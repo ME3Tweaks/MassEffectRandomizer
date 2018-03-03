@@ -1,0 +1,44 @@
+﻿<Controls:MetroWindow x:Class="MassEffectRandomizer.MainWindow"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MassEffectRandomizer"
+        Icon="masseffectrandomizer.ico"
+        IconScalingMode="ScaleDownLargerFrame"
+        mc:Ignorable="d"
+        Title="Mass Effect Randomizer" Height="350" Width="525">
+    <DockPanel Margin="7" LastChildFill="True" >
+        <StackPanel Margin="5" DockPanel.Dock="Top">
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Mass Effect Randomizer allows you to randomize values in the Bio2DA tables the game uses for a large set of values." VerticalAlignment="Top"/>
+            <RadioButton Content="Select what to randomize" Margin="4"/>
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <CheckBox Grid.Row="0" Grid.Column="0" Content="Enemy Stats" Margin="3"/>
+                <CheckBox Grid.Row="0" Grid.Column="1" Content="Weapon Stats" Margin="3"/>
+                <CheckBox Grid.Row="0" Grid.Column="2" Content="Inventory Stats" Margin="3"/>
+                <CheckBox Grid.Row="1" Grid.Column="0" Content="Galaxy Map" Margin="3"/>
+                <CheckBox Grid.Row="1" Grid.Column="1" Content="Character Creator" Margin="3"/>
+                <CheckBox Grid.Row="1" Grid.Column="2" Content="Music" Margin="3"/>
+
+            </Grid>
+            <RadioButton Content="Randomize a common set of stuff" Margin="4"/>
+            <RadioButton Content="Give me a screed. I want to experience hell." Margin="4"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom">
+            <Button Content="Randomize" Click="RandomizeButton_Click"/>
+            <ProgressBar Height="15" Margin="0,5,0,5"/>
+        </StackPanel>
+        <StackPanel/>
+    </DockPanel>
+</Controls:MetroWindow>
