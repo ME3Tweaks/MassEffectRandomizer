@@ -36,8 +36,9 @@
             <RadioButton Content="Give me a screed. I want to experience hell." Margin="4"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
-            <Button Content="Randomize" Click="RandomizeButton_Click"/>
-            <ProgressBar Height="15" Margin="0,5,0,5"/>
+            <Button Name="Button_Randomize" Content="Randomize" Click="RandomizeButton_Click"/>
+            <TextBlock Name="Textblock_CurrentTask" Text="Randomizing stuff..." HorizontalAlignment="Center" Visibility="Collapsed"/>
+            <ProgressBar Name="Progressbar_Bottom" Height="15" Margin="0,5,0,5" IsIndeterminate="True" Visibility="Collapsed"/>
         </StackPanel>
         <StackPanel/>
     </DockPanel>

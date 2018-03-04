@@ -100,6 +100,7 @@
     <Compile Include="Classes\NodeType.cs" />
     <Compile Include="Classes\PropertyCollection.cs" />
     <Compile Include="Classes\Randomizer.cs" />
+    <Compile Include="Classes\ThreadCommand.cs" />
     <Compile Include="Classes\UnrealFlags.cs" />
     <Compile Include="Classes\ZBlock.cs" />
     <Compile Include="MainWindow.xaml.cs">
