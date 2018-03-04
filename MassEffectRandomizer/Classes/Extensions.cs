@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -11,6 +7,17 @@ namespace MassEffectRandomizer.Classes
         public static T[] TypedClone<T>(this T[] src)
         {
             return (T[])src.Clone();
+        }
+    }
+
+    public static class RandomExtensions
+    {
+        public static float NextFloat(
+            this Random random,
+            double minValue,
+            double maxValue)
+        {
+            return (float)(random.NextDouble() * (maxValue - minValue) + minValue);
         }
     }
 }

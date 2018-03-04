@@ -1,6 +1,7 @@
 ﻿using Gibbed.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace MassEffectRandomizer.Classes
         IExportEntry export;
         public Bio2DA(IExportEntry export)
         {
+            Console.WriteLine("Loading " + export.ObjectName);
             this.export = export;
             ME1Package pcc = export.FileRef;
             byte[] data = export.Data;
@@ -92,7 +94,8 @@ namespace MassEffectRandomizer.Classes
                         dataType = data[curroffset];
                         curroffset++;
                         int dataSize = dataType == Bio2DACell.TYPE_NAME ? 8 : 4;
-                        byte[] celldata = data.Skip(curroffset).Take(dataSize).ToArray();
+                        byte[] celldata = new byte[dataSize];
+                        Buffer.BlockCopy(data, curroffset, celldata, 0, dataSize);
                         Bio2DACell cell = new Bio2DACell(pcc, curroffset, dataType, celldata);
                         Cells[rowindex, colindex] = cell;
                         curroffset += dataSize;
@@ -117,13 +120,15 @@ namespace MassEffectRandomizer.Classes
                     byte dataType = data[curroffset];
                     int dataSize = dataType == Bio2DACell.TYPE_NAME ? 8 : 4;
                     curroffset++;
-                    byte[] celldata = data.Skip(curroffset).Take(dataSize).ToArray();
+                    byte[] celldata = new byte[dataSize];
+                    Buffer.BlockCopy(data, curroffset, celldata, 0, dataSize);
                     Bio2DACell cell = new Bio2DACell(pcc, curroffset, dataType, celldata);
                     Cells[row, col] = cell;
                     CellCount++;
                     curroffset += dataSize;
                 }
             }
+            Console.WriteLine("Finished loading " + export.ObjectName);
         }
 
         public void Write2DAToExport()
@@ -149,7 +154,7 @@ namespace MassEffectRandomizer.Classes
                             if (IsIndexed)
                             {
                                 //write index
-                                int index = rowindex * colindex;
+                                int index = (rowindex * columnNames.Count()) + colindex; //+1 because they are not zero based indexes since they are numerals
                                 stream.WriteBytes(BitConverter.GetBytes(index));
                             }
                             stream.WriteByte(cell.Type);
@@ -171,13 +176,15 @@ namespace MassEffectRandomizer.Classes
                 }
 
                 //Write Columns
-                stream.WriteBytes(BitConverter.GetBytes(0));
-
-                Console.WriteLine("Columns defs start at " + stream.Position.ToString("X6"));
+                if (!IsIndexed)
+                {
+                    stream.WriteBytes(BitConverter.GetBytes(0)); //seems to be a 0 before column definitions
+                }
+                //Console.WriteLine("Columns defs start at " + stream.Position.ToString("X6"));
                 stream.WriteBytes(BitConverter.GetBytes(columnNames.Count()));
                 for (int colindex = 0; colindex < columnNames.Count(); colindex++)
                 {
-                    Console.WriteLine("Writing column definition " + columnNames[colindex]);
+                    //Console.WriteLine("Writing column definition " + columnNames[colindex]);
                     int nameIndexForCol = export.FileRef.findName(columnNames[colindex]);
                     stream.WriteBytes(BitConverter.GetBytes(nameIndexForCol));
                     stream.WriteBytes(BitConverter.GetBytes(0)); //second half of name reference in 2da is always zero since they're always indexed at 0
@@ -185,9 +192,33 @@ namespace MassEffectRandomizer.Classes
                 }
 
                 int propsEnd = export.propsEnd();
-                byte[] binarydata = export.Data.Skip(propsEnd).Take(export.Data.Length - propsEnd).ToArray();
+                byte[] binarydata = stream.ToArray();
+                byte[] propertydata = export.Data.Take(propsEnd).ToArray();
+                var newExportData = new byte[propertydata.Length + binarydata.Length];
+                propertydata.CopyTo(newExportData, 0);
+                binarydata.CopyTo(newExportData, propertydata.Length);
+                //Console.WriteLine("Old data size: " + export.Data.Length);
+                //Console.WriteLine("NEw data size: " + newExportData.Length);
+                if (export.Data.Length != newExportData.Length)
+                {
+                    Console.WriteLine("FILES ARE WRONG SIZE");
+                    Debugger.Break();
+                }
+                export.Data = newExportData;
+            }
+        }
 
-                File.WriteAllBytes(@"C:\users\mgame\desktop\2dawrite.bin", stream.ToArray());
+        public Bio2DACell this[int rowindex, int colindex]
+        {
+            get
+            {
+                // get the item for that index.
+                return Cells[rowindex, colindex];
+            }
+            set
+            {
+                // set the item for this index. value will be of type Thing.
+                Cells[rowindex, colindex] = value;
             }
         }
     }
