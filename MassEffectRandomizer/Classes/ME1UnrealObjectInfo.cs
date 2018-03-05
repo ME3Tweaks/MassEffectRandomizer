@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using static MassEffectRandomizer.Classes.ME1Package;
@@ -12,25 +13,30 @@ namespace MassEffectRandomizer.Classes
         public static Dictionary<string, ClassInfo> Structs = new Dictionary<string, ClassInfo>();
         public static Dictionary<string, List<string>> Enums = new Dictionary<string, List<string>>();
 
+
+        private static bool loaded;
+
         public static void loadfromJSON()
         {
-            //string path = Application.StartupPath + "//exec//ME1ObjectInfo.json";
+            if (loaded)
+            {
+                return;
+            }
 
-            //try
-            //{
-            //    if (File.Exists(path))
-            //    {
-            //        string raw = File.ReadAllText(path);
-            //        var blob  = JsonConvert.DeserializeAnonymousType(raw, new { Classes, Structs, Enums });
-            //        Classes = blob.Classes;
-            //        Structs = blob.Structs;
-            //        Enums = blob.Enums;
-            //    }
-            //}
-            //catch
-            //{
-            //    return;
-            //}
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var resourceName = "MassEffectRandomizer.staticfiles.ME1ObjectInfo.json";
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+
+            {
+                TextReader tr = new StreamReader(stream);
+                string raw = tr.ReadToEnd();
+                var blob = JsonConvert.DeserializeAnonymousType(raw, new { Classes, Structs, Enums });
+                Classes = blob.Classes;
+                Structs = blob.Structs;
+                Enums = blob.Enums;
+                loaded = true;
+            }
         }
 
         public static string getEnumTypefromProp(string className, string propName, bool inStruct = false)
@@ -98,7 +104,7 @@ namespace MassEffectRandomizer.Classes
 
         public static ArrayType getArrayType(string className, string propName, bool inStruct = false)
         {
-            PropertyInfo p = getPropertyInfo(className, propName, inStruct);
+            PropertyInfo p = getPropertyInfo(propName,className, inStruct);
             if (p == null)
             {
                 p = getPropertyInfo(className, propName, !inStruct);

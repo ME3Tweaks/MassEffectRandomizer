@@ -43,14 +43,14 @@ namespace MassEffectRandomizer.Classes
             return BitConverter.ToInt32(Data, 0);
         }
 
-        float GetFloatValue()
+        public float GetFloatValue()
         {
             return BitConverter.ToSingle(Data, 0);
         }
 
-        int GetNameIndex()
+        public PreloadedNameReference GetPreloadedNameValue()
         {
-            return BitConverter.ToInt32(Data, 0);
+            return new PreloadedNameReference(BitConverter.ToInt32(Data, 0), BitConverter.ToInt32(Data, 4));
         }
     }
 }

@@ -25,7 +25,6 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <CheckBox Grid.Row="0" Grid.Column="0" Content="Enemy Stats" Margin="3"/>
-                <CheckBox Grid.Row="0" Grid.Column="1" Content="Weapon Stats" Margin="3"/>
                 <CheckBox Grid.Row="0" Grid.Column="2" Content="Inventory Stats" Margin="3"/>
                 <CheckBox Grid.Row="1" Grid.Column="0" Content="Galaxy Map" Margin="3"/>
                 <CheckBox Grid.Row="1" Grid.Column="1" Content="Character Creator" Margin="3"/>
@@ -34,6 +33,17 @@
             </Grid>
             <RadioButton Content="Randomize a common set of stuff" Margin="4"/>
             <RadioButton Content="Give me a screed. I want to experience hell." Margin="4"/>
+            <TabControl Height="100">
+                <TabItem Header="Weapons">
+                    <Grid>
+                        <CheckBox Grid.Row="0" Grid.Column="1" Content="Weapon Stats" Margin="3"/>
+
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Powers">
+                    <Grid Background="#FFE5E5E5"/>
+                </TabItem>
+            </TabControl>
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
             <Button Name="Button_Randomize" Content="Randomize" Click="RandomizeButton_Click"/>
