@@ -307,7 +307,7 @@ namespace MassEffectRandomizer.Classes
                 //2: Manufacturer
                 if (randomizeLevels)
                 {
-                    startingitems2da[row, 1].Data = BitConverter.GetBytes(random.Next(1, 10));
+                    startingitems2da[row, 2].Data = BitConverter.GetBytes(random.Next(1, 10));
                 }
                 startingitems2da[row, 2].Data = BitConverter.GetBytes(manufacturers[random.Next(manufacturers.Length)]);
             }
@@ -322,33 +322,41 @@ namespace MassEffectRandomizer.Classes
         private void RandomizeTalentLists(IExportEntry export, Random random)
         {
             //List of talents... i think. Taken from talent_talenteffectlevels
-            int[] talentsarray = { 0, 7, 14, 15, 21, 28, 29, 30, 35, 42, 49, 50, 56, 57, 63, 64, 84, 86, 91, 93, 98, 99, 108, 109, 119, 122, 126, 128, 131, 132, 134, 137, 138, 141, 142, 145, 146, 149, 150, 153, 154, 157, 158, 163, 164, 165, 166, 167, 168, 169, 170, 171, 174, 175, 176, 177, 178, 180, 182, 184, 186, 188, 189, 190, 192, 193, 194, 195, 196, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 305, 306, 307, 310, 312, 313, 315, 317, 318, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332 };
-            List<int> talents = talentsarray.ToList();
+            //int[] talentsarray = { 0, 7, 14, 15, 21, 28, 29, 30, 35, 42, 49, 50, 56, 57, 63, 64, 84, 86, 91, 93, 98, 99, 108, 109, 119, 122, 126, 128, 131, 132, 134, 137, 138, 141, 142, 145, 146, 149, 150, 153, 154, 157, 158, 163, 164, 165, 166, 167, 168, 169, 170, 171, 174, 175, 176, 177, 178, 180, 182, 184, 186, 188, 189, 190, 192, 193, 194, 195, 196, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 305, 306, 307, 310, 312, 313, 315, 317, 318, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332 };
+            List<int> classidsremainingtoassign = new List<int>();
+            Bio2DA classtalents = new Bio2DA(export);
+
+            for (int row = 0; row < classtalents.rowNames.Count(); row++)
+            {
+                classidsremainingtoassign.Add(classtalents[row, 0].GetIntValue());
+            }
+
+
             randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class talents list"));
-            bool randomizeLevels = false; //will use better later
+            //bool randomizeLevels = false; //will use better later
             Console.WriteLine("Randomizing Class talent list");
-            Bio2DA talenttemplate2da = new Bio2DA(export);
-            for (int row = 0; row < talenttemplate2da.rowNames.Count(); row++)
+
+
+
+
+            for (int row = 0; row < classtalents.rowNames.Count(); row++)
             {
                 //Columns:
-                //0: Item Class - you must have 1 of each or game will crash when swapping to that slot and cutscenes will be super bugged
-                //1: Item Sophistication (Level?)
-                //2: Manufacturer
-                if (talenttemplate2da[row, 1] != null)
+                if (classtalents[row, 0] != null)
                 {
-                    Console.WriteLine("[" + row + "][" + 1 + "]  (" + talenttemplate2da.columnNames[1] + ") value originally is " + talenttemplate2da[row, 1].GetDisplayableValue());
-                    int randomindex = random.Next(talents.Count());
-                    int talentindex = talents[randomindex];
-                    talents.RemoveAt(randomindex);
-                    talenttemplate2da[row, 1].Data = BitConverter.GetBytes(talentindex);
-                    Console.WriteLine("[" + row + "][" + 1 + "]  (" + talenttemplate2da.columnNames[1] + ") value is now " + talenttemplate2da[row, 1].GetDisplayableValue());
+                    //Console.WriteLine("[" + row + "][" + 1 + "]  (" + classtalents.columnNames[1] + ") value originally is " + classtalents[row, 1].GetDisplayableValue());
+                    int randomindex = random.Next(classidsremainingtoassign.Count());
+                    int talentindex = classidsremainingtoassign[randomindex];
+                    classidsremainingtoassign.RemoveAt(randomindex);
+                    classtalents[row, 0].Data = BitConverter.GetBytes(talentindex);
+                    //Console.WriteLine("[" + row + "][" + 1 + "]  (" + classtalents.columnNames[1] + ") value is now " + classtalents[row, 1].GetDisplayableValue());
                 }
-                if (randomizeLevels)
-                {
-                    talenttemplate2da[row, 1].Data = BitConverter.GetBytes(random.Next(1, 12));
-                }
+                //if (randomizeLevels)
+                //{
+                //classtalents[row, 1].Data = BitConverter.GetBytes(random.Next(1, 12));
+                //}
             }
-            talenttemplate2da.Write2DAToExport();
+            classtalents.Write2DAToExport();
         }
 
         /// <summary>
@@ -454,12 +462,13 @@ namespace MassEffectRandomizer.Classes
                             //Hair Scalars
                             if (export.ObjectName.Contains("MorphHair") && row > 0 && col >= 4 && col <= 8)
                             {
-                                
+
                                 float scalarval = random.NextFloat(0, 1);
                                 if (col == 5)
                                 {
                                     numberedscalar = scalarval;
-                                } else if (col > 5)
+                                }
+                                else if (col > 5)
                                 {
                                     scalarval = numberedscalar;
                                 }
