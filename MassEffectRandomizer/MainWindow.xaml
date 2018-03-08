@@ -8,48 +8,95 @@
         Icon="masseffectrandomizer.ico"
         IconScalingMode="ScaleDownLargerFrame"
         mc:Ignorable="d"
-        Title="Mass Effect Randomizer" Height="350" Width="525">
+        Title="Mass Effect Randomizer" Height="480" Width="640">
     <DockPanel Margin="7" LastChildFill="True" >
         <StackPanel Margin="5" DockPanel.Dock="Top">
             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Mass Effect Randomizer allows you to randomize values in the Bio2DA tables the game uses for a large set of values." VerticalAlignment="Top"/>
-            <RadioButton Content="Select what to randomize" Margin="4"/>
-            <Grid Margin="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <CheckBox Grid.Row="0" Grid.Column="0" Content="Enemy Stats" Margin="3"/>
-                <CheckBox Grid.Row="0" Grid.Column="2" Content="Inventory Stats" Margin="3"/>
-                <CheckBox Grid.Row="1" Grid.Column="0" Content="Galaxy Map" Margin="3"/>
-                <CheckBox Grid.Row="1" Grid.Column="1" Content="Character Creator" Margin="3"/>
-                <CheckBox Grid.Row="1" Grid.Column="2" Content="Music" Margin="3"/>
-
-            </Grid>
-            <RadioButton Content="Randomize a common set of stuff" Margin="4"/>
-            <RadioButton Content="Give me a screed. I want to experience hell." Margin="4"/>
-            <TabControl Height="100">
-                <TabItem Header="Weapons">
-                    <Grid>
-                        <CheckBox Grid.Row="0" Grid.Column="1" Content="Weapon Stats" Margin="3"/>
-
-                    </Grid>
-                </TabItem>
-                <TabItem Header="Powers">
-                    <Grid Background="#FFE5E5E5"/>
-                </TabItem>
-            </TabControl>
         </StackPanel>
+
         <StackPanel DockPanel.Dock="Bottom">
             <Button Name="Button_Randomize" Content="Randomize" Click="RandomizeButton_Click"/>
             <TextBlock Name="Textblock_CurrentTask" Text="Randomizing stuff..." HorizontalAlignment="Center" Visibility="Collapsed"/>
             <ProgressBar Name="Progressbar_Bottom" Height="15" Margin="0,5,0,5" IsIndeterminate="True" Visibility="Collapsed"/>
         </StackPanel>
-        <StackPanel/>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical">
+            <RadioButton Content="Select what to randomize" Margin="4" IsEnabled="False"/>
+            <RadioButton Content="Randomize a common set of stuff" Margin="4" IsEnabled="False"/>
+            <RadioButton Content="Give me a screed. I want to experience hell." Margin="4" IsChecked="True"/>
+        </StackPanel>
+        <TabControl>
+            <TabItem Header="Weapons">
+                <StackPanel>
+                    <CheckBox Content="Randomize initial 4 starting weapons" Margin="3"/>
+                    <CheckBox Content="Randomize weapon damage" Margin="3"/>
+                    <CheckBox Content="Randomize weapon cooldown" Margin="3"/>
+                    <CheckBox Content="Randomize weapon heat" Margin="3"/>
+                    <CheckBox Content="Randomize Pistols " Margin="3"/>
+                    <CheckBox Content="Music" Margin="3"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Powers">
+                <StackPanel>
+                    <CheckBox Content="Randomize class powers (requires a new save)" Margin="3"/>
+                    <CheckBox Content="Randomize weapon damage" Margin="3"/>
+                    <CheckBox Content="Randomize weapon cooldown" Margin="3"/>
+                    <CheckBox Content="Randomize weapon heat" Margin="3"/>
+                    <CheckBox Content="Randomize Pistols " Margin="3"/>
+                    <CheckBox Content="Music" Margin="3"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Movement">
+                <StackPanel>
+                    <CheckBox Content="Randomize movement speeds" Margin="3"/>
+                    <CheckBox Content="Randomize weapon damage" Margin="3"/>
+                    <CheckBox Content="Randomize weapon cooldown" Margin="3"/>
+                    <CheckBox Content="Randomize weapon heat" Margin="3"/>
+                    <CheckBox Content="Randomize Pistols " Margin="3"/>
+                    <CheckBox Content="Music" Margin="3"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Enemies">
+                <StackPanel>
+                    <CheckBox Content="Randomize enemy weapons" Margin="3"/>
+                    <CheckBox Content="Randomize weapon damage" Margin="3"/>
+                    <CheckBox Content="Randomize weapon cooldown" Margin="3"/>
+                    <CheckBox Content="Randomize weapon heat" Margin="3"/>
+                    <CheckBox Content="Randomize Pistols " Margin="3"/>
+                    <CheckBox Content="Music" Margin="3"/>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="About">
+                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="84" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130" />
+
+                        <ColumnDefinition Width="35*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Source="images/masseffectrandomizer.png" Grid.Row="0" Grid.Column="0" Margin="4" ToolTip="Hello!"/>
+                    <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,3,0,0">
+                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="20"  Text="Mass Effect Randomizer" FontWeight="Light"/>
+                        <TextBlock x:Name="TextBlock_AssemblyVersion" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" FontWeight="Light" Text="Version"/>
+                        <Image HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Source="images/me3tweaks.png" Margin="8,0,0,0" Cursor="Hand" MouseDown="Image_ME3Tweaks_Click" ToolTip="Software developed with love by ME3Tweaks"/>
+
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,3,0,0">
+                        <TextBlock Text=" Mass Effect Randomizer&#10;
+Copyright (C) 2018 ME3Tweaks&#10;
+&#10;
+This program is free software: you can redistribute it and/or modify it under the terms of the&#10;
+GNU General Public License as published by the Free Software Foundation, either version 3 of the&#10;
+License, or (at your option) any later version.&#10;
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without&#10;
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#10;
+GNU General Public License for more details.&#10;&#10;
+Mass Effect is a registered trademark of EA INTERNATIONAL (STUDIO&#10; AND PUBLISHING) LTD. This program has no affiliation with BioWare&#10; or Electronic Arts."/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </DockPanel>
 </Controls:MetroWindow>

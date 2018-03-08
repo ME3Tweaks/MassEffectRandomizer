@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,6 +31,8 @@ namespace MassEffectRandomizer
             EmbeddedDllClass.LoadDll("lzo2.dll");
             EmbeddedDllClass.LoadDll("lzo2helper.dll");
             InitializeComponent();
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            TextBlock_AssemblyVersion.Text = "Version " + version;
         }
 
         private void RandomizeButton_Click(object sender, RoutedEventArgs e)
@@ -41,6 +44,16 @@ namespace MassEffectRandomizer
             randomizer.randomize();
         }
 
-        
+        private void Image_ME3Tweaks_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("https://me3tweaks.com");
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
     }
 }

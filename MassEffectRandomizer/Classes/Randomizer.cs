@@ -1,7 +1,9 @@
 ﻿using AlotAddOnGUI.classes;
+using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -17,8 +19,62 @@ namespace MassEffectRandomizer.Classes
         public Randomizer(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
+            //DumpSpecialTable();
+        }
+
+        private void DumpSpecialTable()
+        {
+            ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
+            IExportEntry Classes_ClassTalents = null; //write to final column in worksheet
+            IExportEntry Talent_TalentEffectLevesl = null; //write to final column in worksheet
+
+            foreach (IExportEntry export in engine.Exports)
+            {
+                if (export.ObjectName == "Classes_ClassTalents")
+                {
+                    Classes_ClassTalents = export;
+                    continue;
+                }
+                if (export.ObjectName == "Talent_TalentEffectLevels")
+                {
+                    Talent_TalentEffectLevesl = export;
+                    continue;
+                }
+            }
+
+            Bio2DA classtalents = new Bio2DA(Classes_ClassTalents); //col0 = talentid, 16 = HR name
+            Bio2DA talenteffects = new Bio2DA(Talent_TalentEffectLevesl); //col 1 = TALENT ID
+
+            var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("TalentMapping");
+
+            //for each talen in class talents...
+            int sheetindex = 0;
+            for (int rowindex = 0; rowindex < classtalents.rowNames.Count(); rowindex++)
+            {
+                int talentid = classtalents[rowindex, 1].GetIntValue();
+                for (int talrowindex = 0; talrowindex < talenteffects.rowNames.Count(); talrowindex++)
+                {
+                    int talenttableid = talenteffects[talrowindex, 0].GetIntValue();
+                    if (talenttableid == talentid)
+                    {
+                        Console.WriteLine("talenttableid = " + talenttableid);
+                        sheetindex++;
+                        string nameOfTalent = talenteffects[talrowindex, 16].GetDisplayableValue();
+                        worksheet.Cell(sheetindex, 1).Value = talenttableid.ToString();
+                        worksheet.Cell(sheetindex, 2).Value = nameOfTalent;
+                        break;
+                    }
+                }
+            }
 
 
+            //worksheet.SheetView.FreezeRows(1);
+            //worksheet.SheetView.FreezeColumns(1);
+            worksheet.Columns().AdjustToContents();
+            workbook.SaveAs(@"C:\Users\mgame\desktop\2das\TALENTS.xlsx");
+
+            engine.save();
         }
 
         public void randomize()
@@ -151,6 +207,7 @@ namespace MassEffectRandomizer.Classes
         private void RandomizeGalaxyMap(Random random)
         {
             ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
+
             foreach (IExportEntry export in engine.Exports)
             {
                 switch (export.ObjectName)
@@ -168,10 +225,23 @@ namespace MassEffectRandomizer.Classes
                         RandomizeStartingWeapons(export, random);
                         break;
                     case "Classes_ClassTalents":
-                        RandomizeTalentLists(export, random);
+                        int shuffleattempts = 0;
+                        bool reattemptTalentShuffle = true;
+                        while (reattemptTalentShuffle)
+                        {
+                            if (shuffleattempts > 0)
+                            {
+                                randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
+                            }
+                            reattemptTalentShuffle = RandomizeTalentLists(export, random);
+                            shuffleattempts++;
+                        }
                         break;
                     case "LevelUp_ChallengeScalingVars":
-                        RandomizeLeveUpChallenge(export, random);
+                        RandomizeLevelUpChallenge(export, random);
+                        break;
+                    case "Items_ItemEffectLevels":
+                        RandomizeWeaponStats(export, random);
                         break;
                 }
             }
@@ -268,6 +338,39 @@ namespace MassEffectRandomizer.Classes
         }
 
         /// <summary>
+        /// Randomizes the planet-level galaxy map view. 
+        /// </summary>
+        /// <param name="export">2DA Export</param>
+        /// <param name="random">Random number generator</param>
+        private void RandomizeWeaponStats(IExportEntry export, Random random)
+        {
+            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Items - Weapon Stats"));
+
+            Console.WriteLine("Randomizing Items - Weapon Stats");
+            Bio2DA itemsitems2da = new Bio2DA(export);
+            for (int row = 0; row < itemsitems2da.rowNames.Count(); row++)
+            {
+                for (int i = 4; i <= /*itemsitems2da.columnNames.Count()*/ 13; i++)
+                {
+                    if (itemsitems2da[row, i] != null && itemsitems2da[row, i].Type == Bio2DACell.TYPE_FLOAT)
+                    {
+                        int sizebefore = itemsitems2da[row, i].Data.Count();
+                        Console.WriteLine("[" + row + "][" + i + "]  (" + itemsitems2da.columnNames[i] + ") value is " + itemsitems2da[row, i].GetDisplayableValue());
+                        float randvalue = random.NextFloat(0.1, 20);
+                        Console.WriteLine("Items - Weapon Stats Randomizer [" + row + "][" + i + "] (" + itemsitems2da.columnNames[i] + ") value is now " + randvalue);
+                        itemsitems2da[row, i].Data = BitConverter.GetBytes(randvalue);
+                        itemsitems2da[row, i].Type = Bio2DACell.TYPE_FLOAT;
+                        if (itemsitems2da[row, i].Data.Count() != sizebefore)
+                        {
+                            Debugger.Break();
+                        }
+                    }
+                }
+            }
+            itemsitems2da.Write2DAToExport();
+        }
+
+        /// <summary>
         /// Randomizes the 4 guns you get at the start of the game.
         /// </summary>
         /// <param name="export">2DA Export</param>
@@ -315,40 +418,128 @@ namespace MassEffectRandomizer.Classes
         }
 
         /// <summary>
-        /// Randomizes the 4 guns you get at the start of the game.
+        /// Randomizes the talent list
         /// </summary>
         /// <param name="export">2DA Export</param>
         /// <param name="random">Random number generator</param>
-        private void RandomizeTalentLists(IExportEntry export, Random random)
+        private bool RandomizeTalentLists(IExportEntry export, Random random)
         {
             //List of talents... i think. Taken from talent_talenteffectlevels
             //int[] talentsarray = { 0, 7, 14, 15, 21, 28, 29, 30, 35, 42, 49, 50, 56, 57, 63, 64, 84, 86, 91, 93, 98, 99, 108, 109, 119, 122, 126, 128, 131, 132, 134, 137, 138, 141, 142, 145, 146, 149, 150, 153, 154, 157, 158, 163, 164, 165, 166, 167, 168, 169, 170, 171, 174, 175, 176, 177, 178, 180, 182, 184, 186, 188, 189, 190, 192, 193, 194, 195, 196, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 305, 306, 307, 310, 312, 313, 315, 317, 318, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332 };
-            List<int> classidsremainingtoassign = new List<int>();
+            List<int> talentidstoassign = new List<int>();
             Bio2DA classtalents = new Bio2DA(export);
 
             for (int row = 0; row < classtalents.rowNames.Count(); row++)
             {
-                classidsremainingtoassign.Add(classtalents[row, 0].GetIntValue());
+                int baseclassid = classtalents[row, 0].GetIntValue();
+                if (baseclassid == 10)
+                {
+                    continue;
+                }
+                int isvisible = classtalents[row, 6].GetIntValue();
+                if (isvisible == 0)
+                {
+                    continue;
+                }
+                talentidstoassign.Add(classtalents[row, 1].GetIntValue());
             }
 
+            int i = 0;
+            int spectretrainingid = 259;
+            //while (i < 60)
+            //{
+            //    talentidstoassign.Add(spectretrainingid); //spectre training
+            //    i++;
+            //}
 
             randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class talents list"));
             //bool randomizeLevels = false; //will use better later
             Console.WriteLine("Randomizing Class talent list");
 
-
-
-
+            int currentClassNum = -1;
+            List<int> powersAssignedToThisClass = new List<int>();
+            List<int> rowsNeedingPrereqReassignments = new List<int>(); //some powers require a prereq, this will ensure all powers are unlockable for this randomization
+            List<int> talentidsNeedingReassignment = new List<int>(); //used only to filter out the list of bad choices, e.g. don't depend on self.
+            List<int> powersAssignedAsPrereq = new List<int>(); //only assign 1 prereq to a power tree
             for (int row = 0; row < classtalents.rowNames.Count(); row++)
             {
-                //Columns:
-                if (classtalents[row, 0] != null)
+                int baseclassid = classtalents[row, 0].GetIntValue();
+                if (baseclassid == 10)
+                {
+                    continue;
+                }
+                if (currentClassNum != baseclassid)
+                //this block only executes when we are changing classes in the list, so at this point
+                //we have all of the info loaded about the class (e.g. all powers that have been assigned)
+                {
+                    if (powersAssignedToThisClass.Count() > 0)
+                    {
+                        List<int> possibleAllowedPrereqs = powersAssignedToThisClass.Except(talentidsNeedingReassignment).ToList();
+
+                        //reassign prereqs now that we have a list of powers
+                        foreach (int prereqrow in rowsNeedingPrereqReassignments)
+                        {
+                            int randomindex = -1;
+                            int prereq = -1;
+                            //while (true)
+                            //{
+                            randomindex = random.Next(possibleAllowedPrereqs.Count());
+                            prereq = possibleAllowedPrereqs[randomindex];
+                            //powersAssignedAsPrereq.Add(prereq);
+                            classtalents[prereqrow, 8].Data = BitConverter.GetBytes(prereq);
+                            classtalents[prereqrow, 9].Data = BitConverter.GetBytes(random.Next(5) + 4);
+                            Console.WriteLine("Class " + baseclassid + "'s power on row " + row + " now depends on " + classtalents[prereqrow, 8].GetIntValue() + " at level " + classtalents[prereqrow, 9].GetIntValue());
+                            //}
+                        }
+                    }
+                    rowsNeedingPrereqReassignments.Clear();
+                    powersAssignedToThisClass.Clear();
+                    powersAssignedAsPrereq.Clear();
+                    currentClassNum = baseclassid;
+
+                }
+                int isvisible = classtalents[row, 6].GetIntValue();
+                if (isvisible == 0)
+                {
+                    continue;
+                }
+
+                if (classtalents[row, 8] != null)
+                {
+                    //prereq
+                    rowsNeedingPrereqReassignments.Add(row);
+                }
+
+                if (classtalents[row, 1] != null) //talentid
                 {
                     //Console.WriteLine("[" + row + "][" + 1 + "]  (" + classtalents.columnNames[1] + ") value originally is " + classtalents[row, 1].GetDisplayableValue());
-                    int randomindex = random.Next(classidsremainingtoassign.Count());
-                    int talentindex = classidsremainingtoassign[randomindex];
-                    classidsremainingtoassign.RemoveAt(randomindex);
-                    classtalents[row, 0].Data = BitConverter.GetBytes(talentindex);
+
+                    int randomindex = -1;
+                    int talentindex = -1;
+                    int reassignattemptsremaining = 250; //attempt 250 random attempts.
+                    while (true)
+                    {
+                        reassignattemptsremaining--;
+                        if (reassignattemptsremaining <= 0)
+                        {
+                            //this isn't going to work.
+                            return false;
+                        }
+                        randomindex = random.Next(talentidstoassign.Count());
+                        talentindex = talentidstoassign[randomindex];
+                        if (baseclassid <= 5 && talentindex == spectretrainingid)
+                        {
+                            continue;
+                        }
+                        if (!powersAssignedToThisClass.Contains(talentindex))
+                        {
+                            break;
+                        }
+                    }
+
+                    talentidstoassign.RemoveAt(randomindex);
+                    classtalents[row, 1].Data = BitConverter.GetBytes(talentindex);
+                    powersAssignedToThisClass.Add(talentindex);
                     //Console.WriteLine("[" + row + "][" + 1 + "]  (" + classtalents.columnNames[1] + ") value is now " + classtalents[row, 1].GetDisplayableValue());
                 }
                 //if (randomizeLevels)
@@ -357,6 +548,7 @@ namespace MassEffectRandomizer.Classes
                 //}
             }
             classtalents.Write2DAToExport();
+            return true;
         }
 
         /// <summary>
@@ -364,12 +556,15 @@ namespace MassEffectRandomizer.Classes
         /// </summary>
         /// <param name="export">2DA Export</param>
         /// <param name="random">Random number generator</param>
-        private void RandomizeLeveUpChallenge(IExportEntry export, Random random)
+        private void RandomizeLevelUpChallenge(IExportEntry export, Random random)
         {
             randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class talents list"));
             bool randomizeLevels = false; //will use better later
             Console.WriteLine("Randomizing Class talent list");
             Bio2DA challenge2da = new Bio2DA(export);
+
+
+
             for (int row = 0; row < challenge2da.rowNames.Count(); row++)
             {
                 for (int col = 0; col < challenge2da.columnNames.Count(); col++)
