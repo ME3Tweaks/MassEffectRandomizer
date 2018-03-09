@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MassEffectRandomizer.Classes
 {
-    class Bio2DACell
+    public class Bio2DACell
     {
         public const byte TYPE_INT = 0;
         public const byte TYPE_NAME = 1;
@@ -46,11 +46,6 @@ namespace MassEffectRandomizer.Classes
         public float GetFloatValue()
         {
             return BitConverter.ToSingle(Data, 0);
-        }
-
-        public PreloadedNameReference GetPreloadedNameValue()
-        {
-            return new PreloadedNameReference(BitConverter.ToInt32(Data, 0), BitConverter.ToInt32(Data, 4));
         }
     }
 }

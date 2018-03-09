@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MassEffectRandomizer.Classes
 {
-    class Bio2DA
+    public class Bio2DA
     {
         bool IsIndexed = false;
         int CellCount = 0;
