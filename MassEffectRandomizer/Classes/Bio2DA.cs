@@ -1,5 +1,4 @@
-﻿using ClosedXML.Excel;
-using Gibbed.IO;
+﻿using Gibbed.IO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -135,38 +134,6 @@ namespace MassEffectRandomizer.Classes
                 }
             }
             Console.WriteLine("Finished loading " + export.ObjectName);
-        }
-
-        public void Write2DAToExcel()
-        {
-            var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add(export.ObjectName.Truncate(30));
-
-            //write labels
-            for (int rowindex = 0; rowindex < rowNames.Count(); rowindex++)
-            {
-                worksheet.Cell(rowindex + 2, 1).Value = rowNames[rowindex];
-            }
-
-            for (int colindex = 0; colindex < columnNames.Count(); colindex++)
-            {
-                worksheet.Cell(1, colindex + 2).Value = columnNames[colindex];
-            }
-
-            //write data
-            for (int rowindex = 0; rowindex < rowNames.Count(); rowindex++)
-            {
-                for (int colindex = 0; colindex < columnNames.Count(); colindex++)
-                {
-                    if (Cells[rowindex, colindex] != null)
-                        worksheet.Cell(rowindex + 2, colindex + 2).Value = Cells[rowindex, colindex].GetDisplayableValue();
-                }
-            }
-
-            worksheet.SheetView.FreezeRows(1);
-            worksheet.SheetView.FreezeColumns(1);
-            worksheet.Columns().AdjustToContents();
-            workbook.SaveAs(@"C:\Users\mgame\desktop\2das\"+ export.ObjectName + ".xlsx");
         }
 
         public void Write2DAToExport()

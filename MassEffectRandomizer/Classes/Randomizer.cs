@@ -1,13 +1,10 @@
 ﻿using AlotAddOnGUI.classes;
-using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -19,62 +16,6 @@ namespace MassEffectRandomizer.Classes
         public Randomizer(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            //DumpSpecialTable();
-        }
-
-        private void DumpSpecialTable()
-        {
-            ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
-            IExportEntry Classes_ClassTalents = null; //write to final column in worksheet
-            IExportEntry Talent_TalentEffectLevesl = null; //write to final column in worksheet
-
-            foreach (IExportEntry export in engine.Exports)
-            {
-                if (export.ObjectName == "Classes_ClassTalents")
-                {
-                    Classes_ClassTalents = export;
-                    continue;
-                }
-                if (export.ObjectName == "Talent_TalentEffectLevels")
-                {
-                    Talent_TalentEffectLevesl = export;
-                    continue;
-                }
-            }
-
-            Bio2DA classtalents = new Bio2DA(Classes_ClassTalents); //col0 = talentid, 16 = HR name
-            Bio2DA talenteffects = new Bio2DA(Talent_TalentEffectLevesl); //col 1 = TALENT ID
-
-            var workbook = new XLWorkbook();
-            var worksheet = workbook.Worksheets.Add("TalentMapping");
-
-            //for each talen in class talents...
-            int sheetindex = 0;
-            for (int rowindex = 0; rowindex < classtalents.rowNames.Count(); rowindex++)
-            {
-                int talentid = classtalents[rowindex, 1].GetIntValue();
-                for (int talrowindex = 0; talrowindex < talenteffects.rowNames.Count(); talrowindex++)
-                {
-                    int talenttableid = talenteffects[talrowindex, 0].GetIntValue();
-                    if (talenttableid == talentid)
-                    {
-                        Console.WriteLine("talenttableid = " + talenttableid);
-                        sheetindex++;
-                        string nameOfTalent = talenteffects[talrowindex, 16].GetDisplayableValue();
-                        worksheet.Cell(sheetindex, 1).Value = talenttableid.ToString();
-                        worksheet.Cell(sheetindex, 2).Value = nameOfTalent;
-                        break;
-                    }
-                }
-            }
-
-
-            //worksheet.SheetView.FreezeRows(1);
-            //worksheet.SheetView.FreezeColumns(1);
-            worksheet.Columns().AdjustToContents();
-            workbook.SaveAs(@"C:\Users\mgame\desktop\2das\TALENTS.xlsx");
-
-            engine.save();
         }
 
         public void randomize()
@@ -118,7 +59,7 @@ namespace MassEffectRandomizer.Classes
         }
         private void RandomizeGUISounds(Random random)
         {
-            ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
+            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
             foreach (IExportEntry export in engine.Exports)
             {
                 switch (export.ObjectName)
@@ -138,7 +79,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeMusic(Random random)
         {
-            ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
+            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
             foreach (IExportEntry export in engine.Exports)
             {
                 switch (export.ObjectName)
@@ -153,23 +94,9 @@ namespace MassEffectRandomizer.Classes
             engine.save();
         }
 
-        private void Dump2DAToExcel()
-        {
-            Random random = new Random();
-            ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
-            foreach (IExportEntry export in engine.Exports)
-            {
-                if ((export.ClassName == "Bio2DA" || export.ClassName == "Bio2DANumberedRows") && !export.ObjectName.Contains("Default"))
-                {
-                    Bio2DA planet2da = new Bio2DA(export);
-                    planet2da.Write2DAToExcel();
-                }
-            }
-        }
-
         private void RandomizeMovementSpeeds(Random random)
         {
-            ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
+            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
             foreach (IExportEntry export in engine.Exports)
             {
                 switch (export.ObjectName)
@@ -206,7 +133,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeGalaxyMap(Random random)
         {
-            ME1Package engine = new ME1Package(@"X:\Mass Effect Games HDD\Mass Effect\BioGame\CookedPC\Engine.u");
+            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
 
             foreach (IExportEntry export in engine.Exports)
             {

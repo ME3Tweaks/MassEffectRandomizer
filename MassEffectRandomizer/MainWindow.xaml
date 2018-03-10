@@ -8,6 +8,7 @@
         Icon="masseffectrandomizer.ico"
         IconScalingMode="ScaleDownLargerFrame"
         mc:Ignorable="d"
+        Loaded="MainWindow_Loaded"
         Title="Mass Effect Randomizer" Height="480" Width="640">
     <DockPanel Margin="7" LastChildFill="True" >
         <StackPanel Margin="5" DockPanel.Dock="Top">
