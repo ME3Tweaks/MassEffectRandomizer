@@ -181,6 +181,7 @@
     <Compile Include="Classes\NodeType.cs" />
     <Compile Include="Classes\PreloadedNameReference.cs" />
     <Compile Include="Classes\PropertyCollection.cs" />
+    <Compile Include="Classes\RandomizationAlgorithms\ItemEffectLevels.cs" />
     <Compile Include="Classes\Randomizer.cs" />
     <Compile Include="Classes\StreamIO.cs" />
     <Compile Include="Classes\ThreadCommand.cs" />

@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using MassEffectRandomizer.Classes.RandomizationAlgorithms;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -140,32 +142,32 @@ namespace MassEffectRandomizer.Classes
                 switch (export.ObjectName)
                 {
                     case "GalaxyMap_Cluster":
-                        RandomizeClusters(export, random);
+                        //RandomizeClusters(export, random);
                         break;
                     case "GalaxyMap_System":
-                        RandomizeSystems(export, random);
+                        //RandomizeSystems(export, random);
                         break;
                     case "GalaxyMap_Planet":
-                        RandomizePlanets(export, random);
+                        //RandomizePlanets(export, random);
                         break;
                     case "Characters_StartingEquipment":
-                        RandomizeStartingWeapons(export, random);
+                        //RandomizeStartingWeapons(export, random);
                         break;
                     case "Classes_ClassTalents":
                         int shuffleattempts = 0;
-                        bool reattemptTalentShuffle = true;
+                        bool reattemptTalentShuffle = false;
                         while (reattemptTalentShuffle)
                         {
                             if (shuffleattempts > 0)
                             {
                                 randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
                             }
-                            reattemptTalentShuffle = RandomizeTalentLists(export, random);
+                            reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
                             shuffleattempts++;
                         }
                         break;
                     case "LevelUp_ChallengeScalingVars":
-                        RandomizeLevelUpChallenge(export, random);
+                        //RandomizeLevelUpChallenge(export, random);
                         break;
                     case "Items_ItemEffectLevels":
                         RandomizeWeaponStats(export, random);
@@ -273,29 +275,32 @@ namespace MassEffectRandomizer.Classes
         {
             randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Items - Weapon Stats"));
 
-            Console.WriteLine("Randomizing Items - Weapon Stats");
-            Bio2DA itemsitems2da = new Bio2DA(export);
-            for (int row = 0; row < itemsitems2da.rowNames.Count(); row++)
+
+            Console.WriteLine("Randomizing Items - Item Effect Levels");
+            Bio2DA itemeffectlevels2da = new Bio2DA(export);
+            for (int row = 0; row < itemeffectlevels2da.rowNames.Count(); row++)
             {
-                for (int i = 4; i <= /*itemsitems2da.columnNames.Count()*/ 13; i++)
+                Bio2DACell propertyCell = itemeffectlevels2da[row, 2];
+                if (propertyCell != null)
                 {
-                    if (itemsitems2da[row, i] != null && itemsitems2da[row, i].Type == Bio2DACell.TYPE_FLOAT)
+                    int gameEffect = propertyCell.GetIntValue();
+                    switch(gameEffect)
                     {
-                        int sizebefore = itemsitems2da[row, i].Data.Count();
-                        Console.WriteLine("[" + row + "][" + i + "]  (" + itemsitems2da.columnNames[i] + ") value is " + itemsitems2da[row, i].GetDisplayableValue());
-                        float randvalue = random.NextFloat(0.1, 20);
-                        Console.WriteLine("Items - Weapon Stats Randomizer [" + row + "][" + i + "] (" + itemsitems2da.columnNames[i] + ") value is now " + randvalue);
-                        itemsitems2da[row, i].Data = BitConverter.GetBytes(randvalue);
-                        itemsitems2da[row, i].Type = Bio2DACell.TYPE_FLOAT;
-                        if (itemsitems2da[row, i].Data.Count() != sizebefore)
-                        {
-                            Debugger.Break();
-                        }
+                        case 1199:
+                            //GE_Weap_HeatPerShot
+                            ItemEffectLevels.Randomize_GE_Weap_HeatPerShot(itemeffectlevels2da, row, random);
+                            break;
+                        case 1201:
+                            //GE_Weap_HeatLossRate
+                            ItemEffectLevels.RandomizeGE_Weap_HeatLossRate(itemeffectlevels2da, row,random);
+                            break;
                     }
                 }
             }
-            itemsitems2da.Write2DAToExport();
+            itemeffectlevels2da.Write2DAToExport();
         }
+
+
 
         /// <summary>
         /// Randomizes the 4 guns you get at the start of the game.
