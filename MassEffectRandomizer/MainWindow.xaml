@@ -56,6 +56,16 @@
                     <CheckBox Content="Music" Margin="3"/>
                 </StackPanel>
             </TabItem>
+            <TabItem Header="Settings">
+                <StackPanel>
+                    <CheckBox Content="Sanity Mode"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Name="Button_BackupRestore" Content="Backup 2DA files" Click="Button_BackupRestore_Click"/>
+                        <Button Content="Delete 2DA Backup"/>
+                    </StackPanel>
+                </StackPanel>
+                
+            </TabItem>
             <TabItem Header="Enemies">
                 <StackPanel>
                     <CheckBox Content="Randomize enemy weapons" Margin="3"/>

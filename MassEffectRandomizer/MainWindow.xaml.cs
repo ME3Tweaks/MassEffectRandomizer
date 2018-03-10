@@ -5,6 +5,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -41,6 +42,7 @@ namespace MassEffectRandomizer
 
         public async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            UpdateBackupButtonStatus();
             string me1Path = Utilities.GetGamePath();
 
             //int installedGames = 5;
@@ -75,6 +77,32 @@ namespace MassEffectRandomizer
             {
 
             }
+        }
+
+        private void Button_BackupRestore_Click(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(System.IO.Path.Combine(Utilities.GetAppDataFolder(), "BACKED_UP")))
+            {
+                Utilities.Restore2DAFiles();
+            }
+            else
+            {
+                Utilities.Backup2daFiles();
+            }
+            UpdateBackupButtonStatus();
+        }
+
+        private void UpdateBackupButtonStatus()
+        {
+            if (File.Exists(System.IO.Path.Combine(Utilities.GetAppDataFolder(), "BACKED_UP")))
+            {
+                Button_BackupRestore.Content = "Restore 2DA files";
+            }
+            else
+            {
+                Button_BackupRestore.Content = "Backup 2DA files";
+            }
+
         }
     }
 }

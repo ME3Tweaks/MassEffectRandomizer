@@ -63,6 +63,31 @@ namespace MassEffectRandomizer.Classes
             return sb.ToString();
         }
 
+        internal static string GetAppDataFolder()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MassEffectRandomizer";
+        }
+
+        internal static void Restore2DAFiles()
+        {
+            List<string> files = new List<string>();
+            files.Add(Path.Combine("BioGame", "CookedPC", "Maps", "EntryMenu.SFM"));
+            files.Add(Path.Combine("BioGame", "CookedPC", "Engine.u"));
+
+            string gamepath = GetGamePath();
+            string backuppath = Path.Combine(GetAppDataFolder(), "2dabackup");
+
+            foreach (string file in files)
+            {
+                var sourcepath = Path.Combine(backuppath, file);
+                var destpath = Path.Combine(gamepath, file);
+
+                Directory.CreateDirectory(Directory.GetParent(destpath).FullName);
+                File.Copy(sourcepath, destpath, true);
+            }
+            File.Create(Path.Combine(GetAppDataFolder(), "BACKED_UP"));
+        }
+
         /// <summary> Checks for write access for the given file.
         /// </summary>
         /// <param name="fileName">The filename.</param>
@@ -110,6 +135,26 @@ namespace MassEffectRandomizer.Classes
         internal static string GetEngineFile()
         {
             return Path.Combine(GetGamePath(), "BioGame", "CookedPC", "Engine.u");
+        }
+
+        internal static void Backup2daFiles()
+        {
+            List<string> files = new List<string>();
+            files.Add(Path.Combine("BioGame", "CookedPC", "Maps", "EntryMenu.SFM"));
+            files.Add(Path.Combine("BioGame", "CookedPC", "Engine.u"));
+
+            string gamepath = GetGamePath();
+            string backuppath = Path.Combine(GetAppDataFolder(), "2dabackup");
+
+            foreach (string file in files)
+            {
+                var sourcepath = Path.Combine(gamepath, file);
+                var destpath = Path.Combine(backuppath, file);
+
+                Directory.CreateDirectory(Directory.GetParent(destpath).FullName);
+                File.Copy(sourcepath, destpath, true);
+            }
+            File.Create(Path.Combine(GetAppDataFolder(), "BACKED_UP"));
         }
 
         internal static string GetEntryMenuFile()
