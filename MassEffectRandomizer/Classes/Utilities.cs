@@ -81,11 +81,8 @@ namespace MassEffectRandomizer.Classes
             {
                 var sourcepath = Path.Combine(backuppath, file);
                 var destpath = Path.Combine(gamepath, file);
-
-                Directory.CreateDirectory(Directory.GetParent(destpath).FullName);
                 File.Copy(sourcepath, destpath, true);
             }
-            File.Create(Path.Combine(GetAppDataFolder(), "BACKED_UP"));
         }
 
         /// <summary> Checks for write access for the given file.
