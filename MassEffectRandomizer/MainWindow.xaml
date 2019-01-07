@@ -42,27 +42,20 @@
                     <CheckBox Content="Randomize weapon damage" Margin="3"/>
                     <CheckBox Content="Randomize weapon cooldown" Margin="3"/>
                     <CheckBox Content="Randomize weapon heat" Margin="3"/>
-                    <CheckBox Content="Randomize Pistols " Margin="3"/>
-                    <CheckBox Content="Music" Margin="3"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Player &amp; Squad">
                 <StackPanel>
                     <CheckBox Content="Randomize premade character creator faces" ToolTip="Generate some nightmare fuel in the preset faces for each gender" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR}"/>
                     <CheckBox Content="Randomize premade character creator skin tone" ToolTip="Randomize skin tone colors for premade shepards" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE}"/>
-                    <CheckBox Content="Randomize class powers (requires a new save)" ToolTip="Randomize the powers for each class. Requires you to start a new gmae for it to work as the power list is saved in your save file" Margin="3"/>
+                    <CheckBox Content="Randomize class powers (requires a new save)" ToolTip="Randomize the powers for each class. Requires you to start a new gmae for it to work as the power list is saved in your save file" Margin="3" IsChecked="{Binding RANDSETTING_TALENT_CLASSTALENTS}"/>
                     <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles the look of each squadmate" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}"/>
                     <CheckBox Content="Randomize squad armor/amp" ToolTip="Randomizes the starting armor and amp for the squad" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_INVENTORY}"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Movement">
                 <StackPanel>
-                    <CheckBox Content="Randomize movement speeds" Margin="3"/>
-                    <CheckBox Content="Randomize weapon damage" Margin="3"/>
-                    <CheckBox Content="Randomize weapon cooldown" Margin="3"/>
-                    <CheckBox Content="Randomize weapon heat" Margin="3"/>
-                    <CheckBox Content="Randomize Pistols" Margin="3"/>
-                    <CheckBox Content="Music" Margin="3"/>
+                    <CheckBox Content="Randomize movement speeds" Margin="3" IsChecked="{Binding RANDSETTING_MOVEMENT_CREATURESPEED}"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Galaxy Map">
@@ -74,19 +67,20 @@
             </TabItem>
             <TabItem Header="Enemies">
                 <StackPanel>
-                    <CheckBox Content="Randomize enemy weapons" Margin="3"/>
-                    <CheckBox Content="Randomize weapon damage" Margin="3"/>
-                    <CheckBox Content="Randomize weapon cooldown" Margin="3"/>
-                    <CheckBox Content="Randomize weapon heat" Margin="3"/>
-                    <CheckBox Content="Randomize Pistols " Margin="3"/>
-                    <CheckBox Content="Music" Margin="3"/>
+                    <CheckBox Content="????" Margin="3"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Miscellaneous">
                 <StackPanel>
-                    <CheckBox Content="Randomize music*" ToolTip="Randomize music used in gameplay" Margin="3"/>
-                    <CheckBox Content="Randomize GUI music*" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3"/>
-                    <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3"/>
+                    <CheckBox Content="Randomize music*" ToolTip="Randomize music used in gameplay" Margin="3"  IsChecked="{Binding RANDSETTING_MISC_MUSIC}"/>
+                    <CheckBox Content="Randomize GUI music*" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}"/>
+                    <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}"/>
+                    <CheckBox Content="Randomize BioMorphFaces in maps" ToolTip="Randomize humanoid faces through the headmorph" Margin="3" IsChecked="{Binding RANDSETTING_MISC_BIOMORPH}"/>
+                    <StackPanel Orientation="Horizontal" Margin="25,0,0,0">
+                        <TextBlock Text="Randomization amount: "/>
+                        <TextBlock Text="{Binding ElementName=RANDSETTING_MISC_BIOMORPHFACE_SLIDER, Path=Value, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Slider Name="RANDSETTING_MISC_BIOMORPHFACE_SLIDER" ToolTip="Amount to randomize. Larger values result in more ridiculous faces" Margin="3" Width="200px" Minimum=".1" Maximum=".5" Value=".3" Ticks=".1,.2,.3,.4,.5" IsSnapToTickEnabled="True" TickPlacement="BottomRight" />
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Settings">
@@ -97,30 +91,30 @@
                         <Button Content="Delete 2DA Backup" Margin="5,0,0,0"/>
                     </StackPanel>
                 </StackPanel>
-                
+
             </TabItem>
-            
+
             <TabItem Header="About">
                 <ScrollViewer>
-                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="84" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="130" />
+                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="84" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130" />
 
-                        <ColumnDefinition Width="35*" />
-                    </Grid.ColumnDefinitions>
-                    <Image Source="images/masseffectrandomizer.png" Grid.Row="0" Grid.Column="0" Margin="4" ToolTip="Hello!"/>
-                    <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,3,0,0">
-                        <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="20"  Text="Mass Effect Randomizer" FontWeight="Light"/>
-                        <TextBlock x:Name="TextBlock_AssemblyVersion" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" FontWeight="Light" Text="Version"/>
-                        <Image HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Source="images/me3tweaks.png" Margin="8,0,0,0" Cursor="Hand" MouseDown="Image_ME3Tweaks_Click" ToolTip="Software developed with love by ME3Tweaks"/>
+                            <ColumnDefinition Width="35*" />
+                        </Grid.ColumnDefinitions>
+                        <Image Source="images/masseffectrandomizer.png" Grid.Row="0" Grid.Column="0" Margin="4" ToolTip="Hello!"/>
+                        <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,3,0,0">
+                            <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="20"  Text="Mass Effect Randomizer" FontWeight="Light"/>
+                            <TextBlock x:Name="TextBlock_AssemblyVersion" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" FontWeight="Light" Text="Version"/>
+                            <Image HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Source="images/me3tweaks.png" Margin="8,0,0,0" Cursor="Hand" MouseDown="Image_ME3Tweaks_Click" ToolTip="Software developed with love by ME3Tweaks"/>
 
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,3,0,0">
-                        <TextBlock Text=" Mass Effect Randomizer&#10;
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,3,0,0">
+                            <TextBlock Text=" Mass Effect Randomizer&#10;
 Copyright (C) 2019 ME3Tweaks&#10;
 &#10;
 This program is free software: you can redistribute it and/or modify it under the terms of the&#10;
@@ -130,8 +124,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#10;
 GNU General Public License for more details.&#10;&#10;
 Mass Effect is a registered trademark of EA INTERNATIONAL (STUDIO&#10; AND PUBLISHING) LTD. This program has no affiliation with BioWare&#10; or Electronic Arts."/>
-                    </StackPanel>
-                </Grid>
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
             </TabItem>
         </TabControl>

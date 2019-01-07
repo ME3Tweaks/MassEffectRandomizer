@@ -11,7 +11,7 @@ namespace MassEffectRandomizer.Classes
         bool HeaderChanged { get; }
         int Index { get; set; }
         int UIndex { get; }
-        byte[] header { get; }
+        byte[] Header { get; }
         ME1Package FileRef { get; }
         int idxLink { get; set; }
         int idxObjectName { get; set; }
@@ -37,17 +37,21 @@ namespace MassEffectRandomizer.Classes
         int indexValue { get; set; }
         string ArchtypeName { get; }
         string ClassParent { get; }
-        uint headerOffset { get; set; }
+        uint HeaderOffset { get; set; }
         ulong ObjectFlags { get; set; }
         int OriginalDataSize { get; }
         bool ReadsFromConfig { get; }
+
         IExportEntry Clone();
-        void setHeader(byte[] v);
-        PropertyCollection GetProperties();
+
+
+        PropertyCollection GetProperties(bool forceReload = false, bool includeNoneProperties = false);
+        void WriteProperties(PropertyCollection props);
         int propsEnd();
         int GetPropertyStart();
         byte[] getBinaryData();
         void setBinaryData(byte[] binaryData);
         T GetProperty<T>(string name) where T : UProperty;
+        void WriteProperty(UProperty prop);
     }
 }

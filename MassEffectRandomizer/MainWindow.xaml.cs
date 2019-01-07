@@ -87,7 +87,26 @@ namespace MassEffectRandomizer
         private bool _randsetting_character_charactercreator_skintone;
         public bool RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE { get { return _randsetting_character_charactercreator_skintone; } set { SetProperty(ref _randsetting_character_charactercreator_skintone, value); } }
 
-        
+        //Talents
+        private bool _randsetting_talents_classtalents;
+        public bool RANDSETTING_TALENTS_CLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }
+
+        //MOVEMENT
+        private bool _randsetting_movement_creaturespeed;
+        public bool RANDSETTING_MOVEMENT_CREATURESPEED { get { return _randsetting_movement_creaturespeed; } set { SetProperty(ref _randsetting_movement_creaturespeed, value); } }
+
+        //Misc
+        private bool _randsetting_misc_music;
+        public bool RANDSETTING_MISC_MUSIC { get { return _randsetting_misc_music; } set { SetProperty(ref _randsetting_misc_music, value); } }
+
+        private bool _randsetting_misc_guimusic;
+        public bool RANDSETTING_MISC_GUIMUSIC { get { return _randsetting_misc_guimusic; } set { SetProperty(ref _randsetting_misc_guimusic, value); } }
+
+        private bool _randsetting_misc_guisfx;
+        public bool RANDSETTING_MISC_GUISFX { get { return _randsetting_misc_guisfx; } set { SetProperty(ref _randsetting_misc_guisfx, value); } }
+
+        //MAKO 
+        //        BIOC_Base.u -> 4940 Default__BioAttributesPawnVehicle m_initialThrusterAmountMax
         //END RANDOMIZE OPTION BINDINGS
 
         public MainWindow()

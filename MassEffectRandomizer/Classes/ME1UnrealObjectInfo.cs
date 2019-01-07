@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using static MassEffectRandomizer.Classes.ME1Package;
-using static MassEffectRandomizer.Classes.PropertyCollection;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -45,6 +45,79 @@ namespace MassEffectRandomizer.Classes
             return p?.reference;
         }
 
+        private static string[] ImmutableStructs = { "Vector", "Color", "LinearColor", "TwoVectors", "Vector4", "Vector2D", "Rotator", "Guid", "Plane", "Box",
+            "Quat", "Matrix", "IntPoint", "ActorReference", "ActorReference", "ActorReference", "PolyReference", "AimTransform", "AimTransform", "NavReference",
+            "CoverReference", "CoverInfo", "CoverSlot", "BioRwBox", "BioMask4Property", "RwVector2", "RwVector3", "RwVector4", "BioRwBox44" };
+
+        public static bool isImmutable(string structName)
+        {
+            return ImmutableStructs.Contains(structName);
+        }
+
+        //public static byte[] getDefaultClassValue(PCCPackage pcc, string className, bool fullProps = false)
+        //{
+        //    if (Structs.ContainsKey(className))
+        //    {
+        //        bool isImmutable = ImmutableStructs.Contains(className);
+        //        ClassInfo info = Structs[className];
+        //        PCCPackage importPCC = new PCCPackage(Path.Combine(ME3Directory.gamePath, @"BIOGame\" + info.pccPath));
+        //        byte[] buff;
+        //        //Plane and CoverReference inherit from other structs, meaning they don't have default values (who knows why)
+        //        //thus, I have hardcoded what those default values should be 
+        //        if (className == "Plane")
+        //        {
+        //            buff = PlaneDefault;
+        //        }
+        //        else if (className == "CoverReference")
+        //        {
+        //            buff = CoverReferenceDefault;
+        //        }
+        //        else
+        //        {
+        //            buff = importPCC.Exports[info.exportIndex].Data.Skip(0x24).ToArray();
+        //        }
+        //        List<PropertyReader.Property> Props = PropertyReader.ReadProp(importPCC, buff, 0);
+        //        MemoryStream m = new MemoryStream();
+        //        foreach (PropertyReader.Property p in Props)
+        //        {
+        //            string propName = importPCC.GetName(p.Name);
+        //            //check if property is transient, if so, skip (neither of the structs that inherit have transient props)
+        //            if (info.properties.ContainsKey(propName) || propName == "None" || info.baseClass != "Class")
+        //            {
+        //                if (isImmutable && !fullProps)
+        //                {
+        //                    PropertyReader.ImportImmutableProperty(pcc, importPCC, p, className, m, true);
+        //                }
+        //                else
+        //                {
+        //                    PropertyReader.ImportProperty(pcc, importPCC, p, className, m, true);
+        //                }
+        //            }
+        //        }
+        //        importPCC.Source.Close();
+        //        return m.ToArray();
+        //    }
+        //    else if (Classes.ContainsKey(className))
+        //    {
+        //        ClassInfo info = Structs[className];
+        //        PCCPackage importPCC = new PCCPackage(Path.Combine(ME3Directory.gamePath, @"BIOGame\" + info.pccPath));
+        //        PCCPackage.ExportEntry entry = pcc.Exports[info.exportIndex + 1];
+        //        List<PropertyReader.Property> Props = PropertyReader.getPropList(importPCC, entry);
+        //        MemoryStream m = new MemoryStream(entry.Datasize - 4);
+        //        foreach (PropertyReader.Property p in Props)
+        //        {
+        //            if (!info.properties.ContainsKey(importPCC.GetName(p.Name)))
+        //            {
+        //                //property is transient
+        //                continue;
+        //            }
+        //            PropertyReader.ImportProperty(pcc, importPCC, p, className, m);
+        //        }
+        //        return m.ToArray();
+        //    }
+        //    return null;
+        //}
+
         public static List<string> getEnumfromProp(string className, string propName, bool inStruct = false)
         {
             Dictionary<string, ClassInfo> temp = inStruct ? Structs : Classes;
@@ -68,7 +141,7 @@ namespace MassEffectRandomizer.Classes
                         if (p.type == PropertyType.StructProperty || p.type == PropertyType.ArrayProperty)
                         {
                             List<string> vals = getEnumfromProp(p.reference, propName, true);
-                            if(vals != null)
+                            if (vals != null)
                             {
                                 return vals;
                             }
@@ -88,7 +161,7 @@ namespace MassEffectRandomizer.Classes
             return null;
         }
 
-        public static List<string> getEnumValues(string enumName, bool includeNone = false)
+        public static List<string> GetEnumValues(string enumName, bool includeNone = false)
         {
             if (Enums.ContainsKey(enumName))
             {
@@ -104,7 +177,7 @@ namespace MassEffectRandomizer.Classes
 
         public static ArrayType getArrayType(string className, string propName, bool inStruct = false)
         {
-            PropertyInfo p = getPropertyInfo(propName,className, inStruct);
+            PropertyInfo p = getPropertyInfo(className, propName, inStruct);
             if (p == null)
             {
                 p = getPropertyInfo(className, propName, !inStruct);

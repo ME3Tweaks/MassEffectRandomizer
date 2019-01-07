@@ -21,6 +21,14 @@ namespace MassEffectRandomizer.Classes
         int Generations { get { return BitConverter.ToInt32(header, nameSize + 64); } }
         int Compression { get { return BitConverter.ToInt32(header, header.Length - 4); } set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, header.Length - 4, sizeof(int)); } }
 
+        public enum MEGame
+        {
+            ME1 = 1,
+            ME2 = 2,
+            ME3 = 3
+        }
+        public MEGame Game { get { return MEGame.ME1; } }
+
         public enum ArrayType
         {
             Object,
@@ -34,23 +42,23 @@ namespace MassEffectRandomizer.Classes
             Byte,
         }
 
-        public enum PropertyType
-        {
-            Unknown = -1,
-            None = 0,
-            StructProperty = 1,
-            IntProperty = 2,
-            FloatProperty = 3,
-            ObjectProperty = 4,
-            NameProperty = 5,
-            BoolProperty = 6,
-            ByteProperty = 7,
-            ArrayProperty = 8,
-            StrProperty = 9,
-            StringRefProperty = 10,
-            DelegateProperty = 11,
-            BioMask4Property
-        }
+        //public enum PropertyType
+        //{
+        //    Unknown = -1,
+        //    None = 0,
+        //    StructProperty = 1,
+        //    IntProperty = 2,
+        //    FloatProperty = 3,
+        //    ObjectProperty = 4,
+        //    NameProperty = 5,
+        //    BoolProperty = 6,
+        //    ByteProperty = 7,
+        //    ArrayProperty = 8,
+        //    StrProperty = 9,
+        //    StringRefProperty = 10,
+        //    DelegateProperty = 11,
+        //    BioMask4Property
+        //}
 
         public class PropertyInfo
         {
@@ -260,7 +268,7 @@ namespace MassEffectRandomizer.Classes
                 ImportCount = imports.Count;
                 foreach (ImportEntry e in imports)
                 {
-                    m.WriteBytes(e.header);
+                    m.WriteBytes(e.Header);
                 }
                 //export table
                 ExportOffset = (int)m.Position;
@@ -268,8 +276,8 @@ namespace MassEffectRandomizer.Classes
                 for (int i = 0; i < exports.Count; i++)
                 {
                     IExportEntry e = exports[i];
-                    e.headerOffset = (uint)m.Position;
-                    m.WriteBytes(e.header);
+                    e.HeaderOffset = (uint)m.Position;
+                    m.WriteBytes(e.Header);
                 }
                 //freezone
                 int FreeZoneSize = expDataBegOffset - FreeZoneStart;
@@ -284,7 +292,7 @@ namespace MassEffectRandomizer.Classes
                     e.DataSize = e.Data.Length;
                     m.WriteBytes(e.Data);
                     long pos = m.Position;
-                    m.Seek(e.headerOffset + 32, SeekOrigin.Begin);
+                    m.Seek(e.HeaderOffset + 32, SeekOrigin.Begin);
                     m.WriteValueS32(e.DataSize);
                     m.WriteValueS32(e.DataOffset);
                     m.Seek(pos, SeekOrigin.Begin);

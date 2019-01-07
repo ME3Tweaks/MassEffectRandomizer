@@ -60,6 +60,13 @@ namespace MassEffectRandomizer.Classes
             ME1UnrealObjectInfo.loadfromJSON();
             Random random = new Random();
 
+            ////Test
+            //ME1Package test = new ME1Package(@"D:\Origin Games\Mass Effect\BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_06_DSG.SFM");
+            //var morphFaces = test.Exports.Where(x => x.ClassName == "BioMorphFace").ToList();
+            //morphFaces.ForEach(x => RandomizeBioMorphFace(x, random));
+            //test.save();
+            //return;
+
             //Randomize ENGINE
             ME1Package engine = new ME1Package(Utilities.GetEngineFile());
             foreach (IExportEntry export in engine.Exports)
@@ -67,41 +74,67 @@ namespace MassEffectRandomizer.Classes
                 switch (export.ObjectName)
                 {
                     case "Music_Music":
-                        //if randomizemusic
-                        RandomizeMusic(export, random);
+                        if (mainWindow.RANDSETTING_MISC_MUSIC)
+                        {
+                            RandomizeMusic(export, random);
+                        }
                         break;
                     case "UISounds_GuiMusic":
-                        RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Music", "music");
+                        if (mainWindow.RANDSETTING_MISC_GUIMUSIC)
+                        {
+                            RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Music", "music");
+                        }
                         break;
                     case "UISounds_GuiSounds":
-                        RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Sounds", "snd_gui");
+                        if (mainWindow.RANDSETTING_MISC_GUISFX)
+                        {
+                            RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Sounds", "snd_gui");
+                        }
                         break;
                     case "MovementTables_CreatureSpeeds":
-                        RandomizeMovementSpeeds(export, random);
+                        if (mainWindow.RANDSETTING_MOVEMENT_CREATURESPEED)
+                        {
+                            RandomizeMovementSpeeds(export, random);
+                        }
                         break;
                     case "GalaxyMap_Cluster":
-                        //RandomizeClusters(export, random);
+                        if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
+                        {
+                            RandomizeClusters(export, random);
+                        }
                         break;
                     case "GalaxyMap_System":
-                        //RandomizeSystems(export, random);
+                        if (mainWindow.RANDSETTING_GALAXYMAP_SYSTEMS)
+                        {
+                            RandomizeSystems(export, random);
+                        }
                         break;
                     case "GalaxyMap_Planet":
-                        //RandomizePlanets(export, random);
+                        if (mainWindow.RANDSETTING_GALAXYMAP_PLANETCOLOR)
+                        {
+                            RandomizePlanets(export, random);
+                        }
                         break;
                     case "Characters_StartingEquipment":
-                        //RandomizeStartingWeapons(export, random);
+                        if (mainWindow.RANDSETTING_WEAPONS_STARTINGEQUIPMENT)
+                        {
+                            RandomizeStartingWeapons(export, random);
+                        }
                         break;
                     case "Classes_ClassTalents":
-                        int shuffleattempts = 0;
-                        bool reattemptTalentShuffle = false;
-                        while (reattemptTalentShuffle)
+                        if (mainWindow.RANDSETTING_TALENTS_CLASSTALENTS)
                         {
-                            if (shuffleattempts > 0)
+                            int shuffleattempts = 0;
+                            bool reattemptTalentShuffle = false;
+                            while (reattemptTalentShuffle)
                             {
-                                randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
+                                if (shuffleattempts > 0)
+                                {
+                                    randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
+                                }
+                                reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
+                                shuffleattempts++;
                             }
-                            reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
-                            shuffleattempts++;
                         }
                         break;
                     case "LevelUp_ChallengeScalingVars":
@@ -111,6 +144,7 @@ namespace MassEffectRandomizer.Classes
                         RandomizeWeaponStats(export, random);
                         break;
                     case "Characters_Character":
+                        //Has internal checks for types
                         RandomizeCharacter(export, random);
                         break;
                 }
@@ -149,20 +183,6 @@ namespace MassEffectRandomizer.Classes
             }
             entrymenu.save();
         }
-        private void RandomizeGUISounds(Random random)
-        {
-            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
-            foreach (IExportEntry export in engine.Exports)
-            {
-                switch (export.ObjectName)
-                {
-
-                }
-            }
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Finishing GUI Sound Randomizing"));
-
-            engine.save();
-        }
 
         private void RandomizeMusic(Random random)
         {
@@ -177,23 +197,6 @@ namespace MassEffectRandomizer.Classes
                 }
             }
             randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Finishing Music Randomizing"));
-
-            engine.save();
-        }
-
-        private void RandomizeMovementSpeeds(Random random)
-        {
-            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
-            foreach (IExportEntry export in engine.Exports)
-            {
-                switch (export.ObjectName)
-                {
-                    case "MovementTables_CreatureSpeeds":
-                        RandomizeMovementSpeeds(export, random);
-                        break;
-                }
-            }
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Finishing Movement Speeds Randomizing"));
 
             engine.save();
         }
@@ -218,54 +221,54 @@ namespace MassEffectRandomizer.Classes
             cluster2da.Write2DAToExport();
         }
 
-        private void RandomizeGalaxyMap(Random random)
-        {
-            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
+        //private void RandomizeGalaxyMap(Random random)
+        //{
+        //    ME1Package engine = new ME1Package(Utilities.GetEngineFile());
 
-            foreach (IExportEntry export in engine.Exports)
-            {
-                switch (export.ObjectName)
-                {
-                    case "GalaxyMap_Cluster":
-                        //RandomizeClusters(export, random);
-                        break;
-                    case "GalaxyMap_System":
-                        //RandomizeSystems(export, random);
-                        break;
-                    case "GalaxyMap_Planet":
-                        //RandomizePlanets(export, random);
-                        break;
-                    case "Characters_StartingEquipment":
-                        //RandomizeStartingWeapons(export, random);
-                        break;
-                    case "Classes_ClassTalents":
-                        int shuffleattempts = 0;
-                        bool reattemptTalentShuffle = false;
-                        while (reattemptTalentShuffle)
-                        {
-                            if (shuffleattempts > 0)
-                            {
-                                randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
-                            }
-                            reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
-                            shuffleattempts++;
-                        }
-                        break;
-                    case "LevelUp_ChallengeScalingVars":
-                        //RandomizeLevelUpChallenge(export, random);
-                        break;
-                    case "Items_ItemEffectLevels":
-                        RandomizeWeaponStats(export, random);
-                        break;
-                    case "Characters_Character":
-                        RandomizeCharacter(export, random);
-                        break;
-                }
-            }
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Finishing Galaxy Map Randomizing"));
+        //    foreach (IExportEntry export in engine.Exports)
+        //    {
+        //        switch (export.ObjectName)
+        //        {
+        //            case "GalaxyMap_Cluster":
+        //                //RandomizeClusters(export, random);
+        //                break;
+        //            case "GalaxyMap_System":
+        //                //RandomizeSystems(export, random);
+        //                break;
+        //            case "GalaxyMap_Planet":
+        //                //RandomizePlanets(export, random);
+        //                break;
+        //            case "Characters_StartingEquipment":
+        //                //RandomizeStartingWeapons(export, random);
+        //                break;
+        //            case "Classes_ClassTalents":
+        //                int shuffleattempts = 0;
+        //                bool reattemptTalentShuffle = false;
+        //                while (reattemptTalentShuffle)
+        //                {
+        //                    if (shuffleattempts > 0)
+        //                    {
+        //                        randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
+        //                    }
+        //                    reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
+        //                    shuffleattempts++;
+        //                }
+        //                break;
+        //            case "LevelUp_ChallengeScalingVars":
+        //                //RandomizeLevelUpChallenge(export, random);
+        //                break;
+        //            case "Items_ItemEffectLevels":
+        //                RandomizeWeaponStats(export, random);
+        //                break;
+        //            case "Characters_Character":
+        //                RandomizeCharacter(export, random);
+        //                break;
+        //        }
+        //    }
+        //    randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Finishing Galaxy Map Randomizing"));
 
-            engine.save();
-        }
+        //    engine.save();
+        //}
 
         private void RandomizeCharacter(IExportEntry export, Random random)
         {
@@ -280,7 +283,7 @@ namespace MassEffectRandomizer.Classes
             actorTypes.Add("BIOG_Krogan_Hench_C.hench_krogan");
             actorTypes.Add("BIOG_Turian_Hench_C.hench_turian");
             actorTypes.Add("BIOG_Quarian_Hench_C.hench_quarian");
-            actorTypes.Add("BIOG_Jenkins_Hench_C.hench_jenkins");
+            //actorTypes.Add("BIOG_Jenkins_Hench_C.hench_jenkins");
 
             Bio2DA character2da = new Bio2DA(export);
             for (int row = 0; row < character2da.rowNames.Count(); row++)
@@ -290,7 +293,7 @@ namespace MassEffectRandomizer.Classes
 
                 if (mainWindow.RANDSETTING_CHARACTER_HENCH_ARCHETYPES)
                 {
-                    if (character2da[row, 0].GetDisplayableValue().StartsWith("hench"))
+                    if (character2da[row, 0].GetDisplayableValue().StartsWith("hench") && !character2da[row, 0].GetDisplayableValue().Contains("jenkins"))
                     {
                         //Henchman
                         int indexToChoose = random.Next(actorTypes.Count);
@@ -785,7 +788,8 @@ namespace MassEffectRandomizer.Classes
                                 export2da[row, col].Data = BitConverter.GetBytes((ulong)newValue); //name is 8 bytes
                                 hasChanges = true;
                             }
-                        } else
+                        }
+                        else
                         {
                             string rgbNewName = GetRandomColorRBGStr(random);
                             int newValue = export.FileRef.FindNameOrAdd(rgbNewName);
@@ -799,6 +803,42 @@ namespace MassEffectRandomizer.Classes
             {
                 export2da.Write2DAToExport();
             }
+        }
+
+        private void RandomizeBioMorphFace(IExportEntry export, Random random)
+        {
+            var props = export.GetProperties();
+            ArrayProperty<StructProperty> m_aMorphFeatures = props.GetProp<ArrayProperty<StructProperty>>("m_aMorphFeatures");
+            if (m_aMorphFeatures != null)
+            {
+                foreach (StructProperty morphFeature in m_aMorphFeatures)
+                {
+                    FloatProperty offset = morphFeature.GetProp<FloatProperty>("Offset");
+                    if (offset != null)
+                    {
+                        offset.Value = offset.Value * random.NextFloat(0.9, 1.1);
+                    }
+                }
+            }
+
+            ArrayProperty<StructProperty> m_aFinalSkeleton = props.GetProp<ArrayProperty<StructProperty>>("m_aFinalSkeleton");
+            if (m_aFinalSkeleton != null)
+            {
+                foreach (StructProperty offsetBonePos in m_aFinalSkeleton)
+                {
+                    StructProperty vPos = offsetBonePos.GetProp<StructProperty>("vPos");
+                    if (vPos != null)
+                    {
+                        FloatProperty x = vPos.GetProp<FloatProperty>("X");
+                        FloatProperty y = vPos.GetProp<FloatProperty>("Y");
+                        FloatProperty z = vPos.GetProp<FloatProperty>("Z");
+                        x.Value = x.Value * random.NextFloat(0.7, 1.3);
+                        y.Value = y.Value * random.NextFloat(0.7, 1.3);
+                        z.Value = z.Value * random.NextFloat(0.95, 1.05);
+                    }
+                }
+            }
+            export.WriteProperties(props);
         }
 
         private void RandomizePregeneratedHead(IExportEntry export, Random random)
