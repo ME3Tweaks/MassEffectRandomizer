@@ -87,6 +87,9 @@ namespace MassEffectRandomizer
         private bool _randsetting_character_charactercreator_skintone;
         public bool RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE { get { return _randsetting_character_charactercreator_skintone; } set { SetProperty(ref _randsetting_character_charactercreator_skintone, value); } }
 
+        private bool _randsetting_character_henchface;
+        public bool RANDSETTING_CHARACTER_HENCHFACE { get { return _randsetting_character_henchface; } set { SetProperty(ref _randsetting_character_henchface, value); } }
+
         //Talents
         private bool _randsetting_talents_classtalents;
         public bool RANDSETTING_TALENTS_CLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }

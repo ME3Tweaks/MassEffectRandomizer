@@ -129,6 +129,11 @@ namespace MassEffectRandomizer.Classes
             return rules.OfType<FileSystemAccessRule>().Any(r => (groups.Contains(r.IdentityReference) || r.IdentityReference.Value == sidCurrentUser) && r.AccessControlType == AccessControlType.Allow && (r.FileSystemRights & FileSystemRights.WriteData) == FileSystemRights.WriteData);
         }
 
+        internal static string GetGameFile(string subpath)
+        {
+            return Path.Combine(GetGamePath(), subpath);
+        }
+
         internal static string GetEngineFile()
         {
             return Path.Combine(GetGamePath(), "BioGame", "CookedPC", "Engine.u");

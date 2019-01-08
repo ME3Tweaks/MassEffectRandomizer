@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MassEffectRandomizer.Classes.RandomizationAlgorithms;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using System.IO;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -16,9 +17,6 @@ namespace MassEffectRandomizer.Classes
         private const string UPDATE_RANDOMIZING_TEXT = "UPDATE_RANDOMIZING_TEXT";
         private MainWindow mainWindow;
         private BackgroundWorker randomizationWorker;
-
-
-
 
         public Randomizer(MainWindow mainWindow)
         {
@@ -182,6 +180,23 @@ namespace MassEffectRandomizer.Classes
                 }
             }
             entrymenu.save();
+
+            //RANDOMIZE FACES
+            string henchfacesfile = Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GameObjects\Characters\Faces\BIOG_Hench_FAC.upk");
+            if (mainWindow.RANDSETTING_CHARACTER_HENCHFACE && File.Exists(henchfacesfile))
+            {
+                ME1Package Hench_FAC = new ME1Package(henchfacesfile);
+                {
+                    foreach (IExportEntry export in entrymenu.Exports)
+                    {
+                        if (export.ClassName == "BioMorphFace")
+                        {
+                            RandomizeBioMorphFace(export, random);
+                        }
+                    }
+                }
+                Hench_FAC.save();
+            }
         }
 
         private void RandomizeMusic(Random random)
