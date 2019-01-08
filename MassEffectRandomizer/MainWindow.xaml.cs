@@ -36,11 +36,47 @@ namespace MassEffectRandomizer
             ERandomizationMode_Common = 1,
             ERAndomizationMode_Screed = 2
         }
+
         private RandomizationMode _selectedRandomizationMode;
         public RandomizationMode SelectedRandomizeMode
         {
             get { return _selectedRandomizationMode; }
             set { SetProperty(ref _selectedRandomizationMode, value); UpdateCheckboxSettings(); }
+        }
+
+        private bool _isIndeterminate;
+        public bool IsIndeterminate
+        {
+            get { return _isIndeterminate; }
+            set { SetProperty(ref _isIndeterminate, value);  }
+        }
+
+        private int _currentProgress;
+        public int CurrentProgressValue
+        {
+            get { return _currentProgress; }
+            set { SetProperty(ref _currentProgress, value); }
+        }
+
+        private string _currentOperationText;
+        public string CurrentOperationText
+        {
+            get { return _currentOperationText; }
+            set { SetProperty(ref _currentOperationText, value); }
+        }
+
+        private double _progressbar_bottom_min;
+        public double ProgressBar_Bottom_Min
+        {
+            get { return _progressbar_bottom_min; }
+            set { SetProperty(ref _progressbar_bottom_min, value); }
+        }
+
+        private double _progressbar_bottom_max;
+        public double ProgressBar_Bottom_Max
+        {
+            get { return _progressbar_bottom_max; }
+            set { SetProperty(ref _progressbar_bottom_max, value); }
         }
 
         private void UpdateCheckboxSettings()
@@ -90,6 +126,7 @@ namespace MassEffectRandomizer
         private bool _randsetting_character_henchface;
         public bool RANDSETTING_CHARACTER_HENCHFACE { get { return _randsetting_character_henchface; } set { SetProperty(ref _randsetting_character_henchface, value); } }
 
+
         //Talents
         private bool _randsetting_talents_classtalents;
         public bool RANDSETTING_TALENTS_CLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }
@@ -108,6 +145,14 @@ namespace MassEffectRandomizer
         private bool _randsetting_misc_guisfx;
         public bool RANDSETTING_MISC_GUISFX { get { return _randsetting_misc_guisfx; } set { SetProperty(ref _randsetting_misc_guisfx, value); } }
 
+        private bool _randsetting_misc_mapfaces;
+        public bool RANDSETTING_MISC_MAPFACES { get { return _randsetting_misc_mapfaces; } set { SetProperty(ref _randsetting_misc_mapfaces, value); } }
+
+        private double _randsetting_misc_mapfaces_amount;
+        public double RANDSETTING_MISC_MAPFACES_AMOUNT { get { return _randsetting_misc_mapfaces_amount; } set { SetProperty(ref _randsetting_misc_mapfaces_amount, value); } }
+
+        
+
         //MAKO 
         //        BIOC_Base.u -> 4940 Default__BioAttributesPawnVehicle m_initialThrusterAmountMax
         //END RANDOMIZE OPTION BINDINGS
@@ -118,6 +163,11 @@ namespace MassEffectRandomizer
             EmbeddedDllClass.ExtractEmbeddedDlls("lzo2.dll", Properties.Resources.lzo2helper);
             EmbeddedDllClass.LoadDll("lzo2.dll");
             EmbeddedDllClass.LoadDll("lzo2helper.dll");
+
+            RANDSETTING_MISC_MAPFACES_AMOUNT = .3;
+            ProgressBar_Bottom_Max = 100;
+            ProgressBar_Bottom_Min = 0;
+
             InitializeComponent();
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
@@ -166,18 +216,20 @@ namespace MassEffectRandomizer
             if (!me1Installed)
             {
                 Log.Error("Mass Effect couldn't be found. Application will now exit.");
-                await this.ShowMessageAsync("Mass Effect is not installed", "Mass Effect couldn't be found on this system. Mass Effect Randomizer only works with legitimate, official copies of Mass Effect. If you need assistance, please come to the ME3Tweaks Discord.");
+                await this.ShowMessageAsync("Mass Effect is not installed", "Mass Effect couldn't be found on this system. Mass Effect Randomizer only works with legitimate, official copies of Mass Effect. Ensure you have run the game at least once. If you need assistance, please come to the ME3Tweaks Discord.");
                 Log.Error("Exiting due to game not being found");
                 Environment.Exit(1);
             }
+            GameLocationTextbox.Text = "Game Path: " + me1Path;
             Log.Information("Game is installed at " + me1Path);
+
         }
 
         private void RandomizeButton_Click(object sender, RoutedEventArgs e)
         {
             Button_Randomize.Visibility = Visibility.Collapsed;
             Textblock_CurrentTask.Visibility = Visibility.Visible;
-            Progressbar_Bottom.Visibility = Visibility.Visible;
+            Progressbar_Bottom_Wrapper.Visibility = Visibility.Visible;
             Randomizer randomizer = new Randomizer(this);
             randomizer.randomize();
         }
@@ -217,7 +269,6 @@ namespace MassEffectRandomizer
             {
                 Button_BackupRestore.Content = "Backup 2DA files";
             }
-
         }
     }
 }

@@ -196,6 +196,7 @@
     <Compile Include="Classes\UnrealFlags.cs" />
     <Compile Include="Classes\Utilities.cs" />
     <Compile Include="Classes\ZBlock.cs" />
+    <Compile Include="fonts\OutlinedTextBlock.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -219,6 +220,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="fonts\aerolight.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -9,14 +9,14 @@ namespace AlotAddOnGUI.classes
     /// <summary>
     /// Class for passing data between theads
     /// </summary>
-    public class ThreadCommand
+    public class ThreadCommandX
     {
         /// <summary>
         /// Creates a new thread command object with the specified command and data object. This constructori s used for passing data to another thread. The receiver will need to read the command then cast the data.
         /// </summary>
         /// <param name="command">command for this thread communication.</param>
         /// <param name="data">data to pass to another thread</param>
-        public ThreadCommand(string command, object data)
+        public ThreadCommandX(string command, object data)
         {
             Command = command;
             Data = data;
@@ -27,7 +27,7 @@ namespace AlotAddOnGUI.classes
         /// </summary>
         /// <param name="command">command for this thread communication.</param>
         /// <param name="data">data to pass to another thread</param>
-        public ThreadCommand(string command)
+        public ThreadCommandX(string command)
         {
             Command = command;
         }

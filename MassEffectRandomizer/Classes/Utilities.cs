@@ -193,55 +193,13 @@ namespace MassEffectRandomizer.Classes
         }
 
         /// <summary>
-        /// Gets the MEM game path. If the MEM game path is not set, the one from the registry is used.
+        /// Gets the currently origin or steam game path.
         /// </summary>
         /// <param name="gameID"></param>
         /// <returns></returns>
         public static String GetGamePath()
         {
-            bool UseMEMIni = false; //this can be turned on later if I want, but for now I only want legit.
             Utilities.WriteDebugLog("Looking up game path for Mass Effect.");
-            //Read config file.
-            string path = null;
-            string mempath = null;
-            string inipath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "MassEffectModder");
-            inipath = Path.Combine(inipath, "MassEffectModder.ini");
-            WriteDebugLog("MEM ini path " + inipath);
-
-            if (File.Exists(inipath) && UseMEMIni)
-            {
-                WriteDebugLog("ini exists - loading mem ini");
-
-                IniFile configIni = new IniFile(inipath);
-                string key = "ME1";
-                path = configIni.Read(key, "GameDataPath");
-                if (path != null && path != "")
-                {
-                    path = path.TrimEnd(Path.DirectorySeparatorChar);
-                    mempath = path;
-                    WriteDebugLog("gamepath from mem ini: " + mempath);
-
-                    string GameEXEPath = "";
-                    GameEXEPath = Path.Combine(path, @"Binaries\MassEffect.exe");
-
-
-                    if (!File.Exists(GameEXEPath))
-                    {
-                        WriteDebugLog("mem path has missing exe, not using mem path: " + GameEXEPath);
-                        path = null; //mem path is not valid. might still be able to return later.
-                    }
-                    else
-                    {
-                        WriteDebugLog("Using mem path: " + GameEXEPath);
-                        return path;
-                    }
-                }
-                else
-                {
-                    WriteDebugLog("mem ini does not have path for this game.");
-                }
-            }
 
             //does not exist in ini (or ini does not exist).
             string softwareKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\";
@@ -249,7 +207,7 @@ namespace MassEffectRandomizer.Classes
             string gameKey = @"BioWare\Mass Effect";
             string entry = "Path";
 
-            path = (string)Registry.GetValue(softwareKey + gameKey, entry, null);
+            string path = (string)Registry.GetValue(softwareKey + gameKey, entry, null);
             if (path == null)
             {
                 path = (string)Registry.GetValue(softwareKey + key64 + gameKey, entry, null);
@@ -270,12 +228,7 @@ namespace MassEffectRandomizer.Classes
             }
             else
             {
-                WriteDebugLog("Could not find game via registry.");
-            }
-            if (mempath != null && UseMEMIni)
-            {
-                WriteDebugLog("mem path not null and we allow MEM ini. Returning " + mempath);
-                return mempath;
+                WriteDebugLog("Could not find game via registry. Game is not installed, has not yet been run, or is not legitimate.");
             }
             WriteDebugLog("No path found. Returning null");
             return null;

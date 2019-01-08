@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using MassEffectRandomizer.Classes.RandomizationAlgorithms;
 using Microsoft.WindowsAPICodePack.Taskbar;
 using System.IO;
+using System.Windows;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -27,9 +28,7 @@ namespace MassEffectRandomizer.Classes
         {
             randomizationWorker = new BackgroundWorker();
             randomizationWorker.DoWork += PerformRandomization;
-            randomizationWorker.ProgressChanged += Randomization_ProgressChanged;
             randomizationWorker.RunWorkerCompleted += Randomization_Completed;
-            randomizationWorker.WorkerReportsProgress = true;
             randomizationWorker.RunWorkerAsync();
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, mainWindow);
         }
@@ -37,20 +36,9 @@ namespace MassEffectRandomizer.Classes
         private void Randomization_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, mainWindow);
-            mainWindow.Textblock_CurrentTask.Text = "Randomization complete";
-            mainWindow.Progressbar_Bottom.Visibility = System.Windows.Visibility.Collapsed;
+            mainWindow.CurrentOperationText = "Randomization complete";
+            mainWindow.Progressbar_Bottom_Wrapper.Visibility = System.Windows.Visibility.Collapsed;
             mainWindow.Button_Randomize.Visibility = System.Windows.Visibility.Visible;
-        }
-
-        private void Randomization_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            ThreadCommand tc = (ThreadCommand)e.UserState;
-            switch (tc.Command)
-            {
-                case UPDATE_RANDOMIZING_TEXT:
-                    mainWindow.Textblock_CurrentTask.Text = (string)tc.Data;
-                    break;
-            }
         }
 
         private void PerformRandomization(object sender, DoWorkEventArgs e)
@@ -58,167 +46,217 @@ namespace MassEffectRandomizer.Classes
             ME1UnrealObjectInfo.loadfromJSON();
             Random random = new Random();
 
-            ////Test
-            //ME1Package test = new ME1Package(@"D:\Origin Games\Mass Effect\BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_06_DSG.SFM");
-            //var morphFaces = test.Exports.Where(x => x.ClassName == "BioMorphFace").ToList();
-            //morphFaces.ForEach(x => RandomizeBioMorphFace(x, random));
-            //test.save();
-            //return;
-
-            //Randomize ENGINE
-            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
-            foreach (IExportEntry export in engine.Exports)
+            if (false)
             {
-                switch (export.ObjectName)
+                ////Test
+                //ME1Package test = new ME1Package(@"D:\Origin Games\Mass Effect\BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_06_DSG.SFM");
+                //var morphFaces = test.Exports.Where(x => x.ClassName == "BioMorphFace").ToList();
+                //morphFaces.ForEach(x => RandomizeBioMorphFace(x, random));
+                //test.save();
+                //return;
+
+                //Randomize ENGINE
+                ME1Package engine = new ME1Package(Utilities.GetEngineFile());
+                foreach (IExportEntry export in engine.Exports)
                 {
-                    case "Music_Music":
-                        if (mainWindow.RANDSETTING_MISC_MUSIC)
-                        {
-                            RandomizeMusic(export, random);
-                        }
-                        break;
-                    case "UISounds_GuiMusic":
-                        if (mainWindow.RANDSETTING_MISC_GUIMUSIC)
-                        {
-                            RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Music", "music");
-                        }
-                        break;
-                    case "UISounds_GuiSounds":
-                        if (mainWindow.RANDSETTING_MISC_GUISFX)
-                        {
-                            RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Sounds", "snd_gui");
-                        }
-                        break;
-                    case "MovementTables_CreatureSpeeds":
-                        if (mainWindow.RANDSETTING_MOVEMENT_CREATURESPEED)
-                        {
-                            RandomizeMovementSpeeds(export, random);
-                        }
-                        break;
-                    case "GalaxyMap_Cluster":
-                        if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
-                        {
-                            RandomizeClusters(export, random);
-                        }
-                        break;
-                    case "GalaxyMap_System":
-                        if (mainWindow.RANDSETTING_GALAXYMAP_SYSTEMS)
-                        {
-                            RandomizeSystems(export, random);
-                        }
-                        break;
-                    case "GalaxyMap_Planet":
-                        if (mainWindow.RANDSETTING_GALAXYMAP_PLANETCOLOR)
-                        {
-                            RandomizePlanets(export, random);
-                        }
-                        break;
-                    case "Characters_StartingEquipment":
-                        if (mainWindow.RANDSETTING_WEAPONS_STARTINGEQUIPMENT)
-                        {
-                            RandomizeStartingWeapons(export, random);
-                        }
-                        break;
-                    case "Classes_ClassTalents":
-                        if (mainWindow.RANDSETTING_TALENTS_CLASSTALENTS)
-                        {
-                            int shuffleattempts = 0;
-                            bool reattemptTalentShuffle = false;
-                            while (reattemptTalentShuffle)
+                    switch (export.ObjectName)
+                    {
+                        case "Music_Music":
+                            if (mainWindow.RANDSETTING_MISC_MUSIC)
                             {
-                                if (shuffleattempts > 0)
+                                RandomizeMusic(export, random);
+                            }
+                            break;
+                        case "UISounds_GuiMusic":
+                            if (mainWindow.RANDSETTING_MISC_GUIMUSIC)
+                            {
+                                RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Music", "music");
+                            }
+                            break;
+                        case "UISounds_GuiSounds":
+                            if (mainWindow.RANDSETTING_MISC_GUISFX)
+                            {
+                                RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Sounds", "snd_gui");
+                            }
+                            break;
+                        case "MovementTables_CreatureSpeeds":
+                            if (mainWindow.RANDSETTING_MOVEMENT_CREATURESPEED)
+                            {
+                                RandomizeMovementSpeeds(export, random);
+                            }
+                            break;
+                        case "GalaxyMap_Cluster":
+                            if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
+                            {
+                                RandomizeClusters(export, random);
+                            }
+                            break;
+                        case "GalaxyMap_System":
+                            if (mainWindow.RANDSETTING_GALAXYMAP_SYSTEMS)
+                            {
+                                RandomizeSystems(export, random);
+                            }
+                            break;
+                        case "GalaxyMap_Planet":
+                            if (mainWindow.RANDSETTING_GALAXYMAP_PLANETCOLOR)
+                            {
+                                RandomizePlanets(export, random);
+                            }
+                            break;
+                        case "Characters_StartingEquipment":
+                            if (mainWindow.RANDSETTING_WEAPONS_STARTINGEQUIPMENT)
+                            {
+                                RandomizeStartingWeapons(export, random);
+                            }
+                            break;
+                        case "Classes_ClassTalents":
+                            if (mainWindow.RANDSETTING_TALENTS_CLASSTALENTS)
+                            {
+                                int shuffleattempts = 0;
+                                bool reattemptTalentShuffle = false;
+                                while (reattemptTalentShuffle)
                                 {
-                                    randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
+                                    if (shuffleattempts > 0)
+                                    {
+                                        mainWindow.CurrentOperationText = "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1);
+                                    }
+                                    reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
+                                    shuffleattempts++;
                                 }
-                                reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
-                                shuffleattempts++;
+                            }
+                            break;
+                        case "LevelUp_ChallengeScalingVars":
+                            //RandomizeLevelUpChallenge(export, random);
+                            break;
+                        case "Items_ItemEffectLevels":
+                            RandomizeWeaponStats(export, random);
+                            break;
+                        case "Characters_Character":
+                            //Has internal checks for types
+                            RandomizeCharacter(export, random);
+                            break;
+                    }
+                }
+                engine.save();
+
+                //RANDOMIZE ENTRYMENU
+                ME1Package entrymenu = new ME1Package(Utilities.GetEntryMenuFile());
+                foreach (IExportEntry export in entrymenu.Exports)
+                {
+                    switch (export.ObjectName)
+                    {
+                        case "FemalePregeneratedHeads":
+                        case "MalePregeneratedHeads":
+                        case "BaseMaleSliders":
+                        case "BaseFemaleSliders":
+                            if (mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
+                            {
+                                RandomizePregeneratedHead(export, random);
+                            }
+                            break;
+                        default:
+                            if ((export.ClassName == "Bio2DA" || export.ClassName == "Bio2DANumberedRows") && !export.ObjectName.Contains("Default") && mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
+                            {
+                                RandomizeCharacterCreator(random, export);
+                            }
+                            break;
+
+                            //RandomizeGalaxyMap(random);
+                            //RandomizeGUISounds(random);
+                            //RandomizeMusic(random);
+                            //RandomizeMovementSpeeds(random);
+                            //RandomizeCharacterCreator(random);
+                            //Dump2DAToExcel();
+                    }
+                }
+                entrymenu.save();
+
+            }
+            //RANDOMIZE FACES
+            if (mainWindow.RANDSETTING_CHARACTER_HENCHFACE)
+            {
+
+                string henchfacesfile = Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GameObjects\Characters\Faces\BIOG_Hench_FAC.upk");
+
+                if (File.Exists(henchfacesfile))
+                {
+                    ME1Package Hench_FAC = new ME1Package(henchfacesfile);
+                    {
+                        foreach (IExportEntry export in Hench_FAC.Exports)
+                        {
+                            if (export.ClassName == "BioMorphFace")
+                            {
+                                RandomizeBioMorphFace(export, random);
                             }
                         }
-                        break;
-                    case "LevelUp_ChallengeScalingVars":
-                        //RandomizeLevelUpChallenge(export, random);
-                        break;
-                    case "Items_ItemEffectLevels":
-                        RandomizeWeaponStats(export, random);
-                        break;
-                    case "Characters_Character":
-                        //Has internal checks for types
-                        RandomizeCharacter(export, random);
-                        break;
+                    }
+                    Hench_FAC.save();
                 }
-            }
-            engine.save();
-
-            //RANDOMIZE ENTRYMENU
-            ME1Package entrymenu = new ME1Package(Utilities.GetEntryMenuFile());
-            foreach (IExportEntry export in entrymenu.Exports)
-            {
-                switch (export.ObjectName)
+                string morph_face_file = Utilities.GetGameFile(@"BioGame\CookedPC\Packages\BIOG_MORPH_FACE.upk");
+                if (File.Exists(morph_face_file))
                 {
-                    case "FemalePregeneratedHeads":
-                    case "MalePregeneratedHeads":
-                    case "BaseMaleSliders":
-                    case "BaseFemaleSliders":
-                        if (mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
-                        {
-                            RandomizePregeneratedHead(export, random);
-                        }
-                        break;
-                    default:
-                        if ((export.ClassName == "Bio2DA" || export.ClassName == "Bio2DANumberedRows") && !export.ObjectName.Contains("Default") && mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
-                        {
-                            RandomizeCharacterCreator(random, export);
-                        }
-                        break;
-
-                        //RandomizeGalaxyMap(random);
-                        //RandomizeGUISounds(random);
-                        //RandomizeMusic(random);
-                        //RandomizeMovementSpeeds(random);
-                        //RandomizeCharacterCreator(random);
-                        //Dump2DAToExcel();
-                }
-            }
-            entrymenu.save();
-
-            //RANDOMIZE FACES
-            string henchfacesfile = Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GameObjects\Characters\Faces\BIOG_Hench_FAC.upk");
-            if (mainWindow.RANDSETTING_CHARACTER_HENCHFACE && File.Exists(henchfacesfile))
-            {
-                ME1Package Hench_FAC = new ME1Package(henchfacesfile);
-                {
-                    foreach (IExportEntry export in entrymenu.Exports)
+                    ME1Package IconicMorphFace = new ME1Package(morph_face_file);
                     {
-                        if (export.ClassName == "BioMorphFace")
+                        foreach (IExportEntry export in IconicMorphFace.Exports)
                         {
-                            RandomizeBioMorphFace(export, random);
+                            if (export.ClassName == "BioMorphFace")
+                            {
+                                RandomizeBioMorphFace(export, random);
+                            }
+                        }
+                    }
+                    IconicMorphFace.save();
+                }
+            }
+
+            if (mainWindow.RANDSETTING_MISC_MAPFACES)
+            {
+                mainWindow.CurrentOperationText = "Getting list of files...";
+
+                mainWindow.IsIndeterminate = true;
+                string path = Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps");
+                string[] files = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg")).ToArray();
+                //double total = files.Count();
+                mainWindow.IsIndeterminate = false;
+                mainWindow.ProgressBar_Bottom_Max = files.Count();
+                mainWindow.ProgressBar_Bottom_Min = 0;
+                double amount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
+                for (int i = 0; i < files.Length; i++)
+                {
+                    //                    int progress = (int)((i / total) * 100);
+                    mainWindow.CurrentProgressValue = i;
+                    mainWindow.CurrentOperationText = "Randomizing faces in map files [" + i + "/" + files.Count() + "]";
+                    if (!files[i].ToLower().Contains("entrymenu"))
+                    {
+                        ME1Package pcc = new ME1Package(files[i]);
+                        bool hasChanges = false;
+                        foreach (IExportEntry export in pcc.Exports)
+                        {
+                            if (export.ClassName == "BioMorphFace")
+                            {
+                                RandomizeBioMorphFace(export, random, amount);
+                                hasChanges = true;
+                            }
+                        }
+                        if (hasChanges)
+                        {
+                            Debug.WriteLine(pcc.FileName);
+                            Application.Current.Dispatcher.Invoke(new Action(() => {
+                                Debug.WriteLine(mainWindow.Progressbar_Bottom.Maximum);
+                            }));
+                            pcc.save();
+                        } else
+                        {
+                            Debug.WriteLine("Skip " + pcc.FileName);
                         }
                     }
                 }
-                Hench_FAC.save();
             }
-        }
-
-        private void RandomizeMusic(Random random)
-        {
-            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
-            foreach (IExportEntry export in engine.Exports)
-            {
-                switch (export.ObjectName)
-                {
-                    case "Music_Music":
-                        RandomizeMusic(export, random);
-                        break;
-                }
-            }
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Finishing Music Randomizing"));
-
-            engine.save();
         }
 
         private void RandomizeMovementSpeeds(IExportEntry export, Random random)
         {
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Movement Speeds"));
+            mainWindow.CurrentOperationText = "Randomizing Movement Speeds";
 
             Bio2DA cluster2da = new Bio2DA(export);
             int[] colsToRandomize = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 17, 18, 19 };
@@ -263,7 +301,7 @@ namespace MassEffectRandomizer.Classes
         //                {
         //                    if (shuffleattempts > 0)
         //                    {
-        //                        randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
+        //                        mainWindow.CurrentOperationText = "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1)));
         //                    }
         //                    reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
         //                    shuffleattempts++;
@@ -280,7 +318,7 @@ namespace MassEffectRandomizer.Classes
         //                break;
         //        }
         //    }
-        //    randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Finishing Galaxy Map Randomizing"));
+        //    mainWindow.CurrentOperationText = "Finishing Galaxy Map Randomizing"));
 
         //    engine.save();
         //}
@@ -359,7 +397,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="random">Random number generator</param>
         private void RandomizeClusters(IExportEntry export, Random random)
         {
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Galaxy Map - Clusters"));
+            mainWindow.CurrentOperationText = "Randomizing Galaxy Map - Clusters";
 
             Bio2DA cluster2da = new Bio2DA(export);
             int[] colsToRandomize = { 1, 2 };
@@ -383,7 +421,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="random">Random number generator</param>
         private void RandomizeSystems(IExportEntry export, Random random)
         {
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Galaxy Map - Systems"));
+            mainWindow.CurrentOperationText = "Randomizing Galaxy Map - Systems";
 
             Console.WriteLine("Randomizing Galaxy Map - Systems");
             Bio2DA system2da = new Bio2DA(export);
@@ -414,7 +452,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="random">Random number generator</param>
         private void RandomizePlanets(IExportEntry export, Random random)
         {
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Galaxy Map - Planets"));
+            mainWindow.CurrentOperationText = "Randomizing Galaxy Map - Planets";
 
             Console.WriteLine("Randomizing Galaxy Map - Planets");
             Bio2DA planet2da = new Bio2DA(export);
@@ -446,7 +484,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="random">Random number generator</param>
         private void RandomizeWeaponStats(IExportEntry export, Random random)
         {
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Items - Weapon Stats"));
+            mainWindow.CurrentOperationText = "Randomizing Items - Weapon Stats";
 
 
             Console.WriteLine("Randomizing Items - Item Effect Levels");
@@ -517,7 +555,7 @@ namespace MassEffectRandomizer.Classes
             600	Manf_Jorman_Weap
             601	Manf_HKShadow_Weap*/
 
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Starting Weapons"));
+            mainWindow.CurrentOperationText = "Randomizing Starting Weapons";
             bool randomizeLevels = true; //will use better later
             Console.WriteLine("Randomizing Starting Weapons");
             Bio2DA startingitems2da = new Bio2DA(export);
@@ -573,7 +611,7 @@ namespace MassEffectRandomizer.Classes
             //    i++;
             //}
 
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class talents list"));
+            mainWindow.CurrentOperationText = "Randomizing Class talents list";
             //bool randomizeLevels = false; //will use better later
             Console.WriteLine("Randomizing Class talent list");
 
@@ -679,7 +717,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="random">Random number generator</param>
         private void RandomizeLevelUpChallenge(IExportEntry export, Random random)
         {
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Class talents list"));
+            mainWindow.CurrentOperationText = "Randomizing Class talents list";
             bool randomizeLevels = false; //will use better later
             Console.WriteLine("Randomizing Class talent list");
             Bio2DA challenge2da = new Bio2DA(export);
@@ -731,7 +769,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="random">Random number generator</param>
         private void RandomizeCharacterCreator(Random random, IExportEntry export)
         {
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, "Randomizing Charactor Creator"));
+            mainWindow.CurrentOperationText = "Randomizing Charactor Creator";
             //if (headrandomizerclasses.Contains(export.ObjectName))
             //{
             //    RandomizePregeneratedHead(export, random);
@@ -820,7 +858,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        private void RandomizeBioMorphFace(IExportEntry export, Random random)
+        private void RandomizeBioMorphFace(IExportEntry export, Random random, double amount = 0.3)
         {
             var props = export.GetProperties();
             ArrayProperty<StructProperty> m_aMorphFeatures = props.GetProp<ArrayProperty<StructProperty>>("m_aMorphFeatures");
@@ -831,7 +869,8 @@ namespace MassEffectRandomizer.Classes
                     FloatProperty offset = morphFeature.GetProp<FloatProperty>("Offset");
                     if (offset != null)
                     {
-                        offset.Value = offset.Value * random.NextFloat(0.9, 1.1);
+                        //Debug.WriteLine("Randomizing morph face " + Path.GetFileName(export.FileRef.FileName) + " " + export.UIndex + " " + export.GetFullPath + " offset");
+                        offset.Value = offset.Value * random.NextFloat(1 - (amount / 3), 1 + (amount / 3));
                     }
                 }
             }
@@ -844,12 +883,13 @@ namespace MassEffectRandomizer.Classes
                     StructProperty vPos = offsetBonePos.GetProp<StructProperty>("vPos");
                     if (vPos != null)
                     {
+                        //Debug.WriteLine("Randomizing morph face " + Path.GetFileName(export.FileRef.FileName) + " " + export.UIndex + " " + export.GetFullPath + " vPos");
                         FloatProperty x = vPos.GetProp<FloatProperty>("X");
                         FloatProperty y = vPos.GetProp<FloatProperty>("Y");
                         FloatProperty z = vPos.GetProp<FloatProperty>("Z");
-                        x.Value = x.Value * random.NextFloat(0.7, 1.3);
-                        y.Value = y.Value * random.NextFloat(0.7, 1.3);
-                        z.Value = z.Value * random.NextFloat(0.95, 1.05);
+                        x.Value = x.Value * random.NextFloat(1 - amount, 1 + amount);
+                        y.Value = y.Value * random.NextFloat(1 - amount, 1 + amount);
+                        z.Value = z.Value * random.NextFloat(1 - (amount / .85), 1 + (amount / .85));
                     }
                 }
             }
@@ -933,7 +973,7 @@ namespace MassEffectRandomizer.Classes
             {
                 randomizingtext = "Randomizing Music";
             }
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, randomizingtext));
+            mainWindow.CurrentOperationText = randomizingtext;
             Console.WriteLine(randomizingtext);
             Bio2DA music2da = new Bio2DA(export);
             List<byte[]> names = new List<byte[]>();
@@ -987,7 +1027,7 @@ namespace MassEffectRandomizer.Classes
             {
                 randomizingtext = "Randomizing UI - Sounds";
             }
-            randomizationWorker.ReportProgress(0, new ThreadCommand(UPDATE_RANDOMIZING_TEXT, randomizingtext));
+            mainWindow.CurrentOperationText = randomizingtext;
             Console.WriteLine(randomizingtext);
             Bio2DA guisounds2da = new Bio2DA(export);
             int[] colsToRandomize = { 0 };//sound name
