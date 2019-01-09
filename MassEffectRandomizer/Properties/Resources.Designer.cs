@@ -63,19 +63,9 @@ namespace MassEffectRandomizer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] lzo2 {
+        internal static byte[] lzo2wrapper {
             get {
-                object obj = ResourceManager.GetObject("lzo2", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] lzo2helper {
-            get {
-                object obj = ResourceManager.GetObject("lzo2helper", resourceCulture);
+                object obj = ResourceManager.GetObject("lzo2wrapper", resourceCulture);
                 return ((byte[])(obj));
             }
         }

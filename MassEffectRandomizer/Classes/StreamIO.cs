@@ -106,7 +106,9 @@ namespace MassEffectRandomizer.Classes
 
         public static void WriteStringASCII(this Stream stream, string str)
         {
-            stream.Write(Encoding.ASCII.GetBytes(str), 0, Encoding.ASCII.GetByteCount(str));
+            var bytecount = Encoding.ASCII.GetByteCount(str);
+            var bytes = Encoding.ASCII.GetBytes(str);
+            stream.Write(bytes, 0, bytecount);
         }
 
         public static void WriteStringASCIINull(this Stream stream, string str)

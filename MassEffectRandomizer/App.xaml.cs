@@ -18,7 +18,8 @@ namespace MassEffectRandomizer
     /// </summary>
     public partial class App : Application
     {
-        internal const string REGISTRY_KEY = "MassEffectRandomizer";
+        internal const string REGISTRY_KEY = @"Software\MassEffectRandomizer";
+        internal const string BACKUP_REGISTRY_KEY = @"Software\ALOTAddon"; //Shared
 
         [STAThread]
         public static void Main()

@@ -1,5 +1,4 @@
 ﻿using Gibbed.IO;
-using MassEffectRandomizer.Classes.ManagedLZO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -130,7 +129,7 @@ namespace MassEffectRandomizer.Classes
 
                     //try
                     //{
-                        LZO1X.Decompress(datain, dataout);
+                        LZO2Helper.LZO2.Decompress(datain, (uint) b.compressedsize, dataout);
                     //}
                     //catch (DllNotFoundException ex)
                     //{

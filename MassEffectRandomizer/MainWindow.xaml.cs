@@ -79,6 +79,15 @@ namespace MassEffectRandomizer
             set { SetProperty(ref _progressbar_bottom_max, value); }
         }
 
+        private Visibility _progressbar_visible;
+        public Visibility ProgressBarVisible
+        {
+            get { return _progressbar_visible; }
+            set { SetProperty(ref _progressbar_visible, value); }
+        }
+
+        
+
         private void UpdateCheckboxSettings()
         {
             if (SelectedRandomizeMode == RandomizationMode.ERandomizationMode_Common)
@@ -126,6 +135,9 @@ namespace MassEffectRandomizer
         private bool _randsetting_character_henchface;
         public bool RANDSETTING_CHARACTER_HENCHFACE { get { return _randsetting_character_henchface; } set { SetProperty(ref _randsetting_character_henchface, value); } }
 
+        private bool _randsetting_character_iconicface;
+        public bool RANDSETTING_CHARACTER_ICONICFACE { get { return _randsetting_character_iconicface; } set { SetProperty(ref _randsetting_character_iconicface, value); } }
+
 
         //Talents
         private bool _randsetting_talents_classtalents;
@@ -151,7 +163,9 @@ namespace MassEffectRandomizer
         private double _randsetting_misc_mapfaces_amount;
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get { return _randsetting_misc_mapfaces_amount; } set { SetProperty(ref _randsetting_misc_mapfaces_amount, value); } }
 
-        
+        private bool _randsetting_misc_mappawnsizes;
+        public bool RANDSETTING_MISC_MAPPAWNSIZES { get { return _randsetting_misc_mappawnsizes; } set { SetProperty(ref _randsetting_misc_mappawnsizes, value); } }
+
 
         //MAKO 
         //        BIOC_Base.u -> 4940 Default__BioAttributesPawnVehicle m_initialThrusterAmountMax
@@ -159,16 +173,16 @@ namespace MassEffectRandomizer
 
         public MainWindow()
         {
-            EmbeddedDllClass.ExtractEmbeddedDlls("lzo2.dll", Properties.Resources.lzo2);
-            EmbeddedDllClass.ExtractEmbeddedDlls("lzo2.dll", Properties.Resources.lzo2helper);
-            EmbeddedDllClass.LoadDll("lzo2.dll");
-            EmbeddedDllClass.LoadDll("lzo2helper.dll");
-
+            EmbeddedDllClass.ExtractEmbeddedDlls("lzo2wrapper.dll", Properties.Resources.lzo2wrapper);
+            EmbeddedDllClass.LoadDll("lzo2wrapper.dll");
+            Random random = new Random();
+            var preseed = random.Next();
             RANDSETTING_MISC_MAPFACES_AMOUNT = .3;
             ProgressBar_Bottom_Max = 100;
             ProgressBar_Bottom_Min = 0;
-
+            ProgressBarVisible = Visibility.Collapsed;
             InitializeComponent();
+            SeedTextBox.Text = preseed.ToString();
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
             DataContext = this;

@@ -1149,7 +1149,7 @@ namespace MassEffectRandomizer.Classes
             //}
             //else
             //{
-                stream.WriteValueB32(value);
+            stream.WriteValueB32(value);
             //}
         }
 
@@ -1202,7 +1202,7 @@ namespace MassEffectRandomizer.Classes
             stream.WritePropHeader(pcc, propName, PropertyType.ArrayProperty, 4 + (int)value.Length);
             stream.WriteValueS32(count);
             value.WriteTo(stream);
-//            stream.WriteStream(value);
+            //            stream.WriteStream(value);
         }
 
         public static void WriteArrayProperty(this Stream stream, ME1Package pcc, string propName, int count, Func<MemoryStream> func)
@@ -1224,9 +1224,12 @@ namespace MassEffectRandomizer.Classes
             //}
             //else
             //{
-                stream.WritePropHeader(pcc, propName, PropertyType.StrProperty, strLen + 4);
-                stream.WriteStringASCII(value);
-           // }
+            stream.WritePropHeader(pcc, propName, PropertyType.StrProperty, strLen + 4);
+            stream.WriteBytes(BitConverter.GetBytes(strLen));
+            if (strLen > 0)
+            {
+                stream.WriteStringASCIINull(value);
+            }
         }
 
         public static void WriteStringRefProperty(this Stream stream, ME1Package pcc, string propName, int value)

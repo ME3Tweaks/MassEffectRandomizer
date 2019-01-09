@@ -54,12 +54,43 @@ namespace MassEffectRandomizer.Classes
         {
             foreach (var prop in this)
             {
+                //Debug.WriteLine("Writing property " + prop.Name + " at 0x" + stream.Position.ToString("X4"));
                 prop.WriteTo(stream, pcc);
             }
             if (requireNoneAtEnd && (Count == 0 || !(this.Last() is NoneProperty)))
             {
                 stream.WriteNoneProperty(pcc);
             }
+        }
+
+        /// <summary>
+        /// Returns the bytes that will be inserted to add a Vector Struct property
+        /// </summary>
+        /// <param name="pcc">Package to add/look for names</param>
+        /// <returns>byte list to insert into data stream</returns>
+        public static List<byte> GetBytesForNewVectorProperty(ME1Package pcc, string propertyName)
+        {
+            MemoryStream ms = new MemoryStream();
+            var propNameIdx = pcc.FindNameOrAdd(propertyName);
+            ms.Write(BitConverter.GetBytes(propNameIdx), 0, 4);
+            ms.Write(BitConverter.GetBytes(0), 0, 4);
+
+            var structNameIdx = pcc.FindNameOrAdd("StructProperty");
+            ms.Write(BitConverter.GetBytes(structNameIdx), 0, 4);
+            ms.Write(BitConverter.GetBytes(0), 0, 4);
+
+            ms.Write(BitConverter.GetBytes(12), 0, 4); //struct size
+            ms.Write(BitConverter.GetBytes(0), 0, 4);
+
+            var vectorNameIdx = pcc.FindNameOrAdd("Vector");
+            ms.Write(BitConverter.GetBytes(vectorNameIdx), 0, 4);
+            ms.Write(BitConverter.GetBytes(0), 0, 4);
+
+            ms.Write(BitConverter.GetBytes((float)1), 0, 4); //1
+            ms.Write(BitConverter.GetBytes((float)1), 0, 4); //1
+            ms.Write(BitConverter.GetBytes((float)1), 0, 4); //1
+
+            return ms.ToArray().ToList();
         }
 
         public static PropertyCollection ReadProps(ME1Package pcc, MemoryStream stream, string typeName, bool includeNoneProperty = false, bool requireNoneAtEnd = true, string exportName = null)
@@ -70,6 +101,8 @@ namespace MassEffectRandomizer.Classes
             {
               //Debugger.Break();
             }*/
+            //Debug.WriteLine("Reading PROPS==========");
+
             PropertyCollection props = new PropertyCollection();
             long startPosition = stream.Position;
             while (stream.Position + 8 <= stream.Length)
@@ -82,6 +115,7 @@ namespace MassEffectRandomizer.Classes
                     break;
                 }
                 string name = pcc.getNameEntry(nameIdx);
+                //Debug.WriteLine("Reading property " + name + " at 0x" + propertyStartPosition.ToString("X4"));
                 if (name == "None")
                 {
                     props.Add(new NoneProperty(stream, "None") { StartOffset = propertyStartPosition });
@@ -157,7 +191,7 @@ namespace MassEffectRandomizer.Classes
                                 }
                                 else
                                 {
-                                    Debug.WriteLine("Enum reading ME1/ME2 at 0x" + propertyStartPosition.ToString("X6"));
+                                    //Debug.WriteLine("Enum reading ME1/ME2 at 0x" + propertyStartPosition.ToString("X6"));
                                     enumType.Name = ME1UnrealObjectInfo.getEnumTypefromProp(typeName, name);
                                 }
                                 try
@@ -472,7 +506,7 @@ namespace MassEffectRandomizer.Classes
                 case ArrayType.Enum:
                     {
                         var props = new List<EnumProperty>();
-                        NameReference enumType = new NameReference { Name = ME1UnrealObjectInfo.getEnumTypefromProp(enclosingType,name) };
+                        NameReference enumType = new NameReference { Name = ME1UnrealObjectInfo.getEnumTypefromProp(enclosingType, name) };
                         for (int i = 0; i < count; i++)
                         {
                             long startPos = stream.Position;

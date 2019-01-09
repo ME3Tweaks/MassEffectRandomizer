@@ -1,6 +1,7 @@
 ﻿using Gibbed.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace MassEffectRandomizer.Classes
 {
+    [DebuggerDisplay("ME1Package | {FileName}")]
     public class ME1Package : MEPackage
     {
         public static readonly uint magicnum = 0x9E2A83C1;

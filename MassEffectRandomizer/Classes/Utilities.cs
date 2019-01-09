@@ -284,6 +284,12 @@ namespace MassEffectRandomizer.Classes
             subkey.SetValue(value, data);
         }
 
+        public static string GetBackupRegistrySettingString(string name)
+        {
+            string softwareKey = @"HKEY_CURRENT_USER\" + App.BACKUP_REGISTRY_KEY;
+            return (string)Registry.GetValue(softwareKey, name, null);
+        }
+
         public static string GetRegistrySettingString(string name)
         {
             string softwareKey = @"HKEY_CURRENT_USER\" + App.REGISTRY_KEY;
@@ -307,34 +313,15 @@ namespace MassEffectRandomizer.Classes
             return null;
         }
 
-        public static string GetGameBackupPath(int game)
+        public static string GetGameBackupPath()
         {
-            string entry = "";
-            string path = null;
-            switch (game)
-            {
-                case 1:
-                    entry = "ME1VanillaBackupLocation";
-                    path = Utilities.GetRegistrySettingString(entry);
-                    break;
-                case 2:
-                    entry = "ME2VanillaBackupLocation";
-                    path = Utilities.GetRegistrySettingString(entry);
-                    break;
-                case 3:
-                    //Check for backup via registry - Use Mod Manager's game backup key to find backup.
-                    string softwareKey = @"HKEY_CURRENT_USER\SOFTWARE\Mass Effect 3 Mod Manager";
-                    entry = "VanillaCopyLocation";
-                    path = Utilities.GetRegistrySettingString(softwareKey, entry);
-                    break;
-                default:
-                    return null;
-            }
+            string entry = "ME1VanillaBackupLocation";
+            string path = Utilities.GetBackupRegistrySettingString(entry);
             if (path == null || !Directory.Exists(path))
             {
                 return null;
             }
-            if (!Directory.Exists(path + @"\BIOGame") || !Directory.Exists(path + @"\Binaries"))
+            if (!Directory.Exists(path + @"\BioGame") || !Directory.Exists(path + @"\Binaries"))
             {
                 return null;
             }

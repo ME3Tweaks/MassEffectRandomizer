@@ -1,6 +1,7 @@
 ﻿using Gibbed.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace MassEffectRandomizer.Classes
 {
+    [DebuggerDisplay("ExportEntry | {UIndex} - {ObjectName} ({ClassName})")]
     public abstract class ExportEntry : IEntry
     {
         public ME1Package FileRef { get; protected set; }
@@ -252,10 +254,14 @@ namespace MassEffectRandomizer.Classes
         {
             MemoryStream m = new MemoryStream();
             props.WriteTo(m, FileRef);
-            int propStart = GetPropertyStart();
-            int propEnd = propsEnd();
+            int propStart = GetPropertyStart(); //get old start
+            int propEnd = propsEnd(); //get old end
             byte[] propData = m.ToArray();
-            this.Data = _data.Take(propStart).Concat(propData).Concat(_data.Skip(propEnd)).ToArray();
+
+            m.Seek(0, SeekOrigin.Begin);
+            var newproperties = PropertyCollection.ReadProps(FileRef, m, ClassName, true, true);
+
+            this.Data = _data.Take(propStart).Concat(propData).Concat(_data.Skip(propEnd)).ToArray(); //splice in new data
         }
 
         public void WriteProperty(UProperty prop)
