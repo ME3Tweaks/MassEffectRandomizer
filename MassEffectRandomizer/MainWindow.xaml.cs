@@ -44,13 +44,6 @@ namespace MassEffectRandomizer
             set { SetProperty(ref _selectedRandomizationMode, value); UpdateCheckboxSettings(); }
         }
 
-        private bool _isIndeterminate;
-        public bool IsIndeterminate
-        {
-            get { return _isIndeterminate; }
-            set { SetProperty(ref _isIndeterminate, value); }
-        }
-
         private int _currentProgress;
         public int CurrentProgressValue
         {
@@ -86,6 +79,8 @@ namespace MassEffectRandomizer
             set { SetProperty(ref _progressbar_visible, value); }
         }
 
+        private bool _progressbar_indeterminate;
+        public bool ProgressBarIndeterminate { get { return _progressbar_indeterminate; } set { SetProperty(ref _progressbar_indeterminate, value); } }
 
 
         private void UpdateCheckboxSettings()
@@ -137,6 +132,10 @@ namespace MassEffectRandomizer
         private bool _randsetting_weapons_startingequipment;
         public bool RANDSETTING_WEAPONS_STARTINGEQUIPMENT { get { return _randsetting_weapons_startingequipment; } set { SetProperty(ref _randsetting_weapons_startingequipment, value); } }
 
+        private bool _randsetting_weapons_effectlevels;
+        public bool RANDSETTING_WEAPONS_EFFECTLEVELS { get { return _randsetting_weapons_effectlevels; } set { SetProperty(ref _randsetting_weapons_effectlevels, value); } }
+
+
         //Character
         private bool _randsetting_character_hench_archetypes;
         public bool RANDSETTING_CHARACTER_HENCH_ARCHETYPES { get { return _randsetting_character_hench_archetypes; } set { SetProperty(ref _randsetting_character_hench_archetypes, value); } }
@@ -159,8 +158,12 @@ namespace MassEffectRandomizer
 
         //Talents
         private bool _randsetting_talents_classtalents;
-        public bool RANDSETTING_TALENTS_CLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }
+        public bool RANDSETTING_TALENTS_SHUFFLECLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }
 
+        private bool _randsetting_talents_stats;
+        public bool RANDSETTING_TALENTS_STATS { get { return _randsetting_talents_stats; } set { SetProperty(ref _randsetting_talents_stats, value); } }
+
+        
         //MOVEMENT
         private bool _randsetting_movement_creaturespeed;
         public bool RANDSETTING_MOVEMENT_CREATURESPEED { get { return _randsetting_movement_creaturespeed; } set { SetProperty(ref _randsetting_movement_creaturespeed, value); } }
@@ -183,6 +186,9 @@ namespace MassEffectRandomizer
 
         private bool _randsetting_misc_mappawnsizes;
         public bool RANDSETTING_MISC_MAPPAWNSIZES { get { return _randsetting_misc_mappawnsizes; } set { SetProperty(ref _randsetting_misc_mappawnsizes, value); } }
+
+
+
 
 
         //MAKO 

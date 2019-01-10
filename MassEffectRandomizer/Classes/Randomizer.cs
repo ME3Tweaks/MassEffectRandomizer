@@ -68,267 +68,323 @@ namespace MassEffectRandomizer.Classes
             ModifiedFiles = new ConcurrentDictionary<string, string>(); //this will act as a Set since there is no ConcurrentSet
             Random random = new Random((int)e.Argument);
 
-            if (false)
-            {
-                ////Test
-                //ME1Package test = new ME1Package(@"D:\Origin Games\Mass Effect\BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_06_DSG.SFM");
-                //var morphFaces = test.Exports.Where(x => x.ClassName == "BioMorphFace").ToList();
-                //morphFaces.ForEach(x => RandomizeBioMorphFace(x, random));
-                //test.save();
-                //return;
-
-                //Randomize ENGINE
-                ME1Package engine = new ME1Package(Utilities.GetEngineFile());
-                foreach (IExportEntry export in engine.Exports)
-                {
-                    switch (export.ObjectName)
-                    {
-                        case "Music_Music":
-                            if (mainWindow.RANDSETTING_MISC_MUSIC)
-                            {
-                                RandomizeMusic(export, random);
-                            }
-                            break;
-                        case "UISounds_GuiMusic":
-                            if (mainWindow.RANDSETTING_MISC_GUIMUSIC)
-                            {
-                                RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Music", "music");
-                            }
-                            break;
-                        case "UISounds_GuiSounds":
-                            if (mainWindow.RANDSETTING_MISC_GUISFX)
-                            {
-                                RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Sounds", "snd_gui");
-                            }
-                            break;
-                        case "MovementTables_CreatureSpeeds":
-                            if (mainWindow.RANDSETTING_MOVEMENT_CREATURESPEED)
-                            {
-                                RandomizeMovementSpeeds(export, random);
-                            }
-                            break;
-                        case "GalaxyMap_Cluster":
-                            if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
-                            {
-                                RandomizeClusters(export, random);
-                            }
-                            break;
-                        case "GalaxyMap_System":
-                            if (mainWindow.RANDSETTING_GALAXYMAP_SYSTEMS)
-                            {
-                                RandomizeSystems(export, random);
-                            }
-                            break;
-                        case "GalaxyMap_Planet":
-                            if (mainWindow.RANDSETTING_GALAXYMAP_PLANETCOLOR)
-                            {
-                                RandomizePlanets(export, random);
-                            }
-                            break;
-                        case "Characters_StartingEquipment":
-                            if (mainWindow.RANDSETTING_WEAPONS_STARTINGEQUIPMENT)
-                            {
-                                RandomizeStartingWeapons(export, random);
-                            }
-                            break;
-                        case "Classes_ClassTalents":
-                            if (mainWindow.RANDSETTING_TALENTS_CLASSTALENTS)
-                            {
-                                int shuffleattempts = 0;
-                                bool reattemptTalentShuffle = false;
-                                while (reattemptTalentShuffle)
-                                {
-                                    if (shuffleattempts > 0)
-                                    {
-                                        mainWindow.CurrentOperationText = "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1);
-                                    }
-                                    reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
-                                    shuffleattempts++;
-                                }
-                            }
-                            break;
-                        case "LevelUp_ChallengeScalingVars":
-                            //RandomizeLevelUpChallenge(export, random);
-                            break;
-                        case "Items_ItemEffectLevels":
-                            RandomizeWeaponStats(export, random);
-                            break;
-                        case "Characters_Character":
-                            //Has internal checks for types
-                            RandomizeCharacter(export, random);
-                            break;
-                    }
-                }
-                engine.save();
-                //RANDOMIZE ENTRYMENU
-                StructProperty iconicFemaleOffsets = null;
-                ME1Package entrymenu = new ME1Package(Utilities.GetEntryMenuFile());
-                foreach (IExportEntry export in entrymenu.Exports)
-                {
-                    switch (export.ObjectName)
-                    {
-                        case "FemalePregeneratedHeads":
-                        case "MalePregeneratedHeads":
-                        case "BaseMaleSliders":
-                        case "BaseFemaleSliders":
-                            if (mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
-                            {
-                                RandomizePregeneratedHead(export, random);
-                            }
-                            break;
-                        default:
-                            if ((export.ClassName == "Bio2DA" || export.ClassName == "Bio2DANumberedRows") && !export.ObjectName.Contains("Default") && mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
-                            {
-                                RandomizeCharacterCreator(random, export);
-                            }
-                            break;
-
-                            //RandomizeGalaxyMap(random);
-                            //RandomizeGUISounds(random);
-                            //RandomizeMusic(random);
-                            //RandomizeMovementSpeeds(random);
-                            //RandomizeCharacterCreator(random);
-                            //Dump2DAToExcel();
-                    }
-                    if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && export.ClassName == "BioMorphFace" && export.ObjectName.StartsWith("Player_"))
-                    {
-                        if (export.ObjectName == "")
-                        {
-
-                        }
-                        RandomizeBioMorphFace(export, random, .2);
-                    }
-                }
-
-                //if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && iconicMaleExport != null && iconicFemaleStructProp != null)
-                //{
-
-                //}
-
-                entrymenu.save();
-
-
-                //RANDOMIZE FACES
-                if (mainWindow.RANDSETTING_CHARACTER_HENCHFACE)
-                {
-                    RandomizeBioMorphFaceWrapper(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GameObjects\Characters\Faces\BIOG_Hench_FAC.upk"), random); //Henchmen
-                    RandomizeBioMorphFaceWrapper(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\BIOG_MORPH_FACE.upk"), random); //Iconic and player (Not sure if this does anything...
-                }
-
-                if (mainWindow.RANDSETTING_MISC_MAPFACES)
-                {
-                    mainWindow.CurrentOperationText = "Getting list of files...";
-
-                    mainWindow.IsIndeterminate = true;
-                    string path = Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps");
-                    string bdtspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_UNC", "CookedPC", "Maps");
-                    string pspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_Vegas", "CookedPC", "Maps");
-
-                    string[] files = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg")).ToArray();
-                    if (Directory.Exists(bdtspath))
-                    {
-                        files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
-                    }
-                    if (Directory.Exists(pspath))
-                    {
-                        files = files.Concat(Directory.GetFiles(pspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
-                    }
-
-                    mainWindow.IsIndeterminate = false;
-                    mainWindow.ProgressBar_Bottom_Max = files.Count();
-                    mainWindow.ProgressBar_Bottom_Min = 0;
-                    double amount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
-                    for (int i = 0; i < files.Length; i++)
-                    {
-                        //                    int progress = (int)((i / total) * 100);
-                        mainWindow.CurrentProgressValue = i;
-                        mainWindow.CurrentOperationText = "Randomizing faces in map files [" + i + "/" + files.Count() + "]";
-                        if (!files[i].ToLower().Contains("entrymenu"))
-                        {
-                            ME1Package package = new ME1Package(files[i]);
-                            bool hasChanges = false;
-                            foreach (IExportEntry export in package.Exports)
-                            {
-                                if (export.ClassName == "BioMorphFace")
-                                {
-                                    RandomizeBioMorphFace(export, random, amount);
-                                    hasChanges = true;
-                                }
-                            }
-                            if (hasChanges)
-                            {
-                                ModifiedFiles[package.FileName] = package.FileName;
-                                package.save();
-                            }
-                        }
-                    }
-                }
-
-                //PAWN SIZES
-                if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES)
-                {
-                    mainWindow.CurrentOperationText = "Getting list of files...";
-
-                    mainWindow.IsIndeterminate = true;
-                    string path = Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps");
-                    string bdtspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_UNC", "CookedPC", "Maps");
-                    string pspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_Vegas", "CookedPC", "Maps");
-
-                    string[] files = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg")).ToArray();
-                    if (Directory.Exists(bdtspath))
-                    {
-                        files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
-                    }
-                    if (Directory.Exists(pspath))
-                    {
-                        files = files.Concat(Directory.GetFiles(pspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
-                    }
-
-                    mainWindow.IsIndeterminate = false;
-                    mainWindow.ProgressBar_Bottom_Max = files.Count();
-                    mainWindow.ProgressBar_Bottom_Min = 0;
-                    double amount = 0.4;
-                    for (int i = 0; i < files.Length; i++)
-                    {
-                        //                    int progress = (int)((i / total) * 100);
-                        mainWindow.CurrentProgressValue = i;
-                        mainWindow.CurrentOperationText = "Randomizing pawn sizes in map files [" + i + "/" + files.Count() + "]";
-                        if (!files[i].ToLower().Contains("entrymenu"))
-                        {
-                            ME1Package package = new ME1Package(files[i]);
-                            bool hasChanges = false;
-                            foreach (IExportEntry export in package.Exports)
-                            {
-                                if (export.ClassName == "BioPawn" /*&& (random.Next(4) == 0 || export.FileRef.FileName.Contains("BIOA_END20_02_DSG")*/)
-                                //if (export.UIndex == 852 && export.FileRef.FileName.Contains("BIOA_END20_02_DSG"))
-                                {
-                                    RandomizeBioPawnSize(export, random, amount);
-                                    hasChanges = true;
-                                }
-                            }
-                            if (hasChanges)
-                            {
-                                ModifiedFiles[package.FileName] = package.FileName;
-                                package.save();
-                            }
-                        }
-                    }
-                }
-            }
-
-            ME1Package globalTLK = new ME1Package(@"C:\Program Files (x86)\Origin Games\Mass Effect\BioGame\CookedPC\Packages\Dialog\GlobalTlk.upk");
+            //Load TLKs
+            mainWindow.CurrentOperationText = "Loading TLKs";
+            mainWindow.ProgressBarIndeterminate = true;
+            string globalTLKPath = Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Packages", "Dialog", "GlobalTlk.upk");
+            ME1Package globalTLK = new ME1Package(globalTLKPath);
+            List<TalkFile> Tlks = new List<TalkFile>();
             foreach (IExportEntry exp in globalTLK.Exports)
             {
                 if (exp.ClassName == "BioTlkFile")
                 {
                     TalkFile tlk = new TalkFile(exp);
-                    tlk.replaceString(171797, "SizeSixteens");
-                    tlk.replaceString(156667, "SizeSixteens");
-                    tlk.replaceString(125303, "SizeSixteens");
-                    tlk.saveToExport();
+                    Tlks.Add(tlk);
                 }
             }
-            globalTLK.save();
+            ////Test
+            //ME1Package test = new ME1Package(@"D:\Origin Games\Mass Effect\BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_06_DSG.SFM");
+            //var morphFaces = test.Exports.Where(x => x.ClassName == "BioMorphFace").ToList();
+            //morphFaces.ForEach(x => RandomizeBioMorphFace(x, random));
+            //test.save();
+            //return;
+
+            //Randomize ENGINE
+            ME1Package engine = new ME1Package(Utilities.GetEngineFile());
+            IExportEntry talentEffectLevels = null;
+
+            foreach (IExportEntry export in engine.Exports)
+            {
+                switch (export.ObjectName)
+                {
+                    case "Music_Music":
+                        if (mainWindow.RANDSETTING_MISC_MUSIC)
+                        {
+                            RandomizeMusic(export, random);
+                        }
+                        break;
+                    case "UISounds_GuiMusic":
+                        if (mainWindow.RANDSETTING_MISC_GUIMUSIC)
+                        {
+                            RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Music", "music");
+                        }
+                        break;
+                    case "UISounds_GuiSounds":
+                        if (mainWindow.RANDSETTING_MISC_GUISFX)
+                        {
+                            RandomizeGUISounds(export, random, "Randomizing GUI Sounds - Sounds", "snd_gui");
+                        }
+                        break;
+                    case "MovementTables_CreatureSpeeds":
+                        if (mainWindow.RANDSETTING_MOVEMENT_CREATURESPEED)
+                        {
+                            RandomizeMovementSpeeds(export, random);
+                        }
+                        break;
+                    case "GalaxyMap_Cluster":
+                        if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
+                        {
+                            RandomizeClusters(export, random);
+                        }
+                        break;
+                    case "GalaxyMap_System":
+                        if (mainWindow.RANDSETTING_GALAXYMAP_SYSTEMS)
+                        {
+                            RandomizeSystems(export, random);
+                        }
+                        break;
+                    case "GalaxyMap_Planet":
+                        if (mainWindow.RANDSETTING_GALAXYMAP_PLANETCOLOR)
+                        {
+                            RandomizePlanets(export, random);
+                        }
+                        break;
+                    case "Characters_StartingEquipment":
+                        if (mainWindow.RANDSETTING_WEAPONS_STARTINGEQUIPMENT)
+                        {
+                            RandomizeStartingWeapons(export, random);
+                        }
+                        break;
+                    case "Classes_ClassTalents":
+                        if (mainWindow.RANDSETTING_TALENTS_SHUFFLECLASSTALENTS)
+                        {
+                            int shuffleattempts = 0;
+                            bool reattemptTalentShuffle = false;
+                            while (reattemptTalentShuffle)
+                            {
+                                if (shuffleattempts > 0)
+                                {
+                                    mainWindow.CurrentOperationText = "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1);
+                                }
+                                reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
+                                shuffleattempts++;
+                            }
+                        }
+                        break;
+                    case "LevelUp_ChallengeScalingVars":
+                        //RandomizeLevelUpChallenge(export, random);
+                        break;
+                    case "Items_ItemEffectLevels":
+                        if (mainWindow.RANDSETTING_WEAPONS_EFFECTLEVELS)
+                        {
+                            RandomizeWeaponStats(export, random);
+                        }
+                        break;
+                    case "Characters_Character":
+                        //Has internal checks for types
+                        RandomizeCharacter(export, random);
+                        break;
+                    case "Talent_TalentEffectLevels":
+                        if (mainWindow.RANDSETTING_TALENTS_STATS)
+                        {
+                            RandomizeTalentEffectLevels(export, random);
+                            talentEffectLevels = export;
+                        }
+                        break;
+                }
+            }
+
+            if (talentEffectLevels != null && mainWindow.RANDSETTING_TALENTS_SHUFFLECLASSTALENTS)
+            {
+
+            }
+
+            engine.save();
+            //RANDOMIZE ENTRYMENU
+            StructProperty iconicFemaleOffsets = null;
+            ME1Package entrymenu = new ME1Package(Utilities.GetEntryMenuFile());
+            foreach (IExportEntry export in entrymenu.Exports)
+            {
+                switch (export.ObjectName)
+                {
+                    case "FemalePregeneratedHeads":
+                    case "MalePregeneratedHeads":
+                    case "BaseMaleSliders":
+                    case "BaseFemaleSliders":
+                        if (mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
+                        {
+                            RandomizePregeneratedHead(export, random);
+                        }
+                        break;
+                    default:
+                        if ((export.ClassName == "Bio2DA" || export.ClassName == "Bio2DANumberedRows") && !export.ObjectName.Contains("Default") && mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
+                        {
+                            RandomizeCharacterCreator(random, export);
+                        }
+                        break;
+
+                        //RandomizeGalaxyMap(random);
+                        //RandomizeGUISounds(random);
+                        //RandomizeMusic(random);
+                        //RandomizeMovementSpeeds(random);
+                        //RandomizeCharacterCreator(random);
+                        //Dump2DAToExcel();
+                }
+                if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && export.ClassName == "BioMorphFace" && export.ObjectName.StartsWith("Player_"))
+                {
+                    if (export.ObjectName == "")
+                    {
+
+                    }
+                    RandomizeBioMorphFace(export, random, .2);
+                }
+            }
+
+            //if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && iconicMaleExport != null && iconicFemaleStructProp != null)
+            //{
+
+            //}
+
+            entrymenu.save();
+
+
+            //RANDOMIZE FACES
+            if (mainWindow.RANDSETTING_CHARACTER_HENCHFACE)
+            {
+                RandomizeBioMorphFaceWrapper(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GameObjects\Characters\Faces\BIOG_Hench_FAC.upk"), random); //Henchmen
+                RandomizeBioMorphFaceWrapper(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\BIOG_MORPH_FACE.upk"), random); //Iconic and player (Not sure if this does anything...
+            }
+
+            if (mainWindow.RANDSETTING_MISC_MAPFACES)
+            {
+                mainWindow.CurrentOperationText = "Getting list of files...";
+
+                mainWindow.ProgressBarIndeterminate = true;
+                string path = Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps");
+                string bdtspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_UNC", "CookedPC", "Maps");
+                string pspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_Vegas", "CookedPC", "Maps");
+
+                string[] files = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg")).ToArray();
+                if (Directory.Exists(bdtspath))
+                {
+                    files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
+                }
+                if (Directory.Exists(pspath))
+                {
+                    files = files.Concat(Directory.GetFiles(pspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
+                }
+
+                mainWindow.ProgressBarIndeterminate = false;
+                mainWindow.ProgressBar_Bottom_Max = files.Count();
+                mainWindow.ProgressBar_Bottom_Min = 0;
+                double amount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
+                for (int i = 0; i < files.Length; i++)
+                {
+                    //                    int progress = (int)((i / total) * 100);
+                    mainWindow.CurrentProgressValue = i;
+                    mainWindow.CurrentOperationText = "Randomizing faces in map files [" + i + "/" + files.Count() + "]";
+                    if (!files[i].ToLower().Contains("entrymenu"))
+                    {
+                        ME1Package package = new ME1Package(files[i]);
+                        bool hasChanges = false;
+                        foreach (IExportEntry exp in package.Exports)
+                        {
+                            if (exp.ClassName == "BioMorphFace")
+                            {
+                                RandomizeBioMorphFace(exp, random, amount);
+                                hasChanges = true;
+                            }
+                        }
+                        if (hasChanges)
+                        {
+                            ModifiedFiles[package.FileName] = package.FileName;
+                            package.save();
+                        }
+                    }
+                }
+            }
+
+            //PAWN SIZES
+            if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES)
+            {
+                mainWindow.CurrentOperationText = "Getting list of files...";
+
+                mainWindow.ProgressBarIndeterminate = true;
+                string path = Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps");
+                string bdtspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_UNC", "CookedPC", "Maps");
+                string pspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_Vegas", "CookedPC", "Maps");
+
+                string[] files = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg")).ToArray();
+                if (Directory.Exists(bdtspath))
+                {
+                    files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
+                }
+                if (Directory.Exists(pspath))
+                {
+                    files = files.Concat(Directory.GetFiles(pspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
+                }
+
+                mainWindow.ProgressBarIndeterminate = false;
+                mainWindow.ProgressBar_Bottom_Max = files.Count();
+                mainWindow.ProgressBar_Bottom_Min = 0;
+                double amount = 0.4;
+                for (int i = 0; i < files.Length; i++)
+                {
+                    //                    int progress = (int)((i / total) * 100);
+                    mainWindow.CurrentProgressValue = i;
+                    mainWindow.CurrentOperationText = "Randomizing pawn sizes in map files [" + i + "/" + files.Count() + "]";
+                    if (!files[i].ToLower().Contains("entrymenu"))
+                    {
+                        ME1Package package = new ME1Package(files[i]);
+                        bool hasChanges = false;
+                        foreach (IExportEntry export in package.Exports)
+                        {
+                            if (export.ClassName == "BioPawn" && random.Next(4) == 0)
+                            {
+                                RandomizeBioPawnSize(export, random, amount);
+                                hasChanges = true;
+                            }
+                        }
+                        if (hasChanges)
+                        {
+                            ModifiedFiles[package.FileName] = package.FileName;
+                            package.save();
+                        }
+                    }
+                }
+            }
+
+            bool saveGlobalTLK = false;
+            foreach(TalkFile tf in Tlks)
+            {
+                if (tf.Modified)
+                {
+                    tf.saveToExport();
+                }
+                saveGlobalTLK = true;
+            }
+            if (saveGlobalTLK)
+            {
+                globalTLK.save();
+            }
+        }
+
+        private static string[] TalentEffectsToRandomize_THROW = { "GE_TKThrow_CastingTime", "GE_TKThrow_Kickback", "GE_TKThrow_CooldownTime", "GE_TKThrow_ImpactRadius", "GE_TKThrow_Force" };
+        private void RandomizeTalentEffectLevels(IExportEntry export, Random random)
+        {
+            Bio2DA talentEffectLevels = new Bio2DA(export);
+            const int gameEffectLabelCol = 18;
+
+            for (int i = 0; i < talentEffectLevels.rowNames.Count; i++)
+            {
+                //for each row
+                if (talentEffectLevels[i, 0].GetIntValue() == 49 && TalentEffectsToRandomize_THROW.Contains(talentEffectLevels[i, gameEffectLabelCol].GetDisplayableValue()))
+                {
+                    //One of throw 
+                    List<int> boostedLevels = new List<int>();
+                    boostedLevels.Add(8);
+                    boostedLevels.Add(12);
+                    string effect = talentEffectLevels[i, gameEffectLabelCol].GetDisplayableValue();
+                    switch (effect)
+                    {
+                        case "GE_TKThrow_Force":
+                            Debug.WriteLine("Randomizing GK_TKThrow_Force");
+                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .75, boostedLevels, random);
+                            break;
+                    }
+                }
+            }
+            talentEffectLevels.Write2DAToExport();
         }
 
         private void RandomizeBioPawnSize(IExportEntry export, Random random, double amount)
@@ -862,6 +918,62 @@ namespace MassEffectRandomizer.Classes
             }
             classtalents.Write2DAToExport();
             return true;
+        }
+
+        private void RandomizeTalents(IExportEntry talentGUIExport, IExportEntry talentEffectLevelsExport, List<TalkFile> talkFiles)
+        {
+            Bio2DA talentGUI2DA = new Bio2DA(talentGUIExport);
+            Bio2DA talentEffectLevels2DA = new Bio2DA(talentEffectLevelsExport);
+            const int columnPatternStart = 4;
+            const int numColumnsPerLevelGui = 4;
+            int statTableLevelStartColumn = 5; //Level 1 in TalentEffectLevels
+            for (int i = 0; i < talentGUI2DA.rowNames.Count; i++)
+            {
+                if (int.TryParse(talentGUI2DA.rowNames[i], out int talentID))
+                {
+                    for (int level = 0; level < 11; level++)
+                    {
+                        switch (talentID)
+                        {
+                            case 49: //Throw
+                                int stringId = talentGUI2DA[i, columnPatternStart + ((level + 1) * numColumnsPerLevelGui)].GetIntValue();
+
+                                string basicFormat = "%HEADER%\n\nThrows enemies away from the caster with a force of %TOKEN1% Newtons\n\nRadius: %TOKEN2% m\nTime To Cast: %TOKEN3% sec\nRecharge Time: %TOKEN4% sec\nAccuracy Cost: %TOKEN5%%";
+                                int token1row = 176; //Force
+                                int token2row = 174; //impact radius
+                                int token3row = 171; //Casting time
+                                int token4row = 173; //Cooldown
+                                int token5row = 172; //Accuracy cost
+
+                                string force = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetDisplayableValue();
+                                string radius = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetDisplayableValue();
+                                string time = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetDisplayableValue();
+                                string cooldown = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetDisplayableValue();
+                                string cost = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetDisplayableValue();
+
+                                string header = "Throw";
+                                if (level > 7) { header = "Advanced Throw"; }
+                                if (level >= 11) { header = "Master Throw"; }
+
+                                string formatted = FormatString(basicFormat, header, force, radius, time, cooldown, cost);
+                                talkFiles.ForEach(x => x.replaceString(stringId, formatted));
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private string FormatString(string unformattedStr, string header, params string[] tokens)
+        {
+            string retStr = unformattedStr;
+            retStr = retStr.Replace("%HEADER%", header);
+            for (int i = 1; i <= tokens.Length; i++)
+            {
+                string token = tokens[i - 1];
+                retStr = retStr.Replace($"%TOKEN{i}", token);
+            }
+            return retStr;
         }
 
         /// <summary>

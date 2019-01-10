@@ -212,6 +212,7 @@
     <Compile Include="Classes\PropertyCollection.cs" />
     <Compile Include="Classes\PropertyReadWrite.cs" />
     <Compile Include="Classes\RandomizationAlgorithms\ItemEffectLevels.cs" />
+    <Compile Include="Classes\RandomizationAlgorithms\TalentEffectLevels.cs" />
     <Compile Include="Classes\Randomizer.cs" />
     <Compile Include="Classes\StreamIO.cs" />
     <Compile Include="Classes\TalkFile.cs" />

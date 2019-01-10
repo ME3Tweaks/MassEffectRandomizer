@@ -55,7 +55,7 @@ namespace MassEffectRandomizer.Classes.TLK
         private BitArray Bits;
         private int langRef;
         private int tlkSetIndex;
-
+        public bool Modified;
         public TLKStringRef[] StringRefs;
         public IExportEntry export;
 
@@ -201,6 +201,7 @@ namespace MassEffectRandomizer.Classes.TLK
                 if (StringRefs[i].StringID == id)
                 {
                     StringRefs[i].Data = newString;
+                    Modified = true;
                 }
             }
         }
