@@ -48,7 +48,7 @@ namespace MassEffectRandomizer
         public bool IsIndeterminate
         {
             get { return _isIndeterminate; }
-            set { SetProperty(ref _isIndeterminate, value);  }
+            set { SetProperty(ref _isIndeterminate, value); }
         }
 
         private int _currentProgress;
@@ -86,10 +86,20 @@ namespace MassEffectRandomizer
             set { SetProperty(ref _progressbar_visible, value); }
         }
 
-        
+
 
         private void UpdateCheckboxSettings()
         {
+            //both as common requires clear
+            if (SelectedRandomizeMode == RandomizationMode.ERandomizationMode_SelectAny || SelectedRandomizeMode == RandomizationMode.ERandomizationMode_Common)
+            {
+                foreach (CheckBox cb in FindVisualChildren<CheckBox>(randomizationOptionsPanel))
+                {
+                    // do something with cb here
+                    cb.IsChecked = false;
+                }
+            }
+
             if (SelectedRandomizeMode == RandomizationMode.ERandomizationMode_Common)
             {
                 RANDSETTING_GALAXYMAP_CLUSTERS = true;
@@ -101,6 +111,14 @@ namespace MassEffectRandomizer
                 //testing only
                 RANDSETTING_CHARACTER_HENCH_ARCHETYPES = true;
                 RANDSETTING_CHARACTER_CHARCREATOR = true;
+            }
+            else if (SelectedRandomizeMode == RandomizationMode.ERAndomizationMode_Screed)
+            {
+                foreach (CheckBox cb in FindVisualChildren<CheckBox>(randomizationOptionsPanel))
+                {
+                    // do something with cb here
+                    cb.IsChecked = true;
+                }
             }
         }
 
@@ -187,6 +205,26 @@ namespace MassEffectRandomizer
             TextBlock_AssemblyVersion.Text = "Version " + version;
             DataContext = this;
             SelectedRandomizeMode = RandomizationMode.ERandomizationMode_Common;
+        }
+
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
         }
 
         #region Property Changed Notification

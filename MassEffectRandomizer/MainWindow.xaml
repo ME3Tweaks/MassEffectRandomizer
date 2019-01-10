@@ -66,7 +66,7 @@
             <TabControl Background="Transparent" HorizontalAlignment="Center">
                 <TabItem Header="Randomization options">
                     <ScrollViewer HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Center">
-                        <Grid>
+                        <Grid Name="randomizationOptionsPanel">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
@@ -111,6 +111,7 @@
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Player &amp; Squad" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
+                                        <CheckBox Content="Randomize the iconic Shepard face" ToolTip="Randomize the face morphs used for the male/female default shepard" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_ICONICFACE}" />
                                         <CheckBox Content="Randomize premade character creator faces" ToolTip="Generate some nightmare fuel in the preset faces for each gender" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR}" />
                                         <CheckBox Content="Randomize premade character creator skin tone" ToolTip="Randomize skin tone colors for premade shepards" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE}" />
                                         <CheckBox Content="Randomize squadmate faces" ToolTip="Randomize the face morphs used by squadmates that support face morphs" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCHFACE}" />

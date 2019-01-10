@@ -214,10 +214,11 @@
     <Compile Include="Classes\RandomizationAlgorithms\ItemEffectLevels.cs" />
     <Compile Include="Classes\Randomizer.cs" />
     <Compile Include="Classes\StreamIO.cs" />
+    <Compile Include="Classes\TalkFile.cs" />
     <Compile Include="Classes\ThreadCommand.cs" />
+    <Compile Include="Classes\TLK\HuffmanCompression.cs" />
     <Compile Include="Classes\UnrealFlags.cs" />
     <Compile Include="Classes\Utilities.cs" />
-    <Compile Include="Classes\ZBlock.cs" />
     <Compile Include="fonts\OutlinedTextBlock.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
