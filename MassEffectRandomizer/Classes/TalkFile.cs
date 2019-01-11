@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -200,6 +201,7 @@ namespace MassEffectRandomizer.Classes.TLK
             {
                 if (StringRefs[i].StringID == id)
                 {
+                    Debug.WriteLine("Setting string " + id + " to " + newString);
                     StringRefs[i].Data = newString;
                     Modified = true;
                 }

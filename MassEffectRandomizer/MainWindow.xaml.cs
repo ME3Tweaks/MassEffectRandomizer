@@ -210,7 +210,7 @@ namespace MassEffectRandomizer
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
             DataContext = this;
-            SelectedRandomizeMode = RandomizationMode.ERandomizationMode_Common;
+            SelectedRandomizeMode = RandomizationMode.ERandomizationMode_SelectAny;
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
