@@ -48,11 +48,12 @@ namespace MassEffectRandomizer.Classes
             return BitConverter.ToSingle(Data, 0);
         }
 
-        internal string GetTlkDisplayableValue(bool isPercent = false)
+        internal string GetTlkDisplayableValue(bool isPercent = false, bool isMeters = false)
         {
             if (Type == TYPE_INT) return GetDisplayableValue();
             float value = GetFloatValue();
             if (isPercent) value *= 100;
+            if (isMeters) value /= 100;
             return value.ToString("f2");
         }
     }

@@ -896,6 +896,7 @@ namespace MassEffectRandomizer.Classes
         }
 
         private static string[] TalentEffectsToRandomize_THROW = { "GE_TKThrow_CastingTime", "GE_TKThrow_Kickback", "GE_TKThrow_CooldownTime", "GE_TKThrow_ImpactRadius", "GE_TKThrow_Force" };
+        private static string[] TalentEffectsToRandomize_LIFT = { "GE_TKLift_Force", "GE_TKLift_EffectDuration", "GE_TKLift_ImpactRadius", "GE_TKLift_CooldownTime" };
         private void RandomizeTalentEffectLevels(IExportEntry export, List<TalkFile> Tlks, Random random)
         {
             mainWindow.CurrentOperationText = "Randomizing Talent and Power stats";
@@ -905,35 +906,63 @@ namespace MassEffectRandomizer.Classes
             for (int i = 0; i < talentEffectLevels.rowNames.Count; i++)
             {
                 //for each row
-                if (talentEffectLevels[i, 0].GetIntValue() == 49 && TalentEffectsToRandomize_THROW.Contains(talentEffectLevels[i, gameEffectLabelCol].GetDisplayableValue()))
+                int talentId = talentEffectLevels[i, 0].GetIntValue();
+                string rowEffect = talentEffectLevels[i, gameEffectLabelCol].GetDisplayableValue();
+
+                if (talentId == 49 && TalentEffectsToRandomize_THROW.Contains(rowEffect))
                 {
-                    //One of throw 
+                    //THROW = 49 
                     List<int> boostedLevels = new List<int>();
-                    boostedLevels.Add(8);
+                    boostedLevels.Add(7);
                     boostedLevels.Add(12);
-                    string effect = talentEffectLevels[i, gameEffectLabelCol].GetDisplayableValue();
-                    switch (effect)
+                    switch (rowEffect)
                     {
                         case "GE_TKThrow_Force":
                             Debug.WriteLine("Randomizing GK_TKThrow_Force");
                             TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .45, boostedLevels, random, maxValue: 2500f);
-                            break;
+                            continue;
                         case "GE_TKThrow_CastingTime":
                             Debug.WriteLine("GE_TKThrow_CastingTime");
                             TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .15, boostedLevels, random, directionsAllowed: RandomizationDirection.DownOnly, minValue: .3f);
-                            break;
+                            continue;
                         case "GE_TKThrow_Kickback":
                             Debug.WriteLine("GE_TKThrow_Kickback");
                             TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .1, boostedLevels, random, minValue: 0.05f);
-                            break;
+                            continue;
                         case "GE_TKThrow_CooldownTime":
                             Debug.WriteLine("GE_TKThrow_CooldownTime");
                             TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .22, boostedLevels, random, minValue: 5);
-                            break;
+                            continue;
                         case "GE_TKThrow_ImpactRadius":
                             Debug.WriteLine("GE_TKThrow_ImpactRadius");
                             TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .4, boostedLevels, random, minValue: 100, maxValue: 1200f);
-                            break;
+                            continue;
+                    }
+                }
+                else if (talentId == 50 && TalentEffectsToRandomize_LIFT.Contains(rowEffect))
+                {
+                    List<int> boostedLevels = new List<int>();
+                    boostedLevels.Add(7);
+                    boostedLevels.Add(12);
+                    switch (rowEffect)
+                    {
+                        //LIFT = 50
+                        case "GE_TKLift_Force":
+                            Debug.WriteLine("GE_TKLift_Force");
+                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .5, boostedLevels, random, directionsAllowed: RandomizationDirection.UpOnly, minValue: .3f);
+                            continue;
+                        case "GE_TKLift_EffectDuration":
+                            Debug.WriteLine("GE_TKLift_EffectDuration");
+                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .1, boostedLevels, random, minValue: 1f, directionsAllowed: RandomizationDirection.DownOnly);
+                            continue;
+                        case "GE_TKLift_ImpactRadius":
+                            Debug.WriteLine("GE_TKLift_ImpactRadius");
+                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .22, boostedLevels, random, minValue: 5);
+                            continue;
+                        case "GE_TKLift_CooldownTime":
+                            Debug.WriteLine("GE_TKLift_CooldownTime");
+                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .4, boostedLevels, random, minValue: 15f, maxValue: 60f);
+                            continue;
                     }
                 }
             }
@@ -958,28 +987,56 @@ namespace MassEffectRandomizer.Classes
                         switch (talentID)
                         {
                             case 49: //Throw
-                                var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
-                                int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
+                                {
+                                    var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
+                                    int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
 
-                                string basicFormat = "%HEADER%\n\nThrows enemies away from the caster with a force of %TOKEN1% Newtons\n\nRadius: %TOKEN2% cm\nTime To Cast: %TOKEN3% sec\nRecharge Time: %TOKEN4% sec\nAccuracy Cost: %TOKEN5%%";
-                                int token1row = 175; //Force
-                                int token2row = 173; //impact radius
-                                int token3row = 170; //Casting time
-                                int token4row = 172; //Cooldown
-                                int token5row = 171; //Accuracy cost
+                                    string basicFormat = "%HEADER%\n\nThrows enemies away from the caster with a force of %TOKEN1% Newtons\n\nRadius: %TOKEN2% m\nTime To Cast: %TOKEN3% sec\nRecharge Time: %TOKEN4% sec\nAccuracy Cost: %TOKEN5%%";
+                                    int token1row = 175; //Force
+                                    int token2row = 173; //impact radius
+                                    int token3row = 170; //Casting time
+                                    int token4row = 172; //Cooldown
+                                    int token5row = 171; //Accuracy cost
 
-                                string force = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string radius = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string time = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string cooldown = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string cost = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
+                                    string force = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string radius = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isMeters: true);
+                                    string time = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cooldown = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cost = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
 
-                                string header = "Throw";
-                                if (level > 6) { header = "Advanced Throw"; }
-                                if (level >= 11) { header = "Master Throw"; }
+                                    string header = "Throw";
+                                    if (level > 6) { header = "Advanced Throw"; }
+                                    if (level >= 11) { header = "Master Throw"; }
 
-                                string formatted = FormatString(basicFormat, header, force, radius, time, cooldown, cost);
-                                talkFiles.ForEach(x => x.replaceString(stringId, formatted));
+                                    string formatted = FormatString(basicFormat, header, force, radius, time, cooldown, cost);
+                                    talkFiles.ForEach(x => x.replaceString(stringId, formatted));
+                                }
+                                break;
+                            case 50: //Lift
+                                {
+                                    var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
+                                    int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
+
+                                    string basicFormat = "%HEADER%\n\nLifts everything within %TOKEN1% m of the target into the air, rendering enemies immobile and unable to attack. Drops them when it expires. \n\nDuration: %TOKEN2% sec\nRecharge Time: %TOKEN3% sec\nAccuracy Cost: %TOKEN4%%\nLift Force: %TOKEN5% Newtons";
+                                    int token1row = 175; //Force
+                                    int token2row = 173; //impact radius
+                                    int token3row = 170; //Casting time
+                                    int token4row = 172; //Cooldown
+                                    int token5row = 171; //Accuracy cost
+
+                                    string force = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string radius = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string time = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cooldown = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cost = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
+
+                                    string header = "Lift";
+                                    if (level > 6) { header = "Advanced Lift"; }
+                                    if (level >= 11) { header = "Master Lift"; }
+
+                                    string formatted = FormatString(basicFormat, header, force, radius, time, cooldown, cost);
+                                    talkFiles.ForEach(x => x.replaceString(stringId, formatted));
+                                }
                                 break;
                         }
                     }
