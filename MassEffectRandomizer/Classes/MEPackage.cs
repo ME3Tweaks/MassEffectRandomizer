@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -78,6 +79,7 @@ namespace MassEffectRandomizer.Classes
 
         public int FindNameOrAdd(string name)
         {
+            if (name == null) Debugger.Break();
             for (int i = 0; i < names.Count; i++)
                 if (names[i] == name)
                     return i;
@@ -87,6 +89,7 @@ namespace MassEffectRandomizer.Classes
 
         public void addName(string name)
         {
+            if (name == null) Debugger.Break();
             if (!names.Contains(name))
             {
                 names.Add(name);

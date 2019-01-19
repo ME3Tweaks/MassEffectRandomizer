@@ -1,6 +1,9 @@
-﻿using MahApps.Metro.Controls;
+﻿using ByteSizeLib;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MassEffectRandomizer.Classes;
+using MassEffectRandomizer.Classes.Updater;
+using Octokit;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -8,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -82,6 +86,7 @@ namespace MassEffectRandomizer
         private bool _progressbar_indeterminate;
         public bool ProgressBarIndeterminate { get { return _progressbar_indeterminate; } set { SetProperty(ref _progressbar_indeterminate, value); } }
 
+        ProgressDialogController updateprogresscontroller;
 
         private void UpdateCheckboxSettings()
         {
@@ -208,8 +213,8 @@ namespace MassEffectRandomizer
         private bool _randsetting_talents_classtalents;
         public bool RANDSETTING_TALENTS_SHUFFLECLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }
 
-        private bool _randsetting_talents_shuffle_allowsquadmateunity;
-        public bool RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY { get { return _randsetting_talents_shuffle_allowsquadmateunity; } set { SetProperty(ref _randsetting_talents_shuffle_allowsquadmateunity, value); } }
+        //private bool _randsetting_talents_shuffle_allowsquadmateunity;
+        //public bool RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY { get { return _randsetting_talents_shuffle_allowsquadmateunity; } set { SetProperty(ref _randsetting_talents_shuffle_allowsquadmateunity, value); } }
 
         private bool _randsetting_talents_stats;
         public bool RANDSETTING_TALENTS_STATS { get { return _randsetting_talents_stats; } set { SetProperty(ref _randsetting_talents_stats, value); } }
@@ -352,6 +357,144 @@ namespace MassEffectRandomizer
             catch (Exception ex)
             {
 
+            }
+        }
+
+        private async void PerformUpdateCheck(bool dotNetSatisfiedForUpdate)
+        {
+            Log.Information("Checking for application updates from gitub");
+            ProgressBarIndeterminate = true;
+            CurrentOperationText = "Checking for application updates";
+            var versInfo = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+            var client = new GitHubClient(new ProductHeaderValue("ALOTAddonGUI"));
+            try
+            {
+                int myReleaseAge = 0;
+                var releases = await client.Repository.Release.GetAll("Mgamerz", "MassEffectRandomizer");
+                if (releases.Count > 0)
+                {
+                    Log.Information("Fetched application releases from github");
+
+                    //The release we want to check is always the latest, so [0]
+                    Release latest = null;
+                    Version latestVer = new Version("0.0.0.0");
+                    bool newHiddenBetaBuildAvailable = false;
+                    foreach (Release r in releases)
+                    {
+                        if (r.Assets.Count > 0)
+                        {
+                            Version releaseVersion = new Version(r.TagName);
+                            if (versInfo < releaseVersion)
+                            {
+                                myReleaseAge++;
+                            }
+                            if (releaseVersion > latestVer)
+                            {
+                                latest = r;
+                                latestVer = releaseVersion;
+                            }
+                        }
+                    }
+
+                    if (latest != null)
+                    {
+                        Log.Information("Latest available: " + latest.TagName);
+                        Version releaseName = new Version(latest.TagName);
+                        if (versInfo < releaseName && latest.Assets.Count > 0)
+                        {
+                            bool upgrade = false;
+                            bool canCancel = true;
+                            Log.Information("Latest release is applicable to us.");
+
+                            string versionInfo = "";
+                            int daysAgo = (DateTime.Now - latest.PublishedAt.Value).Days;
+                            string ageStr = "";
+                            if (daysAgo == 1)
+                            {
+                                ageStr = "1 day ago";
+                            }
+                            else if (daysAgo == 0)
+                            {
+                                ageStr = "today";
+                            }
+                            else
+                            {
+                                ageStr = daysAgo + " days ago";
+                            }
+
+                            versionInfo += "\nReleased " + ageStr;
+                            MetroDialogSettings mds = new MetroDialogSettings();
+                            mds.AffirmativeButtonText = "Update";
+                            mds.NegativeButtonText = "Later";
+                            mds.DefaultButtonFocus = MessageDialogResult.Affirmative;
+
+                            //MessageDialogResult result = await this.ShowMessageAsync("Update Available", "ALOT Installer " + releaseName + " is available. You are currently using version " + versInfo.ToString() + ".\n========================\n" + versionInfo + "\n" + latest.Body + "\n========================\nInstall the update?", MessageDialogStyle.AffirmativeAndNegative, mds);
+                            //upgrade = result == MessageDialogResult.Affirmative;
+                            string message = "ALOT Installer " + releaseName + " is available. You are currently using version " + versInfo.ToString() + "." + versionInfo;
+                            UpdateAvailableDialog uad = new UpdateAvailableDialog(message, latest.Body, this);
+                            await this.ShowMetroDialogAsync(uad, mds);
+                            await uad.WaitUntilUnloadedAsync();
+                            upgrade = uad.wasUpdateAccepted();
+
+                            if (upgrade)
+                            {
+                                Log.Information("Downloading update for application");
+
+                                //there's an update
+                                message = "Downloading update...";
+
+                                updateprogresscontroller = await this.ShowProgressAsync("Downloading Update", message, canCancel);
+                                updateprogresscontroller.SetIndeterminate();
+                                WebClient downloadClient = new WebClient();
+
+                                downloadClient.Headers["Accept"] = "application/vnd.github.v3+json";
+                                downloadClient.Headers["user-agent"] = "MassEffectRandomizer";
+                                string temppath = System.IO.Path.GetTempPath();
+                                int downloadProgress = 0;
+                                downloadClient.DownloadProgressChanged += (s, e) =>
+                                {
+                                    if (downloadProgress != e.ProgressPercentage)
+                                    {
+                                        Log.Information("Program update download percent: " + e.ProgressPercentage);
+                                    }
+                                    string downloadedStr = ByteSize.FromBytes(e.BytesReceived).ToString() + " of " + ByteSize.FromBytes(e.TotalBytesToReceive).ToString();
+                                    updateprogresscontroller.SetMessage(message + "\n\n" + downloadedStr);
+
+                                    downloadProgress = e.ProgressPercentage;
+                                    updateprogresscontroller.SetProgress((double)e.ProgressPercentage / 100);
+                                };
+                                updateprogresscontroller.Canceled += async (s, e) =>
+                                {
+                                    if (downloadClient != null)
+                                    {
+                                        Log.Information("Application update was in progress but was canceled.");
+                                        downloadClient.CancelAsync();
+                                        await updateprogresscontroller.CloseAsync();
+                                    }
+                                };
+                                //downloadClient.DownloadFileCompleted += UnzipSelfUpdate;
+                                string downloadPath = temppath + "MassEffectRandomizer_Update" + System.IO.Path.GetExtension(latest.Assets[0].BrowserDownloadUrl);
+                                //DEBUG ONLY
+                                Uri downloadUri = new Uri(latest.Assets[0].BrowserDownloadUrl);
+                                downloadClient.DownloadFileAsync(downloadUri, downloadPath, new KeyValuePair<ProgressDialogController, string>(updateprogresscontroller, downloadPath));
+                            }
+                            else
+                            {
+                                Log.Warning("Application update was declined");
+                            }
+                        }
+                        else
+                        {
+                            //up to date
+                            CurrentOperationText = "Application up to date";
+                            ProgressBarIndeterminate = false;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error checking for update: " + e);
             }
         }
 

@@ -132,12 +132,12 @@
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Player &amp; Squad" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
-                                        <CheckBox Content="Randomize the iconic female Shepard face" ToolTip="Randomize the face morph used for the female default shepard&#xA;Iconic male Shepard cannot randomized as his face is not a biomorphface" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_ICONICFACE}" />
+                                        <CheckBox Content="Randomize the iconic female Shepard face" ToolTip="Randomize the face morph used for the female default shepard&#xA;Iconic male Shepard cannot be randomized as his face is not a biomorphface" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_ICONICFACE}" />
                                         <CheckBox Content="Randomize premade character creator faces" ToolTip="Generate some nightmare fuel in the preset faces for each gender" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR}" />
                                         <CheckBox Content="Randomize premade character creator skin tone" ToolTip="Randomize skin tone colors for premade shepards" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE}" />
                                         <CheckBox Content="Randomize squadmate faces" ToolTip="Randomize the face morphs used by squadmates that support face morphs" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCHFACE}" />
                                         <CheckBox Name="Checkbox_RandomizeSquadPower" Content="Randomize class powers (requires a new save)" ToolTip="Randomize the powers for each class.&#xA;Requires you to start a new game for it to work as the power list is saved in your save file" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_SHUFFLECLASSTALENTS}" />
-                                        <CheckBox Content="Allow squadmates to have Spectre Training" Margin="25,0,0,0" ToolTip="Adds unity to the list of powers to reassign." IsChecked="{Binding RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY}">
+                                        <!--<CheckBox Content="Allow squadmates to have Spectre Training" Margin="25,0,0,0" ToolTip="Adds unity to the list of powers to reassign." IsChecked="{Binding RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY}">
                                             <CheckBox.Style>
                                                 <Style TargetType="CheckBox" BasedOn="{StaticResource MetroCheckBox}">
                                                     <Setter Property="Opacity" Value="0.5"></Setter>
@@ -151,7 +151,7 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </CheckBox.Style>
-                                        </CheckBox>
+                                        </CheckBox>-->
                                         <CheckBox Content="Randomize talent and power stats" ToolTip="Randomizes the stats of talents and powers" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_STATS}" />
                                         <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles the look of each squadmate" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
                                         <CheckBox Content="Randomize squad armor/amp" ToolTip="Randomizes the starting armor and amp for the squad" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_INVENTORY}" />

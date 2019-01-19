@@ -1000,12 +1000,12 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            if (mainWindow.RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY)
-            {
-                //Add 2 possible chances to get unity
-                powersToReassignSquadMaster.Add(259);
-                powersToReassignSquadMaster.Add(259);
-            }
+            //if (mainWindow.RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY)
+            //{
+            //    //Add 2 possible chances to get unity
+            //    powersToReassignSquadMaster.Add(259);
+            //    powersToReassignSquadMaster.Add(259);
+            //}
 
             //REASSIGN POWERS
             int reassignmentAttemptsRemaining = 200;
@@ -1023,6 +1023,7 @@ namespace MassEffectRandomizer.Classes
                 playerReassignmentList.Shuffle(random);
                 squadReassignmentList.Shuffle(random);
 
+                int previousClassId = -1;
                 for (int row = 0; row < classtalents.RowNames.Count(); row++)
                 {
                     var classId = classtalents[row, 0].GetIntValue();
@@ -1044,10 +1045,19 @@ namespace MassEffectRandomizer.Classes
                         }
                         else
                         {
-                            //squadmate class
-                            int talentId = squadReassignmentList[0];
-                            squadReassignmentList.RemoveAt(0);
-                            classtalents[row, 1].SetData(talentId);
+                            //if (previousClassId != classId)
+                            //{
+                            //    Debug.WriteLine("reassigning to specture training " + row);
+                            //    previousClassId = classId;
+                            //    classtalents[row, 1].SetData(259);
+                            //}
+                            //else
+                            //{
+                                //squadmate class
+                                int talentId = squadReassignmentList[0];
+                                squadReassignmentList.RemoveAt(0);
+                                classtalents[row, 1].SetData(talentId);
+                           // }
                         }
                     }
                 }
@@ -1062,6 +1072,18 @@ namespace MassEffectRandomizer.Classes
                 Debugger.Break();
                 return false;
             }
+
+            //Patch out Destroyer Tutorial as it may cause a softlock as it checks for kaidan throw
+            ME1Package Pro10_08_Dsg = new ME1Package(Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps", "PRO", "DSG", "BIOA_PRO10_08_DSG.SFM"));
+            IExportEntry GDInvulnerabilityCounter = (IExportEntry)Pro10_08_Dsg.getEntry(13521);
+            var invulnCount = GDInvulnerabilityCounter.GetProperty<IntProperty>("IntValue");
+            if (invulnCount != null && invulnCount.Value != 0)
+            {
+                invulnCount.Value = 0;
+                GDInvulnerabilityCounter.WriteProperty(invulnCount);
+                Pro10_08_Dsg.save();
+            }
+
 
             //REASSIGN UNLOCK REQUIREMENTS
             Debug.WriteLine("Reassigned talents");
@@ -1479,7 +1501,7 @@ namespace MassEffectRandomizer.Classes
                         {
                             scalarval = numberedscalar;
                         }
-                       // Bio2DACell cellX = cell;
+                        // Bio2DACell cellX = cell;
                         Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value originally is " + cell.GetDisplayableValue());
                         cell.Data = BitConverter.GetBytes(scalarval);
                         cell.Type = Bio2DACell.TYPE_FLOAT;
@@ -1510,7 +1532,7 @@ namespace MassEffectRandomizer.Classes
                     if (columnName.Contains("Scalar") && cell != null && cell.Type != Bio2DACell.TYPE_NAME)
                     {
                         float currentValue = float.Parse(cell.GetDisplayableValue());
-                        cell.Data = BitConverter.GetBytes(currentValue* random.NextFloat(0.5, 2));
+                        cell.Data = BitConverter.GetBytes(currentValue * random.NextFloat(0.5, 2));
                         cell.Type = Bio2DACell.TYPE_FLOAT;
                         hasChanges = true;
                     }
