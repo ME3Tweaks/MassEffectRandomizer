@@ -13,11 +13,20 @@ using System.Windows;
 using System.Collections.Concurrent;
 using MassEffectRandomizer.Classes.TLK;
 using static MassEffectRandomizer.Classes.RandomizationAlgorithms.TalentEffectLevels;
+using static MassEffectRandomizer.MainWindow;
+using System.Xml.Serialization;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace MassEffectRandomizer.Classes
 {
     class Randomizer
     {
+        private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini",
+            "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Shrek", "Odyssey", "Xi Draconis", "System o’ Hags",
+            "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion",
+            "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan",
+            "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost" };
         private const string UPDATE_RANDOMIZING_TEXT = "UPDATE_RANDOMIZING_TEXT";
         private MainWindow mainWindow;
         private BackgroundWorker randomizationWorker;
@@ -135,9 +144,16 @@ namespace MassEffectRandomizer.Classes
                         }
                         break;
                     case "GalaxyMap_Planet":
+                        //DumpPlanetTexts(export, Tlks[0]);
+                        //return;
+
                         if (mainWindow.RANDSETTING_GALAXYMAP_PLANETCOLOR)
                         {
                             RandomizePlanets(export, random);
+                        }
+                        if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION)
+                        {
+                            RandomizePlanetNameDescriptions(export, random, Tlks);
                         }
                         break;
                     case "Characters_StartingEquipment":
@@ -149,17 +165,7 @@ namespace MassEffectRandomizer.Classes
                     case "Classes_ClassTalents":
                         if (mainWindow.RANDSETTING_TALENTS_SHUFFLECLASSTALENTS)
                         {
-                            int shuffleattempts = 0;
-                            bool reattemptTalentShuffle = false;
-                            while (reattemptTalentShuffle)
-                            {
-                                if (shuffleattempts > 0)
-                                {
-                                    mainWindow.CurrentOperationText = "Randomizing Class Talents... Attempt #" + (shuffleattempts + 1);
-                                }
-                                reattemptTalentShuffle = !RandomizeTalentLists(export, random); //true if shuffle is OK, false if it failed
-                                shuffleattempts++;
-                            }
+                            ShuffleClassTalentsAndPowers(export, random);
                         }
                         break;
                     case "LevelUp_ChallengeScalingVars":
@@ -223,10 +229,6 @@ namespace MassEffectRandomizer.Classes
                 }
                 if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && export.ClassName == "BioMorphFace" && export.ObjectName.StartsWith("Player_"))
                 {
-                    if (export.ObjectName == "")
-                    {
-
-                    }
                     RandomizeBioMorphFace(export, random, .2);
                 }
             }
@@ -361,6 +363,194 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        public string GetResourceFileText(string filename, string assemblyName)
+        {
+            string result = string.Empty;
+
+            using (Stream stream =
+                System.Reflection.Assembly.Load(assemblyName).GetManifestResourceStream($"{assemblyName}.{filename}"))
+            {
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+            return result;
+        }
+
+        private void RandomizePlanetNameDescriptions(IExportEntry export, Random random, List<TalkFile> Tlks)
+        {
+            mainWindow.CurrentOperationText = "Randomizing planet descriptions and names";
+            string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("planetinfo.xml");
+
+            XElement rootElement = XElement.Parse(fileContents);
+            var allMapRandomizationInfo = (from e in rootElement.Elements("RandomizedPlanetInfo")
+                                           select new RandomizedPlanetInfo
+                                           {
+                                               PlanetName = (string)e.Element("PlanetName"),
+                                               PlanetDescription = (string)e.Element("PlanetDescription"),
+                                               IsMSV = (bool)e.Element("IsMSV"),
+                                               IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
+                                               PreventShuffle = (bool)e.Element("PreventShuffle"),
+                                               RowID = (int)e.Element("RowID")
+                                           }).ToList();
+
+            var msvInfos = allMapRandomizationInfo.Where(x => x.IsMSV).ToList();
+            var asteroidInfos = allMapRandomizationInfo.Where(x => x.IsAsteroidBelt).ToList();
+            var planetInfos = allMapRandomizationInfo.Where(x => !x.IsAsteroidBelt && !x.IsMSV && !x.PreventShuffle).ToList();
+
+            msvInfos.Shuffle(random);
+            asteroidInfos.Shuffle(random);
+            planetInfos.Shuffle(random);
+
+            List<int> rowsToNotRandomlyReassign = new List<int>();
+
+            IExportEntry systemsExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_System");
+            Bio2DA systems2DA = new Bio2DA(systemsExport);
+            Bio2DA planets2DA = new Bio2DA(export);
+
+            List<string> shuffledSystemNames = new List<string>(RandomSystemNameCollection);
+            shuffledSystemNames.Shuffle(random);
+
+            int nameColumnSystems = systems2DA.GetColumnIndexByName("Name");
+            for (int i = 0; i < systems2DA.RowNames.Count; i++)
+            {
+                string newName = shuffledSystemNames[0];
+                shuffledSystemNames.RemoveAt(0);
+
+                int tlkRef = systems2DA[i, nameColumnSystems].GetIntValue();
+                foreach (TalkFile tf in Tlks)
+                {
+                    tf.replaceString(tlkRef, newName);
+                }
+            }
+
+
+
+            Dictionary<int, int> systemIdToTlkNameMap = new Dictionary<int, int>();
+            //Used for dynamic lookup when building TLK
+            for (int i = 0; i < systems2DA.RowNames.Count(); i++)
+            {
+                systemIdToTlkNameMap[int.Parse(systems2DA.RowNames[i])] = systems2DA[i, 4].GetIntValue();
+            }
+
+            int nameCol = planets2DA.GetColumnIndexByName("Name");
+            int descCol = planets2DA.GetColumnIndexByName("Description");
+
+            for (int i = 0; i < planets2DA.RowNames.Count; i++)
+            {
+                int systemId = planets2DA[i, 1].GetIntValue();
+                string systemName = Tlks[0].findDataById(systemIdToTlkNameMap[systemId]);
+
+                int nameReference = planets2DA[i, nameCol].GetIntValue();
+                string currentNAme = Tlks[0].findDataById(nameReference);
+                Bio2DACell descriptionRefCell = planets2DA[i, descCol];
+
+                int descriptionReference = descriptionRefCell == null ? 0 : descriptionRefCell.GetIntValue();
+
+                //var rowIndex = int.Parse(planets2DA.RowNames[i]);
+                var info = allMapRandomizationInfo.FirstOrDefault(x => x.RowID == i);
+                if (info != null)
+                {
+                    //found original info
+                    RandomizedPlanetInfo rpi = null;
+                    if (info.PreventShuffle)
+                    {
+                        rpi = info;
+                        //Do not use shuffled
+
+                    }
+                    else
+                    {
+                        if (info.IsMSV)
+                        {
+                            rpi = msvInfos[0];
+                            msvInfos.RemoveAt(0);
+                        }
+                        else if (info.IsAsteroidBelt)
+                        {
+                            rpi = asteroidInfos[0];
+                            asteroidInfos.RemoveAt(0);
+                        }
+                        else
+                        {
+                            rpi = planetInfos[0];
+                            planetInfos.RemoveAt(0);
+                        }
+                    }
+
+                    var description = rpi.PlanetDescription;
+                    if (description != null)
+                    {
+                        description = description.Replace("%SYSTEMNAME%", systemName);
+                    }
+                    foreach (TalkFile tf in Tlks)
+                    {
+                        Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + rpi.PlanetName);
+                        tf.replaceString(nameReference, rpi.PlanetName);
+                        if (descriptionReference != 0 && description != null)
+                        {
+                            int truncated = Math.Min(description.Length, 25);
+                            Debug.WriteLine("   Setting planet description to " + description.Substring(0, truncated));
+                            tf.replaceString(descriptionReference, description);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DumpPlanetTexts(IExportEntry export, TalkFile tf)
+        {
+            Bio2DA planets = new Bio2DA(export);
+            var planetInfos = new List<RandomizedPlanetInfo>();
+
+            int nameRefcolumn = planets.GetColumnIndexByName("Name");
+            int descColumn = planets.GetColumnIndexByName("Description");
+
+            for (int i = 0; i < planets.RowNames.Count; i++)
+            {
+                RandomizedPlanetInfo rpi = new RandomizedPlanetInfo();
+                rpi.PlanetName = tf.findDataById(planets[i, nameRefcolumn].GetIntValue()).Trim('"');
+
+                var descCell = planets[i, descColumn];
+                if (descCell != null)
+                {
+                    rpi.PlanetDescription = tf.findDataById(planets[i, 7].GetIntValue()).Trim('"');
+                }
+                rpi.RowID = i;
+                planetInfos.Add(rpi);
+            }
+
+            using (StringWriter writer = new StringWriter())
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(List<RandomizedPlanetInfo>));
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.OmitXmlDeclaration = true;
+
+                XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+                namespaces.Add(string.Empty, string.Empty);
+
+                XmlWriter xmlWriter = XmlWriter.Create(writer, settings);
+                xs.Serialize(xmlWriter, planetInfos, namespaces);
+
+                File.WriteAllText(@"C:\users\mgame\desktop\planetinfo.xml", FormatXml(writer.ToString()));
+            }
+        }
+
+        string FormatXml(string xml)
+        {
+            try
+            {
+                XDocument doc = XDocument.Parse(xml);
+                return doc.ToString();
+            }
+            catch (Exception)
+            {
+                // Handle and throw if fatal exception here; don't just ignore them
+                return xml;
+            }
+        }
+
         private void RandomizeBioPawnSize(IExportEntry export, Random random, double amount)
         {
             var props = export.GetProperties();
@@ -444,7 +634,7 @@ namespace MassEffectRandomizer.Classes
 
             Bio2DA cluster2da = new Bio2DA(export);
             int[] colsToRandomize = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 17, 18, 19 };
-            for (int row = 0; row < cluster2da.rowNames.Count(); row++)
+            for (int row = 0; row < cluster2da.RowNames.Count(); row++)
             {
                 for (int i = 0; i < colsToRandomize.Count(); i++)
                 {
@@ -523,7 +713,7 @@ namespace MassEffectRandomizer.Classes
             //actorTypes.Add("BIOG_Jenkins_Hench_C.hench_jenkins");
 
             Bio2DA character2da = new Bio2DA(export);
-            for (int row = 0; row < character2da.rowNames.Count(); row++)
+            for (int row = 0; row < character2da.RowNames.Count(); row++)
             {
                 //Console.WriteLine("[" + row + "][" + colsToRandomize[i] + "] value is " + BitConverter.ToSingle(cluster2da[row, colsToRandomize[i]].Data, 0));
 
@@ -586,7 +776,7 @@ namespace MassEffectRandomizer.Classes
 
             Bio2DA cluster2da = new Bio2DA(export);
             int[] colsToRandomize = { 1, 2 };
-            for (int row = 0; row < cluster2da.rowNames.Count(); row++)
+            for (int row = 0; row < cluster2da.RowNames.Count(); row++)
             {
                 for (int i = 0; i < colsToRandomize.Count(); i++)
                 {
@@ -611,7 +801,7 @@ namespace MassEffectRandomizer.Classes
             Console.WriteLine("Randomizing Galaxy Map - Systems");
             Bio2DA system2da = new Bio2DA(export);
             int[] colsToRandomize = { 2, 3 };//X,Y
-            for (int row = 0; row < system2da.rowNames.Count(); row++)
+            for (int row = 0; row < system2da.RowNames.Count(); row++)
             {
                 for (int i = 0; i < colsToRandomize.Count(); i++)
                 {
@@ -642,19 +832,19 @@ namespace MassEffectRandomizer.Classes
             Console.WriteLine("Randomizing Galaxy Map - Planets");
             Bio2DA planet2da = new Bio2DA(export);
             int[] colsToRandomize = { 2, 3 };//X,Y
-            for (int row = 0; row < planet2da.rowNames.Count(); row++)
+            for (int row = 0; row < planet2da.RowNames.Count(); row++)
             {
-                for (int i = 0; i < planet2da.columnNames.Count(); i++)
+                for (int i = 0; i < planet2da.ColumnNames.Count(); i++)
                 {
                     if (planet2da[row, i] != null && planet2da[row, i].Type == Bio2DACell.TYPE_FLOAT)
                     {
-                        Console.WriteLine("[" + row + "][" + i + "]  (" + planet2da.columnNames[i] + ") value is " + BitConverter.ToSingle(planet2da[row, i].Data, 0));
+                        Console.WriteLine("[" + row + "][" + i + "]  (" + planet2da.ColumnNames[i] + ") value is " + BitConverter.ToSingle(planet2da[row, i].Data, 0));
                         float randvalue = random.NextFloat(0, 1);
                         if (i == 11)
                         {
-                            randvalue = random.NextFloat(0.4, 2);
+                            randvalue = random.NextFloat(2.5, 8.0);
                         }
-                        Console.WriteLine("Planets Randomizer [" + row + "][" + i + "] (" + planet2da.columnNames[i] + ") value is now " + randvalue);
+                        Console.WriteLine("Planets Randomizer [" + row + "][" + i + "] (" + planet2da.ColumnNames[i] + ") value is now " + randvalue);
                         planet2da[row, i].Data = BitConverter.GetBytes(randvalue);
                     }
                 }
@@ -674,7 +864,7 @@ namespace MassEffectRandomizer.Classes
 
             Console.WriteLine("Randomizing Items - Item Effect Levels");
             Bio2DA itemeffectlevels2da = new Bio2DA(export);
-            for (int row = 0; row < itemeffectlevels2da.rowNames.Count(); row++)
+            for (int row = 0; row < itemeffectlevels2da.RowNames.Count(); row++)
             {
                 Bio2DACell propertyCell = itemeffectlevels2da[row, 2];
                 if (propertyCell != null)
@@ -766,14 +956,139 @@ namespace MassEffectRandomizer.Classes
         /// </summary>
         /// <param name="export">2DA Export</param>
         /// <param name="random">Random number generator</param>
-        private bool RandomizeTalentLists(IExportEntry export, Random random)
+        private bool ShuffleClassTalentsAndPowers(IExportEntry export, Random random)
         {
             //List of talents... i think. Taken from talent_talenteffectlevels
             //int[] talentsarray = { 0, 7, 14, 15, 21, 28, 29, 30, 35, 42, 49, 50, 56, 57, 63, 64, 84, 86, 91, 93, 98, 99, 108, 109, 119, 122, 126, 128, 131, 132, 134, 137, 138, 141, 142, 145, 146, 149, 150, 153, 154, 157, 158, 163, 164, 165, 166, 167, 168, 169, 170, 171, 174, 175, 176, 177, 178, 180, 182, 184, 186, 188, 189, 190, 192, 193, 194, 195, 196, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 305, 306, 307, 310, 312, 313, 315, 317, 318, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332 };
             List<int> talentidstoassign = new List<int>();
             Bio2DA classtalents = new Bio2DA(export);
+            mainWindow.CurrentOperationText = "Randomizing Class talents";
 
-            for (int row = 0; row < classtalents.rowNames.Count(); row++)
+            //108 = Charm
+            //109 = Intimidate
+            //229 = Setup_Player -> Spectre Training
+            //228 = Setup_Player_Squad
+            int[] powersToNotReassign = { 108, 109 };
+            var powersToReassignPlayerMaster = new List<int>();
+            var powersToReassignSquadMaster = new List<int>();
+
+            int isVisibleCol = classtalents.GetColumnIndexByName("IsVisible");
+
+            //Get powers list
+            for (int row = 0; row < classtalents.RowNames.Count(); row++)
+            {
+                var classId = classtalents[row, 0].GetIntValue();
+                int talentId = classtalents[row, 1].GetIntValue();
+                if (powersToNotReassign.Contains(talentId)) { continue; }
+                var visibleInt = classtalents[row, isVisibleCol].GetIntValue();
+                if (visibleInt != 0)
+                {
+                    if (classId == 10)
+                    {
+                        continue; //QA Cheat Class
+                    }
+                    if (classId < 6)
+                    {
+                        //Player class
+                        powersToReassignPlayerMaster.Add(talentId);
+                    }
+                    else
+                    {
+                        //squadmate class
+                        powersToReassignSquadMaster.Add(talentId);
+                    }
+                }
+            }
+
+            if (mainWindow.RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY)
+            {
+                //Add 2 possible chances to get unity
+                powersToReassignSquadMaster.Add(259);
+                powersToReassignSquadMaster.Add(259);
+            }
+
+            //REASSIGN POWERS
+            int reassignmentAttemptsRemaining = 200;
+            bool attemptingReassignment = true;
+            while (attemptingReassignment)
+            {
+                reassignmentAttemptsRemaining--;
+                if (reassignmentAttemptsRemaining < 0) { attemptingReassignment = false; }
+
+                var playerReassignmentList = new List<int>();
+                playerReassignmentList.AddRange(powersToReassignPlayerMaster);
+                var squadReassignmentList = new List<int>();
+                squadReassignmentList.AddRange(powersToReassignSquadMaster);
+
+                playerReassignmentList.Shuffle(random);
+                squadReassignmentList.Shuffle(random);
+
+                for (int row = 0; row < classtalents.RowNames.Count(); row++)
+                {
+                    var classId = classtalents[row, 0].GetIntValue();
+                    int existingTalentId = classtalents[row, 1].GetIntValue();
+                    if (powersToNotReassign.Contains(existingTalentId)) { continue; }
+                    var visibleInt = classtalents[row, isVisibleCol].GetIntValue();
+                    if (visibleInt != 0)
+                    {
+                        if (classId == 10)
+                        {
+                            continue; //QA Cheat Class
+                        }
+                        if (classId < 6)
+                        {
+                            //Player class
+                            int talentId = playerReassignmentList[0];
+                            playerReassignmentList.RemoveAt(0);
+                            classtalents[row, 1].SetData(talentId);
+                        }
+                        else
+                        {
+                            //squadmate class
+                            int talentId = squadReassignmentList[0];
+                            squadReassignmentList.RemoveAt(0);
+                            classtalents[row, 1].SetData(talentId);
+                        }
+                    }
+                }
+
+                //Validate
+
+                break;
+            }
+
+            if (reassignmentAttemptsRemaining < 0)
+            {
+                Debugger.Break();
+                return false;
+            }
+
+            //REASSIGN UNLOCK REQUIREMENTS
+            Debug.WriteLine("Reassigned talents");
+            classtalents.Write2DAToExport();
+
+            return true;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //OLD CODE
+            for (int row = 0; row < classtalents.RowNames.Count(); row++)
             {
                 int baseclassid = classtalents[row, 0].GetIntValue();
                 if (baseclassid == 10)
@@ -796,7 +1111,6 @@ namespace MassEffectRandomizer.Classes
             //    i++;
             //}
 
-            mainWindow.CurrentOperationText = "Randomizing Class talents list";
             //bool randomizeLevels = false; //will use better later
             Console.WriteLine("Randomizing Class talent list");
 
@@ -805,7 +1119,7 @@ namespace MassEffectRandomizer.Classes
             List<int> rowsNeedingPrereqReassignments = new List<int>(); //some powers require a prereq, this will ensure all powers are unlockable for this randomization
             List<int> talentidsNeedingReassignment = new List<int>(); //used only to filter out the list of bad choices, e.g. don't depend on self.
             List<int> powersAssignedAsPrereq = new List<int>(); //only assign 1 prereq to a power tree
-            for (int row = 0; row < classtalents.rowNames.Count(); row++)
+            for (int row = 0; row < classtalents.RowNames.Count(); row++)
             {
                 int baseclassid = classtalents[row, 0].GetIntValue();
                 if (baseclassid == 10)
@@ -903,7 +1217,7 @@ namespace MassEffectRandomizer.Classes
             Bio2DA talentEffectLevels = new Bio2DA(export);
             const int gameEffectLabelCol = 18;
 
-            for (int i = 0; i < talentEffectLevels.rowNames.Count; i++)
+            for (int i = 0; i < talentEffectLevels.RowNames.Count; i++)
             {
                 //for each row
                 int talentId = talentEffectLevels[i, 0].GetIntValue();
@@ -949,7 +1263,7 @@ namespace MassEffectRandomizer.Classes
                         //LIFT = 50
                         case "GE_TKLift_Force":
                             Debug.WriteLine("GE_TKLift_Force");
-                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .5, boostedLevels, random, directionsAllowed: RandomizationDirection.UpOnly, minValue: .3f);
+                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .25, boostedLevels, random, directionsAllowed: RandomizationDirection.UpOnly, minValue: .3f, maxValue: 3500f);
                             continue;
                         case "GE_TKLift_EffectDuration":
                             Debug.WriteLine("GE_TKLift_EffectDuration");
@@ -957,7 +1271,7 @@ namespace MassEffectRandomizer.Classes
                             continue;
                         case "GE_TKLift_ImpactRadius":
                             Debug.WriteLine("GE_TKLift_ImpactRadius");
-                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .22, boostedLevels, random, minValue: 5);
+                            TalentEffectLevels.RandomizeRow_FudgeEndpointsEvenDistribution(talentEffectLevels, i, 4, 12, .22, boostedLevels, random, minValue: 5, maxValue: 4500);
                             continue;
                         case "GE_TKLift_CooldownTime":
                             Debug.WriteLine("GE_TKLift_CooldownTime");
@@ -978,9 +1292,9 @@ namespace MassEffectRandomizer.Classes
             const int columnPatternStart = 4;
             const int numColumnsPerLevelGui = 4;
             int statTableLevelStartColumn = 4; //Level 1 in TalentEffectLevels
-            for (int i = 0; i < talentGUI2DA.rowNames.Count; i++)
+            for (int i = 0; i < talentGUI2DA.RowNames.Count; i++)
             {
-                if (int.TryParse(talentGUI2DA.rowNames[i], out int talentID))
+                if (int.TryParse(talentGUI2DA.RowNames[i], out int talentID))
                 {
                     for (int level = 0; level < 12; level++)
                     {
@@ -1017,24 +1331,25 @@ namespace MassEffectRandomizer.Classes
                                     var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
                                     int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
 
-                                    string basicFormat = "%HEADER%\n\nLifts everything within %TOKEN1% m of the target into the air, rendering enemies immobile and unable to attack. Drops them when it expires. \n\nDuration: %TOKEN2% sec\nRecharge Time: %TOKEN3% sec\nAccuracy Cost: %TOKEN4%%\nLift Force: %TOKEN5% Newtons";
-                                    int token1row = 175; //Force
-                                    int token2row = 173; //impact radius
-                                    int token3row = 170; //Casting time
-                                    int token4row = 172; //Cooldown
-                                    int token5row = 171; //Accuracy cost
+                                    string basicFormat = "%HEADER%\n\nLifts everything within %TOKEN1% m of the target into the air, rendering enemies immobile and unable to attack. Drops them when it expires.\n\nDuration: %TOKEN2% sec\nRecharge Time: %TOKEN3% sec\nAccuracy Cost: %TOKEN4%%\nLift Force: %TOKEN5% Newtons";
+                                    int token1row = 175; //impact radius
+                                    int token2row = 189; //duration
+                                    int token3row = 186; //recharge
+                                    int token4row = 185; //accuacy cost
+                                    int token5row = 190; //lift force
 
-                                    string force = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                    string radius = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                    string time = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                    string cooldown = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                    string cost = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
+                                    string radius = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string duration = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cooldown = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cost = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
+                                    string force = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+
 
                                     string header = "Lift";
                                     if (level > 6) { header = "Advanced Lift"; }
                                     if (level >= 11) { header = "Master Lift"; }
 
-                                    string formatted = FormatString(basicFormat, header, force, radius, time, cooldown, cost);
+                                    string formatted = FormatString(basicFormat, header, radius, duration, cooldown, cost, force);
                                     talkFiles.ForEach(x => x.replaceString(stringId, formatted));
                                 }
                                 break;
@@ -1070,12 +1385,12 @@ namespace MassEffectRandomizer.Classes
 
 
 
-            for (int row = 0; row < challenge2da.rowNames.Count(); row++)
+            for (int row = 0; row < challenge2da.RowNames.Count(); row++)
             {
-                for (int col = 0; col < challenge2da.columnNames.Count(); col++)
+                for (int col = 0; col < challenge2da.ColumnNames.Count(); col++)
                     if (challenge2da[row, col] != null)
                     {
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + challenge2da.columnNames[col] + ") value originally is " + challenge2da[row, 1].GetDisplayableValue());
+                        Console.WriteLine("[" + row + "][" + col + "]  (" + challenge2da.ColumnNames[col] + ") value originally is " + challenge2da[row, 1].GetDisplayableValue());
                         //int randomindex = random.Next(talents.Count());
                         //int talentindex = talents[randomindex];
                         //talents.RemoveAt(randomindex);
@@ -1099,7 +1414,7 @@ namespace MassEffectRandomizer.Classes
                             //Level Offset
                             challenge2da[row, col].Data = BitConverter.GetBytes((int)(challenge2da[row, col].GetIntValue() * multiplier));
                         }
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + challenge2da.columnNames[col] + ") value is now " + challenge2da[row, 1].GetDisplayableValue());
+                        Console.WriteLine("[" + row + "][" + col + "]  (" + challenge2da.ColumnNames[col] + ") value is now " + challenge2da[row, 1].GetDisplayableValue());
                     }
                 if (randomizeLevels)
                 {
@@ -1123,32 +1438,31 @@ namespace MassEffectRandomizer.Classes
             //}
             Bio2DA export2da = new Bio2DA(export);
             bool hasChanges = false;
-            for (int row = 0; row < export2da.rowNames.Count(); row++)
+            for (int row = 0; row < export2da.RowNames.Count(); row++)
             {
                 float numberedscalar = 0;
-                for (int col = 0; col < export2da.columnNames.Count(); col++)
+                for (int col = 0; col < export2da.ColumnNames.Count(); col++)
                 {
+                    Bio2DACell cell = export2da[row, col];
 
                     //Extent
-                    if (export2da.columnNames[col] == "Extent" || export2da.columnNames[col] == "Rand_Extent")
+                    if (export2da.ColumnNames[col] == "Extent" || export2da.ColumnNames[col] == "Rand_Extent")
                     {
                         float multiplier = random.NextFloat(0.5, 6);
-
-                        Bio2DACell cell = export2da[row, col];
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.columnNames[col] + ") value originally is " + export2da[row, col].GetDisplayableValue());
+                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value originally is " + export2da[row, col].GetDisplayableValue());
 
                         if (cell.Type == Bio2DACell.TYPE_FLOAT)
                         {
-                            export2da[row, col].Data = BitConverter.GetBytes(export2da[row, col].GetFloatValue() * multiplier);
+                            cell.Data = BitConverter.GetBytes(cell.GetFloatValue() * multiplier);
                             hasChanges = true;
                         }
                         else
                         {
-                            export2da[row, col].Data = BitConverter.GetBytes(export2da[row, col].GetIntValue() * multiplier);
-                            export2da[row, col].Type = Bio2DACell.TYPE_FLOAT;
+                            cell.Data = BitConverter.GetBytes(cell.GetIntValue() * multiplier);
+                            cell.Type = Bio2DACell.TYPE_FLOAT;
                             hasChanges = true;
                         }
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.columnNames[col] + ") value now is " + export2da[row, col].GetDisplayableValue());
+                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value now is " + cell.GetDisplayableValue());
                         continue;
                     }
 
@@ -1165,37 +1479,63 @@ namespace MassEffectRandomizer.Classes
                         {
                             scalarval = numberedscalar;
                         }
-                        Bio2DACell cell = export2da[row, col];
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.columnNames[col] + ") value originally is " + export2da[row, col].GetDisplayableValue());
-                        export2da[row, col].Data = BitConverter.GetBytes(scalarval);
-                        export2da[row, col].Type = Bio2DACell.TYPE_FLOAT;
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.columnNames[col] + ") value now is " + export2da[row, col].GetDisplayableValue());
+                       // Bio2DACell cellX = cell;
+                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value originally is " + cell.GetDisplayableValue());
+                        cell.Data = BitConverter.GetBytes(scalarval);
+                        cell.Type = Bio2DACell.TYPE_FLOAT;
+                        Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value now is " + cell.GetDisplayableValue());
                         hasChanges = true;
                         continue;
                     }
 
                     //Skin Tone
-                    if (export.ObjectName.Contains("Skin_Tone") && mainWindow.RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE && row > 0 && col >= 1 && col <= 5)
+                    if (cell != null && cell.Type == Bio2DACell.TYPE_NAME)
                     {
-                        if (export.ObjectName.Contains("Female"))
+                        if (export.ObjectName.Contains("Skin_Tone") && !mainWindow.RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE)
                         {
-                            if (col < 5)
-                            {
-                                //Females have one less column
-                                string rgbNewName = GetRandomColorRBGStr(random);
-                                int newValue = export.FileRef.FindNameOrAdd(rgbNewName);
-                                export2da[row, col].Data = BitConverter.GetBytes((ulong)newValue); //name is 8 bytes
-                                hasChanges = true;
-                            }
+                            continue; //skip
                         }
-                        else
+                        string value = cell.GetDisplayableValue();
+                        if (value.StartsWith("RGB("))
                         {
+                            //Make new item
                             string rgbNewName = GetRandomColorRBGStr(random);
                             int newValue = export.FileRef.FindNameOrAdd(rgbNewName);
-                            export2da[row, col].Data = BitConverter.GetBytes((ulong)newValue); //name is 8 bytes
+                            cell.Data = BitConverter.GetBytes((ulong)newValue); //name is 8 bytes
                             hasChanges = true;
                         }
                     }
+
+                    string columnName = export2da.GetColumnNameByIndex(col);
+                    if (columnName.Contains("Scalar") && cell != null && cell.Type != Bio2DACell.TYPE_NAME)
+                    {
+                        float currentValue = float.Parse(cell.GetDisplayableValue());
+                        cell.Data = BitConverter.GetBytes(currentValue* random.NextFloat(0.5, 2));
+                        cell.Type = Bio2DACell.TYPE_FLOAT;
+                        hasChanges = true;
+                    }
+
+                    //if (export.ObjectName.Contains("Skin_Tone") && mainWindow.RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE && row > 0 && col >= 1 && col <= 5)
+                    //{
+                    //    if (export.ObjectName.Contains("Female"))
+                    //    {
+                    //        if (col < 5)
+                    //        {
+                    //            //Females have one less column
+                    //            string rgbNewName = GetRandomColorRBGStr(random);
+                    //            int newValue = export.FileRef.FindNameOrAdd(rgbNewName);
+                    //            export2da[row, col].Data = BitConverter.GetBytes((ulong)newValue); //name is 8 bytes
+                    //            hasChanges = true;
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        string rgbNewName = GetRandomColorRBGStr(random);
+                    //        int newValue = export.FileRef.FindNameOrAdd(rgbNewName);
+                    //        export2da[row, col].Data = BitConverter.GetBytes((ulong)newValue); //name is 8 bytes
+                    //        hasChanges = true;
+                    //    }
+                    //}
                 }
             }
             if (hasChanges)
@@ -1283,24 +1623,24 @@ namespace MassEffectRandomizer.Classes
 
             }
             Bio2DA export2da = new Bio2DA(export);
-            for (int row = 0; row < export2da.rowNames.Count(); row++)
+            for (int row = 0; row < export2da.RowNames.Count(); row++)
             {
                 foreach (int col in floatSliderIndexesToRandomize)
                 {
-                    export2da[row, col].Data = BitConverter.GetBytes(random.NextFloat(0, 1));
+                    export2da[row, col].Data = BitConverter.GetBytes(random.NextFloat(0, 2));
                 }
             }
 
-            for (int row = 0; row < export2da.rowNames.Count(); row++)
+            for (int row = 0; row < export2da.RowNames.Count(); row++)
             {
                 foreach (KeyValuePair<int, int> entry in columnMaxDictionary)
                 {
                     int col = entry.Key;
-                    Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.columnNames[col] + ") value originally is " + export2da[row, col].GetDisplayableValue());
+                    Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value originally is " + export2da[row, col].GetDisplayableValue());
 
                     export2da[row, col].Data = BitConverter.GetBytes(random.Next(0, entry.Value) + 1);
                     export2da[row, col].Type = Bio2DACell.TYPE_INT;
-                    Console.WriteLine("Character Creator Randomizer [" + row + "][" + col + "] (" + export2da.columnNames[col] + ") value is now " + export2da[row, col].GetDisplayableValue());
+                    Console.WriteLine("Character Creator Randomizer [" + row + "][" + col + "] (" + export2da.ColumnNames[col] + ") value is now " + export2da[row, col].GetDisplayableValue());
 
                 }
             }
@@ -1324,7 +1664,7 @@ namespace MassEffectRandomizer.Classes
             Bio2DA music2da = new Bio2DA(export);
             List<byte[]> names = new List<byte[]>();
             int[] colsToRandomize = { 0, 5, 6, 7, 8, 9, 10, 11, 12 };
-            for (int row = 0; row < music2da.rowNames.Count(); row++)
+            for (int row = 0; row < music2da.RowNames.Count(); row++)
             {
                 foreach (int col in colsToRandomize)
                 {
@@ -1339,7 +1679,7 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            for (int row = 0; row < music2da.rowNames.Count(); row++)
+            for (int row = 0; row < music2da.RowNames.Count(); row++)
             {
                 foreach (int col in colsToRandomize)
                 {
@@ -1349,12 +1689,12 @@ namespace MassEffectRandomizer.Classes
                         {
                             continue;
                         }
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + music2da.columnNames[col] + ") value originally is " + music2da[row, col].GetDisplayableValue());
+                        Console.WriteLine("[" + row + "][" + col + "]  (" + music2da.ColumnNames[col] + ") value originally is " + music2da[row, col].GetDisplayableValue());
                         int r = random.Next(names.Count);
                         byte[] pnr = names[r];
                         names.RemoveAt(r);
                         music2da[row, col].Data = pnr;
-                        Console.WriteLine("Music Randomizer [" + row + "][" + col + "] (" + music2da.columnNames[col] + ") value is now " + music2da[row, col].GetDisplayableValue());
+                        Console.WriteLine("Music Randomizer [" + row + "][" + col + "] (" + music2da.ColumnNames[col] + ") value is now " + music2da[row, col].GetDisplayableValue());
 
                     }
                 }
@@ -1382,7 +1722,7 @@ namespace MassEffectRandomizer.Classes
             if (requiredprefix != "music")
             {
 
-                for (int row = 0; row < guisounds2da.rowNames.Count(); row++)
+                for (int row = 0; row < guisounds2da.RowNames.Count(); row++)
                 {
                     if (guisounds2da[row, 0] != null && guisounds2da[row, 0].Type == Bio2DACell.TYPE_NAME)
                     {
@@ -1407,7 +1747,7 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            for (int row = 0; row < guisounds2da.rowNames.Count(); row++)
+            for (int row = 0; row < guisounds2da.RowNames.Count(); row++)
             {
                 if (guisounds2da[row, 0] != null && guisounds2da[row, 0].Type == Bio2DACell.TYPE_NAME)
                 {
@@ -1416,12 +1756,12 @@ namespace MassEffectRandomizer.Classes
                         continue;
                     }
                     Thread.Sleep(20);
-                    Console.WriteLine("[" + row + "][" + 0 + "]  (" + guisounds2da.columnNames[0] + ") value originally is " + guisounds2da[row, 0].GetDisplayableValue());
+                    Console.WriteLine("[" + row + "][" + 0 + "]  (" + guisounds2da.ColumnNames[0] + ") value originally is " + guisounds2da[row, 0].GetDisplayableValue());
                     int r = random.Next(names.Count);
                     byte[] pnr = names[r];
                     names.RemoveAt(r);
                     guisounds2da[row, 0].Data = pnr;
-                    Console.WriteLine("Sounds - GUI Sounds Randomizer [" + row + "][" + 0 + "] (" + guisounds2da.columnNames[0] + ") value is now " + guisounds2da[row, 0].GetDisplayableValue());
+                    Console.WriteLine("Sounds - GUI Sounds Randomizer [" + row + "][" + 0 + "] (" + guisounds2da.ColumnNames[0] + ") value is now " + guisounds2da[row, 0].GetDisplayableValue());
 
                 }
             }

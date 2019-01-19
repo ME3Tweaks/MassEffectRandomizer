@@ -68,6 +68,21 @@ namespace MassEffectRandomizer.Classes
             return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MassEffectRandomizer";
         }
 
+        public static string GetEmbeddedStaticFilesTextFile(string filename)
+        {
+            string result = string.Empty;
+            var items = typeof(MainWindow).Assembly.GetManifestResourceNames();
+            using (Stream stream = typeof(MainWindow).Assembly.
+                       GetManifestResourceStream("MassEffectRandomizer.staticfiles." + filename))
+            {
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+            return result;
+        }
+
         internal static void Restore2DAFiles()
         {
             List<string> files = new List<string>();

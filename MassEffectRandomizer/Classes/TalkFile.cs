@@ -201,7 +201,7 @@ namespace MassEffectRandomizer.Classes.TLK
             {
                 if (StringRefs[i].StringID == id)
                 {
-                    Debug.WriteLine("Setting string " + id + " to " + newString);
+                    //Debug.WriteLine("Setting string " + id + " to " + newString);
                     StringRefs[i].Data = newString;
                     Modified = true;
                 }

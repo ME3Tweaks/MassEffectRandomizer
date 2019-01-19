@@ -32,7 +32,13 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
             float startValue = float.Parse(table2DA[row, startcol].GetDisplayableValue());
             float endValue = float.Parse(table2DA[row, startcol + (numcols - 1)].GetDisplayableValue());
 
+            if ((endValue < startValue && directionsAllowed == RandomizationDirection.UpOnly) || (endValue > startValue && directionsAllowed == RandomizationDirection.DownOnly))
+            {
+                endValue = startValue;
+            }
+
             startValue = startValue *= random.NextFloat(1 - maxFudge, 1 + maxFudge);
+
             float preValidationEndValue = endValue * random.NextFloat(1 - maxFudge, 1 + maxFudge);
             if (directionsAllowed != RandomizationDirection.UpDown)
             {
@@ -43,7 +49,8 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                     {
                         preValidationEndValue = endValue * random.NextFloat(1 - maxFudge, 1 + maxFudge);
                     }
-                } else
+                }
+                else
                 {
                     //endvalue must be higher than start
                     while (preValidationEndValue < startValue)

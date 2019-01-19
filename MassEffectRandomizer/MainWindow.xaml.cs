@@ -117,6 +117,50 @@ namespace MassEffectRandomizer
             }
         }
 
+        [DebuggerDisplay("RandomPlanetInfo ({PlanetName})")]
+        public class RandomizedPlanetInfo
+        {
+            /// <summary>
+            /// What 0-based row this planet information is for in the Bio2DA
+            /// </summary>
+            public int RowID;
+            /// <summary>
+            /// Prevents shuffling this item outside of it's row ID
+            /// </summary>
+            public bool PreventShuffle;
+
+            /// <summary>
+            /// Indicator that this is an MSV planet
+            /// </summary>
+            public bool IsMSV;
+
+            /// <summary>
+            /// Indicator that this is an Asteroid Belt
+            /// </summary>
+            public bool IsAsteroidBelt;
+
+            public string PlanetName;
+            public string PlanetDescription;
+
+            //Used for temp randomizations
+            public bool IsHotOnly;
+            public bool IsColdOnly;
+            public bool IsHabitable; //Also will set the atmosheric pressure
+
+            //Used to put a randomization range
+            public long PopulationMin;
+            public long PopulationMax;
+
+        }
+
+        private void LoadPlanetsText()
+        {
+            string path = @"C:\users\mgame\desktop\planet_test.txt";
+            var lines = File.ReadAllLines(path);
+
+
+        }
+
         //RANDOMIZATION OPTION BINDINGS
         //Galaxy Map
         private bool _randsetting_galaxymap_planetcolor;
@@ -127,6 +171,10 @@ namespace MassEffectRandomizer
 
         private bool _randsetting_galaxymap_clusters;
         public bool RANDSETTING_GALAXYMAP_CLUSTERS { get { return _randsetting_galaxymap_clusters; } set { SetProperty(ref _randsetting_galaxymap_clusters, value); } }
+
+        private bool _randsetting_galaxymap_planetnames_descriptions;
+        public bool RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION { get { return _randsetting_galaxymap_planetnames_descriptions; } set { SetProperty(ref _randsetting_galaxymap_planetnames_descriptions, value); } }
+
 
         //Weapons
         private bool _randsetting_weapons_startingequipment;
@@ -160,10 +208,13 @@ namespace MassEffectRandomizer
         private bool _randsetting_talents_classtalents;
         public bool RANDSETTING_TALENTS_SHUFFLECLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }
 
+        private bool _randsetting_talents_shuffle_allowsquadmateunity;
+        public bool RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY { get { return _randsetting_talents_shuffle_allowsquadmateunity; } set { SetProperty(ref _randsetting_talents_shuffle_allowsquadmateunity, value); } }
+
         private bool _randsetting_talents_stats;
         public bool RANDSETTING_TALENTS_STATS { get { return _randsetting_talents_stats; } set { SetProperty(ref _randsetting_talents_stats, value); } }
 
-        
+
         //MOVEMENT
         private bool _randsetting_movement_creaturespeed;
         public bool RANDSETTING_MOVEMENT_CREATURESPEED { get { return _randsetting_movement_creaturespeed; } set { SetProperty(ref _randsetting_movement_creaturespeed, value); } }

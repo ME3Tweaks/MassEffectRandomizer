@@ -280,6 +280,9 @@
   <ItemGroup>
     <None Include="costura32\lzo2wrapper.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="staticfiles\planetinfo.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -56,5 +56,24 @@ namespace MassEffectRandomizer.Classes
             if (isMeters) value /= 100;
             return value.ToString("f2");
         }
+
+        internal void SetData(int i)
+        {
+            Data = BitConverter.GetBytes(i);
+            Type = TYPE_INT;
+        }
+
+        internal void SetData(float f)
+        {
+            Data = BitConverter.GetBytes(f);
+            Type = TYPE_FLOAT;
+        }
+
+        internal void SetData(string name)
+        {
+            int i = Pcc.FindNameOrAdd(name);
+            Data = BitConverter.GetBytes(i);
+            Type = TYPE_NAME;
+        }
     }
 }
