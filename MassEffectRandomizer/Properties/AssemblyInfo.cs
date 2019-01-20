@@ -4,18 +4,17 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Resources;
 
-// General Information
-[assembly: AssemblyTitle("Insert title here")]
-[assembly: AssemblyDescription("Insert description here")]
+[assembly: AssemblyTitle("Mass Effect Randomizer")]
+[assembly: AssemblyDescription("Randomizer for Mass Effect")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Insert company here")]
-[assembly: AssemblyProduct("Insert product here")]
-[assembly: AssemblyCopyright("Insert copyright here")]
-[assembly: AssemblyTrademark("Insert trademark here")]
+[assembly: AssemblyCompany("ME3Tweaks")]
+[assembly: AssemblyProduct("Mass Effect Randomizer")]
+[assembly: AssemblyCopyright("Copyright © 2018-2019 ME3Tweaks")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Version informationr(
-[assembly: AssemblyVersion("0.0.1.2")]
-[assembly: AssemblyFileVersion("0.0.1.2")]
+[assembly: AssemblyVersion("0.0.1.1")]
+[assembly: AssemblyFileVersion("0.0.1.1")]
 [assembly: NeutralResourcesLanguageAttribute( "en-US" )]
 
