@@ -22,11 +22,13 @@ namespace MassEffectRandomizer.Classes
 {
     class Randomizer
     {
-        private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini",
-            "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Shrek", "Odyssey", "Xi Draconis", "System o’ Hags",
-            "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion",
-            "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan",
-            "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost" };
+        private static readonly string[] RandomClusterNameCollection = {
+"Serpent Cluster","Zero","Artemis","Kamino","Kovac Nebula", "Akkala","Lanayru Verge","Kyramud","Tolase","Kirigiri","Ascension Sigma", "Epsilon","Rodin","Gilgamesh","Enkidu","Ventus","Agrias","Canopus","Tartarose","Dorgalua","Losstarot","Onyx Tau","Himura", "Baltoy","Canopy Xi"
+};
+
+
+        private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini", "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Kerh-S", "Odyssey", "Xi Draconis", "System o’ Hags", "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion", "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan", "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost" };
+
         private const string UPDATE_RANDOMIZING_TEXT = "UPDATE_RANDOMIZING_TEXT";
         private MainWindow mainWindow;
         private BackgroundWorker randomizationWorker;
@@ -57,8 +59,8 @@ namespace MassEffectRandomizer.Classes
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, mainWindow);
             mainWindow.CurrentOperationText = "Randomization complete";
 
-            mainWindow.Progressbar_Bottom_Wrapper.Visibility = System.Windows.Visibility.Collapsed;
-            mainWindow.Button_Randomize.Visibility = System.Windows.Visibility.Visible;
+            mainWindow.ProgressPanelVisible = System.Windows.Visibility.Collapsed;
+            mainWindow.ButtonPanelVisible = System.Windows.Visibility.Visible;
             string backupPath = Utilities.GetGameBackupPath();
             string gamePath = Utilities.GetGamePath();
             if (backupPath != null)
@@ -134,7 +136,7 @@ namespace MassEffectRandomizer.Classes
                     case "GalaxyMap_Cluster":
                         if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
                         {
-                            RandomizeClusters(export, random);
+                            RandomizeClusters(export, random,Tlks);
                         }
                         break;
                     case "GalaxyMap_System":
@@ -409,6 +411,7 @@ namespace MassEffectRandomizer.Classes
             Bio2DA systems2DA = new Bio2DA(systemsExport);
             Bio2DA planets2DA = new Bio2DA(export);
 
+
             List<string> shuffledSystemNames = new List<string>(RandomSystemNameCollection);
             shuffledSystemNames.Shuffle(random);
 
@@ -479,11 +482,15 @@ namespace MassEffectRandomizer.Classes
                         }
                     }
 
+                    string planetName = rpi.PlanetName;
+                    //if (rename plot missions) planetName = rpi.PlanetName2
                     var description = rpi.PlanetDescription;
                     if (description != null)
                     {
                         description = description.Replace("%SYSTEMNAME%", systemName);
+                        description = description.Replace("%PLANETNAME%", planetName);
                     }
+
                     foreach (TalkFile tf in Tlks)
                     {
                         Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + rpi.PlanetName);
@@ -770,24 +777,39 @@ namespace MassEffectRandomizer.Classes
         /// </summary>
         /// <param name="export">2DA Export</param>
         /// <param name="random">Random number generator</param>
-        private void RandomizeClusters(IExportEntry export, Random random)
+        private void RandomizeClusters(IExportEntry export, Random random, List<TalkFile> Tlks)
         {
             mainWindow.CurrentOperationText = "Randomizing Galaxy Map - Clusters";
 
             Bio2DA cluster2da = new Bio2DA(export);
-            int[] colsToRandomize = { 1, 2 };
+            int nameColIndex = cluster2da.GetColumnIndexByName("Name");
+            int xColIndex = cluster2da.GetColumnIndexByName("X");
+            int yColIndex = cluster2da.GetColumnIndexByName("Y");
+
+            List<string> shuffledClusterNames = new List<string>(RandomClusterNameCollection);
+            shuffledClusterNames.Shuffle(random);
+
             for (int row = 0; row < cluster2da.RowNames.Count(); row++)
             {
-                for (int i = 0; i < colsToRandomize.Count(); i++)
+                //Randomize X,Y
+                float randvalue = random.NextFloat(0, 1);
+                cluster2da[row, xColIndex].Data = BitConverter.GetBytes(randvalue);
+                randvalue = random.NextFloat(0, 1);
+                cluster2da[row, yColIndex].Data = BitConverter.GetBytes(randvalue);
+
+                //Randomize Name
+                string name = shuffledClusterNames[0];
+                shuffledClusterNames.RemoveAt(0);
+
+                int tlkRef = cluster2da[row, nameColIndex].GetIntValue();
+                foreach (TalkFile tf in Tlks)
                 {
-                    //Console.WriteLine("[" + row + "][" + colsToRandomize[i] + "] value is " + BitConverter.ToSingle(cluster2da[row, colsToRandomize[i]].Data, 0));
-                    float randvalue = random.NextFloat(0, 1);
-                    Console.WriteLine("Cluster Randomizer [" + row + "][" + colsToRandomize[i] + "] value is now " + randvalue);
-                    cluster2da[row, colsToRandomize[i]].Data = BitConverter.GetBytes(randvalue);
+                    tf.replaceString(tlkRef, name);
                 }
             }
             cluster2da.Write2DAToExport();
         }
+
 
         /// <summary>
         /// Randomizes the mid-level galaxy map view. 
@@ -1053,11 +1075,11 @@ namespace MassEffectRandomizer.Classes
                             //}
                             //else
                             //{
-                                //squadmate class
-                                int talentId = squadReassignmentList[0];
-                                squadReassignmentList.RemoveAt(0);
-                                classtalents[row, 1].SetData(talentId);
-                           // }
+                            //squadmate class
+                            int talentId = squadReassignmentList[0];
+                            squadReassignmentList.RemoveAt(0);
+                            classtalents[row, 1].SetData(talentId);
+                            // }
                         }
                     }
                 }

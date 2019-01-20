@@ -41,51 +41,14 @@ namespace MassEffectRandomizer
             ERAndomizationMode_Screed = 2
         }
 
-        private RandomizationMode _selectedRandomizationMode;
-        public RandomizationMode SelectedRandomizeMode
-        {
-            get { return _selectedRandomizationMode; }
-            set { SetProperty(ref _selectedRandomizationMode, value); UpdateCheckboxSettings(); }
-        }
-
-        private int _currentProgress;
-        public int CurrentProgressValue
-        {
-            get { return _currentProgress; }
-            set { SetProperty(ref _currentProgress, value); }
-        }
-
-        private string _currentOperationText;
-        public string CurrentOperationText
-        {
-            get { return _currentOperationText; }
-            set { SetProperty(ref _currentOperationText, value); }
-        }
-
-        private double _progressbar_bottom_min;
-        public double ProgressBar_Bottom_Min
-        {
-            get { return _progressbar_bottom_min; }
-            set { SetProperty(ref _progressbar_bottom_min, value); }
-        }
-
-        private double _progressbar_bottom_max;
-        public double ProgressBar_Bottom_Max
-        {
-            get { return _progressbar_bottom_max; }
-            set { SetProperty(ref _progressbar_bottom_max, value); }
-        }
-
-        private Visibility _progressbar_visible;
-        public Visibility ProgressBarVisible
-        {
-            get { return _progressbar_visible; }
-            set { SetProperty(ref _progressbar_visible, value); }
-        }
-
-        private bool _progressbar_indeterminate;
-        public bool ProgressBarIndeterminate { get { return _progressbar_indeterminate; } set { SetProperty(ref _progressbar_indeterminate, value); } }
-
+        public RandomizationMode SelectedRandomizeMode { get; set; }
+        public int CurrentProgressValue { get; set; }
+        public string CurrentOperationText { get; set; }
+        public double ProgressBar_Bottom_Min { get; set; }
+        public double ProgressBar_Bottom_Max { get; set; }
+        public bool ProgressBarIndeterminate { get; set; }
+        public Visibility ProgressPanelVisible { get; set; }
+        public Visibility ButtonPanelVisible { get; set; }
         ProgressDialogController updateprogresscontroller;
 
         private void UpdateCheckboxSettings()
@@ -168,83 +131,45 @@ namespace MassEffectRandomizer
 
         //RANDOMIZATION OPTION BINDINGS
         //Galaxy Map
-        private bool _randsetting_galaxymap_planetcolor;
-        public bool RANDSETTING_GALAXYMAP_PLANETCOLOR { get { return _randsetting_galaxymap_planetcolor; } set { SetProperty(ref _randsetting_galaxymap_planetcolor, value); } }
-
-        private bool _randsetting_galaxymap_systems;
-        public bool RANDSETTING_GALAXYMAP_SYSTEMS { get { return _randsetting_galaxymap_systems; } set { SetProperty(ref _randsetting_galaxymap_systems, value); } }
-
-        private bool _randsetting_galaxymap_clusters;
-        public bool RANDSETTING_GALAXYMAP_CLUSTERS { get { return _randsetting_galaxymap_clusters; } set { SetProperty(ref _randsetting_galaxymap_clusters, value); } }
-
-        private bool _randsetting_galaxymap_planetnames_descriptions;
-        public bool RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION { get { return _randsetting_galaxymap_planetnames_descriptions; } set { SetProperty(ref _randsetting_galaxymap_planetnames_descriptions, value); } }
+        public bool RANDSETTING_GALAXYMAP_PLANETCOLOR { get; set; }
+        public bool RANDSETTING_GALAXYMAP_SYSTEMS { get; set; }
+        public bool RANDSETTING_GALAXYMAP_CLUSTERS { get; set; }
+        public bool RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION { get; set; }
 
 
         //Weapons
-        private bool _randsetting_weapons_startingequipment;
-        public bool RANDSETTING_WEAPONS_STARTINGEQUIPMENT { get { return _randsetting_weapons_startingequipment; } set { SetProperty(ref _randsetting_weapons_startingequipment, value); } }
-
-        private bool _randsetting_weapons_effectlevels;
-        public bool RANDSETTING_WEAPONS_EFFECTLEVELS { get { return _randsetting_weapons_effectlevels; } set { SetProperty(ref _randsetting_weapons_effectlevels, value); } }
+        public bool RANDSETTING_WEAPONS_STARTINGEQUIPMENT { get; set; }
+        public bool RANDSETTING_WEAPONS_EFFECTLEVELS { get; set; }
 
 
         //Character
-        private bool _randsetting_character_hench_archetypes;
-        public bool RANDSETTING_CHARACTER_HENCH_ARCHETYPES { get { return _randsetting_character_hench_archetypes; } set { SetProperty(ref _randsetting_character_hench_archetypes, value); } }
-
-        private bool _randsetting_character_inventory;
-        public bool RANDSETTING_CHARACTER_INVENTORY { get { return _randsetting_character_inventory; } set { SetProperty(ref _randsetting_character_inventory, value); } }
-
-        private bool _randsetting_character_charactercreator;
-        public bool RANDSETTING_CHARACTER_CHARCREATOR { get { return _randsetting_character_charactercreator; } set { SetProperty(ref _randsetting_character_charactercreator, value); } }
-
-        private bool _randsetting_character_charactercreator_skintone;
-        public bool RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE { get { return _randsetting_character_charactercreator_skintone; } set { SetProperty(ref _randsetting_character_charactercreator_skintone, value); } }
-
-        private bool _randsetting_character_henchface;
-        public bool RANDSETTING_CHARACTER_HENCHFACE { get { return _randsetting_character_henchface; } set { SetProperty(ref _randsetting_character_henchface, value); } }
-
-        private bool _randsetting_character_iconicface;
-        public bool RANDSETTING_CHARACTER_ICONICFACE { get { return _randsetting_character_iconicface; } set { SetProperty(ref _randsetting_character_iconicface, value); } }
+        public bool RANDSETTING_CHARACTER_HENCH_ARCHETYPES { get; set; }
+        public bool RANDSETTING_CHARACTER_INVENTORY { get; set; }
+        public bool RANDSETTING_CHARACTER_CHARCREATOR { get; set; }
+        public bool RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE { get; set; }
+        public bool RANDSETTING_CHARACTER_HENCHFACE { get; set; }
+        public bool RANDSETTING_CHARACTER_ICONICFACE { get; set; }
 
 
         //Talents
-        private bool _randsetting_talents_classtalents;
-        public bool RANDSETTING_TALENTS_SHUFFLECLASSTALENTS { get { return _randsetting_talents_classtalents; } set { SetProperty(ref _randsetting_talents_classtalents, value); } }
+        public bool RANDSETTING_TALENTS_SHUFFLECLASSTALENTS { get; set; }
+        public bool RANDSETTING_TALENTS_STATS { get; set; }
 
         //private bool _randsetting_talents_shuffle_allowsquadmateunity;
         //public bool RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY { get { return _randsetting_talents_shuffle_allowsquadmateunity; } set { SetProperty(ref _randsetting_talents_shuffle_allowsquadmateunity, value); } }
 
-        private bool _randsetting_talents_stats;
-        public bool RANDSETTING_TALENTS_STATS { get { return _randsetting_talents_stats; } set { SetProperty(ref _randsetting_talents_stats, value); } }
 
 
         //MOVEMENT
-        private bool _randsetting_movement_creaturespeed;
-        public bool RANDSETTING_MOVEMENT_CREATURESPEED { get { return _randsetting_movement_creaturespeed; } set { SetProperty(ref _randsetting_movement_creaturespeed, value); } }
+        public bool RANDSETTING_MOVEMENT_CREATURESPEED { get; set; }
 
         //Misc
-        private bool _randsetting_misc_music;
-        public bool RANDSETTING_MISC_MUSIC { get { return _randsetting_misc_music; } set { SetProperty(ref _randsetting_misc_music, value); } }
-
-        private bool _randsetting_misc_guimusic;
-        public bool RANDSETTING_MISC_GUIMUSIC { get { return _randsetting_misc_guimusic; } set { SetProperty(ref _randsetting_misc_guimusic, value); } }
-
-        private bool _randsetting_misc_guisfx;
-        public bool RANDSETTING_MISC_GUISFX { get { return _randsetting_misc_guisfx; } set { SetProperty(ref _randsetting_misc_guisfx, value); } }
-
-        private bool _randsetting_misc_mapfaces;
-        public bool RANDSETTING_MISC_MAPFACES { get { return _randsetting_misc_mapfaces; } set { SetProperty(ref _randsetting_misc_mapfaces, value); } }
-
-        private double _randsetting_misc_mapfaces_amount;
-        public double RANDSETTING_MISC_MAPFACES_AMOUNT { get { return _randsetting_misc_mapfaces_amount; } set { SetProperty(ref _randsetting_misc_mapfaces_amount, value); } }
-
-        private bool _randsetting_misc_mappawnsizes;
-        public bool RANDSETTING_MISC_MAPPAWNSIZES { get { return _randsetting_misc_mappawnsizes; } set { SetProperty(ref _randsetting_misc_mappawnsizes, value); } }
-
-
-
+        public bool RANDSETTING_MISC_MUSIC { get; set; }
+        public bool RANDSETTING_MISC_GUIMUSIC { get; set; }
+        public bool RANDSETTING_MISC_GUISFX { get; set; }
+        public bool RANDSETTING_MISC_MAPFACES { get; set; }
+        public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
+        public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
 
 
         //MAKO 
@@ -260,13 +185,17 @@ namespace MassEffectRandomizer
             RANDSETTING_MISC_MAPFACES_AMOUNT = .3;
             ProgressBar_Bottom_Max = 100;
             ProgressBar_Bottom_Min = 0;
-            ProgressBarVisible = Visibility.Collapsed;
+            ProgressPanelVisible = Visibility.Visible;
+            ButtonPanelVisible = Visibility.Collapsed;
+
             InitializeComponent();
+
             SeedTextBox.Text = preseed.ToString();
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
             DataContext = this;
             SelectedRandomizeMode = RandomizationMode.ERandomizationMode_SelectAny;
+            PerformUpdateCheck();
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -341,9 +270,8 @@ namespace MassEffectRandomizer
 
         private void RandomizeButton_Click(object sender, RoutedEventArgs e)
         {
-            Button_Randomize.Visibility = Visibility.Collapsed;
-            Textblock_CurrentTask.Visibility = Visibility.Visible;
-            Progressbar_Bottom_Wrapper.Visibility = Visibility.Visible;
+            ButtonPanelVisible = Visibility.Collapsed;
+            ProgressPanelVisible = Visibility.Visible;
             Randomizer randomizer = new Randomizer(this);
             randomizer.randomize();
         }
@@ -360,7 +288,7 @@ namespace MassEffectRandomizer
             }
         }
 
-        private async void PerformUpdateCheck(bool dotNetSatisfiedForUpdate)
+        private async void PerformUpdateCheck()
         {
             Log.Information("Checking for application updates from gitub");
             ProgressBarIndeterminate = true;
@@ -378,7 +306,6 @@ namespace MassEffectRandomizer
                     //The release we want to check is always the latest, so [0]
                     Release latest = null;
                     Version latestVer = new Version("0.0.0.0");
-                    bool newHiddenBetaBuildAvailable = false;
                     foreach (Release r in releases)
                     {
                         if (r.Assets.Count > 0)
@@ -430,7 +357,7 @@ namespace MassEffectRandomizer
 
                             //MessageDialogResult result = await this.ShowMessageAsync("Update Available", "ALOT Installer " + releaseName + " is available. You are currently using version " + versInfo.ToString() + ".\n========================\n" + versionInfo + "\n" + latest.Body + "\n========================\nInstall the update?", MessageDialogStyle.AffirmativeAndNegative, mds);
                             //upgrade = result == MessageDialogResult.Affirmative;
-                            string message = "ALOT Installer " + releaseName + " is available. You are currently using version " + versInfo.ToString() + "." + versionInfo;
+                            string message = "Mass Effect Randomizer " + releaseName + " is available. You are currently using version " + versInfo.ToString() + "." + versionInfo;
                             UpdateAvailableDialog uad = new UpdateAvailableDialog(message, latest.Body, this);
                             await this.ShowMetroDialogAsync(uad, mds);
                             await uad.WaitUntilUnloadedAsync();
@@ -443,7 +370,7 @@ namespace MassEffectRandomizer
                                 //there's an update
                                 message = "Downloading update...";
 
-                                updateprogresscontroller = await this.ShowProgressAsync("Downloading Update", message, canCancel);
+                                updateprogresscontroller = await this.ShowProgressAsync("Downloading update", message, canCancel);
                                 updateprogresscontroller.SetIndeterminate();
                                 WebClient downloadClient = new WebClient();
 
@@ -472,8 +399,8 @@ namespace MassEffectRandomizer
                                         await updateprogresscontroller.CloseAsync();
                                     }
                                 };
-                                //downloadClient.DownloadFileCompleted += UnzipSelfUpdate;
-                                string downloadPath = temppath + "MassEffectRandomizer_Update" + System.IO.Path.GetExtension(latest.Assets[0].BrowserDownloadUrl);
+                                downloadClient.DownloadFileCompleted += UpdateDownloadCompleted;
+                                string downloadPath = System.IO.Path.Combine(temppath, "MassEffectRandomizer-Update.exe");
                                 //DEBUG ONLY
                                 Uri downloadUri = new Uri(latest.Assets[0].BrowserDownloadUrl);
                                 downloadClient.DownloadFileAsync(downloadUri, downloadPath, new KeyValuePair<ProgressDialogController, string>(updateprogresscontroller, downloadPath));
@@ -487,15 +414,34 @@ namespace MassEffectRandomizer
                         {
                             //up to date
                             CurrentOperationText = "Application up to date";
-                            ProgressBarIndeterminate = false;
                         }
                     }
+                }
+                else
+                {
+                    Log.Information("No releases found on Github");
                 }
             }
             catch (Exception e)
             {
                 Log.Error("Error checking for update: " + e);
             }
+            ProgressPanelVisible = Visibility.Collapsed;
+            ButtonPanelVisible = Visibility.Visible;
+        }
+
+        private void UpdateDownloadCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            Log.Information("Update downloaded - rebooting to new downloaded file, in update mode");
+            string temppath = System.IO.Path.GetTempPath();
+            string exe = System.IO.Path.Combine(temppath, "MassEffectRandomizer-Update.exe");
+
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            string exePath = assembly.Location;
+
+            string args = "--update-dest-path \"" + exePath + "\"";
+            Utilities.runProcess(exe, args, true);
+            Environment.Exit(0);
         }
 
         private void Button_BackupRestore_Click(object sender, RoutedEventArgs e)
@@ -521,6 +467,11 @@ namespace MassEffectRandomizer
             {
                 Button_BackupRestore.Content = "Backup 2DA files";
             }
+        }
+
+        private void Logs_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

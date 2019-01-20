@@ -308,7 +308,7 @@ Population: 11,000
     <PlanetName>Eden Prime</PlanetName>
     <PlanetName2>Dorstonis</PlanetName2>
     <PlanetDescription>
-This pastoral world marks the founding of the first Earth colony beyond a mass relay. The biosphere, though slightly thin, is well-suited to both humans and native Earth species. The original Systems Alliance colony was soon augmented by the arrival of corporate developments. Most notable of these was Ondore Lhusu’s discovery of the magicite mines, now a major export and source of revenue. The bulk of %PLANETNAME% development is still primarily agricultural, however, and the rolling green hills would not look out of place on Earth.
+This pastoral world marks the founding of the first Earth colony beyond a mass relay. The biosphere, though slightly thin, is well-suited to both humans and native Earth species. The original Systems Alliance colony was soon augmented by the arrival of corporate developments. Most notable of these was Ondore Lhusu’s discovery of the magicite mines, now a major export and source of revenue. The bulk of the development on %PLANETNAME% is still primarily agricultural, however, and the rolling green hills would not look out of place on Earth.
 
 Colony Founded: 2152
 Population: 3.7 million
@@ -587,6 +587,7 @@ Day Length: 14.7 Earth Hours
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>25</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -612,13 +613,13 @@ Surface Gravity: 0.1 G
   <RandomizedPlanetInfo>
     <RowID>26</RowID>
     <PreventShuffle>false</PreventShuffle>
-    <IsMSV>false</IsMSV>
+    <IsMSV>true</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>MSV Majesty</PlanetName>
+    <PlanetName>MSV Kaldwin</PlanetName>
     <PlanetDescription>
-The Majesty is a Kowloon class modular conveyor of human design. The ship is a derelict. All compartments are exposed to space, and the fusion plant is leaking. The damage is consistant with ship-mounted mass accelerator fire.
+The Kaldwin is a Kowloon-class modular conveyor of human design. The ship appears to have been torn apart from the inside by some kind of void. A glowing emblem can be seen on a piece of metal spinning through space. The Normandy’s scanners identify it only as "Mark of the Outsider".
 
-Registry: Private Owner, Captain Willem
+Registry: Private Owner, Captain Sokolov
     </PlanetDescription>
     <IsHotOnly>false</IsHotOnly>
     <IsColdOnly>false</IsColdOnly>
@@ -645,6 +646,7 @@ Day Length: 15.5 Earth Hours
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>28</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -667,6 +669,7 @@ Surface Gravity: 1.16 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>29</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -716,9 +719,9 @@ Surface Gravity: 0.7 G
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Wentania</PlanetName>
+    <PlanetName>Shiva</PlanetName>
     <PlanetDescription>
-Hard data on Wentania is very limited. When the system was charted by the Alliance surveyor Kupe, only a small, unmanned flyby probe was spared for the distant world. It is a small rock and ice planet, with a trace atmosphere of krypton and sulphur dioxide. Normandy's more detailed survey suggests the frozen terrestrial may be a suitable target for mining. While it is largely water ice, mapping of mass concentrations suggests it has a core of pure aluminum.
+A small, unmanned flyby probe provides the only available data for this tiny planet. It is composed almost completely of ice, with a trace atmosphere of krypton. Mapping of mass concentrations shows a core of carbon under intense pressure. Normandy's more detailed survey suggests the core may solidify into something akin to diamond. The difficulty of extracting it, however, will likely deter any mining interest in the planet.
 
 Orbital Period: 82.2 Earth Years
 Radius: 3198 km
@@ -728,11 +731,12 @@ Surface Temperature: -237 Celsius
 Surface Gravity: 0.2 G
     </PlanetDescription>
     <IsHotOnly>false</IsHotOnly>
-    <IsColdOnly>false</IsColdOnly>
+    <IsColdOnly>true</IsColdOnly>
     <IsHabitable>false</IsHabitable>
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>32</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -933,6 +937,7 @@ Surface Gravity: 0.82 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>41</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -957,6 +962,7 @@ Surface Gravity: 0.28 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>42</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1007,6 +1013,7 @@ Radius: 94 km
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>45</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1024,6 +1031,7 @@ Registry: Private Owner, Citadel Station
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>46</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1401,23 +1409,28 @@ Surface Gravity: 0.22 G
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>64</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Virmire</PlanetName>
+    <PlanetName2>Mandalore</PlanetName2>
     <PlanetDescription>
-Virmire is a lush frontier world, ideal for colonization by carbon-based species. Its vast seas and orbital position on the inner life zone have created a wide equatorial band of humid, tropical terrain. Unfortunately, the political instability of the nearby Terminus Systems has impeded colonization efforts - the high risk of raids by pirates and slavers makes it an unappealing homestead.
+%PLANETNAME% is a lush frontier world, covered in veshok forest, oceans, and rolling grasslands. Unique to the planet and its moon Concordia is beskar ore, a nearly indestructible material akin to iron.
 
-Orbital Period: 9.2 Earth Years
+The warrior tradition of the Taung clans has been passed down through ages and the unscrupulous denizens of the nearby Terminus Systems have learned to leave the planet well enough alone.
+
+Capital: Keldabe
+
+Orbital Period: 1.1 Earth Years
 Radius: 6440 km
-Day Length: 22.3 Earth Days
+Day Length: 19 Earth Hours
 Atmospheric Pressure: 0.9 Earth Atmospheres
 Surface Temperature: 32 Celsius
-Surface Gravity: 0.86 G
+Surface Gravity: 1.06 G
     </PlanetDescription>
     <IsHotOnly>false</IsHotOnly>
     <IsColdOnly>false</IsColdOnly>
-    <IsHabitable>false</IsHabitable>
+    <IsHabitable>true</IsHabitable>
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
@@ -1702,9 +1715,11 @@ Surface Gravity: 0.39 G
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Zatorus</PlanetName>
+    <PlanetName>Ramuh</PlanetName>
     <PlanetDescription>
-Zatorus is a hydrogen-helium gas giant, with high-level decks of sulphur clouds. A layer of hydrocarbons has formed deeper in the atmosphere. Vast electrical storm fronts can be seen flickering across the dark side.
+Ramuh is a hydrogen-helium gas giant. Charged ions in the sulfuric atmosphere have created billowing, cloudy storm fronts. Lightning can be seen flickering almost constantly across the dark side of the planet.
+
+The constellation Olduum, with its noticeably purple-hued stars, is visible even through the heavy cloud cover.
 
 Orbital Period: 113.1 Earth Years
 Radius: 52,290 km
@@ -1901,11 +1916,11 @@ Surface Gravity: 0.5 G
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Binthu</PlanetName>
+    <PlanetName>Cuchulainn</PlanetName>
     <PlanetDescription>
-Binthu has an atmosphere of carbon dioxide, with a permanent haze of toxic chlorine and clouds of sulphur dioxide that periodically drop torrents of acidic rain on the surface. Its crust is mainly composed of sulphur with deposits of calcium.
+Cuchulainn’s atmosphere consists of massive sulphur dioxide clouds, which flood the surface with acid rain. The Garamsythe Ocean, which covers most of the planet, rises an average of five millimeters per year. A brief Alliance survey suggests that the acidity of the water may eventually break down the terrestrial surface altogether.
 
-Like most worlds in the Voyager Cluster, Binthu has only been charted within the last 20 years by Alliance surveyors. It has no known native ecology. Data about the world is surprisingly brief and generic, painting a picture of an unpleasant and uninteresting place.
+The planet glows a sickly green color when viewed from space, due to traces of ionized nitrogen in the upper atmosphere.
 
 Orbital Period: 5 Earth Years
 Radius: 5935 km
@@ -1920,6 +1935,7 @@ Surface Gravity: 0.94 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>87</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1939,6 +1955,7 @@ Day Length: 18.1 Earth Hours
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>88</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2439,16 +2456,17 @@ Surface Gravity: 1.7 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>112</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Ontamalca</PlanetName>
+    <PlanetName>Zeromus</PlanetName>
     <PlanetDescription>
-Ontamalca is a large hydrogen-helium gas giant with traces of chlorine and sulphur in the atmosphere. Its massive gravity well tugs many asteroids from the outer belt inwards, past the orbit of Altaaya and Edolus and eventually settle into the inner belt.
+Zeromus is a large hydrogen-helium gas giant. Its massive gravity well has attracted hundreds of moons and asteroids into its orbit. Most are ripped apart by the forces and become part of an ever-growing ring system. Indigo vapor trails make a faint haze in the atmosphere as the planet’s solid copper core slowly collapses under the pressure.
 
-Ontamalca's orbit is congested with hundreds of captured moons. Most last only a few thousand years before being ejected, dragged down into the atmosphere, or ripped apart by tidal forces and added to the gas giant's immense rings. Attempting to navigate this chaotic environment is hazardous at best. Ships without military grade kinetic barriers are likely to suffer catastrophic impacts.
+The planet is commonly called “the Condemner”, and not even pirates venture too close. Even out of the gravity well’s range, the sheer amount of space debris can obliterate all but the most strongly-shielded ships.
 
 Orbital Period: 39.1 Earth Years
 Radius: 72,492 km
@@ -2460,6 +2478,7 @@ Day Length: 17.7 Earth Hours
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>113</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2484,6 +2503,7 @@ Surface Gravity: 0.7 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>114</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2512,6 +2532,7 @@ Radius: 12 km
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>116</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2524,6 +2545,7 @@ Radius: 12 km
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>117</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2550,6 +2572,7 @@ Surface Gravity: 1.12 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>118</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2690,6 +2713,7 @@ Radius: 127 km
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>125</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2718,23 +2742,22 @@ Radius: 83 km
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>127</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Rayingri</PlanetName>
+    <PlanetName>Vah Rudania</PlanetName>
     <PlanetDescription>
-Rayingri is a small, barren terrestrial world. While it possesses a reasonably temperate climate and number of useful resources, no mining corporation is willing to risk investment.
+Vah Rudania is a hot, barren terrestrial world. Chiseled into the surface are maze-like patterns, with scans indicating a subterranean tunnel system that can be entered from specific points in the maze. The surface is dotted with these labyrinths, though no surface dwelling life appears to be able to survive the intense heat to make use of it.
 
-A rogue planetoid, dubbed Vahtz by the initial salarian surveyor team, entered the system approximately ten thousand years ago, and was trapped in a decaying orbit around Rayingri. It is nearing the end of its slow spiral inwards. Earthquakes and cyclonic windstorms are increasingly common on Rayingri.
-
-Within a few hundred years, the planets will rip each other apart. Some asari travel consortiums have already announced sponsorship of cruises to observe the spectacle.
+The single moon of Vah Rudania, Daruk, has several large craters on it. The few colonial areas on the moon have a planetary defense system to defend against incoming meteors.
 
 Radius: 5171 km
 Day Length: 60.5 Earth Hours
 Atmospheric Pressure: 0.84 Earth Atmospheres
-Surface Temperature: 46 Celsius
+Surface Temperature: 180 Celsius
 Surface Gravity: 0.87
     </PlanetDescription>
     <IsHotOnly>false</IsHotOnly>
@@ -2743,24 +2766,23 @@ Surface Gravity: 0.87
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>128</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Junthor</PlanetName>
+    <PlanetName>Ruta</PlanetName>
     <PlanetDescription>
-Junthor is a large terrestrial planet with a thick atmosphere of carbon dioxide and chlorine. The surface is mainly composed of aluminum with deposits of nickel.
+Ruta is a water planet, with a very cold terrestrial atmosphere. Volcanic activity under the planetary ocean and water currents keep the majority of the surface from freezing. A haven for marine life, Ruta has many unexplored secrets in it’s depths.
 
-Surveyors found the ruins of a technical civilization near the equator – evidently the colony of an ancient spacefaring race. The ruins had subsided to almost nothing – merely wind-hollowed husks of arcologies and other megastructures. In the center of the ruins was a single column whose inscriptions defied translation for several centuries.
-
-When asari linguists finally managed a translation, the elaborate relief carvings said merely, "Walk among these works, and know our greatness." The crude scratches on base of the reverse side said, "Monsters from the id."
+A colonized moon of Ruta, Mipha, is considered one of the leading pioneers in medical science. The moon’s capital research facility, named Mipha’s Grace, contributed significantly to the development of Medi-Gel, in partnership with the Sirta Foundation.
 
 Orbital Period: 0.2 Earth Years
 Radius: 10,480 km
 Day Length: 56.7 Earth Hours
 Atmospheric Pressure: 0.96 Earth Atmospheres
-Surface Temperature: -49 Celsius
+Surface Temperature: -60 Celsius
 Surface gravity: 0.98 G
     </PlanetDescription>
     <IsHotOnly>false</IsHotOnly>
@@ -2769,6 +2791,7 @@ Surface gravity: 0.98 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>129</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2984,6 +3007,7 @@ Surface Gravity: 0.08 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>139</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3000,6 +3024,7 @@ Radius: 42 km
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>140</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3027,6 +3052,7 @@ Surface Gravity: 0.8 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>141</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3048,6 +3074,7 @@ Surface Temperature: 3151 Celsius
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>142</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3074,6 +3101,7 @@ Surface Gravity: 0.61 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>143</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3095,6 +3123,7 @@ Day Length: 16.9 Earth Hours
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>144</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3107,6 +3136,7 @@ Day Length: 16.9 Earth Hours
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>145</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3135,6 +3165,7 @@ Radius: 54 km
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>147</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3611,11 +3642,11 @@ Surface Gravity: 0.99 G
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Apo</PlanetName>
+    <PlanetName>Hashmal</PlanetName>
     <PlanetDescription>
-A craggy world of igneous and basaltic mountains, Apo is wracked by constant geologic activity. While volcanic hotspots are rare, continental plates are constantly piling up new mountains, subducting old ones, or causing slips along transform faults.
+A craggy world of basaltic mountains, Hashmal is wracked by constant geologic activity. Tectonic plates are constantly piling up new mountains or collapsing old ones. The planet’s surface is covered in massive rifts.
 
-Apo has a dense atmosphere composed of nitrogen and carbon monoxide. Due to the constant earthquakes and landslide activity, surface exploration is not advised. The rubble-covered wrecks of a half-dozen expeditionary ships stand in mute testament to the planet’s instability.
+Orbital scans show what appears to be a tower standing on one of the tallest peaks, dubbed the “Pharos of Ridorana” for its luminous surface. Much like the lighthouses of ancient Earth, the foot is littered with the remains of expeditionary ships that ventured too near and crashed against the rocks. The tower itself, however, remains untouched by the chaos.
 
 Orbital Period: 29.7 Earth Years
 Radius: 6843 km
@@ -4296,16 +4327,15 @@ Surface Gravity: 0.82 G
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>203</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Sesmose</PlanetName>
+    <PlanetName>Famfrit</PlanetName>
     <PlanetDescription>
-Sesmose is an ice dwarf world, its surface composed almost entirely of frozen water. Normally a planetoid this small would not rate inclusion on the system’s charts, but Sesmose's unusually large and beautiful ring of ice crystals has made it a popular subject for visual artists.
-
-The ring is the result of a glancing equatorial impact, which left a large "trench," and threw a great deal of melted water into the atmosphere. The rings are a temporary feature that will completely decay in a few thousand years.
+Famfrit is an ice dwarf world, its surface composed almost entirely of frozen water. Solar winds stir the dark cloud cover into a roiling mass. An unusually large and beautiful ring of ice crystals orbits the planet, the result of an asteroid impact that shattered the surface and threw a great deal of melted water into the atmosphere. The rings will completely decay in a few thousand years. Nevertheless, they remain a popular subject in the art forms of several species.
 
 Orbital Period: 272.2 Earth Years
 Radius: 3111 km
@@ -4315,11 +4345,12 @@ Surface Temperature: -188 Celsius
 Surface Gravity: 0.09 G
     </PlanetDescription>
     <IsHotOnly>false</IsHotOnly>
-    <IsColdOnly>false</IsColdOnly>
+    <IsColdOnly>true</IsColdOnly>
     <IsHabitable>false</IsHabitable>
     <PopulationMin>0</PopulationMin>
     <PopulationMax>0</PopulationMax>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>204</RowID>
     <PreventShuffle>false</PreventShuffle>
