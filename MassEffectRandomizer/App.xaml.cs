@@ -24,6 +24,8 @@ namespace MassEffectRandomizer
     {
         internal const string REGISTRY_KEY = @"Software\MassEffectRandomizer";
         internal const string BACKUP_REGISTRY_KEY = @"Software\ALOTAddon"; //Shared. Do not change
+        public static string LogDir;
+        internal static string MainThemeColor = "Violet";
 
         [STAThread]
         public static void Main()
@@ -31,6 +33,8 @@ namespace MassEffectRandomizer
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             string exePath = assembly.Location;
             string exeFolder = Directory.GetParent(exePath).ToString();
+            LogDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MassEffectRandomizer", "logs");
+
 
             string[] args = Environment.GetCommandLineArgs();
             Parsed<Options> parsedCommandLineArgs = null;
@@ -72,9 +76,8 @@ namespace MassEffectRandomizer
             }
             #endregion
 
-            var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             Log.Logger = new LoggerConfiguration()
-      .WriteTo.SizeRollingFile(Path.Combine(appdata, "MassEffectRandomizer", "logs", "applog.txt"),
+      .WriteTo.SizeRollingFile(Path.Combine(App.LogDir, "applog.txt"),
               retainedFileDurationLimit: TimeSpan.FromDays(7),
               fileSizeLimitBytes: 1024 * 1024 * 10) // 10MB
 #if DEBUG

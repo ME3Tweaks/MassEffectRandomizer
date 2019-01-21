@@ -343,6 +343,27 @@ namespace MassEffectRandomizer.Classes
             return path;
         }
 
+        public static Stream GetResourceStream(string assemblyResource)
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            return assembly.GetManifestResourceStream(assemblyResource);
+        }
+
+        public static void OpenWebPage(string link)
+        {
+            try
+            {
+                Log.Information("Opening URL: " + link);
+                System.Diagnostics.Process.Start(link);
+            }
+            catch (Exception other)
+            {
+                Log.Error("Exception opening browser - handled. The error was " + other.Message);
+                System.Windows.Clipboard.SetText(link);
+                //await this.ShowMessageAsync("Unable to open web browser", "Unable to open your default web browser. Open your browser and paste the link (already copied to clipboard) into your URL bar.");
+            }
+        }
+
         // Pinvoke for API function
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]

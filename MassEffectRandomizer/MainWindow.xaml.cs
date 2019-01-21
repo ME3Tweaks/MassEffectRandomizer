@@ -1,4 +1,5 @@
 ﻿using ByteSizeLib;
+using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MassEffectRandomizer.Classes;
@@ -100,7 +101,14 @@ namespace MassEffectRandomizer
             /// </summary>
             public bool IsAsteroidBelt;
 
+            /// <summary>
+            /// Name to assign for randomization. If this is a plot planet, this value is the original planet name
+            /// </summary>
             public string PlanetName;
+            /// <summary>
+            /// Name used for randomizing if it is a plot planet
+            /// </summary>
+            public string PlanetName2;
             public string PlanetDescription;
 
             //Used for temp randomizations
@@ -164,6 +172,8 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
         public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
+        public bool LogUploaderFlyoutOpen { get;  set; }
+        public bool DiagnosticsFlyoutOpen { get;  set; }
 
 
         //MAKO 
@@ -482,12 +492,20 @@ namespace MassEffectRandomizer
 
         private void Logs_Click(object sender, RoutedEventArgs e)
         {
-
+            LogUploaderFlyoutOpen = true;
         }
 
         private void Diagnostics_Click(object sender, RoutedEventArgs e)
         {
-            new DiagnosticsWindow().Show();
+            DiagnosticsFlyoutOpen = true;
         }
+
+        private void InstallingOverlayFlyout_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+
     }
 }

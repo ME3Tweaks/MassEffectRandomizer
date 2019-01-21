@@ -26,6 +26,58 @@
              as the file name -->
         </FontFamily>
     </Window.Resources>
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout x:Name="DiagnosticsFlyout" SnapsToDevicePixels="True" TitleVisibility="Collapsed" IsOpen="{Binding DiagnosticsFlyoutOpen}" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="InstallingOverlayFlyout_MouseDown">
+                <Border x:Name="InstallingOverlayFlyout_Border" Background="#77000000" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Orientation="Vertical" UseLayoutRounding="True" x:Name="InstallingOverlayFlyout_Panel">
+                            <Image x:Name="Installing_Checkmark" Width="84" Height="84" Visibility="Collapsed"/>
+                            <Controls:ProgressRing x:Name="Installing_Spinner"  IsActive="True" Margin="0,0,0,10" Foreground="Snow"/>
+                            <TextBlock x:Name="InstallingOverlay_TopLabel" VerticalAlignment="Stretch" FontSize="25" FontWeight="Light" HorizontalAlignment="Center" TextAlignment="Center" Text="Performing Diagnostics">
+                                <TextBlock.Effect>
+                                    <DropShadowEffect
+                                  ShadowDepth="4"
+                                  Direction="330"
+                                  Color="Black"
+                                  Opacity="1"
+                                 BlurRadius="4"/>
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Controls:Flyout>
+            <Controls:Flyout x:Name="LogUploaderFlyout" SnapsToDevicePixels="True" IsOpenChanged="LogUploaderFlyout_IsOpenChanged" IsOpen="{Binding LogUploaderFlyoutOpen}" TitleVisibility="Collapsed" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="InstallingOverlayFlyout_MouseDown">
+                <Border>
+                    <Border.Background>
+                        <ImageBrush ImageSource="images/me3_bg_800x600.jpg" AlignmentY="Center" Stretch="UniformToFill"/>
+                    </Border.Background>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,150">
+                        <TextBlock VerticalAlignment="Stretch" SnapsToDevicePixels="True" FontSize="25" FontWeight="Light" HorizontalAlignment="Center" TextAlignment="Center">
+                            <fonts:OutlinedTextBlock Text="LOG UPLOADER" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="40" StrokeThickness="4" />
+                        </TextBlock>
+
+                        <TextBlock x:Name="LogSelectorHeader" Width="350" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"  Margin="0,10,0,25">
+                            <fonts:OutlinedTextBlock Text="Select a log file for upload. In most cases, you will want to use the most recent one."  Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="14" StrokeThickness="2" TextWrapping="Wrap" TextAlignment="Center"/>
+                        </TextBlock>
+                        <ComboBox x:Name="Combobox_LogSelector" 
+
+                  SelectionChanged="Combobox_LogSelector_SelectionChanged"/>
+                        <Button x:Name="Button_SelectLog" Margin="5,20,6,0" Content="Upload log" Width="95" ToolTip="Performs a quick game diagnostic with single file tests.&#10;Should not take longer than a minute to complete.&#10;Select this one if you don't know which one to choose." HorizontalAlignment="Center" Style="{StaticResource AccentedSquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" Click="Button_SelectLog_Click"/>
+                    </StackPanel>
+                </Border>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
     <Border x:Name="FirstRunOverlayFlyout_Border" Padding="10">
         <Border.Background>
             <ImageBrush Opacity="0.3" ImageSource="images/backdrop.jpg" AlignmentY="Center" Stretch="UniformToFill" />
@@ -38,19 +90,19 @@
             <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
                 <StackPanel DockPanel.Dock="Bottom">
                     <StackPanel Visibility="{Binding ProgressPanelVisible}">
-                    <TextBlock Name="Textblock_CurrentTask" Text="{Binding CurrentOperationText}" HorizontalAlignment="Center" />
-                    <Border Padding="4,4,4,4" Background="#88caaafc" CornerRadius="3">
-                        <ProgressBar Name="Progressbar_Bottom" Height="15" Value="{Binding CurrentProgressValue}" IsIndeterminate="{Binding ProgressBarIndeterminate}" Minimum="{Binding ProgressBar_Bottom_Min}" Maximum="{Binding ProgressBar_Bottom_Max}" />
-                    </Border>
+                        <TextBlock Name="Textblock_CurrentTask" Text="{Binding CurrentOperationText}" HorizontalAlignment="Center" />
+                        <Border Padding="4,4,4,4" Background="#88caaafc" CornerRadius="3">
+                            <ProgressBar Name="Progressbar_Bottom" Height="15" Value="{Binding CurrentProgressValue}" IsIndeterminate="{Binding ProgressBarIndeterminate}" Minimum="{Binding ProgressBar_Bottom_Min}" Maximum="{Binding ProgressBar_Bottom_Max}" />
+                        </Border>
                     </StackPanel>
                     <DockPanel LastChildFill="False" Margin="0,0,0,0" Visibility="{Binding ButtonPanelVisible}">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                        <Button Click="Logs_Click">
-                            <fonts:OutlinedTextBlock Text="Logs" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
-                        </Button>
-                        <Button Click="Diagnostics_Click" Margin="5,0,0,0">
-                            <fonts:OutlinedTextBlock Text="Diagnostics" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
-                        </Button>
+                            <Button Click="Logs_Click">
+                                <fonts:OutlinedTextBlock Text="Logs" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
+                            </Button>
+                            <Button Click="Diagnostics_Click" Margin="5,0,0,0">
+                                <fonts:OutlinedTextBlock Text="Diagnostics" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
+                            </Button>
                         </StackPanel>
                         <Button DockPanel.Dock="Right" Click="RandomizeButton_Click" Padding="20,0,20,0">
                             <fonts:OutlinedTextBlock Text="Randomize" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
@@ -175,7 +227,7 @@
                                         <CheckBox Content="Randomize squad armor/amp" ToolTip="Randomizes the starting armor and amp for the squad" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_INVENTORY}" />
                                     </StackPanel>
                                 </StackPanel>
-                                
+
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Galaxy Map" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">

@@ -390,6 +390,7 @@ namespace MassEffectRandomizer.Classes
                                            select new RandomizedPlanetInfo
                                            {
                                                PlanetName = (string)e.Element("PlanetName"),
+                                               PlanetName2 = (string)e.Element("PlanetName2"),
                                                PlanetDescription = (string)e.Element("PlanetDescription"),
                                                IsMSV = (bool)e.Element("IsMSV"),
                                                IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
@@ -483,6 +484,10 @@ namespace MassEffectRandomizer.Classes
                     }
 
                     string planetName = rpi.PlanetName;
+                    if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION_PLOTPLANET && rpi.PlanetName2 != null)
+                    {
+                        planetName = rpi.PlanetName2;
+                    }
                     //if (rename plot missions) planetName = rpi.PlanetName2
                     var description = rpi.PlanetDescription;
                     if (description != null)

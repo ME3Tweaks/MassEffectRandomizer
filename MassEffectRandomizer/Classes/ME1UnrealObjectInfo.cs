@@ -23,12 +23,7 @@ namespace MassEffectRandomizer.Classes
                 return;
             }
 
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var resourceName = "MassEffectRandomizer.staticfiles.ME1ObjectInfo.json";
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-
-            {
+            using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles.ME1ObjectInfo.json")) {
                 TextReader tr = new StreamReader(stream);
                 string raw = tr.ReadToEnd();
                 var blob = JsonConvert.DeserializeAnonymousType(raw, new { Classes, Structs, Enums });
