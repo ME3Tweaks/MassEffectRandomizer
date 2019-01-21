@@ -43,21 +43,26 @@
                         <ProgressBar Name="Progressbar_Bottom" Height="15" Value="{Binding CurrentProgressValue}" IsIndeterminate="{Binding ProgressBarIndeterminate}" Minimum="{Binding ProgressBar_Bottom_Min}" Maximum="{Binding ProgressBar_Bottom_Max}" />
                     </Border>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Visibility="{Binding ButtonPanelVisible}">
+                    <DockPanel LastChildFill="False" Margin="0,0,0,0" Visibility="{Binding ButtonPanelVisible}">
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                         <Button Click="Logs_Click">
                             <fonts:OutlinedTextBlock Text="Logs" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
                         </Button>
-                        <Button Click="RandomizeButton_Click" Padding="20,0,20,0">
+                        <Button Click="Diagnostics_Click" Margin="5,0,0,0">
+                            <fonts:OutlinedTextBlock Text="Diagnostics" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
+                        </Button>
+                        </StackPanel>
+                        <Button DockPanel.Dock="Right" Click="RandomizeButton_Click" Padding="20,0,20,0">
                             <fonts:OutlinedTextBlock Text="Randomize" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
                         </Button>
-                    </StackPanel>
+                    </DockPanel>
                 </StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
                         <ColumnDefinition Width="50*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Vertical" Grid.Column="0">
+                    <StackPanel Orientation="Vertical" Grid.Column="0" Margin="0,0,0,5">
                         <RadioButton Content="Select what to randomize" Margin="4" GroupName="ERandomizationMode_SelectAny" ToolTip="Pick and choose what you want to randomize" IsChecked="{Binding Path=SelectedRandomizeMode, Mode=TwoWay,                                   Converter={StaticResource enumConverter},                                  ConverterParameter=ERandomizationMode_SelectAny}" />
                         <RadioButton Content="Randomize a common set of stuff" Margin="4" GroupName="ERandomizationMode_Common" ToolTip="Randomize the game in a mostly safe way" IsChecked="{Binding Path=SelectedRandomizeMode, Mode=TwoWay,                                   Converter={StaticResource enumConverter},                                  ConverterParameter=ERandomizationMode_Common}" />
                         <RadioButton Content="Give me a screed. I want to experience hell." Margin="4" GroupName="ERAndomizationMode_Screed" ToolTip="You want to experience hell itself with full randomization" IsChecked="{Binding Path=SelectedRandomizeMode, Mode=TwoWay,                                   Converter={StaticResource enumConverter},                                  ConverterParameter=ERAndomizationMode_Screed}" />
@@ -86,20 +91,26 @@
                                     <fonts:OutlinedTextBlock Text="Weapons" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="Randomize initial 4 starting weapons" Margin="3" ToolTip="Randomizes the starting guns you get.&#xA;Due to how the game is coded, you will be forced to randomly get one of every weapon - otherwise the game will crash on the inventory screen." IsChecked="{Binding RANDSETTING_WEAPONS_STARTINGEQUIPMENT}" />
-                                        <CheckBox Content="Randomize weapon stats" Margin="3" IsChecked="{Binding RANDSETTING_WEAPONS_EFFECTLEVELS}"/>
+                                        <CheckBox Content="Randomize weapon stats" Margin="3" IsChecked="{Binding RANDSETTING_WEAPONS_EFFECTLEVELS}" IsEnabled="False" ToolTip="This feature is not yet complete and cannot be used at this time"/>
                                     </StackPanel>
                                 </StackPanel>
-                                <StackPanel>
+                                <!--<StackPanel>
                                     <fonts:OutlinedTextBlock Text="Enemies" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="????" Margin="3" />
+                                    </StackPanel>
+                                </StackPanel>-->
+                                <StackPanel>
+                                    <fonts:OutlinedTextBlock Text="Movement" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
+                                    <StackPanel Margin="10,0,0,0">
+                                        <CheckBox Content="Randomize movement speeds" Margin="3" ToolTip="Randomizes movement speeds of all characters" IsChecked="{Binding RANDSETTING_MOVEMENT_CREATURESPEED}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Miscellaneous" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
-                                        <CheckBox Content="Randomize music*" ToolTip="Randomize music used in gameplay" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MUSIC}" />
-                                        <CheckBox Content="Randomize GUI music*" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
+                                        <CheckBox Content="Randomize music" ToolTip="Randomize music used in gameplay" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MUSIC}" />
+                                        <CheckBox Content="Randomize GUI music" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
                                         <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}" />
                                         <CheckBox Name="Checkbox_RandomizeBioMorphFaceMaps" Content="Randomize BioMorphFaces in maps" ToolTip="Randomize humanoid faces through the headmorph" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPFACES}" />
                                         <StackPanel>
@@ -130,7 +141,7 @@
                                                 </Style>
                                             </StackPanel.Style>
                                         </StackPanel>
-                                        <CheckBox Content="Randomly randomize pawn sizes in maps" ToolTip="Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
+                                        <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes and will break ragdoll physics and other unknown stuff&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
 
                                     </StackPanel>
                                 </StackPanel>
@@ -159,24 +170,34 @@
                                                 </Style>
                                             </CheckBox.Style>
                                         </CheckBox>-->
-                                        <CheckBox Content="Randomize talent and power stats" ToolTip="Randomizes the stats of talents and powers" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_STATS}" />
-                                        <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles the look of each squadmate" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
+                                        <CheckBox Content="Randomize talent and power stats" ToolTip="This feature is not yet complete and cannot be used at this time&#xA;Randomizes the stats of talents and powers" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_STATS}"  IsEnabled="False" />
+                                        <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles squadmates" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
                                         <CheckBox Content="Randomize squad armor/amp" ToolTip="Randomizes the starting armor and amp for the squad" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_INVENTORY}" />
                                     </StackPanel>
                                 </StackPanel>
-                                <StackPanel>
-                                    <fonts:OutlinedTextBlock Text="Movement" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
-                                    <StackPanel Margin="10,0,0,0">
-                                        <CheckBox Content="Randomize movement speeds" Margin="3" IsChecked="{Binding RANDSETTING_MOVEMENT_CREATURESPEED}" />
-                                    </StackPanel>
-                                </StackPanel>
+                                
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Galaxy Map" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="Randomize clusters" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_CLUSTERS}" ToolTip="Randomizes the location of each cluster on the main galaxy map"/>
                                         <CheckBox Content="Randomize systems" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_SYSTEMS}" ToolTip="Randomizes the location of each system in a cluster"/>
                                         <CheckBox Content="Randomize planet colors" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETCOLOR}" ToolTip="Randomizes the colors used for the 3 layers of each planet"/>
-                                        <CheckBox Content="Randomize planet names and descriptions*" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION}" ToolTip="Randomizes the name and descriptions of planets, using new ones written by the ME3Tweaks team.&#xA;Leaves some key and well known ones same-named" />
+                                        <CheckBox Name="RandomizePlanetNames_CheckBox" Content="Randomize planet names and descriptions*" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION}" ToolTip="Randomizes the name and descriptions of planets, using new ones written by the ME3Tweaks team.&#xA;Leaves some key and well known ones same-named" />
+                                        <CheckBox Content="Include plot planet names" Margin="25,0,0,0" ToolTip="Enables randomizing plot planet names like Virmire, Noveria, etc" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION_PLOTPLANET}">
+                                            <CheckBox.Style>
+                                                <Style TargetType="CheckBox" BasedOn="{StaticResource MetroCheckBox}">
+                                                    <Setter Property="Opacity" Value="0.5"></Setter>
+                                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsChecked,ElementName=RandomizePlanetNames_CheckBox}" Value="True">
+                                                            <Setter Property="IsEnabled" Value="True"/>
+                                                            <Setter Property="Opacity" Value="1.0"></Setter>
+
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </CheckBox.Style>
+                                        </CheckBox>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

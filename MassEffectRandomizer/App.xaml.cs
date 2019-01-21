@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MassEffectRandomizer
 {
@@ -34,6 +35,8 @@ namespace MassEffectRandomizer
             string[] args = Environment.GetCommandLineArgs();
             Parsed<Options> parsedCommandLineArgs = null;
             string updateDestinationPath = null;
+
+            #region Update boot
             if (args.Length > 1)
             {
                 var result = Parser.Default.ParseArguments<Options>(args);
@@ -43,7 +46,7 @@ namespace MassEffectRandomizer
                     parsedCommandLineArgs = (Parsed<Options>)result;
                     if (parsedCommandLineArgs.Value.UpdateDest != null)
                     {
-                        if (Directory.Exists(parsedCommandLineArgs.Value.UpdateDest))
+                        if (File.Exists(parsedCommandLineArgs.Value.UpdateDest))
                         {
                             updateDestinationPath = parsedCommandLineArgs.Value.UpdateDest;
                         }
@@ -67,7 +70,7 @@ namespace MassEffectRandomizer
                     }
                 }
             }
-
+            #endregion
 
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             Log.Logger = new LoggerConfiguration()
@@ -84,6 +87,7 @@ namespace MassEffectRandomizer
             Log.Information("Mass Effect Randomizer " + version);
             Log.Information("Application boot: " + DateTime.UtcNow.ToString());
 
+            #region Update mode boot
             if (updateDestinationPath != null)
             {
                 Log.Information(" >> In update mode. Update destination: " + updateDestinationPath);
@@ -102,7 +106,7 @@ namespace MassEffectRandomizer
                     catch (Exception e)
                     {
                         Log.Error("Error applying update: " + e.Message);
-                        if (i < 5)
+                        if (i < 8)
                         {
                             Thread.Sleep(1000);
                             Log.Warning("Attempt #" + (i + 1));
@@ -116,16 +120,16 @@ namespace MassEffectRandomizer
                     }
                 }
                 Log.Information("Rebooting into normal mode to complete update");
-                ProcessStartInfo psi = new ProcessStartInfo(updateDestinationPath + System.AppDomain.CurrentDomain.FriendlyName);
+                ProcessStartInfo psi = new ProcessStartInfo(updateDestinationPath);
                 psi.WorkingDirectory = updateDestinationPath;
                 psi.Arguments = "--completing-update";
                 Process.Start(psi);
                 Environment.Exit(0);
                 Current.Shutdown();
             }
-
-
-
+            #endregion
+            System.Windows.Controls.ToolTipService.ShowOnDisabledProperty.OverrideMetadata(typeof(Control),
+           new FrameworkPropertyMetadata(true));
 
             var application = new App();
             application.InitializeComponent();

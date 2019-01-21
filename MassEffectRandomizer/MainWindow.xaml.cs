@@ -10,21 +10,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MassEffectRandomizer
 {
@@ -135,6 +128,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_GALAXYMAP_SYSTEMS { get; set; }
         public bool RANDSETTING_GALAXYMAP_CLUSTERS { get; set; }
         public bool RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION { get; set; }
+        public bool RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION_PLOTPLANET { get; set; }
 
 
         //Weapons
@@ -189,10 +183,11 @@ namespace MassEffectRandomizer
             ButtonPanelVisible = Visibility.Collapsed;
 
             InitializeComponent();
-
             SeedTextBox.Text = preseed.ToString();
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
+            Title += " "+version;
+
             DataContext = this;
             SelectedRandomizeMode = RandomizationMode.ERandomizationMode_SelectAny;
             PerformUpdateCheck();
@@ -430,6 +425,12 @@ namespace MassEffectRandomizer
             ButtonPanelVisible = Visibility.Visible;
         }
 
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            // close all active threads
+            Environment.Exit(0);
+        }
+
         private void UpdateDownloadCompleted(object sender, AsyncCompletedEventArgs e)
         {
             Log.Information("Update downloaded - rebooting to new downloaded file, in update mode");
@@ -441,7 +442,17 @@ namespace MassEffectRandomizer
 
             string args = "--update-dest-path \"" + exePath + "\"";
             Utilities.runProcess(exe, args, true);
-            Environment.Exit(0);
+            while (true)
+            {
+                try
+                {
+                    Environment.Exit(0);
+                }
+                catch (TaskCanceledException)
+                {
+                    //something to do with how shutting down works.
+                }
+            }
         }
 
         private void Button_BackupRestore_Click(object sender, RoutedEventArgs e)
@@ -472,6 +483,11 @@ namespace MassEffectRandomizer
         private void Logs_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Diagnostics_Click(object sender, RoutedEventArgs e)
+        {
+            new DiagnosticsWindow().Show();
         }
     }
 }
