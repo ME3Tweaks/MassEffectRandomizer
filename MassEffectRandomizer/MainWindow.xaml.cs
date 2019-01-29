@@ -164,7 +164,7 @@ namespace MassEffectRandomizer
 
         //MOVEMENT
         public bool RANDSETTING_MOVEMENT_CREATURESPEED { get; set; }
-
+        public bool RANDSETTING_MOVEMENT_MAKO { get; set; }
         //Misc
         public bool RANDSETTING_MISC_MUSIC { get; set; }
         public bool RANDSETTING_MISC_GUIMUSIC { get; set; }
@@ -172,8 +172,9 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
         public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
-        public bool LogUploaderFlyoutOpen { get;  set; }
-        public bool DiagnosticsFlyoutOpen { get;  set; }
+        public bool LogUploaderFlyoutOpen { get; set; }
+        public bool DiagnosticsFlyoutOpen { get; set; }
+        public bool RANDSETTING_MISC_GAMEOVERTEXT { get; set; }
 
 
         //MAKO 
@@ -196,7 +197,7 @@ namespace MassEffectRandomizer
             SeedTextBox.Text = preseed.ToString();
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
-            Title += " "+version;
+            Title += " " + version;
 
             DataContext = this;
             SelectedRandomizeMode = RandomizationMode.ERandomizationMode_SelectAny;
@@ -505,7 +506,6 @@ namespace MassEffectRandomizer
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
-
 
     }
 }

@@ -12,7 +12,7 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("ME1Package | {FileName}")]
     public class ME1Package : MEPackage
     {
-        public static readonly uint magicnum = 0x9E2A83C1;
+        const uint packageTag = 0x9E2A83C1;
         public override int NameCount { get { return BitConverter.ToInt32(header, nameSize + 20); } protected set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 20, sizeof(int)); } }
         int NameOffset { get { return BitConverter.ToInt32(header, nameSize + 24); } set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 24, sizeof(int)); } }
         public override int ExportCount { get { return BitConverter.ToInt32(header, nameSize + 28); } protected set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 28, sizeof(int)); } }
@@ -64,6 +64,7 @@ namespace MassEffectRandomizer.Classes
 
         public class PropertyInfo
         {
+            public bool transient;
             public PropertyType type;
             public string reference;
         }
@@ -101,6 +102,8 @@ namespace MassEffectRandomizer.Classes
 
         public ME1Package(string path)
         {
+            //Debug.WriteLine(" >> Opening me1 package " + path);
+
             FileName = Path.GetFullPath(path);
             MemoryStream tempStream = new MemoryStream();
             if (!File.Exists(FileName))
@@ -120,12 +123,14 @@ namespace MassEffectRandomizer.Classes
             tempStream.Seek(64 + tempNameSize, SeekOrigin.Begin);
             int tempGenerations = tempStream.ReadValueS32();
             tempStream.Seek(36 + tempGenerations * 12, SeekOrigin.Current);
-            int tempPos = (int)tempStream.Position + 4;
+
+            tempStream.ReadValueU32(); //Compression Type. We read this from header[] in MEPackage.cs intead when accessing value
+            int tempPos = (int)tempStream.Position;
             tempStream.Seek(0, SeekOrigin.Begin);
             header = tempStream.ReadBytes(tempPos);
             tempStream.Seek(0, SeekOrigin.Begin);
 
-            if (magic != magicnum && magic.Swap() != magicnum)
+            if (magic != packageTag)
             {
                 throw new FormatException("This is not an ME1 Package file. The magic number is incorrect.");
             }
@@ -231,7 +236,7 @@ namespace MassEffectRandomizer.Classes
             }
             else
             {
-                throw new Exception("Cannot save ME1 packages with a SeekFreeShaderCache. Please make an issue on github: https://github.com/ME3Explorer/ME3Explorer/issues");
+                throw new Exception("Cannot save ME1 packages with a SeekFreeShaderCache. Please make an issue on github: https://github.com/Mgamerz/ME3Explorer/issues");
             }
         }
 

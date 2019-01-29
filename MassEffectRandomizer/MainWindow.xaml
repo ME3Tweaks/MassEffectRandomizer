@@ -72,7 +72,10 @@
                         <ComboBox x:Name="Combobox_LogSelector" 
 
                   SelectionChanged="Combobox_LogSelector_SelectionChanged"/>
-                        <Button x:Name="Button_SelectLog" Margin="5,20,6,0" Content="Upload log" Width="95" ToolTip="Performs a quick game diagnostic with single file tests.&#10;Should not take longer than a minute to complete.&#10;Select this one if you don't know which one to choose." HorizontalAlignment="Center" Style="{StaticResource AccentedSquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" Click="Button_SelectLog_Click"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Margin="5,20,6,0" Content="Cancel" Width="95" HorizontalAlignment="Center" Style="{StaticResource AccentedSquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" Click="Button_CancelLog_Click"/>
+                            <Button Margin="5,20,6,0" Content="Upload log" Width="95" ToolTip="Uploads log to log parsing server" HorizontalAlignment="Center" Style="{StaticResource AccentedSquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" Click="Button_SelectLog_Click"/>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </Controls:Flyout>
@@ -156,6 +159,7 @@
                                     <fonts:OutlinedTextBlock Text="Movement" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="Randomize movement speeds" Margin="3" ToolTip="Randomizes movement speeds of all characters" IsChecked="{Binding RANDSETTING_MOVEMENT_CREATURESPEED}" />
+                                        <CheckBox Content="Randomize Mako" Margin="3" ToolTip="Randomizes various parts of the Mako" IsChecked="{Binding RANDSETTING_MOVEMENT_MAKO}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel>
@@ -164,6 +168,7 @@
                                         <CheckBox Content="Randomize music" ToolTip="Randomize music used in gameplay" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MUSIC}" />
                                         <CheckBox Content="Randomize GUI music" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
                                         <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}" />
+                                        <CheckBox Content="Randomize game over text" ToolTip="Randomize the game over title text" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GAMEOVERTEXT}" />
                                         <CheckBox Name="Checkbox_RandomizeBioMorphFaceMaps" Content="Randomize BioMorphFaces in maps" ToolTip="Randomize humanoid faces through the headmorph" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPFACES}" />
                                         <StackPanel>
                                             <StackPanel Orientation="Horizontal" Margin="45,0,0,0">

@@ -71,6 +71,11 @@ namespace MassEffectRandomizer
             }
         }
 
+        private void Button_CancelLog_Click(object sender, RoutedEventArgs e)
+        {
+            LogUploaderFlyoutOpen = false;
+        }
+
         private async Task<string> UploadLog(bool isPreviousCrashLog, string log, bool openPageWhenFinished = true)
         {
             Log.Information("Preparing to upload randomizer log");

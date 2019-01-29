@@ -7,16 +7,15 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Collections;
 using System.Diagnostics;
-using MassEffectRandomizer.Classes;
 using static MassEffectRandomizer.Classes.ME1Package;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace MassEffectRandomizer.Classes
 {
     public class PropertyCollection : ObservableCollection<UProperty>
     {
-        static Dictionary<string, PropertyCollection> defaultStructValues = new Dictionary<string, PropertyCollection>();
+        static Dictionary<string, PropertyCollection> defaultStructValuesME3 = new Dictionary<string, PropertyCollection>();
+        static Dictionary<string, PropertyCollection> defaultStructValuesME2 = new Dictionary<string, PropertyCollection>();
+        static Dictionary<string, PropertyCollection> defaultStructValuesME1 = new Dictionary<string, PropertyCollection>();
 
         public int endOffset;
 
@@ -29,7 +28,7 @@ namespace MassEffectRandomizer.Classes
         {
             foreach (var prop in this)
             {
-                if (prop.Name.Name == name)
+                if (prop.Name != null && prop.Name.Name.ToLower() == name.ToLower())
                 {
                     return prop as T;
                 }
@@ -54,7 +53,6 @@ namespace MassEffectRandomizer.Classes
         {
             foreach (var prop in this)
             {
-                //Debug.WriteLine("Writing property " + prop.Name + " at 0x" + stream.Position.ToString("X4"));
                 prop.WriteTo(stream, pcc);
             }
             if (requireNoneAtEnd && (Count == 0 || !(this.Last() is NoneProperty)))
@@ -63,196 +61,197 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        /// <summary>
-        /// Returns the bytes that will be inserted to add a Vector Struct property
-        /// </summary>
-        /// <param name="pcc">Package to add/look for names</param>
-        /// <returns>byte list to insert into data stream</returns>
-        public static List<byte> GetBytesForNewVectorProperty(ME1Package pcc, string propertyName)
-        {
-            MemoryStream ms = new MemoryStream();
-            var propNameIdx = pcc.FindNameOrAdd(propertyName);
-            ms.Write(BitConverter.GetBytes(propNameIdx), 0, 4);
-            ms.Write(BitConverter.GetBytes(0), 0, 4);
-
-            var structNameIdx = pcc.FindNameOrAdd("StructProperty");
-            ms.Write(BitConverter.GetBytes(structNameIdx), 0, 4);
-            ms.Write(BitConverter.GetBytes(0), 0, 4);
-
-            ms.Write(BitConverter.GetBytes(12), 0, 4); //struct size
-            ms.Write(BitConverter.GetBytes(0), 0, 4);
-
-            var vectorNameIdx = pcc.FindNameOrAdd("Vector");
-            ms.Write(BitConverter.GetBytes(vectorNameIdx), 0, 4);
-            ms.Write(BitConverter.GetBytes(0), 0, 4);
-
-            ms.Write(BitConverter.GetBytes((float)1), 0, 4); //1
-            ms.Write(BitConverter.GetBytes((float)1), 0, 4); //1
-            ms.Write(BitConverter.GetBytes((float)1), 0, 4); //1
-
-            return ms.ToArray().ToList();
-        }
-
-        public static PropertyCollection ReadProps(ME1Package pcc, MemoryStream stream, string typeName, bool includeNoneProperty = false, bool requireNoneAtEnd = true, string exportName = null)
+        public static PropertyCollection ReadProps(ME1Package pcc, MemoryStream stream, string typeName, bool includeNoneProperty = false, bool requireNoneAtEnd = true, IEntry entry = null)
         {
             //Uncomment this for debugging property engine
             /*DebugOutput.StartDebugger("Property Engine ReadProps() for "+typeName);
             if (pcc.FileName == "C:\\Users\\Dev\\Downloads\\ME2_Placeables.upk")
             {
-              //Debugger.Break();
+              Debugger.Break();
             }*/
-            //Debug.WriteLine("Reading PROPS==========");
 
             PropertyCollection props = new PropertyCollection();
             long startPosition = stream.Position;
-            while (stream.Position + 8 <= stream.Length)
+            try
             {
-                long propertyStartPosition = stream.Position;
-                int nameIdx = stream.ReadValueS32();
-                if (!pcc.isName(nameIdx))
+                while (stream.Position + 8 <= stream.Length)
                 {
-                    stream.Seek(-4, SeekOrigin.Current);
-                    break;
-                }
-                string name = pcc.getNameEntry(nameIdx);
-                //Debug.WriteLine("Reading property " + name + " at 0x" + propertyStartPosition.ToString("X4"));
-                if (name == "None")
-                {
-                    props.Add(new NoneProperty(stream, "None") { StartOffset = propertyStartPosition });
-                    stream.Seek(4, SeekOrigin.Current);
-                    break;
-                }
-                NameReference nameRef = new NameReference { Name = name, Number = stream.ReadValueS32() };
-                int typeIdx = stream.ReadValueS32();
-                stream.Seek(4, SeekOrigin.Current);
-                int size = stream.ReadValueS32();
-                if (!pcc.isName(typeIdx) || size < 0 || size > stream.Length - stream.Position)
-                {
-                    stream.Seek(-16, SeekOrigin.Current);
-                    break;
-                }
-                stream.Seek(4, SeekOrigin.Current);
-                PropertyType type;
-                string namev = pcc.getNameEntry(typeIdx);
-                if (Enum.IsDefined(typeof(PropertyType), namev))
-                {
-                    Enum.TryParse(namev, out type);
-                }
-                else
-                {
-                    type = PropertyType.Unknown;
-                }
-                switch (type)
-                {
-                    case PropertyType.StructProperty:
-                        string structType = pcc.getNameEntry(stream.ReadValueS32());
+                    long propertyStartPosition = stream.Position;
+                    int nameIdx = stream.ReadValueS32();
+                    if (!pcc.isName(nameIdx))
+                    {
+                        stream.Seek(-4, SeekOrigin.Current);
+                        break;
+                    }
+                    string name = pcc.getNameEntry(nameIdx);
+                    if (name == "None")
+                    {
+                        props.Add(new NoneProperty(stream, "None") { StartOffset = propertyStartPosition, ValueOffset = propertyStartPosition });
                         stream.Seek(4, SeekOrigin.Current);
-                        long valOffset = stream.Position;
-                        if (ME1UnrealObjectInfo.isImmutable(structType))
-                        {
-                            PropertyCollection structProps = ReadSpecialStruct(pcc, stream, structType, size);
-                            props.Add(new StructProperty(structType, structProps, nameRef, true) { StartOffset = valOffset, ValueOffset = valOffset });
-                        }
-                        else
-                        {
-                            PropertyCollection structProps = ReadProps(pcc, stream, structType, includeNoneProperty);
-                            props.Add(new StructProperty(structType, structProps, nameRef) { StartOffset = propertyStartPosition, ValueOffset = valOffset });
-                        }
                         break;
-                    case PropertyType.IntProperty:
-                        IntProperty ip = new IntProperty(stream, nameRef);
-                        ip.StartOffset = propertyStartPosition;
-                        props.Add(ip);
+                    }
+                    NameReference nameRef = new NameReference { Name = name, Number = stream.ReadValueS32() };
+                    int typeIdx = stream.ReadValueS32();
+                    stream.Seek(4, SeekOrigin.Current);
+                    int size = stream.ReadValueS32();
+                    if (!pcc.isName(typeIdx) || size < 0 || size > stream.Length - stream.Position)
+                    {
+                        stream.Seek(-16, SeekOrigin.Current);
                         break;
-                    case PropertyType.FloatProperty:
-                        props.Add(new FloatProperty(stream, nameRef) { StartOffset = propertyStartPosition });
-                        break;
-                    case PropertyType.ObjectProperty:
-                        props.Add(new ObjectProperty(stream, nameRef) { StartOffset = propertyStartPosition });
-                        break;
-                    case PropertyType.NameProperty:
-                        props.Add(new NameProperty(stream, pcc, nameRef) { StartOffset = propertyStartPosition });
-                        break;
-                    case PropertyType.BoolProperty:
-                        props.Add(new BoolProperty(stream, pcc.Game, nameRef) { StartOffset = propertyStartPosition });
-                        break;
-                    case PropertyType.BioMask4Property:
-                        props.Add(new BioMask4Property(stream, nameRef) { StartOffset = propertyStartPosition });
-                        break;
-                    case PropertyType.ByteProperty:
-                        {
-                            if (size != 1)
+                    }
+                    stream.Seek(4, SeekOrigin.Current);
+                    PropertyType type;
+                    string namev = pcc.getNameEntry(typeIdx);
+                    //Debug.WriteLine("Reading " + name + " (" + namev + ") at 0x" + (stream.Position - 24).ToString("X8"));
+                    if (Enum.IsDefined(typeof(PropertyType), namev))
+                    {
+                        Enum.TryParse(namev, out type);
+                    }
+                    else
+                    {
+                        type = PropertyType.Unknown;
+                    }
+                    switch (type)
+                    {
+                        case PropertyType.StructProperty:
+                            string structType = pcc.getNameEntry(stream.ReadValueS32());
+                            stream.Seek(4, SeekOrigin.Current);
+                            long valOffset = stream.Position;
+                            if (ME1UnrealObjectInfo.isImmutableStruct(structType))
                             {
-                                NameReference enumType = new NameReference();
-                                if (pcc.Game == MEGame.ME3)
-                                {
-                                    enumType.Name = pcc.getNameEntry(stream.ReadValueS32());
-                                    enumType.Number = stream.ReadValueS32();
-                                }
-                                else
-                                {
-                                    //Debug.WriteLine("Enum reading ME1/ME2 at 0x" + propertyStartPosition.ToString("X6"));
-                                    enumType.Name = ME1UnrealObjectInfo.getEnumTypefromProp(typeName, name);
-                                }
-                                try
-                                {
-                                    props.Add(new EnumProperty(stream, pcc, enumType, nameRef) { StartOffset = propertyStartPosition });
-                                }
-                                catch (Exception e)
-                                {
-                                    //ERROR
-                                    props.Add(new UnknownProperty("Error reading enum property! Name: " + nameRef.Name));
-                                }
+                                PropertyCollection structProps = ReadImmutableStruct(pcc, stream, structType, size, entry);
+                                props.Add(new StructProperty(structType, structProps, nameRef, true) { StartOffset = propertyStartPosition, ValueOffset = valOffset });
                             }
                             else
                             {
-                                if (pcc.Game == MEGame.ME3)
-                                {
-                                    stream.Seek(8, SeekOrigin.Current);
-                                }
-                                props.Add(new ByteProperty(stream, nameRef) { StartOffset = propertyStartPosition });
+                                PropertyCollection structProps = ReadProps(pcc, stream, structType, includeNoneProperty, entry: entry);
+                                props.Add(new StructProperty(structType, structProps, nameRef) { StartOffset = propertyStartPosition, ValueOffset = valOffset });
                             }
-                        }
-                        break;
-                    case PropertyType.ArrayProperty:
-                        {
-                            UProperty ap = ReadArrayProperty(stream, pcc, typeName, nameRef, IncludeNoneProperties: includeNoneProperty);
-                            ap.StartOffset = propertyStartPosition;
-                            props.Add(ap);
-                        }
-                        break;
-                    case PropertyType.StrProperty:
-                        {
-                            props.Add(new StrProperty(stream, nameRef) { StartOffset = propertyStartPosition });
-                        }
-                        break;
-                    case PropertyType.StringRefProperty:
-                        props.Add(new StringRefProperty(stream, nameRef) { StartOffset = propertyStartPosition });
-                        break;
-                    case PropertyType.DelegateProperty:
-                        props.Add(new DelegateProperty(stream, pcc, nameRef) { StartOffset = propertyStartPosition });
-                        break;
-                    case PropertyType.Unknown:
-                        {
-                            props.Add(new UnknownProperty(stream, size, pcc.getNameEntry(typeIdx), nameRef) { StartOffset = propertyStartPosition });
-                        }
-                        break;
-                    case PropertyType.None:
-                        if (includeNoneProperty)
-                        {
-                            props.Add(new NoneProperty(stream, "None") { StartOffset = propertyStartPosition });
-                        }
-                        break;
+                            break;
+                        case PropertyType.IntProperty:
+                            IntProperty ip = new IntProperty(stream, nameRef);
+                            ip.StartOffset = propertyStartPosition;
+                            props.Add(ip);
+                            break;
+                        case PropertyType.FloatProperty:
+                            props.Add(new FloatProperty(stream, nameRef) { StartOffset = propertyStartPosition });
+                            break;
+                        case PropertyType.ObjectProperty:
+                            props.Add(new ObjectProperty(stream, nameRef) { StartOffset = propertyStartPosition });
+                            break;
+                        case PropertyType.NameProperty:
+                            props.Add(new NameProperty(stream, pcc, nameRef) { StartOffset = propertyStartPosition });
+                            break;
+                        case PropertyType.BoolProperty:
+                            props.Add(new BoolProperty(stream, pcc.Game, nameRef) { StartOffset = propertyStartPosition });
+                            break;
+                        case PropertyType.BioMask4Property:
+                            props.Add(new BioMask4Property(stream, nameRef) { StartOffset = propertyStartPosition });
+                            break;
+                        case PropertyType.ByteProperty:
+                            {
+                                if (size != 1)
+                                {
+                                    NameReference enumType = new NameReference();
+                                    if (pcc.Game == MEGame.ME3)
+                                    {
+                                        enumType.Name = pcc.getNameEntry(stream.ReadValueS32());
+                                        enumType.Number = stream.ReadValueS32();
+                                    }
+                                    else
+                                    {
+                                        //Debug.WriteLine("Reading enum for ME1/ME2 at 0x" + propertyStartPosition.ToString("X6"));
+
+                                        //Attempt to get info without lookup first
+                                        var enumname = ME1UnrealObjectInfo.getEnumTypefromProp(typeName, name);
+                                        ClassInfo classInfo = null;
+                                        if (enumname == null)
+                                        {
+                                            if (entry != null)
+                                            {
+                                                classInfo = ME1UnrealObjectInfo.generateClassInfo((IExportEntry)entry);
+                                            }
+                                        }
+
+                                        //Use DB info or attempt lookup
+                                        enumType.Name = enumname ?? ME1UnrealObjectInfo.getEnumTypefromProp(typeName, name, nonVanillaClassInfo: classInfo);
+                                    }
+                                    try
+                                    {
+                                        props.Add(new EnumProperty(stream, pcc, enumType, nameRef) { StartOffset = propertyStartPosition });
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        //ERROR
+                                        //Debugger.Break();
+                                        var unknownEnum = new UnknownProperty(stream, 0, enumType, nameRef) { StartOffset = propertyStartPosition };
+                                        props.Add(unknownEnum);
+                                    }
+                                }
+                                else
+                                {
+                                    if (pcc.Game == MEGame.ME3)
+                                    {
+                                        stream.Seek(8, SeekOrigin.Current);
+                                    }
+                                    props.Add(new ByteProperty(stream, nameRef) { StartOffset = propertyStartPosition });
+                                }
+                            }
+                            break;
+                        case PropertyType.ArrayProperty:
+                            {
+                                //Debug.WriteLine("Reading array properties, starting at 0x" + stream.Position.ToString("X5"));
+                                UProperty ap = ReadArrayProperty(stream, pcc, typeName, nameRef, IncludeNoneProperties: includeNoneProperty, parsingEntry: entry);
+                                ap.StartOffset = propertyStartPosition;
+                                props.Add(ap);
+                            }
+                            break;
+                        case PropertyType.StrProperty:
+                            {
+                                props.Add(new StrProperty(stream, nameRef) { StartOffset = propertyStartPosition });
+                            }
+                            break;
+                        case PropertyType.StringRefProperty:
+                            props.Add(new StringRefProperty(stream, nameRef) { StartOffset = propertyStartPosition });
+                            break;
+                        case PropertyType.DelegateProperty:
+                            props.Add(new DelegateProperty(stream, pcc, nameRef) { StartOffset = propertyStartPosition });
+                            break;
+                        case PropertyType.Unknown:
+                            {
+                                // Debugger.Break();
+                                props.Add(new UnknownProperty(stream, size, pcc.getNameEntry(typeIdx), nameRef) { StartOffset = propertyStartPosition });
+                            }
+                            break;
+                        case PropertyType.None:
+                            if (includeNoneProperty)
+                            {
+                                props.Add(new NoneProperty(stream, "None") { StartOffset = propertyStartPosition });
+                            }
+                            break;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Exception: " + e.Message);
             }
             if (props.Count > 0)
             {
                 //error reading props.
                 if (props[props.Count - 1].PropType != PropertyType.None && requireNoneAtEnd)
                 {
-                    Debug.WriteLine(exportName + " - Invalid properties: Does not end with None");
+                    if (entry != null)
+                    {
+                        Debug.WriteLine(entry.UIndex + " " + entry.ObjectName + " - Invalid properties: Does not end with None");
+                    }
+#if DEBUG
+                    props.endOffset = (int)stream.Position;
+                    return props;
+#else
                     stream.Seek(startPosition, SeekOrigin.Begin);
                     return new PropertyCollection { endOffset = (int)stream.Position };
+#endif
                 }
                 //remove None Property
                 if (!includeNoneProperty)
@@ -264,42 +263,9 @@ namespace MassEffectRandomizer.Classes
             return props;
         }
 
-        public static PropertyCollection ReadSpecialStruct(ME1Package pcc, MemoryStream stream, string structType, int size)
+        public static PropertyCollection ReadImmutableStruct(ME1Package pcc, MemoryStream stream, string structType, int size, IEntry parsingEntry = null)
         {
             PropertyCollection props = new PropertyCollection();
-            //if (pcc.Game == MEGame.ME3)
-            //{
-            //    if (ME1UnrealObjectInfo.Structs.ContainsKey(structType))
-            //    {
-            //        PropertyCollection defaultProps;
-            //        //memoize
-            //        if (defaultStructValues.ContainsKey(structType))
-            //        {
-            //            defaultProps = defaultStructValues[structType];
-            //        }
-            //        else
-            //        {
-            //            defaultProps = ME1UnrealObjectInfo.getDefaultStructValue(structType);
-            //            if (defaultProps == null)
-            //            {
-            //                long startPos = stream.Position;
-            //                props.Add(new UnknownProperty(stream, size) { StartOffset = startPos });
-            //                return props;
-            //            }
-            //            defaultStructValues.Add(structType, defaultProps);
-            //        }
-            //        foreach (var prop in defaultProps)
-            //        {
-            //            UProperty uProperty = ReadSpecialStructProp(pcc, stream, prop, structType);
-            //            if (uProperty.PropType != PropertyType.None)
-            //            {
-            //                props.Add(uProperty);
-            //            }
-            //        }
-            //        return props;
-            //    }
-            //}
-            //TODO: implement getDefaultClassValue() for ME1 and ME2 so this isn't needed
             if (structType == "Rotator")
             {
                 string[] labels = { "Pitch", "Yaw", "Roll" };
@@ -309,7 +275,7 @@ namespace MassEffectRandomizer.Classes
                     props.Add(new IntProperty(stream, labels[i]) { StartOffset = startPos });
                 }
             }
-            else if (structType == "Vector2d" || structType == "RwVector2")
+            else if (structType == "Vector2d" || structType == "Vector2D" || structType == "RwVector2")
             {
                 string[] labels = { "X", "Y" };
                 for (int i = 0; i < 2; i++)
@@ -389,6 +355,16 @@ namespace MassEffectRandomizer.Classes
                     props.Add(new IntProperty(stream, labels[i]) { StartOffset = startPos });
                 }
             }
+            else if (structType == "NavReference")
+            {
+                props.Add(new ObjectProperty(stream, "Actor"));
+                string[] labels = { "A", "B", "C", "D" };
+                for (int i = 0; i < 4; i++)
+                {
+                    long startPos = stream.Position;
+                    props.Add(new IntProperty(stream, labels[i]) { StartOffset = startPos });
+                }
+            }
             else if (structType == "IntPoint")
             {
                 string[] labels = { "X", "Y" };
@@ -418,7 +394,53 @@ namespace MassEffectRandomizer.Classes
             }
             else
             {
+                if (ME1UnrealObjectInfo.Structs.ContainsKey(structType))
+                {
+                    PropertyCollection defaultProps;
+                    bool stripTransients = true;
+                    if (parsingEntry != null && parsingEntry.ClassName == "Class")
+                    {
+                        stripTransients = false;
+                    }
+                    //Cache
+                    if (defaultStructValuesME1.ContainsKey(structType) && stripTransients)
+                    {
+                        defaultProps = defaultStructValuesME1[structType];
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Build&cache for ME1 struct: " + structType);
+                        defaultProps = ME1UnrealObjectInfo.getDefaultStructValue(structType, stripTransients);
+                        if (defaultProps == null)
+                        {
+                            long pos = stream.Position;
+                            props.Add(new UnknownProperty(stream, size) { StartOffset = pos });
+                            return props;
+                        }
+                        if (stripTransients)
+                        {
+                            defaultStructValuesME1.Add(structType, defaultProps);
+                        }
+                    }
+                    //Debug.WriteLine("ME1: Build immuatable struct properties for struct type " + structType);
+                    foreach (var prop in defaultProps)
+                    {
+                        //Debug.WriteLine("  > ME1: Building immutable property: " + prop.Name + " at 0x" + stream.Position.ToString("X5"));
+
+                        UProperty uProperty = ReadSpecialStructProp(pcc, stream, prop, structType);
+                        //Debug.WriteLine("  >> ME1: Built immutable property: " + uProperty.Name + " at 0x" + uProperty.StartOffset.ToString("X5"));
+                        if (uProperty.PropType != PropertyType.None)
+                        {
+                            props.Add(uProperty);
+                        }
+
+                    }
+                    return props;
+                }
+
+                Debug.WriteLine("Unknown struct type: " + structType);
                 long startPos = stream.Position;
+                Debugger.Break();
                 props.Add(new UnknownProperty(stream, size) { StartOffset = startPos });
             }
             return props;
@@ -445,7 +467,8 @@ namespace MassEffectRandomizer.Classes
                 case PropertyType.NameProperty:
                     return new NameProperty(stream, pcc, template.Name) { StartOffset = startPos };
                 case PropertyType.BoolProperty:
-                    return new BoolProperty(stream, pcc.Game, template.Name) { StartOffset = startPos };
+                    //always say it's ME3 so that bools get read as 1 byte
+                    return new BoolProperty(stream, pcc.Game, template.Name, true) { StartOffset = startPos };
                 case PropertyType.ByteProperty:
                     if (template is EnumProperty)
                     {
@@ -462,9 +485,11 @@ namespace MassEffectRandomizer.Classes
                     arrayProperty.StartOffset = startPos;
                     return arrayProperty;//this implementation needs checked, as I am not 100% sure of it's validity.
                 case PropertyType.StructProperty:
-                    PropertyCollection structProps = ReadSpecialStruct(pcc, stream, ME1UnrealObjectInfo.getPropertyInfo(structType, template.Name).reference, 0);
+                    long valuePos = stream.Position;
+                    PropertyCollection structProps = ReadImmutableStruct(pcc, stream, ME1UnrealObjectInfo.getPropertyInfo(template.Name, structType).reference, 0);
                     var structProp = new StructProperty(structType, structProps, template.Name, true);
                     structProp.StartOffset = startPos;
+                    structProp.ValueOffset = valuePos;
                     return structProp;//this implementation needs checked, as I am not 100% sure of it's validity.
                 case PropertyType.None:
                     return new NoneProperty(template.Name) { StartOffset = startPos };
@@ -476,10 +501,11 @@ namespace MassEffectRandomizer.Classes
             throw new NotImplementedException("cannot read Unknown property of Immutable struct");
         }
 
-        public static UProperty ReadArrayProperty(MemoryStream stream, ME1Package pcc, string enclosingType, NameReference name, bool IsInImmutable = false, bool IncludeNoneProperties = false)
+        public static UProperty ReadArrayProperty(MemoryStream stream, ME1Package pcc, string enclosingType, NameReference name, bool IsInImmutable = false, bool IncludeNoneProperties = false, IEntry parsingEntry = null)
         {
             long arrayOffset = IsInImmutable ? stream.Position : stream.Position - 24;
-            ArrayType arrayType = ME1UnrealObjectInfo.getArrayType(enclosingType, name);
+            ArrayType arrayType = ME1UnrealObjectInfo.getArrayType(enclosingType, name, parsingEntry as IExportEntry);
+            //Debug.WriteLine("Reading array length at 0x" + stream.Position.ToString("X5"));
             int count = stream.ReadValueS32();
             switch (arrayType)
             {
@@ -519,23 +545,40 @@ namespace MassEffectRandomizer.Classes
                         long startPos = stream.Position;
 
                         var props = new List<StructProperty>();
-                        string arrayStructType = ME1UnrealObjectInfo.getPropertyInfo(enclosingType, name)?.reference;
-                        if (IsInImmutable || ME1UnrealObjectInfo.isImmutable(arrayStructType))
+                        var propertyInfo = ME1UnrealObjectInfo.getPropertyInfo(enclosingType, name);
+                        if (propertyInfo == null && parsingEntry != null)
+                        {
+                            ClassInfo currentInfo = ME1UnrealObjectInfo.generateClassInfo(parsingEntry as IExportEntry);
+                            currentInfo.baseClass = (parsingEntry as IExportEntry).ClassParent;
+                            propertyInfo = ME1UnrealObjectInfo.getPropertyInfo(enclosingType, name, nonVanillaClassInfo: currentInfo);
+                        }
+
+                        string arrayStructType = propertyInfo?.reference;
+                        if (IsInImmutable || ME1UnrealObjectInfo.isImmutableStruct(arrayStructType))
                         {
                             int arraySize = 0;
                             if (!IsInImmutable)
                             {
                                 stream.Seek(-16, SeekOrigin.Current);
+                                //Debug.WriteLine("Arraysize at 0x" + stream.Position.ToString("X5"));
                                 arraySize = stream.ReadValueS32();
                                 stream.Seek(12, SeekOrigin.Current);
                             }
                             for (int i = 0; i < count; i++)
                             {
                                 long offset = stream.Position;
-                                PropertyCollection structProps = ReadSpecialStruct(pcc, stream, arrayStructType, arraySize / count);
-                                StructProperty structP = new StructProperty(arrayStructType, structProps, isImmutable: true) { StartOffset = offset };
-                                structP.ValueOffset = offset;
-                                props.Add(structP);
+                                try
+                                {
+                                    PropertyCollection structProps = ReadImmutableStruct(pcc, stream, arrayStructType, arraySize / count, parsingEntry: parsingEntry);
+                                    StructProperty structP = new StructProperty(arrayStructType, structProps, isImmutable: true) { StartOffset = offset };
+                                    structP.ValueOffset = offset;
+                                    props.Add(structP);
+                                }
+                                catch (Exception e)
+                                {
+                                    Debug.WriteLine("ERROR READING ARRAY PROP");
+                                    return new ArrayProperty<StructProperty>(arrayOffset, props, arrayType, name);
+                                }
                             }
                         }
                         else
@@ -543,9 +586,10 @@ namespace MassEffectRandomizer.Classes
                             for (int i = 0; i < count; i++)
                             {
                                 long structOffset = stream.Position;
+                                //Debug.WriteLine("reading array struct: " + arrayStructType + " at 0x" + stream.Position.ToString("X5"));
                                 PropertyCollection structProps = ReadProps(pcc, stream, arrayStructType, includeNoneProperty: IncludeNoneProperties);
-                                StructProperty structP = new StructProperty(arrayStructType, structProps) { StartOffset = startPos };
-                                structP.ValueOffset = structOffset;
+                                StructProperty structP = new StructProperty(arrayStructType, structProps) { StartOffset = structOffset };
+                                structP.ValueOffset = structProps[0].StartOffset;
                                 props.Add(structP);
                             }
                         }
@@ -557,7 +601,7 @@ namespace MassEffectRandomizer.Classes
                         for (int i = 0; i < count; i++)
                         {
                             long startPos = stream.Position;
-                            props.Add(new BoolProperty(stream, pcc.Game) { StartOffset = startPos });
+                            props.Add(new BoolProperty(stream, pcc.Game, isArrayContained: true) { StartOffset = startPos });
                         }
                         return new ArrayProperty<BoolProperty>(arrayOffset, props, arrayType, name);
                     }
@@ -607,40 +651,9 @@ namespace MassEffectRandomizer.Classes
 
     }
 
-    public abstract class UProperty : INotifyPropertyChanged
+    public abstract class UProperty
     {
-
-        #region Property Changed Notification
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Notifies listeners when given property is updated.
-        /// </summary>
-        /// <param name="propertyname">Name of property to give notification for. If called in property, argument can be ignored as it will be default.</param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyname = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyname));
-        }
-
-        /// <summary>
-        /// Sets given property and notifies listeners of its change. IGNORES setting the property to same value.
-        /// Should be called in property setters.
-        /// </summary>
-        /// <typeparam name="T">Type of given property.</typeparam>
-        /// <param name="field">Backing field to update.</param>
-        /// <param name="value">New value of property.</param>
-        /// <param name="propertyName">Name of property.</param>
-        /// <returns>True if success, false if backing field and new value aren't compatible.</returns>
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-        #endregion
         public PropertyType PropType;
-        private NameReference _name;
         /// <summary>
         /// Offset to the value for this property - note not all properties have actual values.
         /// </summary>
@@ -651,15 +664,11 @@ namespace MassEffectRandomizer.Classes
         /// </summary>
         internal long StartOffset;
 
-        public NameReference Name
-        {
-            get => _name;
-            set => SetProperty(ref _name, value);
-        }
+        public NameReference Name { get; set; }
 
         protected UProperty(NameReference? name)
         {
-            _name = name ?? new NameReference();
+            Name = name ?? new NameReference();
         }
 
         public abstract void WriteTo(Stream stream, ME1Package pcc, bool valueOnly = false);
@@ -740,9 +749,10 @@ namespace MassEffectRandomizer.Classes
             {
                 foreach (var prop in Properties)
                 {
+                    //Debug.WriteLine("Writing struct prop " + prop.Name + " at 0x" + stream.Position.ToString("X4"));
                     prop.WriteTo(stream, pcc, IsImmutable);
                 }
-                if (!IsImmutable && (!(Properties.Last() is NoneProperty)))
+                if (!IsImmutable && (Properties.Count == 0 || !(Properties.Last() is NoneProperty)))
                 {
                     stream.WriteNoneProperty(pcc);
                 }
@@ -770,12 +780,7 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("IntProperty | {Name} = {Value}")]
     public class IntProperty : UProperty, IComparable
     {
-        int _value;
-        public int Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public int Value { get; set; }
 
         public IntProperty(MemoryStream stream, NameReference? name = null) : base(name)
         {
@@ -829,12 +834,7 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("FloatProperty | {Name} = {Value}")]
     public class FloatProperty : UProperty, IComparable
     {
-        float _value;
-        public float Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public float Value { get; set; }
 
         public FloatProperty(MemoryStream stream, NameReference? name = null) : base(name)
         {
@@ -888,12 +888,7 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("ObjectProperty | {Name} = {Value}")]
     public class ObjectProperty : UProperty, IComparable
     {
-        int _value;
-        public int Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public int Value { get; set; }
 
         public ObjectProperty(MemoryStream stream, NameReference? name = null) : base(name)
         {
@@ -968,12 +963,7 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("NameProperty | {Name} = {Value}")]
     public class NameProperty : UProperty
     {
-        NameReference _value;
-        public NameReference Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public NameReference Value { get; set; }
 
         public NameProperty(NameReference? name = null) : base(name)
         {
@@ -1045,17 +1035,21 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("BoolProperty | {Name} = {Value}")]
     public class BoolProperty : UProperty
     {
-        bool _value;
-        public bool Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public bool Value { get; set; }
 
-        public BoolProperty(MemoryStream stream, MEGame game, NameReference? name = null) : base(name)
+        public BoolProperty(MemoryStream stream, MEGame game, NameReference? name = null, bool isArrayContained = false) : base(name)
         {
             ValueOffset = stream.Position;
-            Value = game == MEGame.ME3 ? stream.ReadValueB8() : stream.ReadValueB32();
+            if (game != MEGame.ME3 && isArrayContained)
+            {
+                //ME2 seems to read 1 byte... sometimes...
+                //ME1 as well
+                Value = stream.ReadValueB8();
+            }
+            else
+            {
+                Value = game == MEGame.ME3 ? stream.ReadValueB8() : stream.ReadValueB32();
+            }
             PropType = PropertyType.BoolProperty;
         }
 
@@ -1073,14 +1067,16 @@ namespace MassEffectRandomizer.Classes
             }
             else
             {
-                if (pcc.Game == MEGame.ME3)
-                {
-                    stream.WriteValueB8(Value);
-                }
-                else
-                {
-                    stream.WriteValueB32(Value);
-                }
+                stream.WriteValueB8(Value);
+
+                //if (pcc.Game == MEGame.ME3 || isArrayContained)
+                //{
+                //    stream.WriteValueB8(Value);
+                //}
+                //else
+                //{
+                //    stream.WriteValueB32(Value);
+                //}
             }
         }
 
@@ -1098,12 +1094,7 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("ByteProperty | {Name} = {Value}")]
     public class ByteProperty : UProperty
     {
-        byte _value;
-        public byte Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public byte Value { get; set; }
 
         public ByteProperty(byte val, NameReference? name = null) : base(name)
         {
@@ -1133,12 +1124,7 @@ namespace MassEffectRandomizer.Classes
 
     public class BioMask4Property : UProperty
     {
-        byte _value;
-        public byte Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public byte Value { get; set; }
 
         public BioMask4Property(MemoryStream stream, NameReference? name = null) : base(name)
         {
@@ -1161,25 +1147,25 @@ namespace MassEffectRandomizer.Classes
     public class EnumProperty : UProperty
     {
         public NameReference EnumType { get; }
-        NameReference _value;
-        public NameReference Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public NameReference Value { get; set; }
         public List<string> EnumValues { get; }
 
         public EnumProperty(MemoryStream stream, ME1Package pcc, NameReference enumType, NameReference? name = null) : base(name)
         {
             ValueOffset = stream.Position;
             EnumType = enumType;
+            var eNameIdx = stream.ReadValueS32();
+            var eName = pcc.getNameEntry(eNameIdx);
+            var eNameNumber = stream.ReadValueS32();
+            var eNameTEST = pcc.getNameEntry(eNameNumber);
+
             NameReference enumVal = new NameReference
             {
-                Name = pcc.getNameEntry(stream.ReadValueS32()),
-                Number = stream.ReadValueS32()
+                Name = eName,
+                Number = eNameNumber
             };
             Value = enumVal;
-            EnumValues = ME1UnrealObjectInfo.GetEnumValues(enumType, true);
+            EnumValues = ME1UnrealObjectInfo.getEnumValues(enumType, true);
             PropType = PropertyType.ByteProperty;
         }
 
@@ -1188,7 +1174,7 @@ namespace MassEffectRandomizer.Classes
             EnumType = enumType;
             NameReference enumVal = value;
             Value = enumVal;
-            EnumValues = ME1UnrealObjectInfo.GetEnumValues(enumType, true);
+            EnumValues = ME1UnrealObjectInfo.getEnumValues(enumType, true);
             PropType = PropertyType.ByteProperty;
         }
 
@@ -1201,7 +1187,7 @@ namespace MassEffectRandomizer.Classes
         public EnumProperty(NameReference enumType, ME1Package pcc, NameReference? name = null) : base(name)
         {
             EnumType = enumType;
-            EnumValues = ME1UnrealObjectInfo.GetEnumValues(enumType, true);
+            EnumValues = ME1UnrealObjectInfo.getEnumValues(enumType, true);
             if (EnumValues == null)
             {
                 Debugger.Break();
@@ -1353,12 +1339,7 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("StrProperty | {Name} = {Value}")]
     public class StrProperty : UProperty
     {
-        string _value;
-        public string Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public string Value { get; set; }
 
         public StrProperty(MemoryStream stream, NameReference? name = null) : base(name)
         {
@@ -1441,11 +1422,7 @@ namespace MassEffectRandomizer.Classes
     public class StringRefProperty : UProperty
     {
         int _value;
-        public int Value
-        {
-            get => _value;
-            set => SetProperty(ref _value, value);
-        }
+        public int Value { get; set; }
 
         public StringRefProperty(MemoryStream stream, NameReference? name = null) : base(name)
         {
@@ -1521,7 +1498,7 @@ namespace MassEffectRandomizer.Classes
         public UnknownProperty(MemoryStream stream, int size, string typeName = null, NameReference? name = null) : base(name)
         {
             ValueOffset = stream.Position;
-            TypeName = typeName;
+            TypeName = typeName ?? "Unknown";
             raw = stream.ReadBytes(size);
             PropType = PropertyType.Unknown;
         }

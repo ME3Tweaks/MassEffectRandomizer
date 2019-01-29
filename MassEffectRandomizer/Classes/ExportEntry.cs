@@ -74,7 +74,7 @@ namespace MassEffectRandomizer.Classes
         //if me1 or me2: int unkcount1
         byte[][] unkList1;//if me1 or me2: unkcount1 * 12 bytes
         int unk1; //int unk1 
-        //int unkcount2 
+                  //int unkcount2 
         int unk2;//int unk2 
         public Guid PackageGUID { get; set; } //GUID
         int[] unkList2;//unkcount2 * 4 bytes 
@@ -173,9 +173,6 @@ namespace MassEffectRandomizer.Classes
                 dataChanged = value;
                 //    if (value)
                 //    {
-                
-                //in this project we don't care about this, i think, we don't show ui for this
-                //OnPropertyChanged();
                 //    }
             }
         }
@@ -196,7 +193,6 @@ namespace MassEffectRandomizer.Classes
                 headerChanged = value;
                 //    if (value)
                 //    {
-                //OnPropertyChanged();
                 //    }
             }
         }
@@ -210,7 +206,6 @@ namespace MassEffectRandomizer.Classes
                 if (value != _entryHasPendingChanges)
                 {
                     _entryHasPendingChanges = value;
-                    //OnPropertyChanged();
                 }
             }
         }
@@ -229,20 +224,26 @@ namespace MassEffectRandomizer.Classes
             {
                 return properties;
             }
-            //else if (!includeNoneProperties)
-            //{
-            //    int start = GetPropertyStart();
-            //    MemoryStream stream = new MemoryStream(_data, false);
-            //    stream.Seek(start, SeekOrigin.Current);
-            //    return properties = PropertyCollection.ReadProps(FileRef, stream, ClassName, includeNoneProperties, true, ObjectName);
-            //}
-            //else
-            //{
+            if (ClassName == "Class") { return new PropertyCollection(); } //no properties
+                                                                           //else if (!includeNoneProperties)
+                                                                           //{
+                                                                           //    int start = GetPropertyStart();
+                                                                           //    MemoryStream stream = new MemoryStream(_data, false);
+                                                                           //    stream.Seek(start, SeekOrigin.Current);
+                                                                           //    return properties = PropertyCollection.ReadProps(FileRef, stream, ClassName, includeNoneProperties, true, ObjectName);
+                                                                           //}
+                                                                           //else
+                                                                           //{
             int start = GetPropertyStart();
             MemoryStream stream = new MemoryStream(_data, false);
             stream.Seek(start, SeekOrigin.Current);
-            return PropertyCollection.ReadProps(FileRef, stream, ClassName, includeNoneProperties, true, ObjectName); //do not set properties as this may interfere with some other code. may change later.
-                                                                                                                      //  }
+            IEntry parsingClass = this;
+            if (ObjectName.StartsWith("Default__"))
+            {
+                parsingClass = FileRef.getEntry(idxClass); //class we are defaults of
+            }
+            return PropertyCollection.ReadProps(FileRef, stream, ClassName, includeNoneProperties, true, parsingClass); //do not set properties as this may interfere with some other code. may change later.
+                                                                                                                        //  }
         }
 
         public T GetProperty<T>(string name) where T : UProperty
@@ -254,14 +255,10 @@ namespace MassEffectRandomizer.Classes
         {
             MemoryStream m = new MemoryStream();
             props.WriteTo(m, FileRef);
-            int propStart = GetPropertyStart(); //get old start
-            int propEnd = propsEnd(); //get old end
+            int propStart = GetPropertyStart();
+            int propEnd = propsEnd();
             byte[] propData = m.ToArray();
-
-            m.Seek(0, SeekOrigin.Begin);
-            var newproperties = PropertyCollection.ReadProps(FileRef, m, ClassName, true, true);
-
-            this.Data = _data.Take(propStart).Concat(propData).Concat(_data.Skip(propEnd)).ToArray(); //splice in new data
+            this.Data = _data.Take(propStart).Concat(propData).Concat(_data.Skip(propEnd)).ToArray();
         }
 
         public void WriteProperty(UProperty prop)
@@ -278,18 +275,39 @@ namespace MassEffectRandomizer.Classes
             {
                 return 32;
             }
+            //if (!ObjectName.StartsWith("Default__"))
+            //{
+            //    switch (ClassName)
+            //    {
+            //        case "ParticleSystemComponent":
+            //            return 0x10;
+            //    }
+            //}
             int result = 8;
+            int test0 = BitConverter.ToInt32(_data, 0);
             int test1 = BitConverter.ToInt32(_data, 4);
-            int test2 = BitConverter.ToInt32(_data, 8);
-            if (pcc.isName(test1) && test2 == 0)
+            int test2 = BitConverter.ToInt32(_data, 8); //Name index if Test1 is actually a name. Should be 0 since we wouldn't have indexes here
+            if (pcc.isName(test1) && test2 == 0) //is 0x4 a proper 8 byte name?
                 result = 4;
             if (pcc.isName(test1) && pcc.isName(test2) && test2 != 0)
                 result = 8;
 
-            if (_data.Length > 0x10 && pcc.isName(test1) && pcc.getNameEntry(test1) == ObjectName)
+            if (_data.Length > 0x10 && pcc.isName(test1) && pcc.getNameEntry(test1) == ObjectName && test0 == 0 && test2 == indexValue) //!= UIndex will cover more cases, but there's still the very tiny case where they line up
             {
-                //Primitive Component
-                result = 0x10;
+                int test3 = BitConverter.ToInt32(_data, 0x10);
+                string namev = pcc.getNameEntry(test3);
+                //Debug.WriteLine("Reading " + name + " (" + namev + ") at 0x" + (stream.Position - 24).ToString("X8"));
+                if (namev != null && Enum.IsDefined(typeof(PropertyType), namev) && Enum.TryParse(namev, out PropertyType propertyType))
+                {
+                    if (propertyType > PropertyType.None)
+                    {
+                        //Edge case
+                        return 0x8;
+                    }
+                }
+
+                //Debug.WriteLine("Primitive Component: " + ClassName + " (" + ObjectName + ")");
+                return 0x10; //Primitive Component
             }
             return result;
         }
@@ -317,6 +335,7 @@ namespace MassEffectRandomizer.Classes
         }
     }
 
+    [DebuggerDisplay("ME1ExportEntry | {UIndex} = {GetFullPath}")]
     public class ME1ExportEntry : ExportEntry, IExportEntry
     {
         public ME1ExportEntry(ME1Package pccFile, Stream stream) : base(pccFile)
@@ -343,7 +362,7 @@ namespace MassEffectRandomizer.Classes
             stream.Seek(end, SeekOrigin.Begin);
             if (ClassName.Contains("Property"))
             {
-                ReadsFromConfig = Data.Length > 25 ? (Data[25] & 64) != 0 : false;
+                ReadsFromConfig = Data.Length > 25 && (Data[25] & 64) != 0;
             }
             else
             {
@@ -357,10 +376,12 @@ namespace MassEffectRandomizer.Classes
 
         public IExportEntry Clone()
         {
-            ME1ExportEntry newExport = new ME1ExportEntry(FileRef as ME1Package);
-            newExport.Header = this.Header.TypedClone();
-            newExport.HeaderOffset = 0;
-            newExport.Data = this.Data;
+            ME1ExportEntry newExport = new ME1ExportEntry(FileRef as ME1Package)
+            {
+                Header = this.Header.TypedClone(),
+                HeaderOffset = 0,
+                Data = this.Data
+            };
             int index = 0;
             string name = ObjectName;
             foreach (IExportEntry ent in FileRef.Exports)

@@ -17,14 +17,20 @@ using static MassEffectRandomizer.MainWindow;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Linq;
+using Serilog;
 
 namespace MassEffectRandomizer.Classes
 {
     class Randomizer
     {
         private static readonly string[] RandomClusterNameCollection = {
-"Serpent Cluster","Zero","Artemis","Kamino","Kovac Nebula", "Akkala","Lanayru Verge","Kyramud","Tolase","Kirigiri","Ascension Sigma", "Epsilon","Rodin","Gilgamesh","Enkidu","Ventus","Agrias","Canopus","Tartarose","Dorgalua","Losstarot","Onyx Tau","Himura", "Baltoy","Canopy Xi"
-};
+        "Serpent Cluster","Zero","Artemis","Kamino","Kovac Nebula", "Akkala","Lanayru Verge","Kyramud","Tolase","Kirigiri","Ascension Sigma", "Epsilon","Rodin","Gilgamesh","Enkidu","Ventus","Agrias","Canopus","Tartarose","Dorgalua","Losstarot","Onyx Tau","Himura", "Baltoy","Canopy Xi"
+        };
+
+        private static readonly string[] GameOverTexts =
+        {
+            "CRITICAL MISSION FAILURE", "YA DONE GOOF'D", "YOU DIED", "PRESS F TO PAY YOUR RESPECTS", "REST IN PEACE", "SLEEP WELL", "ARE YOU EVEN TRYING"
+        };
 
 
         private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini", "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Kerh-S", "Odyssey", "Xi Draconis", "System o’ Hags", "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion", "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan", "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost" };
@@ -53,6 +59,7 @@ namespace MassEffectRandomizer.Classes
             randomizationWorker.RunWorkerAsync(seed);
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, mainWindow);
         }
+
 
         private void Randomization_Completed(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -101,6 +108,36 @@ namespace MassEffectRandomizer.Classes
             //test.save();
             //return;
 
+            //RANDOMIZE TEXTS
+            if (mainWindow.RANDSETTING_MISC_GAMEOVERTEXT)
+            {
+                mainWindow.CurrentOperationText = "Randoming Game Over text";
+                List<string> shuffledGameOverTexts = new List<string>(GameOverTexts);
+                shuffledGameOverTexts.Shuffle(random);
+                var gameOverText = shuffledGameOverTexts[0];
+                foreach (TalkFile tlk in Tlks)
+                {
+                    tlk.replaceString(157152, gameOverText);
+                }
+            }
+
+            //Randomize BIOC_BASE
+            ME1Package bioc_base = new ME1Package(Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "BIOC_Base.u"));
+            bool bioc_base_changed = false;
+            if (mainWindow.RANDSETTING_MOVEMENT_MAKO)
+            {
+                RandomizeMako(bioc_base, random);
+                bioc_base_changed = true;
+            }
+
+            if (bioc_base_changed)
+            {
+                bioc_base.save();
+            }
+
+
+
+
             //Randomize ENGINE
             ME1Package engine = new ME1Package(Utilities.GetEngineFile());
             IExportEntry talentEffectLevels = null;
@@ -136,7 +173,7 @@ namespace MassEffectRandomizer.Classes
                     case "GalaxyMap_Cluster":
                         if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
                         {
-                            RandomizeClusters(export, random,Tlks);
+                            RandomizeClusters(export, random, Tlks);
                         }
                         break;
                     case "GalaxyMap_System":
@@ -380,6 +417,64 @@ namespace MassEffectRandomizer.Classes
             return result;
         }
 
+
+        private void RandomizeMako(ME1Package package, Random random)
+        {
+            IExportEntry SVehicleSimTank = package.Exports[23314];
+            var props = SVehicleSimTank.GetProperties();
+            StructProperty torqueCurve = SVehicleSimTank.GetProperty<StructProperty>("m_TorqueCurve");
+            ArrayProperty<StructProperty> points = torqueCurve.GetProp<ArrayProperty<StructProperty>>("Points");
+            var minOut = random.Next(4000, 5600);
+            var maxOut = random.Next(6000, 22000);
+            var stepping = (maxOut - minOut) / 3; //starts at 0 with 3 upgrades
+            for (int i = 0; i < points.Count; i++)
+            {
+                float newVal = minOut + (stepping * i);
+                Log.Information($"Setting MakoTorque[{i}] to {newVal}");
+                points[i].GetProp<FloatProperty>("OutVal").Value = newVal;
+            }
+            SVehicleSimTank.WriteProperty(torqueCurve);
+
+            if (random.Next(1) == 0)
+            {
+                //Reverse the steering to back wheels
+                //Front
+                IExportEntry LFWheel = package.Exports[36984];
+                IExportEntry RFWheel = package.Exports[36987];
+                //Rear
+                IExportEntry LRWheel = package.Exports[36986];
+                IExportEntry RRWheel = package.Exports[36989];
+
+                var LFSteer = LFWheel.GetProperty<FloatProperty>("SteerFactor");
+                var LRSteer = LRWheel.GetProperty<FloatProperty>("SteerFactor");
+                var RFSteer = RFWheel.GetProperty<FloatProperty>("SteerFactor");
+                var RRSteer = RRWheel.GetProperty<FloatProperty>("SteerFactor");
+
+                LFSteer.Value = -0.4f;
+                LRSteer.Value = 3f;
+                RFSteer.Value = -0.4f;
+                RRSteer.Value = 3f;
+
+                LFWheel.WriteProperty(LFSteer);
+                RFWheel.WriteProperty(RFSteer);
+                LRWheel.WriteProperty(LRSteer);
+                RRWheel.WriteProperty(RRSteer);
+            }
+
+            //Randomize the jumpjets
+            IExportEntry BioVehicleBehaviorBase = package.Exports[23805];
+            var behaviorProps = BioVehicleBehaviorBase.GetProperties();
+            foreach (UProperty prop in behaviorProps)
+            {
+                if (prop.Name.Name.StartsWith("m_fThrusterScalar"))
+                {
+                    var floatprop = prop as FloatProperty;
+                    floatprop.Value = random.NextFloat(.1, 6);
+                }
+            }
+            BioVehicleBehaviorBase.WriteProperties(behaviorProps);
+        }
+
         private void RandomizePlanetNameDescriptions(IExportEntry export, Random random, List<TalkFile> Tlks)
         {
             mainWindow.CurrentOperationText = "Randomizing planet descriptions and names";
@@ -569,23 +664,9 @@ namespace MassEffectRandomizer.Classes
             StructProperty sp = props.GetProp<StructProperty>("DrawScale3D");
             if (sp == null)
             {
-                //Debug.WriteLine("=== READING EXISTING VALUEs...");
-                //we need to insert it
-                int propStart = export.GetPropertyStart(); //get old start
-                int propEnd = export.propsEnd(); //get old end
-
-                List<byte> data = export.Data.Skip(propStart).Take(propEnd - propStart).ToList();
-                var newBytes = PropertyCollection.GetBytesForNewVectorProperty(export.FileRef, "DrawScale3D");
-                data.InsertRange(data.Count - 8, newBytes);
-                //Debug.WriteLine("=== READING NEW VALUEs...");
-
-                //var newproperties = PropertyCollection.ReadProps(export.FileRef, new MemoryStream(data.ToArray()), export.ClassName, true, true);
-
-                var stream = new MemoryStream(data.ToArray());
-                stream.Seek(0, SeekOrigin.Current);
-
-                props = PropertyCollection.ReadProps(export.FileRef, stream, export.ClassName, true, true, export.ObjectName);
-                sp = props.GetProp<StructProperty>("DrawScale3D");
+                var structprops = ME1UnrealObjectInfo.getDefaultStructValue("Vector");
+                sp = new StructProperty("Vector", structprops, "DrawScale3D");
+                props.Add(sp);
             }
 
             if (sp != null)
@@ -1027,13 +1108,33 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            //if (mainWindow.RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY)
-            //{
-            //    //Add 2 possible chances to get unity
-            //    powersToReassignSquadMaster.Add(259);
-            //    powersToReassignSquadMaster.Add(259);
-            //}
+            var playerPowersShuffled = TalentsShuffler.TalentShuffle(powersToReassignPlayerMaster, 6, 9, random);
+            var squadPowersShuffled = TalentsShuffler.TalentShuffle(powersToReassignSquadMaster, 6, 9, random);
 
+            //ASSIGN POWERS TO TABLE
+            for (int classId = 0; classId < 6; classId++)
+            {
+                int assignmentStartRow = (classId * 16) + 5; //16 powers per player, the first 5 of each are setup, the last 2 are charm/intimidate
+                var talentList = playerPowersShuffled[classId];
+                for (int i = 0; i < talentList.Count; i++)
+                {
+                    Log.Information("Talent randomizer: Setting row " + (assignmentStartRow + i) + " to " + talentList[i]);
+                    classtalents[assignmentStartRow + i, 1].Data = BitConverter.GetBytes(talentList[i]);
+                }
+            }
+
+            //UPDATE UNLOCKS (in reverse)
+            int prereqTalentCol = classtalents.GetColumnIndexByName("PrereqTalent0");
+            for (int row = classtalents.RowNames.Count() - 1; row > 0; row--)
+            {
+                var hasPrereq = classtalents[row, prereqTalentCol] != null;
+                if (hasPrereq)
+                {
+                    classtalents[row, prereqTalentCol].Data = BitConverter.GetBytes(classtalents[row - 1, 1].GetIntValue()); //Talent ID of above row
+                }
+            }
+
+            /*
             //REASSIGN POWERS
             int reassignmentAttemptsRemaining = 200;
             bool attemptingReassignment = true;
@@ -1072,19 +1173,11 @@ namespace MassEffectRandomizer.Classes
                         }
                         else
                         {
-                            //if (previousClassId != classId)
-                            //{
-                            //    Debug.WriteLine("reassigning to specture training " + row);
-                            //    previousClassId = classId;
-                            //    classtalents[row, 1].SetData(259);
-                            //}
-                            //else
-                            //{
+
                             //squadmate class
                             int talentId = squadReassignmentList[0];
                             squadReassignmentList.RemoveAt(0);
                             classtalents[row, 1].SetData(talentId);
-                            // }
                         }
                     }
                 }
@@ -1098,7 +1191,7 @@ namespace MassEffectRandomizer.Classes
             {
                 Debugger.Break();
                 return false;
-            }
+            }*/
 
             //Patch out Destroyer Tutorial as it may cause a softlock as it checks for kaidan throw
             ME1Package Pro10_08_Dsg = new ME1Package(Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps", "PRO", "DSG", "BIOA_PRO10_08_DSG.SFM"));
@@ -1113,7 +1206,7 @@ namespace MassEffectRandomizer.Classes
 
 
             //REASSIGN UNLOCK REQUIREMENTS
-            Debug.WriteLine("Reassigned talents");
+            Log.Information("Reassigned talents");
             classtalents.Write2DAToExport();
 
             return true;
@@ -1127,7 +1220,7 @@ namespace MassEffectRandomizer.Classes
 
 
 
-
+            /*
 
 
 
@@ -1255,7 +1348,7 @@ namespace MassEffectRandomizer.Classes
                 //}
             }
             classtalents.Write2DAToExport();
-            return true;
+            return true;*/
         }
 
         private static string[] TalentEffectsToRandomize_THROW = { "GE_TKThrow_CastingTime", "GE_TKThrow_Kickback", "GE_TKThrow_CooldownTime", "GE_TKThrow_ImpactRadius", "GE_TKThrow_Force" };
