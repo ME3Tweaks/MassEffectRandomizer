@@ -650,12 +650,12 @@ namespace MassEffectRandomizer.Classes
                         long startPos = stream.Position;
 
                         var props = new List<StructProperty>();
-                        var propertyInfo = ME1UnrealObjectInfo.getPropertyInfo(name, enclosingType);
+                        var propertyInfo = ME1UnrealObjectInfo.getPropertyInfo(enclosingType, name);
                         if (propertyInfo == null && parsingEntry != null)
                         {
                             var currentInfo = ME1UnrealObjectInfo.generateClassInfo(parsingEntry as IExportEntry);
                             currentInfo.baseClass = ((IExportEntry)parsingEntry).ClassParent;
-                            propertyInfo = ME1UnrealObjectInfo.getPropertyInfo(name, enclosingType, nonVanillaClassInfo: currentInfo);
+                            propertyInfo = ME1UnrealObjectInfo.getPropertyInfo(enclosingType, name, nonVanillaClassInfo: currentInfo);
                         }
 
                         string arrayStructType = propertyInfo?.reference;
