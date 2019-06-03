@@ -6,85 +6,63 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MassEffectRandomizer.Classes
 {
-    [DebuggerDisplay("ME1Package | {FileName}")]
-    public class ME1Package : MEPackage
+    public enum MEGame
     {
+        ME1 = 1,
+        ME2,
+        ME3,
+        UDK
+    }
+
+    public sealed class ME1Package : MEPackage
+    {
+        public readonly MEGame Game = MEGame.ME1;
         const uint packageTag = 0x9E2A83C1;
-        public override int NameCount { get { return BitConverter.ToInt32(header, nameSize + 20); } protected set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 20, sizeof(int)); } }
-        int NameOffset { get { return BitConverter.ToInt32(header, nameSize + 24); } set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 24, sizeof(int)); } }
-        public override int ExportCount { get { return BitConverter.ToInt32(header, nameSize + 28); } protected set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 28, sizeof(int)); } }
-        int ExportOffset { get { return BitConverter.ToInt32(header, nameSize + 32); } set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 32, sizeof(int)); } }
-        public override int ImportCount { get { return BitConverter.ToInt32(header, nameSize + 36); } protected set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 36, sizeof(int)); } }
-        public int ImportOffset { get { return BitConverter.ToInt32(header, nameSize + 40); } private set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 40, sizeof(int)); } }
-        int FreeZoneStart { get { return BitConverter.ToInt32(header, nameSize + 44); } set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 44, sizeof(int)); } }
-        int Generations { get { return BitConverter.ToInt32(header, nameSize + 64); } }
-        int Compression { get { return BitConverter.ToInt32(header, header.Length - 4); } set { Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, header.Length - 4, sizeof(int)); } }
-
-        public enum MEGame
+        public override int NameCount
         {
-            ME1 = 1,
-            ME2 = 2,
-            ME3 = 3
+            get => BitConverter.ToInt32(header, nameSize + 20);
+            protected set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 20, sizeof(int));
         }
-        public MEGame Game { get { return MEGame.ME1; } }
-
-        public enum ArrayType
+        public int NameOffset
         {
-            Object,
-            Name,
-            Enum,
-            Struct,
-            Bool,
-            String,
-            Float,
-            Int,
-            Byte,
+            get => BitConverter.ToInt32(header, nameSize + 24);
+            private set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 24, sizeof(int));
         }
-
-        //public enum PropertyType
-        //{
-        //    Unknown = -1,
-        //    None = 0,
-        //    StructProperty = 1,
-        //    IntProperty = 2,
-        //    FloatProperty = 3,
-        //    ObjectProperty = 4,
-        //    NameProperty = 5,
-        //    BoolProperty = 6,
-        //    ByteProperty = 7,
-        //    ArrayProperty = 8,
-        //    StrProperty = 9,
-        //    StringRefProperty = 10,
-        //    DelegateProperty = 11,
-        //    BioMask4Property
-        //}
-
-        public class PropertyInfo
+        public override int ExportCount
         {
-            public bool transient;
-            public PropertyType type;
-            public string reference;
+            get => BitConverter.ToInt32(header, nameSize + 28);
+            protected set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 28, sizeof(int));
         }
-
-        public class ClassInfo
+        public int ExportOffset
         {
-            public Dictionary<string, PropertyInfo> properties;
-            public string baseClass;
-            //Relative to BIOGame
-            public string pccPath;
-            public int exportIndex;
-
-            public ClassInfo()
-            {
-                properties = new Dictionary<string, PropertyInfo>();
-            }
+            get => BitConverter.ToInt32(header, nameSize + 32);
+            private set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 32, sizeof(int));
         }
-
-
-
+        public override int ImportCount
+        {
+            get => BitConverter.ToInt32(header, nameSize + 36);
+            protected set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 36, sizeof(int));
+        }
+        public int ImportOffset
+        {
+            get => BitConverter.ToInt32(header, nameSize + 40);
+            private set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 40, sizeof(int));
+        }
+        int FreeZoneStart
+        {
+            get => BitConverter.ToInt32(header, nameSize + 44);
+            set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, nameSize + 44, sizeof(int));
+        }
+        int Generations => BitConverter.ToInt32(header, nameSize + 64);
+        int Compression
+        {
+            get => BitConverter.ToInt32(header, header.Length - 4);
+            set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, header.Length - 4, sizeof(int));
+        }
 
         static bool isInitialized;
         public static Func<string, ME1Package> Initialize()
@@ -103,7 +81,6 @@ namespace MassEffectRandomizer.Classes
         public ME1Package(string path)
         {
             //Debug.WriteLine(" >> Opening me1 package " + path);
-
             FileName = Path.GetFullPath(path);
             MemoryStream tempStream = new MemoryStream();
             if (!File.Exists(FileName))
@@ -137,6 +114,10 @@ namespace MassEffectRandomizer.Classes
             MemoryStream listsStream;
             if (IsCompressed)
             {
+                //Aquadran: Code to decompress package on disk.
+                //Do not set the decompressed flag as some tools use this flag
+                //to determine if the file on disk is still compressed or not
+                //e.g. soundplorer's offset based audio access
                 listsStream = CompressionHelper.DecompressME1orME2(tempStream);
 
                 //Correct the header
@@ -236,7 +217,7 @@ namespace MassEffectRandomizer.Classes
             }
             else
             {
-                throw new Exception("Cannot save ME1 packages with a SeekFreeShaderCache. Please make an issue on github: https://github.com/Mgamerz/ME3Explorer/issues");
+                throw new Exception($"Cannot save ME1 packages with a SeekFreeShaderCache.");
             }
         }
 
@@ -313,9 +294,8 @@ namespace MassEffectRandomizer.Classes
             }
             catch (Exception ex)
             {
-                // MessageBox.Show("PCC Save error:\n" + ex.Message);
+                MessageBox.Show("PCC Save error:\n" + ex.Message);
             }
         }
     }
 }
-

@@ -12,10 +12,9 @@ namespace MassEffectRandomizer.Classes
     {
         public static Dictionary<string, ClassInfo> Classes = new Dictionary<string, ClassInfo>();
         public static Dictionary<string, ClassInfo> Structs = new Dictionary<string, ClassInfo>();
-        public static Dictionary<string, List<string>> Enums = new Dictionary<string, List<string>>();
-
-
+        public static Dictionary<string, List<NameReference>> Enums = new Dictionary<string, List<NameReference>>();
         private static bool loaded;
+
 
         public static void loadfromJSON()
         {
@@ -36,30 +35,12 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        private static string[] ImmutableStructs = { "Vector", "Color", "LinearColor", "TwoVectors", "Vector4", "Vector2D", "Rotator", "Guid", "Plane", "Box",
+        private static readonly string[] ImmutableStructs = { "Vector", "Color", "LinearColor", "TwoVectors", "Vector4", "Vector2D", "Rotator", "Guid", "Plane", "Box",
             "Quat", "Matrix", "IntPoint", "ActorReference", "PolyReference", "AimTransform","BioRwBox", "BioMask4Property", "RwVector2", "RwVector3", "RwVector4",
             "BioRwBox44" };
 
         public static bool isImmutableStruct(string structName)
         {
-            //string hex = "1F19000000000000A12E0000000000000400000000000000000000001849000000000000A12E0000000000000400000000000000000000001638000000000000763A000000000000040000000000000000000000722B000000000000414C0000000000001000000000000000722B00000000000000000000000000000000000000000000C539000000000000";
-            //string str = "0x";
-            //for (int i = 0; i < hex.Length; i++)
-            //{
-            //    if (i % 2 == 0 && i != 0)
-            //    {
-            //        Debug.Write(str + ", ");
-            //        str = "0x";
-            //    }
-            //    str += hex[i];
-            //    if (i % 8 == 0)
-            //    {
-            //        Debug.WriteLine("");
-            //    }
-            //}
-            //Debug.WriteLine("");
-
-
             return ImmutableStructs.Contains(structName);
         }
 
@@ -73,7 +54,7 @@ namespace MassEffectRandomizer.Classes
             return p?.reference;
         }
 
-        public static List<string> getEnumfromProp(string className, string propName, bool inStruct = false)
+        public static List<NameReference> getEnumfromProp(string className, string propName, bool inStruct = false)
         {
             Dictionary<string, ClassInfo> temp = inStruct ? Structs : Classes;
             if (temp.ContainsKey(className))
@@ -95,7 +76,7 @@ namespace MassEffectRandomizer.Classes
                     {
                         if (p.type == PropertyType.StructProperty || p.type == PropertyType.ArrayProperty)
                         {
-                            List<string> vals = getEnumfromProp(p.reference, propName, true);
+                            List<NameReference> vals = getEnumfromProp(p.reference, propName, true);
                             if (vals != null)
                             {
                                 return vals;
@@ -106,7 +87,7 @@ namespace MassEffectRandomizer.Classes
                 //look in base class
                 if (temp.ContainsKey(info.baseClass))
                 {
-                    List<string> vals = getEnumfromProp(info.baseClass, propName, inStruct);
+                    List<NameReference> vals = getEnumfromProp(info.baseClass, propName, inStruct);
                     if (vals != null)
                     {
                         return vals;
@@ -116,11 +97,11 @@ namespace MassEffectRandomizer.Classes
             return null;
         }
 
-        public static List<string> getEnumValues(string enumName, bool includeNone = false)
+        public static List<NameReference> GetEnumValues(string enumName, bool includeNone = false)
         {
             if (Enums.ContainsKey(enumName))
             {
-                List<string> values = new List<string>(Enums[enumName]);
+                var values = new List<NameReference>(Enums[enumName]);
                 if (includeNone)
                 {
                     values.Insert(0, "None");
@@ -132,11 +113,8 @@ namespace MassEffectRandomizer.Classes
 
         public static ArrayType getArrayType(string className, string propName, IExportEntry export = null)
         {
-            PropertyInfo p = getPropertyInfo(className, propName, false);
-            if (p == null)
-            {
-                p = getPropertyInfo(className, propName, true);
-            }
+            PropertyInfo p = getPropertyInfo(className, propName, false, containingExport: export)
+                          ?? getPropertyInfo(className, propName, true, containingExport: export);
             if (p == null && export != null)
             {
                 if (export.ClassName != "Class" && export.idxClass > 0)
@@ -147,11 +125,8 @@ namespace MassEffectRandomizer.Classes
                 {
                     ClassInfo currentInfo = generateClassInfo(export);
                     currentInfo.baseClass = export.ClassParent;
-                    p = getPropertyInfo(className, propName, false, currentInfo);
-                    if (p == null)
-                    {
-                        p = getPropertyInfo(className, propName, true, currentInfo);
-                    }
+                    p = getPropertyInfo(className, propName, false, currentInfo, containingExport: export)
+                     ?? getPropertyInfo(className, propName, true, currentInfo, containingExport: export);
                 }
             }
             return getArrayType(p);
@@ -204,25 +179,14 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        public static PropertyInfo getPropertyInfo(string className, string propName, bool inStruct = false, ClassInfo nonVanillaClassInfo = null, bool reSearch = true)
-        {
-            var info = getPropertyInfoInternal(className, propName, inStruct, nonVanillaClassInfo, reSearch);
-            if (info == null) {
-                info = getPropertyInfoInternal(className, propName, !inStruct, nonVanillaClassInfo, reSearch);
-            }
-            return info;
-        }
-
-
-        private static PropertyInfo getPropertyInfoInternal(string className, string propName, bool inStruct = false, ClassInfo nonVanillaClassInfo = null, bool reSearch = true)
+        public static PropertyInfo getPropertyInfo(string className, string propName, bool inStruct = false, ClassInfo nonVanillaClassInfo = null, bool reSearch = true, IExportEntry containingExport = null)
         {
             if (className.StartsWith("Default__"))
             {
                 className = className.Substring(9);
             }
             Dictionary<string, ClassInfo> temp = inStruct ? Structs : Classes;
-            ClassInfo info;
-            bool infoExists = temp.TryGetValue(className, out info);
+            bool infoExists = temp.TryGetValue(className, out ClassInfo info);
             if (!infoExists && nonVanillaClassInfo != null)
             {
                 info = nonVanillaClassInfo;
@@ -257,6 +221,16 @@ namespace MassEffectRandomizer.Classes
                     if (val != null)
                     {
                         return val;
+                    }
+                }
+                else
+                {
+                    //Baseclass may be modified as well...
+                    if (containingExport != null && containingExport.idxClassParent > 0)
+                    {
+                        //Class parent is in this file. Generate class parent info and attempt refetch
+                        IExportEntry parentExport = containingExport.FileRef.getUExport(containingExport.idxClassParent);
+                        return getPropertyInfo(parentExport.ClassParent, propName, inStruct, generateClassInfo(parentExport), reSearch: true, parentExport);
                     }
                 }
             }
@@ -363,14 +337,14 @@ namespace MassEffectRandomizer.Classes
                 {
                     if (info.pccPath != "ME3Explorer_CustomNativeAdditions")
                     {
-                        string filepath = (Path.Combine(Utilities.GetGamePath(), @"BioGame\" + info.pccPath));
+                        string filepath = (Path.Combine(Utilities.GetGamePath(), "BioGame", info.pccPath));
                         if (File.Exists(info.pccPath))
                         {
                             filepath = info.pccPath; //Used for dynamic lookup
                         }
+
+                        PropertyCollection props;
                         ME1Package importPCC = new ME1Package(filepath);
-                        //using (ME1Package importPCC = MEPackageHandler.OpenME1Package(filepath))
-                        //{
                         byte[] buff;
                         //Plane and CoverReference inherit from other structs, meaning they don't have default values (who knows why)
                         //thus, I have hardcoded what those default values should be 
@@ -387,10 +361,10 @@ namespace MassEffectRandomizer.Classes
                             var exportToRead = importPCC.Exports[info.exportIndex];
                             buff = exportToRead.Data.Skip(0x30).ToArray();
                         }
-                        PropertyCollection props = PropertyCollection.ReadProps(importPCC, new MemoryStream(buff), className);
+                        props = PropertyCollection.ReadProps(importPCC, new MemoryStream(buff), className);
                         if (stripTransients)
                         {
-                            List<UProperty> toRemove = new List<UProperty>();
+                            var toRemove = new List<UProperty>();
                             foreach (var prop in props)
                             {
                                 //remove transient props
@@ -408,13 +382,12 @@ namespace MassEffectRandomizer.Classes
                             }
                             foreach (var prop in toRemove)
                             {
-                                Debug.WriteLine("ME1: Get Default Struct value (" + className + ") - removing transient prop: " + prop.Name);
+                                Debug.WriteLine($"ME1: Get Default Struct value ({className}) - removing transient prop: {prop.Name}");
                                 props.Remove(prop);
                             }
                         }
                         return props;
                     }
-                    //}
                 }
                 catch
                 {
@@ -422,20 +395,6 @@ namespace MassEffectRandomizer.Classes
                 }
             }
             return null;
-        }
-
-        public static bool inheritsFrom(ME1ExportEntry entry, string baseClass)
-        {
-            string className = entry.ClassName;
-            while (Classes.ContainsKey(className))
-            {
-                if (className == baseClass)
-                {
-                    return true;
-                }
-                className = Classes[className].baseClass;
-            }
-            return false;
         }
 
         internal static ClassInfo generateClassInfo(IExportEntry export)
@@ -481,23 +440,6 @@ namespace MassEffectRandomizer.Classes
             }
             return info;
         }
-
-        private static void generateEnumValues(int index, ME1Package pcc)
-        {
-            string enumName = pcc.Exports[index].ObjectName;
-            if (!Enums.ContainsKey(enumName))
-            {
-                List<string> values = new List<string>();
-                byte[] buff = pcc.Exports[index].Data;
-                int count = BitConverter.ToInt32(buff, 20);
-                for (int i = 0; i < count; i++)
-                {
-                    values.Add(pcc.Names[BitConverter.ToInt32(buff, 24 + i * 8)]);
-                }
-                Enums.Add(enumName, values);
-            }
-        }
-
         private static PropertyInfo getProperty(ME1Package pcc, IExportEntry entry)
         {
             PropertyInfo p = new PropertyInfo();
@@ -525,6 +467,8 @@ namespace MassEffectRandomizer.Classes
                     p.type = PropertyType.DelegateProperty;
                     break;
                 case "ObjectProperty":
+                case "ClassProperty":
+                case "ComponentProperty":
                     p.type = PropertyType.ObjectProperty;
                     p.reference = pcc.getObjectName(BitConverter.ToInt32(entry.Data, entry.Data.Length - 4));
                     break;
@@ -577,9 +521,7 @@ namespace MassEffectRandomizer.Classes
                         p = null;
                     }
                     break;
-                case "ClassProperty":
                 case "InterfaceProperty":
-                case "ComponentProperty":
                 default:
                     p = null;
                     break;
@@ -591,5 +533,37 @@ namespace MassEffectRandomizer.Classes
             }
             return p;
         }
+    }
+    public class ClassInfo
+    {
+        public Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
+        public string baseClass;
+        //Relative to BIOGame
+        public string pccPath;
+        //0-based
+        public int exportIndex;
+    }
+
+    [DebuggerDisplay("PropertyInfo | {type} , parent: {reference}, transient: {transient}")]
+    public class PropertyInfo
+    {
+        public PropertyType type { get; set; }
+        public string reference;
+        public bool transient;
+
+        public bool IsEnumProp() => type == PropertyType.ByteProperty && reference != null && reference != "Class" && reference != "Object";
+    }
+
+    public enum ArrayType
+    {
+        Object,
+        Name,
+        Enum,
+        Struct,
+        Bool,
+        String,
+        Float,
+        Int,
+        Byte,
     }
 }

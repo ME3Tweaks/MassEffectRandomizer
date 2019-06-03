@@ -213,6 +213,7 @@
     <Compile Include="Classes\MEPackage.cs" />
     <Compile Include="Classes\MiniLZO.cs" />
     <Compile Include="Classes\NodeType.cs" />
+    <Compile Include="Classes\NotifyPropertyChangedBase.cs" />
     <Compile Include="Classes\PreloadedNameReference.cs" />
     <Compile Include="Classes\PropertyCollection.cs" />
     <Compile Include="Classes\PropertyReadWrite.cs" />

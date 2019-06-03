@@ -660,12 +660,13 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeBioPawnSize(IExportEntry export, Random random, double amount)
         {
+            Log.Information("Randomizing pawn size for " + export.UIndex + ": " + export.GetIndexedFullPath);
             var props = export.GetProperties();
             StructProperty sp = props.GetProp<StructProperty>("DrawScale3D");
             if (sp == null)
             {
                 var structprops = ME1UnrealObjectInfo.getDefaultStructValue("Vector");
-                sp = new StructProperty("Vector", structprops, "DrawScale3D");
+                sp = new StructProperty("Vector", structprops, "DrawScale3D", ME1UnrealObjectInfo.isImmutableStruct("Vector"));
                 props.Add(sp);
             }
 
@@ -675,13 +676,16 @@ namespace MassEffectRandomizer.Classes
                 FloatProperty x = sp.GetProp<FloatProperty>("X");
                 FloatProperty y = sp.GetProp<FloatProperty>("Y");
                 FloatProperty z = sp.GetProp<FloatProperty>("Z");
+                if (x.Value == 0) x.Value = 1;
+                if (y.Value == 0) y.Value = 1;
+                if (z.Value == 0) z.Value = 1;
                 x.Value = x.Value * random.NextFloat(1 - amount, 1 + amount);
                 y.Value = y.Value * random.NextFloat(1 - amount, 1 + amount);
                 z.Value = z.Value * random.NextFloat(1 - amount, 1 + amount);
             }
 
             export.WriteProperties(props);
-            export.GetProperties(true);
+            //export.GetProperties(true);
             //ArrayProperty<StructProperty> m_aMorphFeatures = props.GetProp<ArrayProperty<StructProperty>>("m_aMorphFeatures");
             //if (m_aMorphFeatures != null)
             //{
@@ -1112,15 +1116,39 @@ namespace MassEffectRandomizer.Classes
             var squadPowersShuffled = TalentsShuffler.TalentShuffle(powersToReassignSquadMaster, 6, 9, random);
 
             //ASSIGN POWERS TO TABLE
+
+            // >> Player
             for (int classId = 0; classId < 6; classId++)
             {
                 int assignmentStartRow = (classId * 16) + 5; //16 powers per player, the first 5 of each are setup, the last 2 are charm/intimidate
                 var talentList = playerPowersShuffled[classId];
                 for (int i = 0; i < talentList.Count; i++)
                 {
-                    Log.Information("Talent randomizer: Setting row " + (assignmentStartRow + i) + " to " + talentList[i]);
+                    Log.Information("Talent randomizer [PLAYER - CLASSID " + classId + "]: Setting row " + (assignmentStartRow + i) + " to " + talentList[i]);
                     classtalents[assignmentStartRow + i, 1].Data = BitConverter.GetBytes(talentList[i]);
                 }
+            }
+
+            // >> Squad
+            int currentClassId = -1;
+            List<int> currentList = null;
+            for (int i = 0; i < classtalents.RowNames.Count; i++)
+            {
+                int rowClassId = classtalents[i, 0].GetIntValue();
+                if (rowClassId == 10 || rowClassId < 6) continue; //skip supersoldier, player classes
+                int currentTalentId = classtalents[i, 1].GetIntValue();
+                if (rowClassId != currentClassId)
+                {
+                    currentList = squadPowersShuffled[0];
+                    squadPowersShuffled.RemoveAt(0);
+                    currentClassId = rowClassId;
+                    //Krogan only has 2 non-assignable powers
+                    if (currentClassId == 7) { i += 2; } else { i += 3; }
+                }
+                int newPowerToAssign = currentList[0];
+                currentList.RemoveAt(0);
+                Log.Information("Talent randomizer [SQUAD - CLASSID " + currentClassId + "]: Setting row " + i + " to " + newPowerToAssign);
+                classtalents[i, 1].Data = BitConverter.GetBytes(newPowerToAssign);
             }
 
             //UPDATE UNLOCKS (in reverse)

@@ -35,7 +35,16 @@ namespace MassEffectRandomizer
             ERAndomizationMode_Screed = 2
         }
 
-        public RandomizationMode SelectedRandomizeMode { get; set; }
+        private RandomizationMode _randomizationMode;
+        public RandomizationMode SelectedRandomizeMode
+        {
+            get => _randomizationMode;
+            set
+            {
+                SetProperty(ref _randomizationMode, value);
+                UpdateCheckboxSettings();
+            }
+        }
         public int CurrentProgressValue { get; set; }
         public string CurrentOperationText { get; set; }
         public double ProgressBar_Bottom_Min { get; set; }
@@ -73,9 +82,13 @@ namespace MassEffectRandomizer
             {
                 foreach (CheckBox cb in FindVisualChildren<CheckBox>(randomizationOptionsPanel))
                 {
-                    // do something with cb here
-                    cb.IsChecked = true;
+                    if (cb.IsEnabled)
+                    {
+                        // do something with cb here
+                        cb.IsChecked = true;
+                    }
                 }
+
             }
         }
 
@@ -256,7 +269,6 @@ namespace MassEffectRandomizer
 
         public async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdateBackupButtonStatus();
             string me1Path = Utilities.GetGamePath();
 
             //int installedGames = 5;
@@ -463,31 +475,6 @@ namespace MassEffectRandomizer
                 {
                     //something to do with how shutting down works.
                 }
-            }
-        }
-
-        private void Button_BackupRestore_Click(object sender, RoutedEventArgs e)
-        {
-            if (File.Exists(System.IO.Path.Combine(Utilities.GetAppDataFolder(), "BACKED_UP")))
-            {
-                Utilities.Restore2DAFiles();
-            }
-            else
-            {
-                Utilities.Backup2daFiles();
-            }
-            UpdateBackupButtonStatus();
-        }
-
-        private void UpdateBackupButtonStatus()
-        {
-            if (File.Exists(System.IO.Path.Combine(Utilities.GetAppDataFolder(), "BACKED_UP")))
-            {
-                Button_BackupRestore.Content = "Restore 2DA files";
-            }
-            else
-            {
-                Button_BackupRestore.Content = "Backup 2DA files";
             }
         }
 

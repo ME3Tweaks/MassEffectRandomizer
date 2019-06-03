@@ -104,27 +104,27 @@ namespace MassEffectRandomizer.Classes
             return stream.ReadStringUnicode(count).Trim('\0');
         }
 
-        public static void WriteStringASCII(this Stream stream, string str)
-        {
-            var bytecount = Encoding.ASCII.GetByteCount(str);
-            var bytes = Encoding.ASCII.GetBytes(str);
-            stream.Write(bytes, 0, bytecount);
-        }
+        //public static void WriteStringASCII(this Stream stream, string str)
+        //{
+        //    var bytecount = Encoding.ASCII.GetByteCount(str);
+        //    var bytes = Encoding.ASCII.GetBytes(str);
+        //    stream.Write(bytes, 0, bytecount);
+        //}
 
-        public static void WriteStringASCIINull(this Stream stream, string str)
-        {
-            stream.WriteStringASCII(str + "\0");
-        }
+        //public static void WriteStringASCIINull(this Stream stream, string str)
+        //{
+        //    stream.WriteStringASCII(str + "\0");
+        //}
 
-        public static void WriteStringUnicode(this Stream stream, string str)
-        {
-            stream.Write(Encoding.Unicode.GetBytes(str), 0, Encoding.Unicode.GetByteCount(str));
-        }
+        //public static void WriteStringUnicode(this Stream stream, string str)
+        //{
+        //    stream.Write(Encoding.Unicode.GetBytes(str), 0, Encoding.Unicode.GetByteCount(str));
+        //}
 
-        public static void WriteStringUnicodeNull(this Stream stream, string str)
-        {
-            stream.WriteStringUnicode(str + "\0");
-        }
+        //public static void WriteStringUnicodeNull(this Stream stream, string str)
+        //{
+        //    stream.WriteStringUnicode(str + "\0");
+        //}
 
         public static ulong ReadUInt64(this Stream stream)
         {
