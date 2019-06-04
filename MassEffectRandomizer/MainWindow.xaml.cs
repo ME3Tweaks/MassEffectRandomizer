@@ -188,6 +188,7 @@ namespace MassEffectRandomizer
         public bool LogUploaderFlyoutOpen { get; set; }
         public bool DiagnosticsFlyoutOpen { get; set; }
         public bool RANDSETTING_MISC_GAMEOVERTEXT { get; set; }
+        public bool RANDSETTING_MISC_INTERPS { get; set; }
 
 
         //MAKO 

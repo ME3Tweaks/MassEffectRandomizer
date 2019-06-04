@@ -12,10 +12,10 @@
                       mc:Ignorable="d" 
                       Loaded="MainWindow_Loaded" 
                       Title="Mass Effect Randomizer" 
-                      MinHeight="640" 
-                      MinWidth="680"
-                      Height="640"
-                      Width="680">
+                      MinHeight="680" 
+                      MinWidth="800"
+                      Height="680"
+                      Width="800">
     <Window.Resources>
         <converters:EnumMatchToBooleanConverter x:Key="enumConverter" />
         <FontFamily x:Key="AeroLight">
@@ -197,7 +197,8 @@
                                                 </Style>
                                             </StackPanel.Style>
                                         </StackPanel>
-                                        <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes and will break ragdoll physics and other unknown stuff&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
+                                        <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes, ragdoll physics, and may make enemies immune to gun damage (but not melee)&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
+                                        <CheckBox Content="Randomly randomize movement interpolations" Foreground="Red" ToolTip="Warning: This breaks a lot of stuff I'm suref&#xA;Slightly changes the movement and rotations of interpolations of everything&#xA;This setting will not apply to all interpolations, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPS}" />
 
                                     </StackPanel>
                                 </StackPanel>

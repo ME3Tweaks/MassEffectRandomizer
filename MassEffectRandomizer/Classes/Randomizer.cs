@@ -386,6 +386,56 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
+            //PAWN SIZES
+            if (mainWindow.RANDSETTING_MISC_INTERPS)
+            {
+                mainWindow.CurrentOperationText = "Getting list of files...";
+
+                mainWindow.ProgressBarIndeterminate = true;
+                string path = Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps");
+                string bdtspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_UNC", "CookedPC", "Maps");
+                string pspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_Vegas", "CookedPC", "Maps");
+
+                string[] files = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg")).ToArray();
+                if (Directory.Exists(bdtspath))
+                {
+                    files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
+                }
+                if (Directory.Exists(pspath))
+                {
+                    files = files.Concat(Directory.GetFiles(pspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_") && Path.GetFileName(x).ToLower().Contains("dsg"))).ToArray();
+                }
+
+                mainWindow.ProgressBarIndeterminate = false;
+                mainWindow.ProgressBar_Bottom_Max = files.Count();
+                mainWindow.ProgressBar_Bottom_Min = 0;
+                double amount = 0.4;
+                for (int i = 0; i < files.Length; i++)
+                {
+                    //                    int progress = (int)((i / total) * 100);
+                    mainWindow.CurrentProgressValue = i;
+                    mainWindow.CurrentOperationText = "Randomizing interpolations in map files [" + i + "/" + files.Count() + "]";
+                    if (!files[i].ToLower().Contains("entrymenu"))
+                    {
+                        ME1Package package = new ME1Package(files[i]);
+                        bool hasChanges = false;
+                        foreach (IExportEntry export in package.Exports)
+                        {
+                            if (export.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
+                            {
+                                RandomizeInterpTrackMove(export, random, amount);
+                                hasChanges = true;
+                            }
+                        }
+                        if (hasChanges)
+                        {
+                            ModifiedFiles[package.FileName] = package.FileName;
+                            package.save();
+                        }
+                    }
+                }
+            }
+
             bool saveGlobalTLK = false;
             foreach (TalkFile tf in Tlks)
             {
@@ -400,6 +450,57 @@ namespace MassEffectRandomizer.Classes
             {
                 globalTLK.save();
             }
+        }
+
+        private void RandomizeInterpTrackMove(IExportEntry export, Random random, double amount)
+        {
+            Log.Information("Randomizing movement interpolations for " + export.UIndex + ": " + export.GetIndexedFullPath);
+            var props = export.GetProperties();
+            var posTrack = props.GetProp<StructProperty>("PosTrack");
+            if (posTrack != null)
+            {
+                var points = posTrack.GetProp<ArrayProperty<StructProperty>>("Points");
+                if (points != null)
+                {
+                    foreach (StructProperty s in points)
+                    {
+                        var outVal = s.GetProp<StructProperty>("OutVal");
+                        if (outVal != null)
+                        {
+                            FloatProperty x = outVal.GetProp<FloatProperty>("X");
+                            FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+                            FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+                            x.Value = x.Value * random.NextFloat(1 - amount, 1 + amount);
+                            y.Value = y.Value * random.NextFloat(1 - amount, 1 + amount);
+                            z.Value = z.Value * random.NextFloat(1 - amount, 1 + amount);
+                        }
+                    }
+                }
+            }
+
+            var eulerTrack = props.GetProp<StructProperty>("PosTrack");
+            if (eulerTrack != null)
+            {
+                var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
+                if (points != null)
+                {
+                    foreach (StructProperty s in points)
+                    {
+                        var outVal = s.GetProp<StructProperty>("OutVal");
+                        if (outVal != null)
+                        {
+                            FloatProperty x = outVal.GetProp<FloatProperty>("X");
+                            FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+                            FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+                            x.Value = x.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                            y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                            z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                        }
+                    }
+                }
+            }
+
+            export.WriteProperties(props);
         }
 
         public string GetResourceFileText(string filename, string assemblyName)
@@ -793,6 +894,8 @@ namespace MassEffectRandomizer.Classes
 
         //    engine.save();
         //}
+
+
 
         private void RandomizeCharacter(IExportEntry export, Random random)
         {

@@ -179,7 +179,27 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        /// <summary>
+        /// Wrapper that will call getPropertyInfoInternal and swap the in-struct search if the firstl ookup fails.
+        /// </summary>
+        /// <param name="className"></param>
+        /// <param name="propName"></param>
+        /// <param name="inStruct"></param>
+        /// <param name="nonVanillaClassInfo"></param>
+        /// <param name="reSearch"></param>
+        /// <param name="containingExport"></param>
+        /// <returns></returns>
         public static PropertyInfo getPropertyInfo(string className, string propName, bool inStruct = false, ClassInfo nonVanillaClassInfo = null, bool reSearch = true, IExportEntry containingExport = null)
+        {
+            var pinfo = getPropertyInfoInternal(className, propName, inStruct, nonVanillaClassInfo, reSearch, containingExport);
+            if (pinfo == null)
+            {
+                pinfo = getPropertyInfoInternal(className, propName, !inStruct, nonVanillaClassInfo, reSearch, containingExport);
+            }
+            return pinfo;
+        }
+
+        private static PropertyInfo getPropertyInfoInternal(string className, string propName, bool inStruct = false, ClassInfo nonVanillaClassInfo = null, bool reSearch = true, IExportEntry containingExport = null)
         {
             if (className.StartsWith("Default__"))
             {
