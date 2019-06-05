@@ -441,6 +441,12 @@ namespace MassEffectRandomizer.Classes
                 mainWindow.CurrentOperationText = "Randomizing opening cutscene";
                 RandomizeOpeningCrawl(random, Tlks);
                 RandomizeOpeningSequence(random);
+                Log.Information("Applying fly-into-earth interp modification");
+                ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\NOR\LAY\BIOA_NOR10_13_LAY.SFM"));
+                p.getUExport(220).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_EarthCardIntro_220.bin");
+                Log.Information("Applying shepard-faces-camera modification");
+                p.getUExport(219).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_PlayerFaceCameraIntro_219.bin");
+                p.save();
             }
 
             bool saveGlobalTLK = false;
@@ -779,6 +785,7 @@ namespace MassEffectRandomizer.Classes
                               CrawlText = e.Value,
                               RequiresFaceRandomizer = e.Element("requiresfacerandomizer") != null && ((bool)e.Element("requiresfacerandomizer"))
                           }).ToList();
+            crawls = crawls.Where(x => x.CrawlText != "").ToList();
 
             if (!mainWindow.RANDSETTING_MISC_MAPFACES)
             {
@@ -786,7 +793,9 @@ namespace MassEffectRandomizer.Classes
             }
 
             string crawl = crawls[random.Next(crawls.Count)].CrawlText;
-
+            crawl = string.Join(
+                "\n",
+                crawl.Split('\n').Select(s => s.Trim()));
             foreach (TalkFile tf in Tlks)
             {
                 tf.replaceString(153106, crawl);

@@ -83,6 +83,18 @@ namespace MassEffectRandomizer.Classes
             return result;
         }
 
+        public static byte[] GetEmbeddedStaticFilesBinaryFile(string filename)
+        {
+            var items = typeof(MainWindow).Assembly.GetManifestResourceNames();
+            using (Stream stream = typeof(MainWindow).Assembly.
+                GetManifestResourceStream("MassEffectRandomizer.staticfiles." + filename))
+            {
+                byte[] ba = new byte[stream.Length];
+                stream.Read(ba, 0, ba.Length);
+                return ba;
+            }
+        }
+
         internal static void Restore2DAFiles()
         {
             List<string> files = new List<string>();

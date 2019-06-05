@@ -1,4 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<!--
+The intro text only supports 8 lines of text. If you go over this, it won’t appear.
+-->
 <IntroCrawlTexts>
   <CrawlText>
     In the year 2148, explorers on Mars discovered the remains of an ancient spacefaring civilization. In the decades that followed, these mysterious artifacts revealed startling new technologies, enabling travel to the furthest stars. The basis for this incredible technology was a force that controlled the very fabric of space and time.
@@ -8,21 +10,30 @@
     The civilizations of the galaxy call it...
   </CrawlText>
   <CrawlText>
-    This series is  a science fiction action role-playing third-person shooter video game series developed by the Canadian company BioWare and released for the Xbox 360, PlayStation 3, and Microsoft Windows, with the third installment also released on the Wii U.
+    This series is a science fiction action role-playing third-person shooter video game series developed by the Canadian company BioWare and released for the Xbox 360, PlayStation 3, and Microsoft Windows, with the third installment also released on the Wii U.
 
-    All of the first three major installments of this series have been met with commercial success as well as universal acclaim. The series is highly regarded for its narrative, character development, voice acting, the universe, and emphasis on player choice affecting the experience.
+    The series is highly regarded for its narrative, character development, voice acting, the universe, and emphasis on player choice affecting the experience.
 
-    The fourth game was released on Windows, PlayStation 4 and Xbox One in March 2017, but you’re currently playing...</CrawlText>
+    The fourth game was released on Windows, PlayStation 4 and Xbox One in March 2017, but you’re currently playing...
+  </CrawlText>
   <CrawlText requiresfacerandomizer="true">
     Only a select few in our galaxy have survived the cataclysm that mutated us. As one of these chosen few, you’ve been conditioned to put down these scourges of the galaxy, of which there are many.
 
     You are humanity’s chosen champion. You must rise to the challenge and show that you can rescue humanity, and once this is all over… you can find your own humanity again.
 
-    Your job is to wipe out what is mutating the citizens of the Milky Way. Get rid of what they call...</CrawlText>
+    This is your call to arms. Get rid of what they call...
+  </CrawlText>
   <CrawlText>
-    Hello there! Welcome to the galaxy of ALIENS and SPACE MAGIC! My name is UDINA! People call me the ALIEN PROF! This galaxy is inhabited by creatures called BATARIANS! And SALARIANS! For some people, ALIENS are friends. Others use them for committing war crimes against, like sterilization!
+    Hello there! Welcome to the galaxy of ALIENS and SPACE MAGIC! My name is UDINA! People call me the ALIEN PROF! This galaxy is inhabited by creatures called BATARIANS! And SALARIANS! For some people, ALIENS are friends. Others use them for committing war crimes against other species, like sterilization!
 
-    Myself...I study ALIEN POLITICS as a profession. Shepard! This is my grandson. He's been your rival since you were a baby. His name is… erm…. That's right! I remember now! His name is JENKINS! SHEPARD! Your very own ALIEN legend is about to unfold! A galaxy of dreams and adventures with ALIENS awaits!
+    Myself...I study ALIEN POLITICS as a profession.
 
-    Let's go!</CrawlText>
+    Shepard! Let's go!
+  </CrawlText>
+  <CrawlText></CrawlText>
+  <CrawlText></CrawlText>
+  <CrawlText></CrawlText>
+  <CrawlText></CrawlText>
+  <CrawlText></CrawlText>
+  <CrawlText></CrawlText>
 </IntroCrawlTexts>
