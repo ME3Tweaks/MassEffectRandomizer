@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using MassEffectRandomizer.Classes;
+using Serilog;
 
 namespace MassEffectRandomizer.Classes.TLK
 {
@@ -202,6 +203,7 @@ namespace MassEffectRandomizer.Classes.TLK
                 if (StringRefs[i].StringID == id)
                 {
                     //Debug.WriteLine("Setting string " + id + " to " + newString);
+                    Log.Information($"Updating string id {id} to {newString}");
                     StringRefs[i].Data = newString;
                     Modified = true;
                 }

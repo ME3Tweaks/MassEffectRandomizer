@@ -436,6 +436,13 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
+            if (mainWindow.RANDSETTING_WACK_OPENINGCUTSCENE)
+            {
+                mainWindow.CurrentOperationText = "Randomizing opening cutscene";
+                RandomizeOpeningCrawl(random, Tlks);
+                RandomizeOpeningSequence(random);
+            }
+
             bool saveGlobalTLK = false;
             foreach (TalkFile tf in Tlks)
             {
@@ -759,6 +766,34 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        private void RandomizeOpeningCrawl(Random random, List<TalkFile> Tlks)
+        {
+            Log.Information($"Randomizing opening crawl text");
+
+            string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("openingcrawls.xml");
+
+            XElement rootElement = XElement.Parse(fileContents);
+            var crawls = (from e in rootElement.Elements("CrawlText")
+                          select new OpeningCrawl()
+                          {
+                              CrawlText = e.Value,
+                              RequiresFaceRandomizer = e.Element("requiresfacerandomizer") != null && ((bool)e.Element("requiresfacerandomizer"))
+                          }).ToList();
+
+            if (!mainWindow.RANDSETTING_MISC_MAPFACES)
+            {
+                crawls = crawls.Where(x => !x.RequiresFaceRandomizer).ToList();
+            }
+
+            string crawl = crawls[random.Next(crawls.Count)].CrawlText;
+
+            foreach (TalkFile tf in Tlks)
+            {
+                tf.replaceString(153106, crawl);
+            }
+
+        }
+
         private void RandomizeBioPawnSize(IExportEntry export, Random random, double amount)
         {
             Log.Information("Randomizing pawn size for " + export.UIndex + ": " + export.GetIndexedFullPath);
@@ -1065,6 +1100,67 @@ namespace MassEffectRandomizer.Classes
                 }
             }
             planet2da.Write2DAToExport();
+        }
+
+        private void RandomizeOpeningSequence(Random random)
+        {
+            Log.Information($"Randomizing opening cutscene");
+
+            ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\PRO\CIN\BIOA_GLO00_A_Opening_Flyby_CIN.SFM"));
+            foreach (var ex in p.Exports)
+            {
+                if (ex.ClassName == "BioSunFlareComponent")
+                {
+                    var tint = ex.GetProperty<StructProperty>("FlareTint");
+                    if (tint != null)
+                    {
+                        RandomizeTint(random, tint, false);
+                        ex.WriteProperty(tint);
+                    }
+                }
+                else if (ex.ClassName == "BioSunActor")
+                {
+                    var tint = ex.GetProperty<StructProperty>("SunTint");
+                    if (tint != null)
+                    {
+                        RandomizeTint(random, tint, false);
+                        ex.WriteProperty(tint);
+                    }
+                }
+
+            }
+
+            p.save();
+        }
+
+        private void RandomizeTint(Random random, StructProperty tint, bool randomizeAlpha)
+        {
+            var a = tint.GetProp<FloatProperty>("A");
+            var r = tint.GetProp<FloatProperty>("R");
+            var g = tint.GetProp<FloatProperty>("G");
+            var b = tint.GetProp<FloatProperty>("B");
+
+            float totalTintValue = r + g + b;
+
+            //Randomizing hte pick order will ensure we get a random more-dominant first color (but only sometimes).
+            //e.g. if e went in R G B order red would always have a chance at a higher value than the last picked item
+            List<FloatProperty> randomOrderChooser = new List<FloatProperty>();
+            randomOrderChooser.Add(r);
+            randomOrderChooser.Add(g);
+            randomOrderChooser.Add(b);
+            randomOrderChooser.Shuffle(random);
+
+            randomOrderChooser[0].Value = random.NextFloat(0, totalTintValue);
+            totalTintValue -= randomOrderChooser[0].Value;
+
+            randomOrderChooser[1].Value = random.NextFloat(0, totalTintValue);
+            totalTintValue -= randomOrderChooser[1].Value;
+
+            randomOrderChooser[2].Value = totalTintValue;
+            if (randomizeAlpha)
+            {
+                a.Value = random.NextFloat(0, 1);
+            }
         }
 
         /// <summary>

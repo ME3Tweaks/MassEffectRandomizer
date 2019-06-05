@@ -135,6 +135,12 @@ namespace MassEffectRandomizer
 
         }
 
+        public class OpeningCrawl
+        {
+            public bool RequiresFaceRandomizer;
+            public string CrawlText;
+        }
+
         private void LoadPlanetsText()
         {
             string path = @"C:\users\mgame\desktop\planet_test.txt";
@@ -184,11 +190,14 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_GUISFX { get; set; }
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
-        public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
         public bool LogUploaderFlyoutOpen { get; set; }
         public bool DiagnosticsFlyoutOpen { get; set; }
         public bool RANDSETTING_MISC_GAMEOVERTEXT { get; set; }
+
+        //Wackadoodle
+        public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
         public bool RANDSETTING_MISC_INTERPS { get; set; }
+        public bool RANDSETTING_WACK_OPENINGCUTSCENE { get; set; }
 
 
         //MAKO 
