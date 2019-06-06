@@ -196,6 +196,7 @@ namespace MassEffectRandomizer
 
         //Wackadoodle
         public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
+        public bool RANDSETTING_MISC_HAZARDS { get; set; }
         public bool RANDSETTING_MISC_INTERPS { get; set; }
         public bool RANDSETTING_WACK_OPENINGCUTSCENE { get; set; }
 

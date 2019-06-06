@@ -259,6 +259,7 @@
                                                 </Style>
                                             </CheckBox.Style>
                                         </CheckBox>
+                                        <CheckBox Content="Randomize planet hazards" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HAZARDS}" ToolTip="Randomizes what hazard you will get on maps that have hazards"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
