@@ -19,7 +19,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
         /// <summary>
         /// Randomizes a row of level-based stats using a linear distribution with optional columns that can get boosted a random amount
         /// </summary>
-        /// <param name="table2DA">TAble to randomize</param>
+        /// <param name="table2DA">Table to randomize</param>
         /// <param name="row">Row to randomize</param>
         /// <param name="startcol">Level 1 column index</param>
         /// <param name="numcols">Number of columns (maxlevel)</param>
@@ -93,7 +93,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 if (Math.Abs(previousValue - Math.Floor(previousValue + 0.001)) < 0.001)
                 {
                     //int
-                    table2DA[row, column].Type = Bio2DACell.TYPE_INT;
+                    table2DA[row, column].Type = Bio2DACell.Bio2DADataType.TYPE_INT;
                     int value = (int)previousValue;
                     Debug.WriteLine("TalentEffectLevels " + row + ", " + column + " = " + value);
                     table2DA[row, startcol + (level - 1)].Data = BitConverter.GetBytes(value);
@@ -101,7 +101,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 else
                 {
                     //float
-                    table2DA[row, column].Type = Bio2DACell.TYPE_FLOAT;
+                    table2DA[row, column].Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                     Debug.WriteLine("TalentEffectLevels " + row + ", " + column + " = " + previousValue);
                     table2DA[row, startcol + (level - 1)].Data = BitConverter.GetBytes(previousValue);
                 }

@@ -23,17 +23,21 @@ namespace MassEffectRandomizer.Classes
 {
     class Randomizer
     {
+
         private static readonly string[] RandomClusterNameCollection = {
-        "Serpent Cluster","Zero","Artemis","Kamino","Kovac Nebula", "Akkala","Lanayru Verge","Kyramud","Tolase","Kirigiri","Ascension Sigma", "Epsilon","Rodin","Gilgamesh","Enkidu","Ventus","Agrias","Canopus","Tartarose","Dorgalua","Losstarot","Onyx Tau","Himura", "Baltoy","Canopy Xi"
+            "Serpent Cluster","Zero","Artemis","Kamino","Kovac Nebula", "Akkala","Lanayru Verge","Kyramud","Tolase","Kirigiri",
+            "Ascension Sigma", "Epsilon","Rodin","Gilgamesh","Enkidu","Ventus","Agrias","Canopus","Tartarose","Dorgalua","Losstarot",
+            "Onyx Tau","Himura", "Baltoy","Arugula", "Wily’s Castle"
         };
 
         private static readonly string[] GameOverTexts =
         {
-            "CRITICAL MISSION FAILURE", "YA DONE GOOF'D", "YOU DIED", "PRESS F TO PAY YOUR RESPECTS", "REST IN PEACE", "SLEEP WELL", "ARE YOU EVEN TRYING"
+            "CRITICAL MISSION FAILURE", "YA DONE GOOF'D", "YOU DIED", "PRESS F TO PAY YOUR RESPECTS", "REST IN PEACE",
+            "SLEEP WELL", "ARE YOU EVEN TRYING?", "THE CYCLE CONTINUES", "MAY WE MEET AGAIN","THAT COULD HAVE GONE BETTER",
+            "ADMIRAL AHERN IS DISAPPOINTED","OH NO!","SHEPARRRRRRRRDDDDD!"
         };
 
-
-        private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini", "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Kerh-S", "Odyssey", "Xi Draconis", "System o’ Hags", "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion", "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan", "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost" };
+        private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini", "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Kerh-S", "Odyssey", "Xi Draconis", "System o’ Hags", "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion", "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan", "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost", "Stealthed Edge" };
 
         private const string UPDATE_RANDOMIZING_TEXT = "UPDATE_RANDOMIZING_TEXT";
         private MainWindow mainWindow;
@@ -364,6 +368,11 @@ namespace MassEffectRandomizer.Classes
                                 }
                                 //Pawn size randomizer
                                 RandomizeBioPawnSize(exp, random, 0.4);
+                                if (random.Next(15) == 0)
+                                {
+                                    //Todo: restore from older commits for headmesh scaling.
+                                    //scaleHeadMesh()
+                                }
                                 hasChanges = true;
                             }
                             else if (mainWindow.RANDSETTING_MISC_INTERPS && exp.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
@@ -386,7 +395,7 @@ namespace MassEffectRandomizer.Classes
                     }
                 }
             }
-            
+
             if (mainWindow.RANDSETTING_WACK_OPENINGCUTSCENE)
             {
                 mainWindow.CurrentOperationText = "Randomizing opening cutscene";
@@ -423,7 +432,7 @@ namespace MassEffectRandomizer.Classes
             var variableLinks = export.GetProperty<ArrayProperty<StructProperty>>("VariableLinks");
             if (variableLinks != null)
             {
-                foreach(var variableLink in variableLinks)
+                foreach (var variableLink in variableLinks)
                 {
                     var expectedType = export.FileRef.getEntry(variableLink.GetProp<ObjectProperty>("ExpectedType").Value).ObjectName;
                     var linkedVariable = export.FileRef.getUExport(variableLink.GetProp<ArrayProperty<ObjectProperty>>("LinkedVariables")[0].Value); //hoochie mama that is one big statement.
@@ -440,15 +449,15 @@ namespace MassEffectRandomizer.Classes
                         case "SeqVar_Bool":
                             //Force helmet
                             var hazardHelmetProp = new IntProperty(random.Next(2), "bValue");
-                            Log.Information(" >> Force helmet on: "+hazardHelmetProp.Value);
+                            Log.Information(" >> Force helmet on: " + hazardHelmetProp.Value);
                             linkedVariable.WriteProperty(hazardHelmetProp);
                             break;
                         case "SeqVar_Int":
                             //Hazard level
                             var hazardLevelProp = new IntProperty(random.Next(4) + 1, "IntValue");
-                            if (random.Next(4) == 0) //oof, for the player
+                            if (random.Next(3) == 0) //oof, for the player
                             {
-                                hazardLevelProp.Value += random.Next(6) + 1;
+                                hazardLevelProp.Value += random.Next(3) + 1;
                                 hazardLevelProp.Value = Math.Min(hazardLevelProp.Value, 9); //cap at 9
                             }
                             Log.Information(" >> Hazard level: " + hazardLevelProp.Value);
@@ -624,12 +633,14 @@ namespace MassEffectRandomizer.Classes
                                            select new RandomizedPlanetInfo
                                            {
                                                PlanetName = (string)e.Element("PlanetName"),
-                                               PlanetName2 = (string)e.Element("PlanetName2"),
+                                               PlanetName2 = (string)e.Element("PlanetName2"), //Original name (plot planets only)
                                                PlanetDescription = (string)e.Element("PlanetDescription"),
                                                IsMSV = (bool)e.Element("IsMSV"),
                                                IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
                                                PreventShuffle = (bool)e.Element("PreventShuffle"),
-                                               RowID = (int)e.Element("RowID")
+                                               RowID = (int)e.Element("RowID"),
+                                               MapBaseNames = e.Elements("MapBaseNames")
+                                                   .Select(r => r.Value).ToList()
                                            }).ToList();
 
             var msvInfos = allMapRandomizationInfo.Where(x => x.IsMSV).ToList();
@@ -643,9 +654,13 @@ namespace MassEffectRandomizer.Classes
             List<int> rowsToNotRandomlyReassign = new List<int>();
 
             IExportEntry systemsExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_System");
+            IExportEntry areaMapExport = export.FileRef.Exports.First(x => x.ObjectName == "AreaMap_AreaMap");
+            IExportEntry plotPlanetExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_PlotPlanet");
+
             Bio2DA systems2DA = new Bio2DA(systemsExport);
             Bio2DA planets2DA = new Bio2DA(export);
-
+            Bio2DA areaMap2DA = new Bio2DA(areaMapExport);
+            Bio2DA plotPlanet2DA = new Bio2DA(plotPlanetExport);
 
             List<string> shuffledSystemNames = new List<string>(RandomSystemNameCollection);
             shuffledSystemNames.Shuffle(random);
@@ -728,12 +743,24 @@ namespace MassEffectRandomizer.Classes
                     {
                         description = description.Replace("%SYSTEMNAME%", systemName);
                         description = description.Replace("%PLANETNAME%", planetName);
+                        description = description.Trim();
                     }
 
                     foreach (TalkFile tf in Tlks)
                     {
-                        Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + rpi.PlanetName);
-                        tf.replaceString(nameReference, rpi.PlanetName);
+                        Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + planetName);
+                        tf.replaceString(nameReference, planetName);
+
+                        if (rpi.MapBaseNames.Count > 0)
+                        {
+                            //Replace info in areamap and plot planet tables
+                            for(int a = 0; a < areaMap2DA.RowCount; a++)
+                            {
+                                //todo: lookup labels against base name and update strings.
+                                //todo: lookup plot planets
+                            }
+                        }
+
                         if (descriptionReference != 0 && description != null)
                         {
                             int truncated = Math.Min(description.Length, 25);
@@ -909,7 +936,7 @@ namespace MassEffectRandomizer.Classes
                     int randvalue = random.Next(10, 1200);
                     Console.WriteLine("Movement Speed Randomizer [" + row + "][" + colsToRandomize[i] + "] value is now " + randvalue);
                     cluster2da[row, colsToRandomize[i]].Data = BitConverter.GetBytes(randvalue);
-                    cluster2da[row, colsToRandomize[i]].Type = Bio2DACell.TYPE_INT;
+                    cluster2da[row, colsToRandomize[i]].Type = Bio2DACell.Bio2DADataType.TYPE_INT;
                 }
             }
             cluster2da.Write2DAToExport();
@@ -1099,7 +1126,7 @@ namespace MassEffectRandomizer.Classes
                 float scalerandvalue = random.NextFloat(0.25, 2);
                 Console.WriteLine("System Randomizer [" + row + "][9] value is now " + scalerandvalue);
                 system2da[row, 9].Data = BitConverter.GetBytes(scalerandvalue);
-                system2da[row, 9].Type = Bio2DACell.TYPE_FLOAT;
+                system2da[row, 9].Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
             }
             system2da.Write2DAToExport();
         }
@@ -1120,7 +1147,7 @@ namespace MassEffectRandomizer.Classes
             {
                 for (int i = 0; i < planet2da.ColumnNames.Count(); i++)
                 {
-                    if (planet2da[row, i] != null && planet2da[row, i].Type == Bio2DACell.TYPE_FLOAT)
+                    if (planet2da[row, i] != null && planet2da[row, i].Type == Bio2DACell.Bio2DADataType.TYPE_FLOAT)
                     {
                         Console.WriteLine("[" + row + "][" + i + "]  (" + planet2da.ColumnNames[i] + ") value is " + BitConverter.ToSingle(planet2da[row, i].Data, 0));
                         float randvalue = random.NextFloat(0, 1);
@@ -1615,9 +1642,11 @@ namespace MassEffectRandomizer.Classes
         private static string[] TalentEffectsToRandomize_THROW = { "GE_TKThrow_CastingTime", "GE_TKThrow_Kickback", "GE_TKThrow_CooldownTime", "GE_TKThrow_ImpactRadius", "GE_TKThrow_Force" };
         private static string[] TalentEffectsToRandomize_LIFT = { "GE_TKLift_Force", "GE_TKLift_EffectDuration", "GE_TKLift_ImpactRadius", "GE_TKLift_CooldownTime" };
 
-        public bool RunMapRandomizerPass { get => mainWindow.RANDSETTING_MISC_MAPFACES ||
-                mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
-                mainWindow.RANDSETTING_MISC_INTERPS;
+        public bool RunMapRandomizerPass
+        {
+            get => mainWindow.RANDSETTING_MISC_MAPFACES ||
+mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
+mainWindow.RANDSETTING_MISC_INTERPS;
         }
 
         private void RandomizeTalentEffectLevels(IExportEntry export, List<TalkFile> Tlks, Random random)
@@ -1808,14 +1837,14 @@ namespace MassEffectRandomizer.Classes
                         {
                             //Fraction
                             Bio2DACell cell = challenge2da[row, col];
-                            if (cell.Type == Bio2DACell.TYPE_FLOAT)
+                            if (cell.Type == Bio2DACell.Bio2DADataType.TYPE_FLOAT)
                             {
                                 challenge2da[row, col].Data = BitConverter.GetBytes(challenge2da[row, col].GetFloatValue() * multiplier);
                             }
                             else
                             {
                                 challenge2da[row, col].Data = BitConverter.GetBytes(challenge2da[row, col].GetIntValue() * multiplier);
-                                challenge2da[row, col].Type = Bio2DACell.TYPE_FLOAT;
+                                challenge2da[row, col].Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                             }
                         }
                         else
@@ -1860,7 +1889,7 @@ namespace MassEffectRandomizer.Classes
                         float multiplier = random.NextFloat(0.5, 6);
                         Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value originally is " + export2da[row, col].GetDisplayableValue());
 
-                        if (cell.Type == Bio2DACell.TYPE_FLOAT)
+                        if (cell.Type == Bio2DACell.Bio2DADataType.TYPE_FLOAT)
                         {
                             cell.Data = BitConverter.GetBytes(cell.GetFloatValue() * multiplier);
                             hasChanges = true;
@@ -1868,7 +1897,7 @@ namespace MassEffectRandomizer.Classes
                         else
                         {
                             cell.Data = BitConverter.GetBytes(cell.GetIntValue() * multiplier);
-                            cell.Type = Bio2DACell.TYPE_FLOAT;
+                            cell.Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                             hasChanges = true;
                         }
                         Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value now is " + cell.GetDisplayableValue());
@@ -1891,14 +1920,14 @@ namespace MassEffectRandomizer.Classes
                         // Bio2DACell cellX = cell;
                         Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value originally is " + cell.GetDisplayableValue());
                         cell.Data = BitConverter.GetBytes(scalarval);
-                        cell.Type = Bio2DACell.TYPE_FLOAT;
+                        cell.Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                         Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value now is " + cell.GetDisplayableValue());
                         hasChanges = true;
                         continue;
                     }
 
                     //Skin Tone
-                    if (cell != null && cell.Type == Bio2DACell.TYPE_NAME)
+                    if (cell != null && cell.Type == Bio2DACell.Bio2DADataType.TYPE_NAME)
                     {
                         if (export.ObjectName.Contains("Skin_Tone") && !mainWindow.RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE)
                         {
@@ -1916,11 +1945,11 @@ namespace MassEffectRandomizer.Classes
                     }
 
                     string columnName = export2da.GetColumnNameByIndex(col);
-                    if (columnName.Contains("Scalar") && cell != null && cell.Type != Bio2DACell.TYPE_NAME)
+                    if (columnName.Contains("Scalar") && cell != null && cell.Type != Bio2DACell.Bio2DADataType.TYPE_NAME)
                     {
                         float currentValue = float.Parse(cell.GetDisplayableValue());
                         cell.Data = BitConverter.GetBytes(currentValue * random.NextFloat(0.5, 2));
-                        cell.Type = Bio2DACell.TYPE_FLOAT;
+                        cell.Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                         hasChanges = true;
                     }
 
@@ -2048,7 +2077,7 @@ namespace MassEffectRandomizer.Classes
                     Console.WriteLine("[" + row + "][" + col + "]  (" + export2da.ColumnNames[col] + ") value originally is " + export2da[row, col].GetDisplayableValue());
 
                     export2da[row, col].Data = BitConverter.GetBytes(random.Next(0, entry.Value) + 1);
-                    export2da[row, col].Type = Bio2DACell.TYPE_INT;
+                    export2da[row, col].Type = Bio2DACell.Bio2DADataType.TYPE_INT;
                     Console.WriteLine("Character Creator Randomizer [" + row + "][" + col + "] (" + export2da.ColumnNames[col] + ") value is now " + export2da[row, col].GetDisplayableValue());
 
                 }
@@ -2077,7 +2106,7 @@ namespace MassEffectRandomizer.Classes
             {
                 foreach (int col in colsToRandomize)
                 {
-                    if (music2da[row, col] != null && music2da[row, col].Type == Bio2DACell.TYPE_NAME)
+                    if (music2da[row, col] != null && music2da[row, col].Type == Bio2DACell.Bio2DADataType.TYPE_NAME)
                     {
                         if (!music2da[row, col].GetDisplayableValue().StartsWith("music"))
                         {
@@ -2092,7 +2121,7 @@ namespace MassEffectRandomizer.Classes
             {
                 foreach (int col in colsToRandomize)
                 {
-                    if (music2da[row, col] != null && music2da[row, col].Type == Bio2DACell.TYPE_NAME)
+                    if (music2da[row, col] != null && music2da[row, col].Type == Bio2DACell.Bio2DADataType.TYPE_NAME)
                     {
                         if (!music2da[row, col].GetDisplayableValue().StartsWith("music"))
                         {
@@ -2133,7 +2162,7 @@ namespace MassEffectRandomizer.Classes
 
                 for (int row = 0; row < guisounds2da.RowNames.Count(); row++)
                 {
-                    if (guisounds2da[row, 0] != null && guisounds2da[row, 0].Type == Bio2DACell.TYPE_NAME)
+                    if (guisounds2da[row, 0] != null && guisounds2da[row, 0].Type == Bio2DACell.Bio2DADataType.TYPE_NAME)
                     {
                         if (requiredprefix != null && !guisounds2da[row, 0].GetDisplayableValue().StartsWith(requiredprefix))
                         {
@@ -2158,7 +2187,7 @@ namespace MassEffectRandomizer.Classes
 
             for (int row = 0; row < guisounds2da.RowNames.Count(); row++)
             {
-                if (guisounds2da[row, 0] != null && guisounds2da[row, 0].Type == Bio2DACell.TYPE_NAME)
+                if (guisounds2da[row, 0] != null && guisounds2da[row, 0].Type == Bio2DACell.Bio2DADataType.TYPE_NAME)
                 {
                     if (requiredprefix != null && !guisounds2da[row, 0].GetDisplayableValue().StartsWith(requiredprefix))
                     {

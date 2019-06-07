@@ -65,7 +65,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 float randvalue = basevalue + (scalingvalue * (i - 4));
                 Console.WriteLine("Items - Weapon Stats Randomizer HEATLOSSRATE[" + row + "][" + i + "] (" + table2da.ColumnNames[i] + ") value is now " + randvalue);
                 table2da[row, i].Data = BitConverter.GetBytes(randvalue);
-                table2da[row, i].Type = Bio2DACell.TYPE_FLOAT;
+                table2da[row, i].Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                 if (table2da[row, i].Data.Count() != sizebefore)
                 {
                     Debugger.Break();
@@ -124,7 +124,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 float randvalue = basevalue - (scalingvalue * (i - 4));
                 Console.WriteLine("Items - Weapon Stats Randomizer HEATPERSHOT [" + row + "][" + i + "] (" + table2da.ColumnNames[i] + ") value is now " + randvalue);
                 table2da[row, i].Data = BitConverter.GetBytes(randvalue);
-                table2da[row, i].Type = Bio2DACell.TYPE_FLOAT;
+                table2da[row, i].Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                 if (table2da[row, i].Data.Count() != sizebefore)
                 {
                     Debugger.Break();
@@ -144,7 +144,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 float randvalue = basevalue + (scalingvalue * (i - 4));
                 Console.WriteLine("Items - Weapon Stats Randomizer HEATLOSSRATEOH[" + row + "][" + i + "] (" + table2da.ColumnNames[i] + ") value is now " + randvalue);
                 table2da[row, i].Data = BitConverter.GetBytes(randvalue);
-                table2da[row, i].Type = Bio2DACell.TYPE_FLOAT;
+                table2da[row, i].Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                 if (table2da[row, i].Data.Count() != sizebefore)
                 {
                     Debugger.Break();
@@ -199,7 +199,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 Console.WriteLine("[" + row + "][" + i + "]  (" + table2da.ColumnNames[i] + ") value is " + table2da[row, i].GetDisplayableValue());
                 float randvalue = basevalue + (scalingvalue * (i - 4));
                 table2da[row, i].Data = BitConverter.GetBytes(randvalue);
-                table2da[row, i].Type = Bio2DACell.TYPE_FLOAT;
+                table2da[row, i].Type = Bio2DACell.Bio2DADataType.TYPE_FLOAT;
                 Console.WriteLine("Items - Weapon Stats Randomizer RPS [" + row + "][" + i + "] (" + table2da.ColumnNames[i] + ") value is now " + table2da[row, i].GetDisplayableValue());
                 if (table2da[row, i].Data.Count() != sizebefore)
                 {
@@ -263,7 +263,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 int randvalue = basevalue + (scalingvalue * (i - 4));
                 Console.WriteLine("Items - Weapon Stats Randomizer PhysicsForce [" + row + "][" + i + "] (" + table2da.ColumnNames[i] + ") value is now " + randvalue);
                 table2da[row, i].Data = BitConverter.GetBytes(randvalue);
-                table2da[row, i].Type = Bio2DACell.TYPE_INT;
+                table2da[row, i].Type = Bio2DACell.Bio2DADataType.TYPE_INT;
                 if (table2da[row, i].Data.Count() != sizebefore)
                 {
                     Debugger.Break();
@@ -332,7 +332,7 @@ namespace MassEffectRandomizer.Classes.RandomizationAlgorithms
                 Console.WriteLine("[" + row + "][" + i + "]  (" + table2da.ColumnNames[i] + ") value is " + table2da[row, i].GetDisplayableValue());
                 int randvalue = basevalue + (scalingvalue * (i - 4));
                 table2da[row, i].Data = BitConverter.GetBytes(randvalue);
-                table2da[row, i].Type = Bio2DACell.TYPE_INT;
+                table2da[row, i].Type = Bio2DACell.Bio2DADataType.TYPE_INT;
                 Console.WriteLine("Items - Weapon Stats Randomizer Damage [" + row + "][" + i + "] (" + table2da.ColumnNames[i] + ") value is now " + table2da[row, i].GetDisplayableValue());
 
                 if (table2da[row, i].Data.Count() != sizebefore)

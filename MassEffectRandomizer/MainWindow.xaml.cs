@@ -124,15 +124,10 @@ namespace MassEffectRandomizer
             public string PlanetName2;
             public string PlanetDescription;
 
-            //Used for temp randomizations
-            public bool IsHotOnly;
-            public bool IsColdOnly;
-            public bool IsHabitable; //Also will set the atmosheric pressure
-
-            //Used to put a randomization range
-            public long PopulationMin;
-            public long PopulationMax;
-
+            /// <summary>
+            /// WHen updating 2DA_AreaMap, labels that begin with these prefixes will be analyzed and updated accordingly by full (if no :) or anything before :.
+            /// </summary>
+            public List<string> MapBaseNames { get; internal set; }
         }
 
         public class OpeningCrawl

@@ -11,12 +11,20 @@ namespace MassEffectRandomizer.Classes
 {
     public class Bio2DA
     {
-        bool IsIndexed = false;
-        int CellCount = 0;
+        public bool IsIndexed = false;
+        /// <summary>
+        /// Number of cells that the Bio2DA says exist in the table
+        /// </summary>
+        int PopulatedCellCount = 0;
         static string[] stringRefColumns = { "StringRef", "SaveGameStringRef", "Title", "LabelRef", "Name", "ActiveWorld", "Description", "ButtonLabel" };
-        Bio2DACell[,] Cells;
-        public List<string> RowNames;
-        public List<string> ColumnNames;
+        public Bio2DACell[,] Cells { get; set; }
+        public List<string> RowNames { get; set; }
+        public List<string> ColumnNames { get; set; }
+
+        public int RowCount => RowNames?.Count ?? 0;
+
+        public int ColumnCount => ColumnNames?.Count ?? 0;
+
         IExportEntry export;
         public Bio2DA(IExportEntry export)
         {
@@ -28,8 +36,7 @@ namespace MassEffectRandomizer.Classes
             RowNames = new List<string>();
             if (export.ClassName == "Bio2DA")
             {
-                string rowLabelsVar = "m_sRowLabel";
-                var properties = export.GetProperties();
+                const string rowLabelsVar = "m_sRowLabel";
                 var props = export.GetProperty<ArrayProperty<NameProperty>>(rowLabelsVar);
                 if (props != null)
                 {
@@ -47,8 +54,7 @@ namespace MassEffectRandomizer.Classes
             }
             else
             {
-                string rowLabelsVar = "m_lstRowNumbers"; //Bio2DANumberedRows
-                var props = export.GetProperty<ArrayProperty<IntProperty>>(rowLabelsVar);
+                var props = export.GetProperty<ArrayProperty<IntProperty>>("m_lstRowNumbers");//Bio2DANumberedRows
                 if (props != null)
                 {
                     foreach (IntProperty n in props)
@@ -58,7 +64,7 @@ namespace MassEffectRandomizer.Classes
                 }
                 else
                 {
-                    Console.WriteLine("Unable to find row names property!");
+                    Debug.WriteLine("Unable to find row names property (m_lstRowNumbers)!");
                     Debugger.Break();
                     return;
                 }
@@ -78,7 +84,7 @@ namespace MassEffectRandomizer.Classes
                 ColumnNames.Insert(0, name);
                 colcount--;
             }
-            Cells = new Bio2DACell[RowNames.Count(), ColumnNames.Count()];
+            Cells = new Bio2DACell[RowCount, ColumnCount];
 
             currentcoloffset += 4;  //column count.
             int infilecolcount = BitConverter.ToInt32(data, data.Length - currentcoloffset);
@@ -91,14 +97,13 @@ namespace MassEffectRandomizer.Classes
             if (cellcount > 0)
             {
                 curroffset += 4;
-                for (int rowindex = 0; rowindex < RowNames.Count(); rowindex++)
+                for (int rowindex = 0; rowindex < RowCount; rowindex++)
                 {
-                    for (int colindex = 0; colindex < ColumnNames.Count() && curroffset < data.Length - currentcoloffset; colindex++)
+                    for (int colindex = 0; colindex < ColumnCount && curroffset < data.Length - currentcoloffset; colindex++)
                     {
-                        byte dataType = 255;
-                        dataType = data[curroffset];
+                        byte dataType = data[curroffset];
                         curroffset++;
-                        int dataSize = dataType == Bio2DACell.TYPE_NAME ? 8 : 4;
+                        int dataSize = dataType == (byte)Bio2DACell.Bio2DADataType.TYPE_NAME ? 8 : 4;
                         byte[] celldata = new byte[dataSize];
                         Buffer.BlockCopy(data, curroffset, celldata, 0, dataSize);
                         Bio2DACell cell = new Bio2DACell(pcc, curroffset, dataType, celldata);
@@ -106,7 +111,7 @@ namespace MassEffectRandomizer.Classes
                         curroffset += dataSize;
                     }
                 }
-                CellCount = RowNames.Count() * ColumnNames.Count();
+                PopulatedCellCount = RowCount * ColumnCount;  //Required for edits to write correct count if SaveToExport
             }
             else
             {
@@ -116,24 +121,32 @@ namespace MassEffectRandomizer.Classes
                 curroffset += 4;
 
                 //curroffset += 4;
-                while (CellCount < cellcount)
+                while (PopulatedCellCount < cellcount)
                 {
                     int index = BitConverter.ToInt32(data, curroffset);
-                    int row = index / ColumnNames.Count();
-                    int col = index % ColumnNames.Count();
+                    int row = index / ColumnCount;
+                    int col = index % ColumnCount;
                     curroffset += 4;
                     byte dataType = data[curroffset];
-                    int dataSize = dataType == Bio2DACell.TYPE_NAME ? 8 : 4;
+                    int dataSize = dataType == (byte)Bio2DACell.Bio2DADataType.TYPE_NAME ? 8 : 4;
                     curroffset++;
-                    byte[] celldata = new byte[dataSize];
+                    var celldata = new byte[dataSize];
                     Buffer.BlockCopy(data, curroffset, celldata, 0, dataSize);
                     Bio2DACell cell = new Bio2DACell(pcc, curroffset, dataType, celldata);
-                    Cells[row, col] = cell;
-                    CellCount++;
+                    this[row, col] = cell;
                     curroffset += dataSize;
                 }
             }
-            Console.WriteLine("Finished loading " + export.ObjectName);
+            //Console.WriteLine("Finished loading " + export.ObjectName);
+        }
+
+        /// <summary>
+        /// Initializes a blank Bio2DA. Cells is not initialized, the caller must set up this Bio2DA.
+        /// </summary>
+        public Bio2DA()
+        {
+            ColumnNames = new List<string>();
+            RowNames = new List<string>();
         }
 
         internal string GetColumnNameByIndex(int columnIndex)
@@ -170,12 +183,12 @@ namespace MassEffectRandomizer.Classes
                     //Indexed ones seem to have 0 at start
                     stream.WriteBytes(BitConverter.GetBytes(0));
                 }
-                stream.WriteBytes(BitConverter.GetBytes(CellCount));
+                stream.WriteBytes(BitConverter.GetBytes(PopulatedCellCount));
 
                 //Write cell data
-                for (int rowindex = 0; rowindex < RowNames.Count(); rowindex++)
+                for (int rowindex = 0; rowindex < RowCount; rowindex++)
                 {
-                    for (int colindex = 0; colindex < ColumnNames.Count(); colindex++)
+                    for (int colindex = 0; colindex < ColumnCount; colindex++)
                     {
                         Bio2DACell cell = Cells[rowindex, colindex];
                         if (cell != null)
@@ -183,10 +196,10 @@ namespace MassEffectRandomizer.Classes
                             if (IsIndexed)
                             {
                                 //write index
-                                int index = (rowindex * ColumnNames.Count()) + colindex; //+1 because they are not zero based indexes since they are numerals
+                                int index = (rowindex * ColumnCount) + colindex; //+1 because they are not zero based indexes since they are numerals
                                 stream.WriteBytes(BitConverter.GetBytes(index));
                             }
-                            stream.WriteByte(cell.Type);
+                            stream.WriteByte((byte)cell.Type);
                             stream.WriteBytes(cell.Data);
                         }
                         else
@@ -198,7 +211,9 @@ namespace MassEffectRandomizer.Classes
                             }
                             else
                             {
-                                Console.WriteLine("THIS SHOULDN'T OCCUR!");
+                                Debug.WriteLine("THIS SHOULDN'T OCCUR!");
+                                Debugger.Break();
+                                throw new Exception("A non-indexed Bio2DA cannot have null cells.");
                             }
                         }
                     }
@@ -210,11 +225,11 @@ namespace MassEffectRandomizer.Classes
                     stream.WriteBytes(BitConverter.GetBytes(0)); //seems to be a 0 before column definitions
                 }
                 //Console.WriteLine("Columns defs start at " + stream.Position.ToString("X6"));
-                stream.WriteBytes(BitConverter.GetBytes(ColumnNames.Count()));
-                for (int colindex = 0; colindex < ColumnNames.Count(); colindex++)
+                stream.WriteBytes(BitConverter.GetBytes(ColumnCount));
+                for (int colindex = 0; colindex < ColumnCount; colindex++)
                 {
                     //Console.WriteLine("Writing column definition " + columnNames[colindex]);
-                    int nameIndexForCol = export.FileRef.findName(ColumnNames[colindex]);
+                    int nameIndexForCol = export.FileRef.FindNameOrAdd(ColumnNames[colindex]);
                     stream.WriteBytes(BitConverter.GetBytes(nameIndexForCol));
                     stream.WriteBytes(BitConverter.GetBytes(0)); //second half of name reference in 2da is always zero since they're always indexed at 0
                     stream.WriteBytes(BitConverter.GetBytes(colindex));
@@ -222,17 +237,46 @@ namespace MassEffectRandomizer.Classes
 
                 int propsEnd = export.propsEnd();
                 byte[] binarydata = stream.ToArray();
-                byte[] propertydata = export.Data.Take(propsEnd).ToArray();
-                var newExportData = new byte[propertydata.Length + binarydata.Length];
-                propertydata.CopyTo(newExportData, 0);
-                binarydata.CopyTo(newExportData, propertydata.Length);
+
+                //Todo: Rewrite properties here
+                PropertyCollection props = new PropertyCollection();
+                if (export.ClassName == "Bio2DA")
+                {
+                    var indicies = new ArrayProperty<NameProperty>(ArrayType.Name, "m_sRowLabel");
+                    foreach (var rowname in RowNames)
+                    {
+                        indicies.Add(new NameProperty { Value = rowname });
+                    }
+                    props.Add(indicies);
+                }
+                else
+                {
+                    var indices = new ArrayProperty<IntProperty>(ArrayType.Int, "m_lstRowNumbers");
+                    foreach (var rowname in RowNames)
+                    {
+                        indices.Add(new IntProperty(int.Parse(rowname)));
+                    }
+                    props.Add(indices);
+                }
+
+                MemoryStream propsStream = new MemoryStream();
+                props.WriteTo(propsStream, export.FileRef);
+                MemoryStream currentDataStream = new MemoryStream(export.Data);
+                byte[] propertydata = propsStream.ToArray();
+                int propertyStartOffset = export.GetPropertyStart();
+                var newExportData = new byte[propertyStartOffset + propertydata.Length + binarydata.Length];
+                Buffer.BlockCopy(export.Data, 0, newExportData, 0, propertyStartOffset);
+                propertydata.CopyTo(newExportData, propertyStartOffset);
+                binarydata.CopyTo(newExportData, propertyStartOffset + propertydata.Length);
                 //Console.WriteLine("Old data size: " + export.Data.Length);
                 //Console.WriteLine("NEw data size: " + newExportData.Length);
-                if (export.Data.Length != newExportData.Length)
-                {
-                    Console.WriteLine("FILES ARE WRONG SIZE");
-                    Debugger.Break();
-                }
+
+                //This assumes the input and output data sizes are the same. We should not assume this with new functionality
+                //if (export.Data.Length != newExportData.Length)
+                //{
+                //    Debug.WriteLine("FILES ARE WRONG SIZE");
+                //    Debugger.Break();
+                //}
                 export.Data = newExportData;
             }
         }
