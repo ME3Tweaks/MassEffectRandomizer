@@ -317,14 +317,79 @@ namespace MassEffectRandomizer.Classes
                     mainWindow.CurrentOperationText = "Randomizing faces in map files [" + i + "/" + files.Count() + "]";
                     if (!files[i].ToLower().Contains("entrymenu"))
                     {
+                        bool hasLogged = false;
                         ME1Package package = new ME1Package(files[i]);
                         bool hasChanges = false;
                         foreach (IExportEntry exp in package.Exports)
                         {
                             if (exp.ClassName == "BioMorphFace")
                             {
+                                if (!hasLogged)
+                                {
+                                    Log.Information("Face randomizer on file: " + files[i]);
+                                    hasLogged = true;
+                                }
                                 RandomizeBioMorphFace(exp, random, amount);
                                 hasChanges = true;
+                            }
+
+                            if (exp.ClassName == "BioPawn")
+                            {
+                                var headMeshRef = exp.GetProperty<ObjectProperty>("m_oHeadMesh");
+                                var headMeshGearRef = exp.GetProperty<ObjectProperty>("m_oHeadGearMesh");
+                                var visorMeshRef = exp.GetProperty<ObjectProperty>("m_oVisorMesh");
+                                var facePlateMeshRef = exp.GetProperty<ObjectProperty>("m_oFacePlateMesh");
+
+                                float headScale = random.NextFloat(0.5, 1.5);
+                                float superHeadScale = random.NextFloat(2, 5);
+
+                                //DEBUG: Set to 1, RELEASE: Set to 15 or higher.
+                                headScale = (random.Next(1) == 0) ? superHeadScale : headScale;
+
+                                if (headMeshRef != null)
+                                {
+                                    if (!hasLogged)
+                                    {
+                                        Log.Information("Face randomizer on file: " + files[i]);
+                                        hasLogged = true;
+                                    }
+                                    IExportEntry meshRef = package.getUExport(headMeshRef.Value);
+                                    scaleHeadMesh(meshRef, headScale);
+                                    hasChanges = true;
+                                }
+                                if (headMeshGearRef != null)
+                                {
+                                    if (!hasLogged)
+                                    {
+                                        Log.Information("Face randomizer on file: " + files[i]);
+                                        hasLogged = true;
+                                    }
+                                    IExportEntry meshRef = package.getUExport(headMeshGearRef.Value);
+                                    scaleHeadMesh(meshRef, headScale);
+                                    hasChanges = true;
+                                }
+                                if (visorMeshRef != null)
+                                {
+                                    if (!hasLogged)
+                                    {
+                                        Log.Information("Face randomizer on file: " + files[i]);
+                                        hasLogged = true;
+                                    }
+                                    IExportEntry meshRef = package.getUExport(visorMeshRef.Value);
+                                    scaleHeadMesh(meshRef, headScale);
+                                    hasChanges = true;
+                                }
+                                if (facePlateMeshRef != null)
+                                {
+                                    if (!hasLogged)
+                                    {
+                                        Log.Information("Face randomizer on file: " + files[i]);
+                                        hasLogged = true;
+                                    }
+                                    IExportEntry meshRef = package.getUExport(facePlateMeshRef.Value);
+                                    scaleHeadMesh(meshRef, headScale);
+                                    hasChanges = true;
+                                }
                             }
                         }
                         if (hasChanges)
@@ -462,6 +527,37 @@ namespace MassEffectRandomizer.Classes
             if (saveGlobalTLK)
             {
                 globalTLK.save();
+            }
+        }
+
+        private void scaleHeadMesh(IExportEntry meshRef, float headScale)
+        {
+            Log.Information("Randomizing headmesh for " + meshRef.GetIndexedFullPath);
+            var drawScale = meshRef.GetProperty<FloatProperty>("Scale");
+            var drawScale3D = meshRef.GetProperty<StructProperty>("Scale3D");
+            if (drawScale != null)
+            {
+                drawScale.Value = headScale * drawScale.Value;
+                meshRef.WriteProperty(drawScale);
+            }
+            else if (drawScale3D != null)
+            {
+                PropertyCollection p = drawScale3D.Properties;
+                p.AddOrReplaceProp(new FloatProperty(headScale, "X"));
+                p.AddOrReplaceProp(new FloatProperty(headScale, "Y"));
+                p.AddOrReplaceProp(new FloatProperty(headScale, "Z"));
+                meshRef.WriteProperty(drawScale3D);
+            }
+            else
+            {
+                FloatProperty scale = new FloatProperty(headScale, "Scale");
+                /*
+                PropertyCollection p = new PropertyCollection();
+                p.AddOrReplaceProp(new FloatProperty(headScale, "X"));
+                p.AddOrReplaceProp(new FloatProperty(headScale, "Y"));
+                p.AddOrReplaceProp(new FloatProperty(headScale, "Z"));
+                meshRef.WriteProperty(new StructProperty("Vector", p, "Scale3D", true));*/
+                meshRef.WriteProperty(scale);
             }
         }
 
