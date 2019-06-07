@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassEffectRandomizer", "MassEffectRandomizer\MassEffectRandomizer.csproj", "{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}"
 EndProject
@@ -10,27 +10,17 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Debug|x64.ActiveCfg = Debug|x64
 		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Debug|x64.Build.0 = Debug|x64
-		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Debug|x86.Build.0 = Debug|Any CPU
 		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Release|x64.ActiveCfg = Release|x64
 		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Release|x64.Build.0 = Release|x64
-		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Release|x86.ActiveCfg = Release|Any CPU
-		{FC77E0BE-18DC-4EC5-BBC9-19D52235EF2E}.Release|x86.Build.0 = Release|Any CPU
 		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Debug|x64.ActiveCfg = Debug|x64
 		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Debug|x64.Build.0 = Debug|x64
-		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Debug|x86.Build.0 = Debug|Any CPU
 		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Release|x64.ActiveCfg = Release|x64
 		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Release|x64.Build.0 = Release|x64
-		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Release|x86.ActiveCfg = Release|Any CPU
-		{047857BA-DAA3-4CA7-AFB8-A1B082B28C6A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

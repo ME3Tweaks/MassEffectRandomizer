@@ -206,6 +206,7 @@ namespace MassEffectRandomizer.Classes.TLK
                     Log.Information($"Updating string id {id} to {newString}");
                     StringRefs[i].Data = newString;
                     Modified = true;
+                    return;
                 }
             }
         }
