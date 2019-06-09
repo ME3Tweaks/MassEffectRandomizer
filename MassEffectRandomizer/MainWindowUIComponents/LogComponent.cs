@@ -80,16 +80,18 @@ namespace MassEffectRandomizer
         {
             Log.Information("Preparing to upload randomizer log");
             string randomizerVer = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
-            var lzmaExtractedPath = Path.Combine(Path.GetTempPath(), "lzma.exe");
+            //var lzmaExtractedPath = Path.Combine(Path.GetTempPath(), "lzma.exe");
 
-            //Extract LZMA so we can compress log for upload
-            using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles.lzma.exe"))
-            {
-                using (var file = new FileStream(lzmaExtractedPath, FileMode.Create, FileAccess.Write))
-                {
-                    stream.CopyTo(file);
-                }
-            }
+            ////Extract LZMA so we can compress log for upload
+            //using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles.lzma.exe"))
+            //{
+            //    using (var file = new FileStream(lzmaExtractedPath, FileMode.Create, FileAccess.Write))
+            //    {
+            //        stream.CopyTo(file);
+            //    }
+            //}
+
+            var lzmaExtractedPath = Utilities.ExtractInternalStaticExecutable("lzma.exe", false);
 
 
             if (log == null)

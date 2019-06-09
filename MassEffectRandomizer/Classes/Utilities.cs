@@ -112,6 +112,30 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        internal static string ExtractInternalStaticExecutable(string executableFilename, bool overwrite)
+        {
+            Log.Information("Extracting executable file: "+executableFilename);
+            var extractedPath = Path.Combine(Path.GetTempPath(), executableFilename);
+            if (!File.Exists(extractedPath) || overwrite)
+            {
+                //Extract LZMA so we can compress log for upload
+                using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles." + executableFilename))
+                {
+                    using (var file = new FileStream(extractedPath, FileMode.Create, FileAccess.Write))
+                    {
+                        stream.CopyTo(file);
+                    }
+                }
+            }
+            else
+            {
+                Log.Warning("File already extracted, using that one instead.");
+            }
+            return extractedPath;
+        }
+
+
+
         /// <summary> Checks for write access for the given file.
         /// </summary>
         /// <param name="fileName">The filename.</param>
