@@ -94,22 +94,16 @@ namespace MassEffectRandomizer.Classes.TLK
         #endregion
 
         //ITalkFile
-        public string findDataById(int strRefID, bool withFileName = false)
+        public string findDataById(int strRefID)
         {
-            string data = "No Data";
             for (int i = 0; i < StringRefs.Length; i++)
             {
                 if (StringRefs[i].StringID == strRefID)
                 {
-                    data = "\"" + StringRefs[i].Data + "\"";
-                    if (withFileName)
-                    {
-                        data += " (" + Path.GetFileName(export.FileRef.FileName) + " -> " + BioTlkSetName + Name + ")";
-                    }
-                    break;
+                    return StringRefs[i].Data;
                 }
             }
-            return data;
+            return "No Data";
         }
 
         #region IEquatable
@@ -203,7 +197,7 @@ namespace MassEffectRandomizer.Classes.TLK
                 if (StringRefs[i].StringID == id)
                 {
                     //Debug.WriteLine("Setting string " + id + " to " + newString);
-                    Log.Information($"Updating string id {id} to {newString}");
+                    Log.Information($"Updating {export.ObjectName} string id {id} to {newString.Truncate(35)}{(newString.Length > 35 ? "... (truncated for log)" : "")}");
                     StringRefs[i].Data = newString;
                     Modified = true;
                     return;

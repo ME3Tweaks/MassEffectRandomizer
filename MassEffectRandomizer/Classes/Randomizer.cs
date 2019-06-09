@@ -259,7 +259,7 @@ namespace MassEffectRandomizer.Classes
                     default:
                         if ((export.ClassName == "Bio2DA" || export.ClassName == "Bio2DANumberedRows") && !export.ObjectName.Contains("Default") && mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
                         {
-                            RandomizeCharacterCreator(random, export);
+                            RandomizeCharacterCreator2DA(random, export);
                         }
                         break;
 
@@ -267,13 +267,19 @@ namespace MassEffectRandomizer.Classes
                         //RandomizeGUISounds(random);
                         //RandomizeMusic(random);
                         //RandomizeMovementSpeeds(random);
-                        //RandomizeCharacterCreator(random);
+                        //RandomizeCharacterCreator2DA(random);
                         //Dump2DAToExcel();
                 }
                 if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && export.ClassName == "BioMorphFace" && export.ObjectName.StartsWith("Player_"))
                 {
                     RandomizeBioMorphFace(export, random, .2);
                 }
+            }
+
+            if (mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
+            {
+                RandomizeCharacterCreatorSingular(random, Tlks);
+
             }
 
             //if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && iconicMaleExport != null && iconicFemaleStructProp != null)
@@ -415,6 +421,7 @@ namespace MassEffectRandomizer.Classes
                 if (tf.Modified)
                 {
                     mainWindow.CurrentOperationText = "Saving TLKs";
+                    ModifiedFiles[tf.export.FileRef.FileName] = tf.export.FileRef.FileName;
                     tf.saveToExport();
                 }
                 saveGlobalTLK = true;
@@ -525,7 +532,7 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            var eulerTrack = props.GetProp<StructProperty>("PosTrack");
+            var eulerTrack = props.GetProp<StructProperty>("EulerTrack");
             if (eulerTrack != null)
             {
                 var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
@@ -656,11 +663,13 @@ namespace MassEffectRandomizer.Classes
             IExportEntry systemsExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_System");
             IExportEntry areaMapExport = export.FileRef.Exports.First(x => x.ObjectName == "AreaMap_AreaMap");
             IExportEntry plotPlanetExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_PlotPlanet");
+            IExportEntry mapExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_Map");
 
             Bio2DA systems2DA = new Bio2DA(systemsExport);
             Bio2DA planets2DA = new Bio2DA(export);
             Bio2DA areaMap2DA = new Bio2DA(areaMapExport);
             Bio2DA plotPlanet2DA = new Bio2DA(plotPlanetExport);
+            Bio2DA levelMap2DA = new Bio2DA(mapExport);
 
             List<string> shuffledSystemNames = new List<string>(RandomSystemNameCollection);
             shuffledSystemNames.Shuffle(random);
@@ -746,25 +755,62 @@ namespace MassEffectRandomizer.Classes
                         description = description.Trim();
                     }
 
+                    var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
+
                     foreach (TalkFile tf in Tlks)
                     {
                         Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + planetName);
                         tf.replaceString(nameReference, planetName);
 
-                        if (rpi.MapBaseNames.Count > 0)
+                        if (landableMapID > 0)
                         {
-                            //Replace info in areamap and plot planet tables
-                            for(int a = 0; a < areaMap2DA.RowCount; a++)
+                            //This planet can be landed on
+                            string mapName = levelMap2DA[levelMap2DA.GetRowIndexByName(landableMapID), 0].GetDisplayableValue();
+                            Debug.WriteLine("Map Name:" + mapName);
+                            int mapIndex = int.Parse(mapName.Substring(8));
+                            mapName = "Map" + mapName.Substring(5, 3); //BIOA_>>LOS<<XX
+                            if (mapIndex > 0)
                             {
-                                //todo: lookup labels against base name and update strings.
-                                //todo: lookup plot planets
+                                mapName += mapIndex; //Used by UNC
+                            }
+                            //Replace info in areamap and plot planet tables
+                            for (int a = 0; a < areaMap2DA.RowCount; a++)
+                            {
+                                var labelName = areaMap2DA[a, 0].GetDisplayableValue();
+                                if (labelName.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    //This is the row needing updated
+                                    var stringRef = areaMap2DA[a, areaMap2DA.GetColumnIndexByName("Title")].GetIntValue();
+                                    var currentStringValue = tf.findDataById(stringRef);
+                                    if (currentStringValue != "No Data")
+                                    {
+                                        string originalStrValue = currentStringValue;
+                                        Log.Information("Updating areamap references for mapname " + labelName);
+                                        //its in this tlk
+                                        int colonIndex = currentStringValue.IndexOf(":", StringComparison.Ordinal);
+                                        if (colonIndex > 0)
+                                        {
+                                            currentStringValue = planetName + currentStringValue.Substring(colonIndex);
+                                        }
+                                        else
+                                        {
+                                            currentStringValue = planetName;
+                                        }
+
+                                        if (currentStringValue.EndsWith("\""))
+                                        {
+                                            Debugger.Break();
+                                        }
+                                        tf.replaceString(stringRef, currentStringValue);
+                                    }
+                                }
                             }
                         }
 
                         if (descriptionReference != 0 && description != null)
                         {
-                            int truncated = Math.Min(description.Length, 25);
-                            Debug.WriteLine("   Setting planet description to " + description.Substring(0, truncated));
+                            //int truncated = Math.Min(description.Length, 25);
+                            //Debug.WriteLine("   Setting planet description to " + description.Substring(0, truncated));
                             tf.replaceString(descriptionReference, description);
                         }
                     }
@@ -783,12 +829,12 @@ namespace MassEffectRandomizer.Classes
             for (int i = 0; i < planets.RowNames.Count; i++)
             {
                 RandomizedPlanetInfo rpi = new RandomizedPlanetInfo();
-                rpi.PlanetName = tf.findDataById(planets[i, nameRefcolumn].GetIntValue()).Trim('"');
+                rpi.PlanetName = tf.findDataById(planets[i, nameRefcolumn].GetIntValue());
 
                 var descCell = planets[i, descColumn];
                 if (descCell != null)
                 {
-                    rpi.PlanetDescription = tf.findDataById(planets[i, 7].GetIntValue()).Trim('"');
+                    rpi.PlanetDescription = tf.findDataById(planets[i, 7].GetIntValue());
                 }
                 rpi.RowID = i;
                 planetInfos.Add(rpi);
@@ -1866,7 +1912,7 @@ mainWindow.RANDSETTING_MISC_INTERPS;
         /// Randomizes the character creator
         /// </summary>
         /// <param name="random">Random number generator</param>
-        private void RandomizeCharacterCreator(Random random, IExportEntry export)
+        private void RandomizeCharacterCreator2DA(Random random, IExportEntry export)
         {
             mainWindow.CurrentOperationText = "Randomizing Charactor Creator";
             //if (headrandomizerclasses.Contains(export.ObjectName))
@@ -1980,6 +2026,161 @@ mainWindow.RANDSETTING_MISC_INTERPS;
             {
                 export2da.Write2DAToExport();
             }
+
+
+        }
+
+        private void RandomizeCharacterCreatorSingular(Random random, List<TalkFile> Tlks)
+        {
+            //non-2da character creator changes.
+
+            //Randomize look at targets
+            ME1Package biog_uiworld = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\BIOG_UIWorld.sfm"));
+            var bioInerts = biog_uiworld.Exports.Where(x => x.ClassName == "BioInert").ToList();
+            foreach (IExportEntry ex in bioInerts)
+            {
+                RandomizeLocation(ex, random);
+            }
+
+            //Randomize face-zoom in
+            var zoomInOnFaceInterp = biog_uiworld.getUExport(385);
+            var eulerTrack = zoomInOnFaceInterp.GetProperty<StructProperty>("EulerTrack");
+            if (eulerTrack != null)
+            {
+                var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
+                if (points != null)
+                {
+                    var s = points[2]; //end point
+                    var outVal = s.GetProp<StructProperty>("OutVal");
+                    if (outVal != null)
+                    {
+                        FloatProperty x = outVal.GetProp<FloatProperty>("X");
+                        //FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+                        //FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+                        x.Value = x.Value * random.NextFloat(0, 360);
+                        //y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                        //z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                    }
+                }
+            }
+            zoomInOnFaceInterp.WriteProperty(eulerTrack);
+            biog_uiworld.save();
+            ModifiedFiles[biog_uiworld.FileName] = biog_uiworld.FileName;
+
+            //Psych Profiles
+            string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("psychprofiles.xml");
+
+            XElement rootElement = XElement.Parse(fileContents);
+            var childhoods = rootElement.Descendants("childhood").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n",x.Value.Split('\n').Select(s => s.Trim())))).ToList();
+            var reputations = rootElement.Descendants("reputation").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n", x.Value.Split('\n').Select(s => s.Trim())))).ToList();
+
+            childhoods.Shuffle(random);
+            reputations.Shuffle(random);
+
+            var backgroundTlkPairs = new List<(int nameId, int descriptionId)>();
+            backgroundTlkPairs.Add((45477, 34931)); //Spacer
+            backgroundTlkPairs.Add((45508, 34940)); //Earthborn
+            backgroundTlkPairs.Add((45478, 34971)); //Colonist
+            for (int i = 0; i < 3; i++)
+            {
+                foreach (var tlk in Tlks)
+                {
+                    tlk.replaceString(backgroundTlkPairs[i].nameId, childhoods[i].Item1);
+                    tlk.replaceString(backgroundTlkPairs[i].descriptionId, childhoods[i].Item2);
+                }
+            }
+
+            backgroundTlkPairs.Clear();
+            backgroundTlkPairs.Add((45482, 34934)); //Sole Survivor
+            backgroundTlkPairs.Add((45483, 34936)); //War Hero
+            backgroundTlkPairs.Add((45484, 34938)); //Ruthless
+            for (int i = 0; i < 3; i++)
+            {
+                foreach (var tlk in Tlks)
+                {
+                    tlk.replaceString(backgroundTlkPairs[i].nameId, reputations[i].Item1);
+                    tlk.replaceString(backgroundTlkPairs[i].descriptionId, reputations[i].Item2);
+                }
+            }
+
+        }
+
+        private void RandomizeLocation(IExportEntry e, Random random)
+        {
+            SetLocation(e, random.NextFloat(-100000, 100000), random.NextFloat(-100000, 100000), random.NextFloat(-100000, 100000));
+        }
+
+        public static void SetLocation(IExportEntry export, float x, float y, float z)
+        {
+            StructProperty prop = export.GetProperty<StructProperty>("location");
+            SetLocation(prop, x, y, z);
+            export.WriteProperty(prop);
+        }
+
+        public static Point3D GetLocation(IExportEntry export)
+        {
+            float x = 0, y = 0, z = int.MinValue;
+            var prop = export.GetProperty<StructProperty>("location");
+            if (prop != null)
+            {
+                foreach (var locprop in prop.Properties)
+                {
+                    switch (locprop)
+                    {
+                        case FloatProperty fltProp when fltProp.Name == "X":
+                            x = fltProp;
+                            break;
+                        case FloatProperty fltProp when fltProp.Name == "Y":
+                            y = fltProp;
+                            break;
+                        case FloatProperty fltProp when fltProp.Name == "Z":
+                            z = fltProp;
+                            break;
+                    }
+                }
+                return new Point3D(x, y, z);
+            }
+            return null;
+        }
+
+        public class Point3D
+        {
+            public double X { get; set; }
+            public double Y { get; set; }
+            public double Z { get; set; }
+
+            public Point3D()
+            {
+
+            }
+
+            public Point3D(double X, double Y, double Z)
+            {
+                this.X = X;
+                this.Y = Y;
+                this.Z = Z;
+            }
+
+            public double getDistanceToOtherPoint(Point3D other)
+            {
+                double deltaX = X - other.X;
+                double deltaY = Y - other.Y;
+                double deltaZ = Z - other.Z;
+
+                return Math.Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+            }
+
+            public override string ToString()
+            {
+                return $"{X},{Y},{Z}";
+            }
+        }
+
+        public static void SetLocation(StructProperty prop, float x, float y, float z)
+        {
+            prop.GetProp<FloatProperty>("X").Value = x;
+            prop.GetProp<FloatProperty>("Y").Value = y;
+            prop.GetProp<FloatProperty>("Z").Value = z;
         }
 
         private void RandomizeBioMorphFace(IExportEntry export, Random random, double amount = 0.3)

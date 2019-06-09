@@ -283,16 +283,30 @@ namespace MassEffectRandomizer.Classes
 
         public Bio2DACell this[int rowindex, int colindex]
         {
-            get
-            {
-                // get the item for that index.
-                return Cells[rowindex, colindex];
-            }
+            get => Cells[rowindex, colindex];
             set
             {
-                // set the item for this index. value will be of type Thing.
+                // set the item for this index. value will be of type Bio2DACell.
+                if (Cells[rowindex, colindex] == null && value != null)
+                {
+                    PopulatedCellCount++;
+                }
+                if (Cells[rowindex, colindex] != null && value == null)
+                {
+                    PopulatedCellCount--;
+                }
                 Cells[rowindex, colindex] = value;
             }
+        }
+
+        public int GetRowIndexByName(int rowName)
+        {
+            return GetRowIndexByName(rowName.ToString());
+        }
+
+        public int GetRowIndexByName(string rowName)
+        {
+            return RowNames.IndexOf(rowName);
         }
     }
 }

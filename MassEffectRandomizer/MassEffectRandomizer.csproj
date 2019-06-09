@@ -299,6 +299,7 @@
     <EmbeddedResource Include="staticfiles\planetinfo.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="staticfiles\psychprofiles.xml" />
     <EmbeddedResource Include="staticfiles\openingcrawls.xml" />
     <EmbeddedResource Include="staticfiles\lzma.exe" />
     <Resource Include="images\me3_bg_800x600.jpg" />
