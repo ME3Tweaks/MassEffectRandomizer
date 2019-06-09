@@ -2057,7 +2057,7 @@ mainWindow.RANDSETTING_MISC_INTERPS;
                         FloatProperty x = outVal.GetProp<FloatProperty>("X");
                         //FloatProperty y = outVal.GetProp<FloatProperty>("Y");
                         //FloatProperty z = outVal.GetProp<FloatProperty>("Z");
-                        x.Value = x.Value * random.NextFloat(0, 360);
+                        x.Value = random.NextFloat(0, 360);
                         //y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
                         //z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
                     }
