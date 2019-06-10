@@ -162,6 +162,7 @@
                                     <fonts:OutlinedTextBlock Text="Movement" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="Randomize movement speeds" Margin="3" ToolTip="Randomizes movement speeds of all characters" IsChecked="{Binding RANDSETTING_MOVEMENT_CREATURESPEED}" />
+                                        <CheckBox Content="Randomize enemy AI distances" Margin="3" ToolTip="Randomize the distances enemy AI prefer to fight at" IsChecked="{Binding RANDSETTING_MISC_ENEMYAIDISTANCES}" />
                                         <CheckBox Content="Randomize Mako" Margin="3" ToolTip="Randomizes various parts of the Mako" IsChecked="{Binding RANDSETTING_MOVEMENT_MAKO}" />
                                     </StackPanel>
                                 </StackPanel>

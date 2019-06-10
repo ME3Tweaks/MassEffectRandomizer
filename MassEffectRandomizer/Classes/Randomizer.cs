@@ -282,11 +282,6 @@ namespace MassEffectRandomizer.Classes
 
             }
 
-            //if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && iconicMaleExport != null && iconicFemaleStructProp != null)
-            //{
-
-            //}
-
             entrymenu.save();
 
 
@@ -331,7 +326,6 @@ namespace MassEffectRandomizer.Classes
                     {
                         bool hasLogged = false;
                         ME1Package package = new ME1Package(files[i]);
-                        bool hasChanges = false;
                         foreach (IExportEntry exp in package.Exports)
                         {
                             if (mainWindow.RANDSETTING_MISC_MAPFACES && exp.ClassName == "BioMorphFace")
@@ -343,7 +337,7 @@ namespace MassEffectRandomizer.Classes
                                     loggedFilename = true;
                                 }
                                 RandomizeBioMorphFace(exp, random, amount);
-                                hasChanges = true;
+                                package.ShouldSave = true;
                             }
                             else if (mainWindow.RANDSETTING_MISC_HAZARDS && exp.ClassName == "SequenceReference")
                             {
@@ -361,7 +355,7 @@ namespace MassEffectRandomizer.Classes
                                             loggedFilename = true;
                                         }
                                         RandomizeHazard(exp, random);
-                                        hasChanges = true;
+                                        package.ShouldSave = true;
                                     }
                                 }
                             }
@@ -379,7 +373,7 @@ namespace MassEffectRandomizer.Classes
                                     //Todo: restore from older commits for headmesh scaling.
                                     //scaleHeadMesh()
                                 }
-                                hasChanges = true;
+                                package.ShouldSave = true;
                             }
                             else if (mainWindow.RANDSETTING_MISC_INTERPS && exp.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
                             {
@@ -390,10 +384,16 @@ namespace MassEffectRandomizer.Classes
                                 }
                                 //Interpolation randomizer
                                 RandomizeInterpTrackMove(exp, random, amount);
-                                hasChanges = true;
+                                package.ShouldSave = true;
                             }
                         }
-                        if (hasChanges)
+
+                        if (mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES)
+                        {
+                            RandomizeAINames(package, random);
+                        }
+
+                        if (package.ShouldSave)
                         {
                             ModifiedFiles[package.FileName] = package.FileName;
                             package.save();
@@ -1692,7 +1692,7 @@ namespace MassEffectRandomizer.Classes
         {
             get => mainWindow.RANDSETTING_MISC_MAPFACES ||
 mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
-mainWindow.RANDSETTING_MISC_INTERPS;
+mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES;
         }
 
         private void RandomizeTalentEffectLevels(IExportEntry export, List<TalkFile> Tlks, Random random)
@@ -2071,7 +2071,7 @@ mainWindow.RANDSETTING_MISC_INTERPS;
             string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("psychprofiles.xml");
 
             XElement rootElement = XElement.Parse(fileContents);
-            var childhoods = rootElement.Descendants("childhood").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n",x.Value.Split('\n').Select(s => s.Trim())))).ToList();
+            var childhoods = rootElement.Descendants("childhood").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n", x.Value.Split('\n').Select(s => s.Trim())))).ToList();
             var reputations = rootElement.Descendants("reputation").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n", x.Value.Split('\n').Select(s => s.Trim())))).ToList();
 
             childhoods.Shuffle(random);
@@ -2328,17 +2328,42 @@ mainWindow.RANDSETTING_MISC_INTERPS;
                         {
                             continue;
                         }
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + music2da.ColumnNames[col] + ") value originally is " + music2da[row, col].GetDisplayableValue());
+                        Log.Information("[" + row + "][" + col + "]  (" + music2da.ColumnNames[col] + ") value originally is " + music2da[row, col].GetDisplayableValue());
                         int r = random.Next(names.Count);
                         byte[] pnr = names[r];
                         names.RemoveAt(r);
                         music2da[row, col].Data = pnr;
-                        Console.WriteLine("Music Randomizer [" + row + "][" + col + "] (" + music2da.ColumnNames[col] + ") value is now " + music2da[row, col].GetDisplayableValue());
+                        Log.Information("Music Randomizer [" + row + "][" + col + "] (" + music2da.ColumnNames[col] + ") value is now " + music2da[row, col].GetDisplayableValue());
 
                     }
                 }
             }
             music2da.Write2DAToExport();
+        }
+
+        private string[] aiTypes =
+        {
+            "BioAI_Krogan", "BioAI_Assault", "BioAI_AssaultDrone", "BioAI_Charge", "BioAI_Commander", "BioAI_Destroyer", "BioAI_Drone",
+            "BioAI_GunShip", "BioAI_HumanoidMinion", "BioAI_Juggernaut", "BioAI_Melee", "BioAI_Mercenary", "BioAI_Rachnii", "BioAI_Sniper"
+        };
+
+        private void RandomizeAINames(ME1Package pacakge, Random random)
+        {
+            bool forcedCharge = random.Next(10) == 0;
+            for (int i = 0; i < pacakge.NameCount; i++)
+            {
+                NameReference n = pacakge.getNameEntry(i);
+
+                //Todo: Test Saren Hopper AI. Might be interesting to force him to change types.
+                if (aiTypes.Contains(n.Name))
+                {
+                    string newAiType = forcedCharge ? "BioAI_Charge" : aiTypes[random.Next(aiTypes.Length)];
+                    Log.Information("Reassigning AI type in " + Path.GetFileName(pacakge.FileName) + ", " + n + " -> " + newAiType);
+                    pacakge.replaceName(i, newAiType);
+                    pacakge.ShouldSave = true;
+                }
+            }
+
         }
 
         /// <summary>
@@ -2418,5 +2443,7 @@ mainWindow.RANDSETTING_MISC_INTERPS;
         {
             return $"RGB({random.Next(255)},{random.Next(255)},{random.Next(255)})";
         }
+
+
     }
 }
