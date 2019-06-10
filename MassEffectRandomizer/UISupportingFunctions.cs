@@ -21,10 +21,10 @@ namespace MassEffectRandomizer
     {
         private BackgroundWorker BackupWorker;
 
-        private async void BackupGame(int game)
+        private async void BackupGame()
         {
-            Log.Information("Start of UI thread BackupGame() for Mass Effect " + game);
-            ALOTVersionInfo info = Utilities.GetInstalledALOTInfo(game);
+            Log.Information("Start of UI thread BackupGame() for Mass Effect");
+            ALOTVersionInfo info = Utilities.GetInstalledALOTInfo();
             if (info != null)
             {
                 //Game is modified via ALOT flag
@@ -99,23 +99,37 @@ namespace MassEffectRandomizer
             // get all the directories in selected dirctory
         }
 
-        private void RestoreGame(int game)
+        private async void RestoreGame()
         {
+            currentProgressDialogController = backupRestoreController = await this.ShowProgressAsync("Preparing to restore Mass Effect", "Preparing to restore Mass Effect, please wait...", true);
+            currentProgressDialogController.SetIndeterminate();
+
             BackupWorker = new BackgroundWorker();
             BackupWorker.DoWork += RestoreGame;
             BackupWorker.WorkerReportsProgress = true;
             BackupWorker.ProgressChanged += BackupWorker_ProgressChanged;
             BackupWorker.RunWorkerCompleted += RestoreCompleted;
-            BACKUP_THREAD_GAME = game;
-            SettingsFlyout.IsOpen = false;
-            Button_Settings.IsEnabled = false;
-            Button_DownloadAssistant.IsEnabled = false;
-            PreventFileRefresh = true;
-            HeaderLabel.Text = "Restoring Mass Effect" + (game == 1 ? "" : " " + game) + "...\nDo not close the application until this process completes.";
-            Button_InstallME1.IsEnabled = Button_InstallME2.IsEnabled = Button_InstallME3.IsEnabled = Button_Settings.IsEnabled = false;
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal, this);
             TaskbarManager.Instance.SetProgressValue(0, 0);
             BackupWorker.RunWorkerAsync();
+        }
+
+        private async void RestoreCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, this);
+            await currentProgressDialogController?.CloseAsync();
+            if (e.Result != null)
+            {
+                bool result = (bool)e.Result;
+                if (result)
+                {
+                    await this.ShowMessageAsync("Restore completed", "Mass Effect has been restored from backup.");
+                }
+                else
+                {
+                    await this.ShowMessageAsync("Restore failed", "Mass Effect was not restored from backup. Check the logs for more information.");
+                }
+            }
         }
 
         public const string REGISTRY_KEY = @"SOFTWARE\ALOTAddon"; //Backup is shared with ALOT Installer
@@ -207,10 +221,8 @@ namespace MassEffectRandomizer
             if (gamePath != null)
             {
                 Log.Information("Copying backup to game directory: " + backupPath + " -> " + gamePath);
-                CopyDir.CopyAll_ProgressBar(new DirectoryInfo(backupPath), new DirectoryInfo(gamePath), BackupWorker, -1, 0);
+                CopyDir.CopyAll_ProgressBar(new DirectoryInfo(backupPath), new DirectoryInfo(gamePath), BackupWorker, "Restoring Mass Effect...", -1, 0);
                 Log.Information("Restore of game data has completed");
-                await currentProgressDialogController.CloseAsync();
-                await this.ShowMessageAsync("Mass Effect restored", "Mass Effect has been restored from backup.");
             }
             e.Result = true;
         }
@@ -303,7 +315,7 @@ namespace MassEffectRandomizer
                 Log.Information("Creating backup... Only errors will be reported.");
                 try
                 {
-                    CopyDir.CopyAll_ProgressBar(new DirectoryInfo(gamePath), new DirectoryInfo(backupPath), BackupWorker, -1, 0, ignoredExtensions);
+                    CopyDir.CopyAll_ProgressBar(new DirectoryInfo(gamePath), new DirectoryInfo(backupPath), BackupWorker, "Backing up Mass Effect...", -1, 0, ignoredExtensions);
                 }
                 catch (Exception ex)
                 {
@@ -327,7 +339,7 @@ namespace MassEffectRandomizer
             }
             else
             {
-                ThreadCommand tc = (ThreadCommand) e.UserState;
+                ThreadCommand tc = (ThreadCommand)e.UserState;
                 switch (tc.Command)
                 {
                     case RESTORE_FAILED_COULD_NOT_DELETE_FOLDER:
@@ -335,7 +347,7 @@ namespace MassEffectRandomizer
                         await this.ShowMessageAsync("Restore failed", "Could not delete the existing game directory. This is usually due to something still open (such as the game), or running something from within the game folder. Close other programs and try again.");
                         return;
                     case UPDATE_CURRENTPROGRESSDIALOG_DESCRIPTION:
-                        currentProgressDialogController?.SetMessage((string) tc.Data);
+                        currentProgressDialogController?.SetMessage((string)tc.Data);
                         break;
                     case UPDATE_CURRENTPROGRESSDIALOG_SETINDETERMINATE:
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate);
@@ -344,17 +356,17 @@ namespace MassEffectRandomizer
                     case UPDATE_CURRENTPROGRESSDIALOG_SETPROGRESSVALUE:
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
 
-                        currentProgressDialogController?.SetProgress((int) tc.Data);
+                        currentProgressDialogController?.SetProgress((int)tc.Data);
                         var max = currentProgressDialogController?.Maximum;
                         if (max.HasValue)
                         {
-                            TaskbarManager.Instance.SetProgressValue((int) tc.Data, (int) max.Value);
+                            TaskbarManager.Instance.SetProgressValue((int)tc.Data, (int)max.Value);
 
                         }
 
                         break;
                     case UPDATE_CURRENTPROGRESSDIALOG_TITLE:
-                        currentProgressDialogController?.SetTitle((string) tc.Data);
+                        currentProgressDialogController?.SetTitle((string)tc.Data);
                         break;
                     case CLOSE_CURRENT_DIALOG:
                         await currentProgressDialogController?.CloseAsync();
@@ -365,14 +377,14 @@ namespace MassEffectRandomizer
                         //await this.ShowMessageAsync("Error building Addon MEM Package", "An error occured building the addon. The logs will provide more information. The error message given is:\n" + (string)tc.Data);
                         break;
                     case SHOW_DIALOG:
-                        KeyValuePair<string, string> messageStr = (KeyValuePair<string, string>) tc.Data;
+                        KeyValuePair<string, string> messageStr = (KeyValuePair<string, string>)tc.Data;
                         await this.ShowMessageAsync(messageStr.Key, messageStr.Value);
                         break;
                     case "UPDATE_CURRENTPROGRESSDIALOG_SETMAXIMUM":
                         if (currentProgressDialogController != null) currentProgressDialogController.Maximum = (int)tc.Data;
                         break;
                     case SHOW_DIALOG_YES_NO:
-                        ThreadCommandDialogOptions tcdo = (ThreadCommandDialogOptions) tc.Data;
+                        ThreadCommandDialogOptions tcdo = (ThreadCommandDialogOptions)tc.Data;
                         MetroDialogSettings settings = new MetroDialogSettings();
                         settings.NegativeButtonText = tcdo.NegativeButtonText;
                         settings.AffirmativeButtonText = tcdo.AffirmativeButtonText;
@@ -427,7 +439,7 @@ namespace MassEffectRandomizer
                                 Log.Error("Error IPC from MEM: " + param);
                                 BACKGROUND_MEM_PROCESS_ERRORS.Add(param);
                                 break;
-                            
+
                             default:
                                 Log.Information("Unknown IPC command: " + command);
                                 break;
@@ -544,13 +556,13 @@ namespace MassEffectRandomizer
             }
         }
 
-        public static int CopyAll_ProgressBar(DirectoryInfo source, DirectoryInfo target, BackgroundWorker worker, int total, int done, string[] ignoredExtensions = null)
+        public static int CopyAll_ProgressBar(DirectoryInfo source, DirectoryInfo target, BackgroundWorker worker, string messagePrefix, int total, int done, string[] ignoredExtensions = null)
         {
             if (total == -1)
             {
                 //calculate number of files
                 total = Directory.GetFiles(source.FullName, "*.*", SearchOption.AllDirectories).Length;
-                worker.ReportProgress(0,new ThreadCommand(MainWindow.UPDATE_CURRENTPROGRESSDIALOG_SETMAXIMUM, total));
+                worker.ReportProgress(0, new ThreadCommand(MainWindow.UPDATE_CURRENTPROGRESSDIALOG_SETMAXIMUM, total));
             }
 
             int numdone = done;
@@ -573,14 +585,14 @@ namespace MassEffectRandomizer
                     if (skip)
                     {
                         numdone++;
-                        worker.ReportProgress(0,new ThreadCommand(MainWindow.UPDATE_CURRENTPROGRESSDIALOG_SETPROGRESSVALUE));
+                        worker.ReportProgress(0, new ThreadCommand(MainWindow.UPDATE_CURRENTPROGRESSDIALOG_SETPROGRESSVALUE, numdone));
                         //worker.ReportProgress((int)((numdone * 1.0 / total) * 100.0));
                         continue;
                     }
                 }
                 string displayName = fi.Name;
                 string path = Path.Combine(target.FullName, fi.Name);
-                
+
                 //Todo: Update description of box
                 //worker.ReportProgress(done, new ThreadCommand(UPDATE_ADDONUI_CURRENTTASK, displayName));
                 try
@@ -594,6 +606,12 @@ namespace MassEffectRandomizer
                 }
                 // Log.Information(@"Copying {0}\{1}", target.FullName, fi.Name);
                 numdone++;
+                worker.ReportProgress(0, new ThreadCommand(MainWindow.UPDATE_CURRENTPROGRESSDIALOG_SETPROGRESSVALUE, numdone));
+                if (messagePrefix != null)
+                {
+                    string message = $"{messagePrefix}\n\n{numdone} of {total} files copied";
+                    worker.ReportProgress(0, new ThreadCommand(MainWindow.UPDATE_CURRENTPROGRESSDIALOG_DESCRIPTION, message));
+                }
                 //worker.ReportProgress((int)((numdone * 1.0 / total) * 100.0));
             }
 
@@ -602,7 +620,7 @@ namespace MassEffectRandomizer
             {
                 DirectoryInfo nextTargetSubDir =
                     target.CreateSubdirectory(diSourceSubDir.Name);
-                numdone = CopyAll_ProgressBar(diSourceSubDir, nextTargetSubDir, worker, total, numdone);
+                numdone = CopyAll_ProgressBar(diSourceSubDir, nextTargetSubDir, worker, messagePrefix, total, numdone);
             }
             return numdone;
         }

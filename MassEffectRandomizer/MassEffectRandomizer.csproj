@@ -303,6 +303,8 @@
     <EmbeddedResource Include="staticfiles\planetinfo.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="staticfiles\PermissionsGranter.exe" />
+    <EmbeddedResource Include="staticfiles\MassEffectModderNoGui.exe" />
     <EmbeddedResource Include="staticfiles\psychprofiles.xml" />
     <EmbeddedResource Include="staticfiles\openingcrawls.xml" />
     <EmbeddedResource Include="staticfiles\lzma.exe" />

@@ -51,6 +51,7 @@
                                  BlurRadius="4"/>
                                 </TextBlock.Effect>
                             </TextBlock>
+                            <Button Content="Debug: Close" HorizontalAlignment="Center" Margin="0,5" Click="DebugCloseDiagnostics_Click" Style="{StaticResource AccentedSquareButtonStyle}"/>
                         </StackPanel>
                     </Grid>
                 </Border>

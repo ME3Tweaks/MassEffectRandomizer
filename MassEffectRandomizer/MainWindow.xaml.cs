@@ -535,14 +535,27 @@ namespace MassEffectRandomizer
 
         private async void BackupRestore_Click(object sender, RoutedEventArgs e)
         {
-            MetroDialogSettings settings = new MetroDialogSettings();
-            settings.NegativeButtonText = "Cancel";
-            settings.AffirmativeButtonText = "Restore";
-            MessageDialogResult result = await this.ShowMessageAsync("Restoring Mass Effect 2 from backup", "Restoring Mass Effect 2 will wipe out the current installation and put your game back to the state when you backed it up. state. Are you sure you want to do this?", MessageDialogStyle.AffirmativeAndNegative, settings);
-            if (result == MessageDialogResult.Affirmative)
+            string path = Utilities.GetGameBackupPath();
+            if (path != null)
             {
-                RestoreGame();
+                MetroDialogSettings settings = new MetroDialogSettings();
+                settings.NegativeButtonText = "Cancel";
+                settings.AffirmativeButtonText = "Restore";
+                MessageDialogResult result = await this.ShowMessageAsync("Restoring Mass Effect from backup", "Restoring Mass Effect will wipe out the current installation and put your game back to the state when you backed it up. state. Are you sure you want to do this?", MessageDialogStyle.AffirmativeAndNegative, settings);
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    RestoreGame();
+                }
             }
+            else
+            {
+                BackupGame();
+            }
+        }
+
+        private void DebugCloseDiagnostics_Click(object sender, RoutedEventArgs e)
+        {
+            DiagnosticsFlyoutOpen = false;
         }
     }
 }

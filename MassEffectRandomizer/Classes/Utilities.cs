@@ -523,7 +523,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        internal static string GetALOTMarkerFilePath(int gameID)
+        internal static string GetALOTMarkerFilePath()
         {
             string gamePath = GetGamePath();
             if (gamePath != null)
@@ -549,9 +549,9 @@ namespace MassEffectRandomizer.Classes
             return stringBuilder.ToString();
         }
 
-        public static ALOTVersionInfo GetInstalledALOTInfo(int gameID)
+        public static ALOTVersionInfo GetInstalledALOTInfo()
         {
-            string gamePath = Utilities.GetALOTMarkerFilePath(gameID);
+            string gamePath = Utilities.GetALOTMarkerFilePath();
             if (gamePath != null && File.Exists(gamePath))
             {
                 try
@@ -568,19 +568,7 @@ namespace MassEffectRandomizer.Classes
                             //ALOT has been installed
                             fs.Position = endPos - 8;
                             int installerVersionUsed = fs.ReadInt32();
-                            int perGameFinal4Bytes = -20;
-                            switch (gameID)
-                            {
-                                case 1:
-                                    perGameFinal4Bytes = 0;
-                                    break;
-                                case 2:
-                                    perGameFinal4Bytes = 4352;
-                                    break;
-                                case 3:
-                                    perGameFinal4Bytes = 16777472;
-                                    break;
-                            }
+                            int perGameFinal4Bytes = 0;
 
                             if (installerVersionUsed >= 10 && installerVersionUsed != perGameFinal4Bytes) //default bytes before 178 MEMI Format
                             {
@@ -604,7 +592,7 @@ namespace MassEffectRandomizer.Classes
                 }
                 catch (Exception e)
                 {
-                    Log.Error("Error reading marker file for Mass Effect " + gameID + ". ALOT Info will be returned as null (nothing installed). " + e.Message);
+                    Log.Error("Error reading marker file for Mass Effect. ALOT Info will be returned as null (nothing installed). " + e.Message);
                     return null;
                 }
             }
