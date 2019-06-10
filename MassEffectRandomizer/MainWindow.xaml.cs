@@ -541,7 +541,7 @@ namespace MassEffectRandomizer
                 MetroDialogSettings settings = new MetroDialogSettings();
                 settings.NegativeButtonText = "Cancel";
                 settings.AffirmativeButtonText = "Restore";
-                MessageDialogResult result = await this.ShowMessageAsync("Restoring Mass Effect from backup", "Restoring Mass Effect will wipe out the current installation and put your game back to the state when you backed it up. state. Are you sure you want to do this?", MessageDialogStyle.AffirmativeAndNegative, settings);
+                MessageDialogResult result = await this.ShowMessageAsync("Restoring Mass Effect from backup", "Restoring Mass Effect will wipe out the current installation and put your game back to the state when you backed it up. Are you sure you want to do this?", MessageDialogStyle.AffirmativeAndNegative, settings);
                 if (result == MessageDialogResult.Affirmative)
                 {
                     RestoreGame();
