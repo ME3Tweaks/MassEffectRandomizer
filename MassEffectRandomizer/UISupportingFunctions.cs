@@ -134,7 +134,7 @@ namespace MassEffectRandomizer
 
         public const string REGISTRY_KEY = @"SOFTWARE\ALOTAddon"; //Backup is shared with ALOT Installer
 
-        private void BackupCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private async void BackupCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, this);
             string destPath = (string)e.Result;
@@ -144,6 +144,21 @@ namespace MassEffectRandomizer
             }
 
             //Backup completed, update UI
+            await currentProgressDialogController?.CloseAsync();
+            if (e.Result != null)
+            {
+                string result = (string)e.Result;
+                if (result != null)
+                {
+                    BackupRestoreText = "Restore";
+                    BackupRestore_Button.ToolTip = "Click to restore game from\n" + result;
+                    await this.ShowMessageAsync("Backup completed", "Mass Effect has been backed up. You can restore this backup by clicking the Restore button.");
+                }
+                else
+                {
+                    await this.ShowMessageAsync("Backup failed", "Mass Effect was unable to be fully backed up. Check the logs for more information.");
+                }
+            }
         }
 
         private async void RestoreGame(object sender, DoWorkEventArgs e)
@@ -266,7 +281,8 @@ namespace MassEffectRandomizer
             List<string> acceptedIPC = new List<string>();
             acceptedIPC.Add("TASK_PROGRESS");
             acceptedIPC.Add("ERROR");
-            BackupWorker.ReportProgress(0, new ThreadCommand(UPDATE_ADDONUI_CURRENTTASK, "Verifying game data..."));
+            BackupWorker.ReportProgress(0, new ThreadCommand(UPDATE_CURRENTPROGRESSDIALOG_DESCRIPTION, "Verifying game data before backup..."));
+            BackupWorker.ReportProgress(0, new ThreadCommand(UPDATE_CURRENTPROGRESSDIALOG_SETMAXIMUM, 100));
 
             runMEM_BackupAndBuild(exe, args, BackupWorker, acceptedIPC);
             while (BACKGROUND_MEM_PROCESS.State == AppState.Running)
