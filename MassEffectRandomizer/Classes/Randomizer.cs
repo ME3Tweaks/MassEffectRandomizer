@@ -321,13 +321,15 @@ namespace MassEffectRandomizer.Classes
                 mainWindow.ProgressBar_Bottom_Max = files.Count();
                 mainWindow.ProgressBar_Bottom_Min = 0;
                 double amount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
+                string[] mapBaseNamesToNotRandomize = {"entrymenu", "biog_uiworld"};
                 for (int i = 0; i < files.Length; i++)
                 {
                     //                    int progress = (int)((i / total) * 100);
                     bool loggedFilename = false;
                     mainWindow.CurrentProgressValue = i;
                     mainWindow.CurrentOperationText = "Randomizing map files [" + i + "/" + files.Count() + "]";
-                    if (!files[i].ToLower().Contains("entrymenu"))
+                    var mapBaseName = files[i].ToLower();
+                    if (!mapBaseNamesToNotRandomize.Any(x=>x.StartsWith(mapBaseName)))
                     {
                         bool hasLogged = false;
                         ME1Package package = new ME1Package(files[i]);
@@ -546,9 +548,32 @@ namespace MassEffectRandomizer.Classes
                             FloatProperty x = outVal.GetProp<FloatProperty>("X");
                             FloatProperty y = outVal.GetProp<FloatProperty>("Y");
                             FloatProperty z = outVal.GetProp<FloatProperty>("Z");
-                            x.Value = x.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-                            y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-                            z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                            if (x.Value != 0)
+                            {
+                                x.Value = x.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                            }
+                            else
+                            {
+                                x.Value = random.NextFloat(0, 360);
+                            }
+
+                            if (y.Value != 0)
+                            {
+                                y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                            }
+                            else
+                            {
+                                y.Value = random.NextFloat(0, 360);
+                            }
+
+                            if (z.Value != 0)
+                            {
+                                z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                            }
+                            else
+                            {
+                                z.Value = random.NextFloat(0, 360);
+                            }
                         }
                     }
                 }
@@ -2045,22 +2070,19 @@ mainWindow.RANDSETTING_MISC_INTERPS;
             //Randomize face-zoom in
             var zoomInOnFaceInterp = biog_uiworld.getUExport(385);
             var eulerTrack = zoomInOnFaceInterp.GetProperty<StructProperty>("EulerTrack");
-            if (eulerTrack != null)
+            var points = eulerTrack?.GetProp<ArrayProperty<StructProperty>>("Points");
+            if (points != null)
             {
-                var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
-                if (points != null)
+                var s = points[2]; //end point
+                var outVal = s.GetProp<StructProperty>("OutVal");
+                if (outVal != null)
                 {
-                    var s = points[2]; //end point
-                    var outVal = s.GetProp<StructProperty>("OutVal");
-                    if (outVal != null)
-                    {
-                        FloatProperty x = outVal.GetProp<FloatProperty>("X");
-                        //FloatProperty y = outVal.GetProp<FloatProperty>("Y");
-                        //FloatProperty z = outVal.GetProp<FloatProperty>("Z");
-                        x.Value = random.NextFloat(0, 360);
-                        //y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-                        //z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-                    }
+                    FloatProperty x = outVal.GetProp<FloatProperty>("X");
+                    //FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+                    //FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+                    x.Value = random.NextFloat(0, 360);
+                    //y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+                    //z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
                 }
             }
             zoomInOnFaceInterp.WriteProperty(eulerTrack);
