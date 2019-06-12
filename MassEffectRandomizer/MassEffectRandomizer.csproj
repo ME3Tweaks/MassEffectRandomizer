@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props" Condition="Exists('..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props')" />
-  <Import Project="..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props')" />
+  <Import Project="..\packages\PropertyChanged.Fody.3.0.1\build\PropertyChanged.Fody.props" Condition="Exists('..\packages\PropertyChanged.Fody.3.0.1\build\PropertyChanged.Fody.props')" />
+  <Import Project="..\packages\Costura.Fody.4.0.0\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.4.0.0\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -70,20 +70,23 @@
     <Reference Include="ByteSize, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ByteSize.1.3.0\lib\net45\ByteSize.dll</HintPath>
     </Reference>
-    <Reference Include="CommandLine, Version=2.4.3.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.4.3\lib\netstandard2.0\CommandLine.dll</HintPath>
+    <Reference Include="CommandLine, Version=2.5.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.5.0\lib\net461\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="ConsoleAppLauncher, Version=1.0.6354.408, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ConsoleAppLauncher.1.0.6354.408\lib\net40\ConsoleAppLauncher.dll</HintPath>
     </Reference>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
-    <Reference Include="Costura, Version=3.3.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.3.3.1\lib\net40\Costura.dll</HintPath>
+    <Reference Include="Costura, Version=4.0.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.4.0.0\lib\net40\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="Flurl, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Flurl.2.8.0\lib\net40\Flurl.dll</HintPath>
+    <Reference Include="Flurl, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.2.8.2\lib\net40\Flurl.dll</HintPath>
     </Reference>
-    <Reference Include="Flurl.Http, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Flurl.Http.2.4.0\lib\net46\Flurl.Http.dll</HintPath>
+    <Reference Include="Flurl.Http, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.Http.2.4.2\lib\net46\Flurl.Http.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
@@ -98,16 +101,16 @@
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Octokit, Version=0.32.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Octokit.0.32.0\lib\net45\Octokit.dll</HintPath>
     </Reference>
-    <Reference Include="Polly, Version=6.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Polly.6.1.2\lib\netstandard2.0\Polly.dll</HintPath>
+    <Reference Include="Polly, Version=7.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Polly.7.1.0\lib\netstandard2.0\Polly.dll</HintPath>
     </Reference>
-    <Reference Include="PropertyChanged, Version=2.6.0.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
-      <HintPath>..\packages\PropertyChanged.Fody.2.6.0\lib\net452\PropertyChanged.dll</HintPath>
+    <Reference Include="PropertyChanged, Version=3.0.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
+      <HintPath>..\packages\PropertyChanged.Fody.3.0.1\lib\net452\PropertyChanged.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.2.8.0\lib\net46\Serilog.dll</HintPath>
@@ -135,8 +138,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+    <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
@@ -177,6 +180,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UISupportingFunctions.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -299,6 +303,8 @@
     <EmbeddedResource Include="staticfiles\planetinfo.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="staticfiles\PermissionsGranter.exe" />
+    <EmbeddedResource Include="staticfiles\MassEffectModderNoGui.exe" />
     <EmbeddedResource Include="staticfiles\psychprofiles.xml" />
     <EmbeddedResource Include="staticfiles\openingcrawls.xml" />
     <EmbeddedResource Include="staticfiles\lzma.exe" />
@@ -320,13 +326,13 @@
     <PostBuildEvent>if $(ConfigurationName) == Release signtool sign /n "Michael Perez" /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a "$(TargetPath)"
 </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Fody.3.3.5\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.5\build\Fody.targets')" />
+  <Import Project="..\packages\Fody.5.0.6\build\Fody.targets" Condition="Exists('..\packages\Fody.5.0.6\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.3.3.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.5\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\Fody.5.0.6\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.5.0.6\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Costura.Fody.4.0.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.4.0.0\build\Costura.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\PropertyChanged.Fody.3.0.1\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged.Fody.3.0.1\build\PropertyChanged.Fody.props'))" />
   </Target>
 </Project>

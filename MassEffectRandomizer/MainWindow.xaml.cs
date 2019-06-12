@@ -28,6 +28,7 @@ namespace MassEffectRandomizer
     public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
         public static bool DEBUG_LOGGING { get; internal set; }
+
         public enum RandomizationMode
         {
             ERandomizationMode_SelectAny = 0,
@@ -36,6 +37,7 @@ namespace MassEffectRandomizer
         }
 
         private RandomizationMode _randomizationMode;
+
         public RandomizationMode SelectedRandomizeMode
         {
             get => _randomizationMode;
@@ -45,6 +47,7 @@ namespace MassEffectRandomizer
                 UpdateCheckboxSettings();
             }
         }
+
         public int CurrentProgressValue { get; set; }
         public string CurrentOperationText { get; set; }
         public double ProgressBar_Bottom_Min { get; set; }
@@ -99,6 +102,7 @@ namespace MassEffectRandomizer
             /// What 0-based row this planet information is for in the Bio2DA
             /// </summary>
             public int RowID;
+
             /// <summary>
             /// Prevents shuffling this item outside of it's row ID
             /// </summary>
@@ -118,10 +122,12 @@ namespace MassEffectRandomizer
             /// Name to assign for randomization. If this is a plot planet, this value is the original planet name
             /// </summary>
             public string PlanetName;
+
             /// <summary>
             /// Name used for randomizing if it is a plot planet
             /// </summary>
             public string PlanetName2;
+
             public string PlanetDescription;
 
             /// <summary>
@@ -178,7 +184,9 @@ namespace MassEffectRandomizer
 
         //MOVEMENT
         public bool RANDSETTING_MOVEMENT_CREATURESPEED { get; set; }
+
         public bool RANDSETTING_MOVEMENT_MAKO { get; set; }
+
         //Misc
         public bool RANDSETTING_MISC_MUSIC { get; set; }
         public bool RANDSETTING_MISC_GUIMUSIC { get; set; }
@@ -192,6 +200,7 @@ namespace MassEffectRandomizer
         //Wackadoodle
         public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
         public bool RANDSETTING_MISC_HAZARDS { get; set; }
+        public bool RANDSETTING_MISC_ENEMYAIDISTANCES { get; set; }
         public bool RANDSETTING_MISC_INTERPS { get; set; }
         public bool RANDSETTING_WACK_OPENINGCUTSCENE { get; set; }
 
@@ -220,6 +229,9 @@ namespace MassEffectRandomizer
 
             DataContext = this;
             SelectedRandomizeMode = RandomizationMode.ERandomizationMode_SelectAny;
+
+
+
             PerformUpdateCheck();
         }
 
@@ -232,7 +244,7 @@ namespace MassEffectRandomizer
                     DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
                     if (child != null && child is T)
                     {
-                        yield return (T)child;
+                        yield return (T) child;
                     }
 
                     foreach (T childOfChild in FindVisualChildren<T>(child))
@@ -244,6 +256,7 @@ namespace MassEffectRandomizer
         }
 
         #region Property Changed Notification
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -271,6 +284,7 @@ namespace MassEffectRandomizer
             OnPropertyChanged(propertyName);
             return true;
         }
+
         #endregion
 
         public async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -287,10 +301,27 @@ namespace MassEffectRandomizer
                 Log.Error("Exiting due to game not being found");
                 Environment.Exit(1);
             }
+
             GameLocationTextbox.Text = "Game Path: " + me1Path;
             Log.Information("Game is installed at " + me1Path);
 
+            string path = Utilities.GetGameBackupPath();
+            if (path != null && me1Path != null)
+            {
+                BackupRestoreText = "Restore";
+                BackupRestore_Button.ToolTip = "Click to restore game from " + Environment.NewLine + path;
+            }
+            else
+            {
+                if (me1Installed)
+                {
+                    BackupRestoreText = "Backup";
+                    BackupRestore_Button.ToolTip = "Click to backup game";
+                }
+            }
         }
+
+        public string BackupRestoreText { get; set; }
 
         private void RandomizeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -339,6 +370,7 @@ namespace MassEffectRandomizer
                             {
                                 myReleaseAge++;
                             }
+
                             if (releaseVersion > latestVer)
                             {
                                 latest = r;
@@ -408,11 +440,12 @@ namespace MassEffectRandomizer
                                     {
                                         Log.Information("Program update download percent: " + e.ProgressPercentage);
                                     }
+
                                     string downloadedStr = ByteSize.FromBytes(e.BytesReceived).ToString() + " of " + ByteSize.FromBytes(e.TotalBytesToReceive).ToString();
                                     updateprogresscontroller.SetMessage(message + "\n\n" + downloadedStr);
 
                                     downloadProgress = e.ProgressPercentage;
-                                    updateprogresscontroller.SetProgress((double)e.ProgressPercentage / 100);
+                                    updateprogresscontroller.SetProgress((double) e.ProgressPercentage / 100);
                                 };
                                 updateprogresscontroller.Canceled += async (s, e) =>
                                 {
@@ -450,6 +483,7 @@ namespace MassEffectRandomizer
             {
                 Log.Error("Error checking for update: " + e);
             }
+
             ProgressPanelVisible = Visibility.Collapsed;
             ButtonPanelVisible = Visibility.Visible;
         }
@@ -500,5 +534,29 @@ namespace MassEffectRandomizer
                 this.DragMove();
         }
 
+        private async void BackupRestore_Click(object sender, RoutedEventArgs e)
+        {
+            string path = Utilities.GetGameBackupPath();
+            if (path != null)
+            {
+                MetroDialogSettings settings = new MetroDialogSettings();
+                settings.NegativeButtonText = "Cancel";
+                settings.AffirmativeButtonText = "Restore";
+                MessageDialogResult result = await this.ShowMessageAsync("Restoring Mass Effect from backup", "Restoring Mass Effect will wipe out the current installation and put your game back to the state when you backed it up. Are you sure you want to do this?", MessageDialogStyle.AffirmativeAndNegative, settings);
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    RestoreGame();
+                }
+            }
+            else
+            {
+                BackupGame();
+            }
+        }
+
+        private void DebugCloseDiagnostics_Click(object sender, RoutedEventArgs e)
+        {
+            DiagnosticsFlyoutOpen = false;
+        }
     }
 }

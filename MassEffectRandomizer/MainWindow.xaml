@@ -14,7 +14,7 @@
                       Title="Mass Effect Randomizer" 
                       MinHeight="680" 
                       MinWidth="800"
-                      Height="680"
+                      Height="705.333"
                       Width="800">
     <Window.Resources>
         <converters:EnumMatchToBooleanConverter x:Key="enumConverter" />
@@ -51,6 +51,7 @@
                                  BlurRadius="4"/>
                                 </TextBlock.Effect>
                             </TextBlock>
+                            <Button Content="Debug: Close" HorizontalAlignment="Center" Margin="0,5" Click="DebugCloseDiagnostics_Click" Style="{StaticResource AccentedSquareButtonStyle}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -97,13 +98,16 @@
                             <ProgressBar Name="Progressbar_Bottom" Height="15" Value="{Binding CurrentProgressValue}" IsIndeterminate="{Binding ProgressBarIndeterminate}" Minimum="{Binding ProgressBar_Bottom_Min}" Maximum="{Binding ProgressBar_Bottom_Max}" />
                         </Border>
                     </StackPanel>
-                    <DockPanel LastChildFill="False" Margin="0,0,0,0" Visibility="{Binding ButtonPanelVisible}">
+                    <DockPanel LastChildFill="False" Margin="0,0,0,0" Visibility="{Binding ButtonPanelVisible}" MinHeight="20">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                            <Button Click="Logs_Click">
+                            <Button Click="Logs_Click" MinWidth="20">
                                 <fonts:OutlinedTextBlock Text="Logs" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
                             </Button>
-                            <Button Click="Diagnostics_Click" Margin="5,0,0,0">
+                            <Button Click="Diagnostics_Click" Margin="5,0,0,0" MinWidth="20">
                                 <fonts:OutlinedTextBlock Text="Diagnostics" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
+                            </Button>
+                            <Button Name="BackupRestore_Button" Click="BackupRestore_Click" Margin="5,0,0,0" MinWidth="20">
+                                <fonts:OutlinedTextBlock Text="{Binding BackupRestoreText, FallbackValue=Backup}" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
                             </Button>
                         </StackPanel>
                         <Button DockPanel.Dock="Right" Click="RandomizeButton_Click" Padding="20,0,20,0">
@@ -158,6 +162,7 @@
                                     <fonts:OutlinedTextBlock Text="Movement" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="Randomize movement speeds" Margin="3" ToolTip="Randomizes movement speeds of all characters" IsChecked="{Binding RANDSETTING_MOVEMENT_CREATURESPEED}" />
+                                        <CheckBox Content="Randomize enemy AI distances" Margin="3" ToolTip="Randomize the distances enemy AI prefer to fight at" IsChecked="{Binding RANDSETTING_MISC_ENEMYAIDISTANCES}" />
                                         <CheckBox Content="Randomize Mako" Margin="3" ToolTip="Randomizes various parts of the Mako" IsChecked="{Binding RANDSETTING_MOVEMENT_MAKO}" />
                                     </StackPanel>
                                 </StackPanel>

@@ -63,6 +63,7 @@ namespace MassEffectRandomizer.Classes
             get => BitConverter.ToInt32(header, header.Length - 4);
             set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, header.Length - 4, sizeof(int));
         }
+        public bool ShouldSave { get; internal set; }
 
         static bool isInitialized;
         public static Func<string, ME1Package> Initialize()
@@ -291,6 +292,7 @@ namespace MassEffectRandomizer.Classes
 
                 File.WriteAllBytes(path, m.ToArray());
                 AfterSave();
+                ShouldSave = false; //mark as no longer needing save
             }
             catch (Exception ex)
             {

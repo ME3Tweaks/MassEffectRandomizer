@@ -8,6 +8,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -137,6 +138,26 @@ namespace MassEffectRandomizer
             var application = new App();
             application.InitializeComponent();
             application.Run();
+        }
+
+        /// <summary>
+        /// Flattens an exception into a printable string
+        /// </summary>
+        /// <param name="exception">Exception to flatten</param>
+        /// <returns>Printable string</returns>
+        public static string FlattenException(Exception exception)
+        {
+            var stringBuilder = new StringBuilder();
+
+            while (exception != null)
+            {
+                stringBuilder.AppendLine(exception.GetType().Name + ": " + exception.Message);
+                stringBuilder.AppendLine(exception.StackTrace);
+
+                exception = exception.InnerException;
+            }
+
+            return stringBuilder.ToString();
         }
     }
 

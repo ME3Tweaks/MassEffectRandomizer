@@ -146,5 +146,17 @@ namespace MassEffectRandomizer.Classes
             int maxLength = Math.Min(str.Length, length);
             return str.Substring(0, maxLength);
         }
+
+        public static bool ContainsWord(this string s, string word)
+        {
+            string[] ar = s.Split(' ', '.'); //Split on space and periods
+
+            foreach (string str in ar)
+            {
+                if (str.ToLower() == word.ToLower())
+                    return true;
+            }
+            return false;
+        }
     }
 }

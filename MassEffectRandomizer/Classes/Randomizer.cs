@@ -282,11 +282,6 @@ namespace MassEffectRandomizer.Classes
 
             }
 
-            //if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && iconicMaleExport != null && iconicFemaleStructProp != null)
-            //{
-
-            //}
-
             entrymenu.save();
 
 
@@ -333,7 +328,6 @@ namespace MassEffectRandomizer.Classes
                     {
                         bool hasLogged = false;
                         ME1Package package = new ME1Package(files[i]);
-                        bool hasChanges = false;
                         foreach (IExportEntry exp in package.Exports)
                         {
                             if (mainWindow.RANDSETTING_MISC_MAPFACES && exp.ClassName == "BioMorphFace")
@@ -345,7 +339,7 @@ namespace MassEffectRandomizer.Classes
                                     loggedFilename = true;
                                 }
                                 RandomizeBioMorphFace(exp, random, amount);
-                                hasChanges = true;
+                                package.ShouldSave = true;
                             }
                             else if (mainWindow.RANDSETTING_MISC_HAZARDS && exp.ClassName == "SequenceReference")
                             {
@@ -363,7 +357,7 @@ namespace MassEffectRandomizer.Classes
                                             loggedFilename = true;
                                         }
                                         RandomizeHazard(exp, random);
-                                        hasChanges = true;
+                                        package.ShouldSave = true;
                                     }
                                 }
                             }
@@ -381,7 +375,7 @@ namespace MassEffectRandomizer.Classes
                                     //Todo: restore from older commits for headmesh scaling.
                                     //scaleHeadMesh()
                                 }
-                                hasChanges = true;
+                                package.ShouldSave = true;
                             }
                             else if (mainWindow.RANDSETTING_MISC_INTERPS && exp.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
                             {
@@ -392,10 +386,16 @@ namespace MassEffectRandomizer.Classes
                                 }
                                 //Interpolation randomizer
                                 RandomizeInterpTrackMove(exp, random, amount);
-                                hasChanges = true;
+                                package.ShouldSave = true;
                             }
                         }
-                        if (hasChanges)
+
+                        if (mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES)
+                        {
+                            RandomizeAINames(package, random);
+                        }
+
+                        if (package.ShouldSave)
                         {
                             ModifiedFiles[package.FileName] = package.FileName;
                             package.save();
@@ -696,19 +696,32 @@ namespace MassEffectRandomizer.Classes
             Bio2DA plotPlanet2DA = new Bio2DA(plotPlanetExport);
             Bio2DA levelMap2DA = new Bio2DA(mapExport);
 
+            //System Names
             List<string> shuffledSystemNames = new List<string>(RandomSystemNameCollection);
             shuffledSystemNames.Shuffle(random);
+
+            Dictionary<string, string> systemNameMapping = new Dictionary<string, string>();
+            Dictionary<string, string> clusterNameMapping = new Dictionary<string, string>();
 
             int nameColumnSystems = systems2DA.GetColumnIndexByName("Name");
             for (int i = 0; i < systems2DA.RowNames.Count; i++)
             {
-                string newName = shuffledSystemNames[0];
-                shuffledSystemNames.RemoveAt(0);
 
+                string newSystemName = shuffledSystemNames[0];
+                shuffledSystemNames.RemoveAt(0);
                 int tlkRef = systems2DA[i, nameColumnSystems].GetIntValue();
+
+
+                string oldSystemName = "";
                 foreach (TalkFile tf in Tlks)
                 {
-                    tf.replaceString(tlkRef, newName);
+                    oldSystemName = tf.findDataById(tlkRef);
+                    if (oldSystemName != "No Data")
+                    {
+                        tf.replaceString(tlkRef, newSystemName);
+                        systemNameMapping[oldSystemName] = newSystemName;
+                        break;
+                    }
                 }
             }
 
@@ -724,13 +737,17 @@ namespace MassEffectRandomizer.Classes
             int nameCol = planets2DA.GetColumnIndexByName("Name");
             int descCol = planets2DA.GetColumnIndexByName("Description");
 
-            for (int i = 0; i < planets2DA.RowNames.Count; i++)
+            mainWindow.CurrentProgressValue = 0;
+            mainWindow.ProgressBar_Bottom_Max = planets2DA.RowCount;
+            mainWindow.ProgressBarIndeterminate = false;
+            for (int i = 0; i < planets2DA.RowCount; i++)
             {
+                mainWindow.CurrentProgressValue = i;
                 int systemId = planets2DA[i, 1].GetIntValue();
                 string systemName = Tlks[0].findDataById(systemIdToTlkNameMap[systemId]);
 
                 int nameReference = planets2DA[i, nameCol].GetIntValue();
-                string currentNAme = Tlks[0].findDataById(nameReference);
+                string currentName = Tlks[0].findDataById(nameReference);
                 Bio2DACell descriptionRefCell = planets2DA[i, descCol];
 
                 int descriptionReference = descriptionRefCell == null ? 0 : descriptionRefCell.GetIntValue();
@@ -766,26 +783,63 @@ namespace MassEffectRandomizer.Classes
                         }
                     }
 
-                    string planetName = rpi.PlanetName;
+                    string newPlanetName = rpi.PlanetName;
                     if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION_PLOTPLANET && rpi.PlanetName2 != null)
                     {
-                        planetName = rpi.PlanetName2;
+                        newPlanetName = rpi.PlanetName2;
                     }
                     //if (rename plot missions) planetName = rpi.PlanetName2
                     var description = rpi.PlanetDescription;
                     if (description != null)
                     {
                         description = description.Replace("%SYSTEMNAME%", systemName);
-                        description = description.Replace("%PLANETNAME%", planetName);
+                        description = description.Replace("%PLANETNAME%", newPlanetName);
                         description = description.Trim();
                     }
 
                     var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
 
+                    //FIRST PASS: PLANET NAME + DESCRIPTION
                     foreach (TalkFile tf in Tlks)
                     {
-                        Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + planetName);
-                        tf.replaceString(nameReference, planetName);
+                        //Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + newPlanetName);
+                        string originalPlanetName = tf.findDataById(nameReference);
+                        if (newPlanetName == originalPlanetName || originalPlanetName == "No Data")
+                        {
+                            continue;
+                        }
+                        tf.replaceString(nameReference, newPlanetName);
+
+                        //Update TLK references to this planet.
+                        bool originalPlanetNameIsSingleWord = !originalPlanetName.Contains(" ");
+                        foreach (var sref in tf.StringRefs)
+                        {
+                            if (sref.Data != null)
+                            {
+                                if (originalPlanetNameIsSingleWord)
+                                {
+                                    //This is to filter out things like Inti resulting in Intimidate
+                                    if (sref.Data.ContainsWord(originalPlanetName))
+                                    {
+                                        //Do a replace if the whole word is matched only (no partial matches on words).
+                                        tf.replaceString(sref.StringID, sref.Data.Replace(originalPlanetName, newPlanetName));
+                                    }
+                                }
+                                else
+                                {
+                                    //Planets with spaces in the names won't (hopefully) match on Contains.
+                                    if (sref.Data.Contains(originalPlanetName))
+                                    {
+                                        tf.replaceString(sref.StringID, sref.Data.Replace(originalPlanetName, newPlanetName));
+                                    }
+                                }
+
+                                //if (sref.Data.Contains(originalPlanetName) && sref.Data.IndexOf('\n') < 0)
+                                //{
+                                //    Log.Warning($"Tlk Reference found matching old planet name ({sref.Index}): {originalPlanetName}\n\n{sref.Data}");
+                                //}
+                            }
+                        }
 
                         if (landableMapID > 0)
                         {
@@ -815,17 +869,14 @@ namespace MassEffectRandomizer.Classes
                                         int colonIndex = currentStringValue.IndexOf(":", StringComparison.Ordinal);
                                         if (colonIndex > 0)
                                         {
-                                            currentStringValue = planetName + currentStringValue.Substring(colonIndex);
+                                            currentStringValue = newPlanetName + currentStringValue.Substring(colonIndex);
                                         }
                                         else
                                         {
-                                            currentStringValue = planetName;
+                                            currentStringValue = newPlanetName;
                                         }
 
-                                        if (currentStringValue.EndsWith("\""))
-                                        {
-                                            Debugger.Break();
-                                        }
+
                                         tf.replaceString(stringRef, currentStringValue);
                                     }
                                 }
@@ -919,6 +970,13 @@ namespace MassEffectRandomizer.Classes
             crawl = string.Join(
                 "\n",
                 crawl.Split('\n').Select(s => s.Trim()));
+            //For length testing.
+            //crawl = "It is a period of civil war. Rebel spaceships, striking from a hidden base, " +
+            //        "have won their first victory against the evil Galactic Empire. During the battle, Rebel spies " +
+            //        "managed to steal secret plans to the Empire's ultimate weapon, the DEATH STAR, an armored space station " +
+            //        "with enough power to destroy an entire planet.\n\n" +
+            //        "Pursued by the Empire's sinister agents, Princess Leia races home aboard her starship, custodian of the stolen plans that can " +
+            //        "save her people and restore freedom to the galaxy.....";
             foreach (TalkFile tf in Tlks)
             {
                 tf.replaceString(153106, crawl);
@@ -997,20 +1055,20 @@ namespace MassEffectRandomizer.Classes
         {
             mainWindow.CurrentOperationText = "Randomizing Movement Speeds";
 
-            Bio2DA cluster2da = new Bio2DA(export);
+            Bio2DA movementSpeed2DA = new Bio2DA(export);
             int[] colsToRandomize = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 17, 18, 19 };
-            for (int row = 0; row < cluster2da.RowNames.Count(); row++)
+            for (int row = 0; row < movementSpeed2DA.RowNames.Count(); row++)
             {
                 for (int i = 0; i < colsToRandomize.Count(); i++)
                 {
                     //Console.WriteLine("[" + row + "][" + colsToRandomize[i] + "] value is " + BitConverter.ToSingle(cluster2da[row, colsToRandomize[i]].Data, 0));
                     int randvalue = random.Next(10, 1200);
                     Console.WriteLine("Movement Speed Randomizer [" + row + "][" + colsToRandomize[i] + "] value is now " + randvalue);
-                    cluster2da[row, colsToRandomize[i]].Data = BitConverter.GetBytes(randvalue);
-                    cluster2da[row, colsToRandomize[i]].Type = Bio2DACell.Bio2DADataType.TYPE_INT;
+                    movementSpeed2DA[row, colsToRandomize[i]].Data = BitConverter.GetBytes(randvalue);
+                    movementSpeed2DA[row, colsToRandomize[i]].Type = Bio2DACell.Bio2DADataType.TYPE_INT;
                 }
             }
-            cluster2da.Write2DAToExport();
+            movementSpeed2DA.Write2DAToExport();
         }
 
         //private void RandomizeGalaxyMap(Random random)
@@ -1717,7 +1775,7 @@ namespace MassEffectRandomizer.Classes
         {
             get => mainWindow.RANDSETTING_MISC_MAPFACES ||
 mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
-mainWindow.RANDSETTING_MISC_INTERPS;
+mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES;
         }
 
         private void RandomizeTalentEffectLevels(IExportEntry export, List<TalkFile> Tlks, Random random)
@@ -2093,7 +2151,7 @@ mainWindow.RANDSETTING_MISC_INTERPS;
             string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("psychprofiles.xml");
 
             XElement rootElement = XElement.Parse(fileContents);
-            var childhoods = rootElement.Descendants("childhood").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n",x.Value.Split('\n').Select(s => s.Trim())))).ToList();
+            var childhoods = rootElement.Descendants("childhood").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n", x.Value.Split('\n').Select(s => s.Trim())))).ToList();
             var reputations = rootElement.Descendants("reputation").Where(x => x.Value != "").Select(x => (x.Attribute("name").Value, string.Join("\n", x.Value.Split('\n').Select(s => s.Trim())))).ToList();
 
             childhoods.Shuffle(random);
@@ -2350,17 +2408,42 @@ mainWindow.RANDSETTING_MISC_INTERPS;
                         {
                             continue;
                         }
-                        Console.WriteLine("[" + row + "][" + col + "]  (" + music2da.ColumnNames[col] + ") value originally is " + music2da[row, col].GetDisplayableValue());
+                        Log.Information("[" + row + "][" + col + "]  (" + music2da.ColumnNames[col] + ") value originally is " + music2da[row, col].GetDisplayableValue());
                         int r = random.Next(names.Count);
                         byte[] pnr = names[r];
                         names.RemoveAt(r);
                         music2da[row, col].Data = pnr;
-                        Console.WriteLine("Music Randomizer [" + row + "][" + col + "] (" + music2da.ColumnNames[col] + ") value is now " + music2da[row, col].GetDisplayableValue());
+                        Log.Information("Music Randomizer [" + row + "][" + col + "] (" + music2da.ColumnNames[col] + ") value is now " + music2da[row, col].GetDisplayableValue());
 
                     }
                 }
             }
             music2da.Write2DAToExport();
+        }
+
+        private string[] aiTypes =
+        {
+            "BioAI_Krogan", "BioAI_Assault", "BioAI_AssaultDrone", "BioAI_Charge", "BioAI_Commander", "BioAI_Destroyer", "BioAI_Drone",
+            "BioAI_GunShip", "BioAI_HumanoidMinion", "BioAI_Juggernaut", "BioAI_Melee", "BioAI_Mercenary", "BioAI_Rachnii", "BioAI_Sniper"
+        };
+
+        private void RandomizeAINames(ME1Package pacakge, Random random)
+        {
+            bool forcedCharge = random.Next(10) == 0;
+            for (int i = 0; i < pacakge.NameCount; i++)
+            {
+                NameReference n = pacakge.getNameEntry(i);
+
+                //Todo: Test Saren Hopper AI. Might be interesting to force him to change types.
+                if (aiTypes.Contains(n.Name))
+                {
+                    string newAiType = forcedCharge ? "BioAI_Charge" : aiTypes[random.Next(aiTypes.Length)];
+                    Log.Information("Reassigning AI type in " + Path.GetFileName(pacakge.FileName) + ", " + n + " -> " + newAiType);
+                    pacakge.replaceName(i, newAiType);
+                    pacakge.ShouldSave = true;
+                }
+            }
+
         }
 
         /// <summary>
@@ -2440,5 +2523,7 @@ mainWindow.RANDSETTING_MISC_INTERPS;
         {
             return $"RGB({random.Next(255)},{random.Next(255)},{random.Next(255)})";
         }
+
+
     }
 }
