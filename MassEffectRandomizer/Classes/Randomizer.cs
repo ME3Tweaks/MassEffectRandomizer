@@ -177,7 +177,7 @@ namespace MassEffectRandomizer.Classes
                     case "GalaxyMap_Cluster":
                         if (mainWindow.RANDSETTING_GALAXYMAP_CLUSTERS)
                         {
-                            RandomizeClusters(export, random, Tlks);
+                            RandomizeClustersXY(export, random, Tlks);
                         }
                         break;
                     case "GalaxyMap_System":
@@ -632,7 +632,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizePlanetNameDescriptions(IExportEntry export, Random random, List<TalkFile> Tlks)
         {
-            mainWindow.CurrentOperationText = "Randomizing planet descriptions and names";
+            mainWindow.CurrentOperationText = "Applying entropy to galaxy map";
             string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("planetinfo.xml");
 
             XElement rootElement = XElement.Parse(fileContents);
@@ -661,22 +661,55 @@ namespace MassEffectRandomizer.Classes
             List<int> rowsToNotRandomlyReassign = new List<int>();
 
             IExportEntry systemsExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_System");
+            IExportEntry clustersExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_Cluster");
             IExportEntry areaMapExport = export.FileRef.Exports.First(x => x.ObjectName == "AreaMap_AreaMap");
             IExportEntry plotPlanetExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_PlotPlanet");
             IExportEntry mapExport = export.FileRef.Exports.First(x => x.ObjectName == "GalaxyMap_Map");
 
             Bio2DA systems2DA = new Bio2DA(systemsExport);
+            Bio2DA clusters2DA = new Bio2DA(clustersExport);
             Bio2DA planets2DA = new Bio2DA(export);
             Bio2DA areaMap2DA = new Bio2DA(areaMapExport);
             Bio2DA plotPlanet2DA = new Bio2DA(plotPlanetExport);
             Bio2DA levelMap2DA = new Bio2DA(mapExport);
 
-            //System Names
+            //These dictionaries hold the mappings between the old names and new names and will be used in the 
+            //map file pass as references to these are also contained in the localized map TLKs.
+            systemNameMapping = new Dictionary<string, string>();
+            clusterNameMapping = new Dictionary<string, string>();
+            planetNameMapping = new Dictionary<string, string>();
+
+
+            //Cluster Names
+            int nameColumnClusters = clusters2DA.GetColumnIndexByName("Name");
+
+            List<string> shuffledClusterNames = new List<string>(RandomClusterNameCollection);
+            shuffledClusterNames.Shuffle(random);
+
+            for (int i = 0; i < systems2DA.RowNames.Count; i++)
+            {
+                string newClusterName = shuffledClusterNames[0];
+                shuffledClusterNames.RemoveAt(0);
+                int tlkRef = clusters2DA[i, nameColumnClusters].GetIntValue();
+
+                string oldClusterName = "";
+                foreach (TalkFile tf in Tlks)
+                {
+                    oldClusterName = tf.findDataById(tlkRef);
+                    if (oldClusterName != "No Data")
+                    {
+                        systemNameMapping[oldClusterName] = newClusterName;
+                        break;
+                    }
+                }
+            }
+
+            //SYSTEMS
+            //Used for resolving %SYSTEMNAME% in planet description and localization VO text
+            Dictionary<int, string> systemIdToSystemNameMap = new Dictionary<int, string>();
+
             List<string> shuffledSystemNames = new List<string>(RandomSystemNameCollection);
             shuffledSystemNames.Shuffle(random);
-
-            Dictionary<string, string> systemNameMapping = new Dictionary<string, string>();
-            Dictionary<string, string> clusterNameMapping = new Dictionary<string, string>();
 
             int nameColumnSystems = systems2DA.GetColumnIndexByName("Name");
             for (int i = 0; i < systems2DA.RowNames.Count; i++)
@@ -693,38 +726,28 @@ namespace MassEffectRandomizer.Classes
                     oldSystemName = tf.findDataById(tlkRef);
                     if (oldSystemName != "No Data")
                     {
-                        tf.replaceString(tlkRef, newSystemName);
+                        //tf.replaceString(tlkRef, newSystemName);
                         systemNameMapping[oldSystemName] = newSystemName;
+                        systemIdToSystemNameMap[int.Parse(systems2DA.RowNames[i])] = newSystemName;
                         break;
                     }
                 }
             }
 
-
-
-            Dictionary<int, int> systemIdToTlkNameMap = new Dictionary<int, int>();
-            //Used for dynamic lookup when building TLK
-            for (int i = 0; i < systems2DA.RowNames.Count(); i++)
-            {
-                systemIdToTlkNameMap[int.Parse(systems2DA.RowNames[i])] = systems2DA[i, 4].GetIntValue();
-            }
-
+            //PLANETS
             int nameCol = planets2DA.GetColumnIndexByName("Name");
             int descCol = planets2DA.GetColumnIndexByName("Description");
 
-            mainWindow.CurrentProgressValue = 0;
-            mainWindow.ProgressBar_Bottom_Max = planets2DA.RowCount;
-            mainWindow.ProgressBarIndeterminate = false;
+            //mainWindow.CurrentProgressValue = 0;
+            //mainWindow.ProgressBar_Bottom_Max = planets2DA.RowCount;
+            //mainWindow.ProgressBarIndeterminate = false;
             for (int i = 0; i < planets2DA.RowCount; i++)
             {
-                mainWindow.CurrentProgressValue = i;
+                //mainWindow.CurrentProgressValue = i;
                 int systemId = planets2DA[i, 1].GetIntValue();
-                string systemName = Tlks[0].findDataById(systemIdToTlkNameMap[systemId]);
+                string systemName = systemIdToSystemNameMap[systemId];
 
-                int nameReference = planets2DA[i, nameCol].GetIntValue();
-                string currentName = Tlks[0].findDataById(nameReference);
                 Bio2DACell descriptionRefCell = planets2DA[i, descCol];
-
                 int descriptionReference = descriptionRefCell == null ? 0 : descriptionRefCell.GetIntValue();
 
                 //var rowIndex = int.Parse(planets2DA.RowNames[i]);
@@ -763,6 +786,7 @@ namespace MassEffectRandomizer.Classes
                     {
                         newPlanetName = rpi.PlanetName2;
                     }
+
                     //if (rename plot missions) planetName = rpi.PlanetName2
                     var description = rpi.PlanetDescription;
                     if (description != null)
@@ -773,98 +797,113 @@ namespace MassEffectRandomizer.Classes
                     }
 
                     var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
-
-                    //FIRST PASS: PLANET NAME + DESCRIPTION
+                    int planetNameTlkId = planets2DA[i, nameCol].GetIntValue();
+                    //Replace planet description here, as it won't be replaced in the overall pass
                     foreach (TalkFile tf in Tlks)
                     {
                         //Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + newPlanetName);
-                        string originalPlanetName = tf.findDataById(nameReference);
-                        if (newPlanetName == originalPlanetName || originalPlanetName == "No Data")
+                        string originalPlanetName = tf.findDataById(planetNameTlkId);
+                        if (newPlanetName == originalPlanetName)
+                        {
+                            break;
+                        }
+                        if (originalPlanetName == "No Data")
                         {
                             continue;
                         }
-                        tf.replaceString(nameReference, newPlanetName);
-
-                        //Update TLK references to this planet.
-                        bool originalPlanetNameIsSingleWord = !originalPlanetName.Contains(" ");
-                        foreach (var sref in tf.StringRefs)
-                        {
-                            if (sref.Data != null)
-                            {
-                                if (originalPlanetNameIsSingleWord)
-                                {
-                                    //This is to filter out things like Inti resulting in Intimidate
-                                    if (sref.Data.ContainsWord(originalPlanetName))
-                                    {
-                                        //Do a replace if the whole word is matched only (no partial matches on words).
-                                        tf.replaceString(sref.StringID, sref.Data.Replace(originalPlanetName, newPlanetName));
-                                    }
-                                }
-                                else
-                                {
-                                    //Planets with spaces in the names won't (hopefully) match on Contains.
-                                    if (sref.Data.Contains(originalPlanetName))
-                                    {
-                                        tf.replaceString(sref.StringID, sref.Data.Replace(originalPlanetName, newPlanetName));
-                                    }
-                                }
-
-                                //if (sref.Data.Contains(originalPlanetName) && sref.Data.IndexOf('\n') < 0)
-                                //{
-                                //    Log.Warning($"Tlk Reference found matching old planet name ({sref.Index}): {originalPlanetName}\n\n{sref.Data}");
-                                //}
-                            }
-                        }
-
-                        if (landableMapID > 0)
-                        {
-                            //This planet can be landed on
-                            string mapName = levelMap2DA[levelMap2DA.GetRowIndexByName(landableMapID), 0].GetDisplayableValue();
-                            Debug.WriteLine("Map Name:" + mapName);
-                            int mapIndex = int.Parse(mapName.Substring(8));
-                            mapName = "Map" + mapName.Substring(5, 3); //BIOA_>>LOS<<XX
-                            if (mapIndex > 0)
-                            {
-                                mapName += mapIndex; //Used by UNC
-                            }
-                            //Replace info in areamap and plot planet tables
-                            for (int a = 0; a < areaMap2DA.RowCount; a++)
-                            {
-                                var labelName = areaMap2DA[a, 0].GetDisplayableValue();
-                                if (labelName.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase))
-                                {
-                                    //This is the row needing updated
-                                    var stringRef = areaMap2DA[a, areaMap2DA.GetColumnIndexByName("Title")].GetIntValue();
-                                    var currentStringValue = tf.findDataById(stringRef);
-                                    if (currentStringValue != "No Data")
-                                    {
-                                        string originalStrValue = currentStringValue;
-                                        Log.Information("Updating areamap references for mapname " + labelName);
-                                        //its in this tlk
-                                        int colonIndex = currentStringValue.IndexOf(":", StringComparison.Ordinal);
-                                        if (colonIndex > 0)
-                                        {
-                                            currentStringValue = newPlanetName + currentStringValue.Substring(colonIndex);
-                                        }
-                                        else
-                                        {
-                                            currentStringValue = newPlanetName;
-                                        }
-
-
-                                        tf.replaceString(stringRef, currentStringValue);
-                                    }
-                                }
-                            }
-                        }
+                        //tf.replaceString(planetNameTlkId, newPlanetName); //done in global references pass.
+                        planetNameMapping[originalPlanetName] = newPlanetName;
 
                         if (descriptionReference != 0 && description != null)
                         {
-                            //int truncated = Math.Min(description.Length, 25);
-                            //Debug.WriteLine("   Setting planet description to " + description.Substring(0, truncated));
                             tf.replaceString(descriptionReference, description);
+                            break;
                         }
                     }
+                }
+            }
+        }
+
+        private void UpdateGalaxyMapGlobalReferences(Random random, List<TalkFile> Tlks)
+        {
+            foreach (var planetMapping in planetNameMapping)
+            {
+                foreach (TalkFile tf in Tlks)
+                {
+                    //Update TLK references to this planet.
+                    bool originalPlanetNameIsSingleWord = !planetMapping.Key.Contains(" ");
+                    foreach (var sref in tf.StringRefs)
+                    {
+                        if (sref.Data != null)
+                        {
+                            if (originalPlanetNameIsSingleWord)
+                            {
+                                //This is to filter out things like Inti resulting in Intimidate
+                                if (sref.Data.ContainsWord(planetMapping.Key))
+                                {
+                                    //Do a replace if the whole word is matched only (no partial matches on words).
+                                    tf.replaceString(sref.StringID, sref.Data.Replace(planetMapping.Key, planetMapping.Value));
+                                }
+                            }
+                            else
+                            {
+                                //Planets with spaces in the names won't (hopefully) match on Contains.
+                                if (sref.Data.Contains(planetMapping.Key))
+                                {
+                                    tf.replaceString(sref.StringID, sref.Data.Replace(planetMapping.Key, planetMapping.Value));
+                                }
+                            }
+
+                            //if (sref.Data.Contains(originalPlanetName) && sref.Data.IndexOf('\n') < 0)
+                            //{
+                            //    Log.Warning($"Tlk Reference found matching old planet name ({sref.Index}): {originalPlanetName}\n\n{sref.Data}");
+                            //}
+                        }
+                    }
+
+                    //This might not be necessary since it seems game has consistent enough planet naming scheme that we can just use general pass
+                    /*if (landableMapID > 0)
+                    {
+                        //This planet can be landed on
+                        string mapName = levelMap2DA[levelMap2DA.GetRowIndexByName(landableMapID), 0].GetDisplayableValue();
+                        Debug.WriteLine("Map Name:" + mapName);
+                        int mapIndex = int.Parse(mapName.Substring(8));
+                        mapName = "Map" + mapName.Substring(5, 3); //BIOA_>>LOS<<XX
+                        if (mapIndex > 0)
+                        {
+                            mapName += mapIndex; //Used by UNC
+                        }
+    
+                        //Replace info in areamap and plot planet tables
+                        for (int a = 0; a < areaMap2DA.RowCount; a++)
+                        {
+                            var labelName = areaMap2DA[a, 0].GetDisplayableValue();
+                            if (labelName.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                //This is the row needing updated
+                                var stringRef = areaMap2DA[a, areaMap2DA.GetColumnIndexByName("Title")].GetIntValue();
+                                var currentStringValue = tf.findDataById(stringRef);
+                                if (currentStringValue != "No Data")
+                                {
+                                    string originalStrValue = currentStringValue;
+                                    Log.Information("Updating areamap references for mapname " + labelName);
+                                    //its in this tlk
+                                    int colonIndex = currentStringValue.IndexOf(":", StringComparison.Ordinal);
+                                    if (colonIndex > 0)
+                                    {
+                                        currentStringValue = newPlanetName + currentStringValue.Substring(colonIndex);
+                                    }
+                                    else
+                                    {
+                                        currentStringValue = newPlanetName;
+                                    }
+    
+    
+                                    tf.replaceString(stringRef, currentStringValue);
+                                }
+                            }
+                        }
+                    }*/
                 }
             }
         }
@@ -1055,7 +1094,7 @@ namespace MassEffectRandomizer.Classes
         //        switch (export.ObjectName)
         //        {
         //            case "GalaxyMap_Cluster":
-        //                //RandomizeClusters(export, random);
+        //                //RandomizeClustersXY(export, random);
         //                break;
         //            case "GalaxyMap_System":
         //                //RandomizeSystems(export, random);
@@ -1170,17 +1209,13 @@ namespace MassEffectRandomizer.Classes
         /// </summary>
         /// <param name="export">2DA Export</param>
         /// <param name="random">Random number generator</param>
-        private void RandomizeClusters(IExportEntry export, Random random, List<TalkFile> Tlks)
+        private void RandomizeClustersXY(IExportEntry export, Random random, List<TalkFile> Tlks)
         {
             mainWindow.CurrentOperationText = "Randomizing Galaxy Map - Clusters";
 
             Bio2DA cluster2da = new Bio2DA(export);
-            int nameColIndex = cluster2da.GetColumnIndexByName("Name");
             int xColIndex = cluster2da.GetColumnIndexByName("X");
             int yColIndex = cluster2da.GetColumnIndexByName("Y");
-
-            List<string> shuffledClusterNames = new List<string>(RandomClusterNameCollection);
-            shuffledClusterNames.Shuffle(random);
 
             for (int row = 0; row < cluster2da.RowNames.Count(); row++)
             {
@@ -1189,16 +1224,6 @@ namespace MassEffectRandomizer.Classes
                 cluster2da[row, xColIndex].Data = BitConverter.GetBytes(randvalue);
                 randvalue = random.NextFloat(0, 1);
                 cluster2da[row, yColIndex].Data = BitConverter.GetBytes(randvalue);
-
-                //Randomize Name
-                string name = shuffledClusterNames[0];
-                shuffledClusterNames.RemoveAt(0);
-
-                int tlkRef = cluster2da[row, nameColIndex].GetIntValue();
-                foreach (TalkFile tf in Tlks)
-                {
-                    tf.replaceString(tlkRef, name);
-                }
             }
             cluster2da.Write2DAToExport();
         }
@@ -2404,6 +2429,9 @@ mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTAN
             "BioAI_Krogan", "BioAI_Assault", "BioAI_AssaultDrone", "BioAI_Charge", "BioAI_Commander", "BioAI_Destroyer", "BioAI_Drone",
             "BioAI_GunShip", "BioAI_HumanoidMinion", "BioAI_Juggernaut", "BioAI_Melee", "BioAI_Mercenary", "BioAI_Rachnii", "BioAI_Sniper"
         };
+        private Dictionary<string, string> systemNameMapping;
+        private Dictionary<string, string> clusterNameMapping;
+        private Dictionary<string, string> planetNameMapping;
 
         private void RandomizeAINames(ME1Package pacakge, Random random)
         {
