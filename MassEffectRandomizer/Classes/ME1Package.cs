@@ -1,4 +1,5 @@
 ﻿using Gibbed.IO;
+using MassEffectRandomizer.Classes.TLK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -63,7 +64,12 @@ namespace MassEffectRandomizer.Classes
             get => BitConverter.ToInt32(header, header.Length - 4);
             set => Buffer.BlockCopy(BitConverter.GetBytes(value), 0, header, header.Length - 4, sizeof(int));
         }
+        /// <summary>
+        /// Indicates an export has been modified in this file
+        /// </summary>
         public bool ShouldSave { get; internal set; }
+        public List<TalkFile> LocalTalkFiles { get; } = new List<TalkFile>();
+        public bool TlksModified => LocalTalkFiles.Any(x => x.Modified);
 
         static bool isInitialized;
         public static Func<string, ME1Package> Initialize()
@@ -145,6 +151,46 @@ namespace MassEffectRandomizer.Classes
             ReadNames(listsStream);
             ReadImports(listsStream);
             ReadExports(listsStream);
+            ReadLocalTLKs();
+        }
+
+        private void ReadLocalTLKs()
+        {
+            LocalTalkFiles.Clear();
+            var tlkFileSets = Exports.Where(x => x.ClassName == "BioTlkFileSet" && !x.ObjectName.StartsWith("Default__")).ToList();
+            var exportsToLoad = new List<IExportEntry>();
+            foreach (var tlkFileSet in tlkFileSets)
+            {
+                MemoryStream r = new MemoryStream(tlkFileSet.Data);
+                r.Position = tlkFileSet.propsEnd();
+                int count = r.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    int langRef = r.ReadInt32();
+                    r.ReadInt32(); //second half of name
+                    string lang = getNameEntry(langRef);
+                    int numTlksForLang = r.ReadInt32(); //I beleive this is always 2. Hopefully I am not wrong.
+                    int maleTlk = r.ReadInt32();
+                    int femaleTlk = r.ReadInt32();
+
+                    if (lang.Equals("int", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        exportsToLoad.Add(getUExport(maleTlk));
+                        exportsToLoad.Add(getUExport(femaleTlk));
+                        break;
+                    }
+
+                    //r.ReadInt64();
+                    //talkFiles.Add(new TalkFile(pcc, r.ReadInt32(), true, langRef, index));
+                    //talkFiles.Add(new TalkFile(pcc, r.ReadInt32(), false, langRef, index));
+                }
+            }
+
+            foreach (var exp in exportsToLoad)
+            {
+                //Debug.WriteLine("Loading local TLK: " + exp.GetIndexedFullPath);
+                LocalTalkFiles.Add(new TalkFile(exp));
+            }
         }
 
         private void ReadNames(MemoryStream fs)
@@ -293,6 +339,7 @@ namespace MassEffectRandomizer.Classes
                 File.WriteAllBytes(path, m.ToArray());
                 AfterSave();
                 ShouldSave = false; //mark as no longer needing save
+                LocalTalkFiles.ForEach(x => x.Modified = false);
             }
             catch (Exception ex)
             {

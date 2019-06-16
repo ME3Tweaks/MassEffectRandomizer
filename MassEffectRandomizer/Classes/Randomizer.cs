@@ -46,6 +46,7 @@ namespace MassEffectRandomizer.Classes
         public Randomizer(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
+            TlksIdsToNotUpdate = new List<int>();
         }
 
         public void randomize()
@@ -99,6 +100,7 @@ namespace MassEffectRandomizer.Classes
             List<TalkFile> Tlks = new List<TalkFile>();
             foreach (IExportEntry exp in globalTLK.Exports)
             {
+                //TODO: Use BioTlkFileSet or something to only do INT
                 if (exp.ClassName == "BioTlkFile")
                 {
                     TalkFile tlk = new TalkFile(exp);
@@ -316,7 +318,7 @@ namespace MassEffectRandomizer.Classes
                 mainWindow.ProgressBar_Bottom_Max = files.Count();
                 mainWindow.ProgressBar_Bottom_Min = 0;
                 double amount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
-                string[] mapBaseNamesToNotRandomize = {"entrymenu", "biog_uiworld"};
+                string[] mapBaseNamesToNotRandomize = { "entrymenu", "biog_uiworld" };
                 for (int i = 0; i < files.Length; i++)
                 {
                     //                    int progress = (int)((i / total) * 100);
@@ -324,69 +326,77 @@ namespace MassEffectRandomizer.Classes
                     mainWindow.CurrentProgressValue = i;
                     mainWindow.CurrentOperationText = "Randomizing map files [" + i + "/" + files.Count() + "]";
                     var mapBaseName = files[i].ToLower();
-                    if (!mapBaseNamesToNotRandomize.Any(x=>x.StartsWith(mapBaseName)))
+                    if (!mapBaseNamesToNotRandomize.Any(x => x.StartsWith(mapBaseName)))
                     {
                         bool hasLogged = false;
                         ME1Package package = new ME1Package(files[i]);
-                        foreach (IExportEntry exp in package.Exports)
+                        if (RunMapRandomizerPassAllExports)
                         {
-                            if (mainWindow.RANDSETTING_MISC_MAPFACES && exp.ClassName == "BioMorphFace")
+                            foreach (IExportEntry exp in package.Exports)
                             {
-                                //Face randomizer
-                                if (!loggedFilename)
+                                if (mainWindow.RANDSETTING_MISC_MAPFACES && exp.ClassName == "BioMorphFace")
                                 {
-                                    Log.Information("Randomizing map file: " + files[i]);
-                                    loggedFilename = true;
-                                }
-                                RandomizeBioMorphFace(exp, random, amount);
-                                package.ShouldSave = true;
-                            }
-                            else if (mainWindow.RANDSETTING_MISC_HAZARDS && exp.ClassName == "SequenceReference")
-                            {
-                                //Hazard Randomizer
-                                var seqRef = exp.GetProperty<ObjectProperty>("oSequenceReference");
-                                if (seqRef != null && exp.FileRef.isUExport(seqRef.Value))
-                                {
-                                    IExportEntry possibleHazSequence = exp.FileRef.getUExport(seqRef.Value);
-                                    var objName = possibleHazSequence.GetProperty<StrProperty>("ObjName");
-                                    if (objName != null && objName == "REF_HazardSystem")
+                                    //Face randomizer
+                                    if (!loggedFilename)
                                     {
-                                        if (!loggedFilename)
+                                        Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
+
+                                    RandomizeBioMorphFace(exp, random, amount);
+                                    package.ShouldSave = true;
+                                }
+                                else if (mainWindow.RANDSETTING_MISC_HAZARDS && exp.ClassName == "SequenceReference")
+                                {
+                                    //Hazard Randomizer
+                                    var seqRef = exp.GetProperty<ObjectProperty>("oSequenceReference");
+                                    if (seqRef != null && exp.FileRef.isUExport(seqRef.Value))
+                                    {
+                                        IExportEntry possibleHazSequence = exp.FileRef.getUExport(seqRef.Value);
+                                        var objName = possibleHazSequence.GetProperty<StrProperty>("ObjName");
+                                        if (objName != null && objName == "REF_HazardSystem")
                                         {
-                                            Log.Information("Randomizing map file: " + files[i]);
-                                            loggedFilename = true;
+                                            if (!loggedFilename)
+                                            {
+                                                Log.Information("Randomizing map file: " + files[i]);
+                                                loggedFilename = true;
+                                            }
+
+                                            RandomizeHazard(exp, random);
+                                            package.ShouldSave = true;
                                         }
-                                        RandomizeHazard(exp, random);
-                                        package.ShouldSave = true;
                                     }
                                 }
-                            }
-                            else if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES && exp.ClassName == "BioPawn" && random.Next(4) == 0)
-                            {
-                                if (!loggedFilename)
+                                else if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES && exp.ClassName == "BioPawn" && random.Next(4) == 0)
                                 {
-                                    Log.Information("Randomizing map file: " + files[i]);
-                                    loggedFilename = true;
+                                    if (!loggedFilename)
+                                    {
+                                        Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
+
+                                    //Pawn size randomizer
+                                    RandomizeBioPawnSize(exp, random, 0.4);
+                                    if (random.Next(15) == 0)
+                                    {
+                                        //Todo: restore from older commits for headmesh scaling.
+                                        //scaleHeadMesh()
+                                    }
+
+                                    package.ShouldSave = true;
                                 }
-                                //Pawn size randomizer
-                                RandomizeBioPawnSize(exp, random, 0.4);
-                                if (random.Next(15) == 0)
+                                else if (mainWindow.RANDSETTING_MISC_INTERPS && exp.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
                                 {
-                                    //Todo: restore from older commits for headmesh scaling.
-                                    //scaleHeadMesh()
+                                    if (!loggedFilename)
+                                    {
+                                        Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
+
+                                    //Interpolation randomizer
+                                    RandomizeInterpTrackMove(exp, random, amount);
+                                    package.ShouldSave = true;
                                 }
-                                package.ShouldSave = true;
-                            }
-                            else if (mainWindow.RANDSETTING_MISC_INTERPS && exp.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
-                            {
-                                if (!loggedFilename)
-                                {
-                                    Log.Information("Randomizing map file: " + files[i]);
-                                    loggedFilename = true;
-                                }
-                                //Interpolation randomizer
-                                RandomizeInterpTrackMove(exp, random, amount);
-                                package.ShouldSave = true;
                             }
                         }
 
@@ -395,7 +405,22 @@ namespace MassEffectRandomizer.Classes
                             RandomizeAINames(package, random);
                         }
 
-                        if (package.ShouldSave)
+                        if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION && package.LocalTalkFiles.Any())
+                        {
+                            if (!loggedFilename)
+                            {
+                                Log.Information("Randomizing map file: " + files[i]);
+                                loggedFilename = true;
+                            }
+                            UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
+                        }
+
+                        foreach (var talkFile in package.LocalTalkFiles.Where(x => x.Modified))
+                        {
+                            talkFile.saveToExport();
+                        }
+
+                        if (package.ShouldSave || package.TlksModified)
                         {
                             ModifiedFiles[package.FileName] = package.FileName;
                             package.save();
@@ -415,6 +440,15 @@ namespace MassEffectRandomizer.Classes
                 Log.Information("Applying shepard-faces-camera modification");
                 p.getUExport(219).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_PlayerFaceCameraIntro_219.bin");
                 p.save();
+            }
+
+            if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION)
+            {
+                Log.Information("Apply galaxy map background transparency fix");
+                ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\NOR\DSG\BIOA_NOR10_03_DSG.SFM"));
+                p.getUExport(1655).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.PC_GalaxyMap_BGFix_1655.bin");
+                p.save();
+                ModifiedFiles[p.FileName] = p.FileName;
             }
 
             bool saveGlobalTLK = false;
@@ -711,7 +745,7 @@ namespace MassEffectRandomizer.Classes
             List<string> shuffledClusterNames = new List<string>(RandomClusterNameCollection);
             shuffledClusterNames.Shuffle(random);
 
-            for (int i = 0; i < systems2DA.RowNames.Count; i++)
+            for (int i = 0; i < clusters2DA.RowNames.Count; i++)
             {
                 string newClusterName = shuffledClusterNames[0];
                 shuffledClusterNames.RemoveAt(0);
@@ -818,11 +852,12 @@ namespace MassEffectRandomizer.Classes
                     {
                         description = description.Replace("%SYSTEMNAME%", systemName);
                         description = description.Replace("%PLANETNAME%", newPlanetName);
-                        description = description.Trim();
+                        description = description.TrimLines();
                     }
 
-                    var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
+                    //var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
                     int planetNameTlkId = planets2DA[i, nameCol].GetIntValue();
+
                     //Replace planet description here, as it won't be replaced in the overall pass
                     foreach (TalkFile tf in Tlks)
                     {
@@ -838,98 +873,173 @@ namespace MassEffectRandomizer.Classes
                         }
                         //tf.replaceString(planetNameTlkId, newPlanetName); //done in global references pass.
                         planetNameMapping[originalPlanetName] = newPlanetName;
-
+                        Debug.WriteLine($"{originalPlanetName} -> {newPlanetName}");
+                        Debug.WriteLine("New description:\n" + description);
+                        //if (originalPlanetName == "Ilos") Debugger.Break();
                         if (descriptionReference != 0 && description != null)
                         {
+                            TlksIdsToNotUpdate.Add(descriptionReference);
                             tf.replaceString(descriptionReference, description);
                             break;
                         }
                     }
                 }
             }
+            UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
         }
 
-        private void UpdateGalaxyMapGlobalReferences(Random random, List<TalkFile> Tlks)
+        private void UpdateGalaxyMapReferencesForTLKs(List<TalkFile> Tlks, bool updateProgressbar)
         {
-            foreach (var planetMapping in planetNameMapping)
+            int currentTlkIndex = 0;
+            foreach (TalkFile tf in Tlks)
             {
-                foreach (TalkFile tf in Tlks)
+                currentTlkIndex++;
+                int max = tf.StringRefs.Count();
+                int current = 0;
+                if (updateProgressbar)
                 {
-                    //Update TLK references to this planet.
-                    bool originalPlanetNameIsSingleWord = !planetMapping.Key.Contains(" ");
-                    foreach (var sref in tf.StringRefs)
+                    mainWindow.CurrentOperationText = $"Applying entropy to galaxy map [{currentTlkIndex}/{Tlks.Count()}]";
+                    mainWindow.ProgressBar_Bottom_Max = tf.StringRefs.Length;
+                    mainWindow.ProgressBarIndeterminate = false;
+                }
+                //This is inefficient but not much I can do it about it.
+                foreach (var sref in tf.StringRefs)
+                {
+                    current++;
+                    if (TlksIdsToNotUpdate.Contains(sref.StringID)) continue; //This string has already been updated and should not be modified.
+                    if (updateProgressbar)
                     {
-                        if (sref.Data != null)
+                        mainWindow.CurrentProgressValue = current;
+                    }
+                    if (!string.IsNullOrWhiteSpace(sref.Data))
+                    {
+                        string originalString = sref.Data;
+                        string newString = sref.Data;
+                        foreach (var planetMapping in planetNameMapping)
                         {
+
+                            //Update TLK references to this planet.
+                            bool originalPlanetNameIsSingleWord = !planetMapping.Key.Contains(" ");
+
                             if (originalPlanetNameIsSingleWord)
                             {
                                 //This is to filter out things like Inti resulting in Intimidate
-                                if (sref.Data.ContainsWord(planetMapping.Key))
+                                if (originalString.ContainsWord(planetMapping.Key) && newString.ContainsWord(planetMapping.Key))
                                 {
                                     //Do a replace if the whole word is matched only (no partial matches on words).
-                                    tf.replaceString(sref.StringID, sref.Data.Replace(planetMapping.Key, planetMapping.Value));
+                                    newString = newString.Replace(planetMapping.Key, planetMapping.Value);
                                 }
                             }
                             else
                             {
                                 //Planets with spaces in the names won't (hopefully) match on Contains.
-                                if (sref.Data.Contains(planetMapping.Key))
+                                if (originalString.Contains(planetMapping.Key) && newString.Contains(planetMapping.Key))
                                 {
-                                    tf.replaceString(sref.StringID, sref.Data.Replace(planetMapping.Key, planetMapping.Value));
+                                    newString = newString.Replace(planetMapping.Key, planetMapping.Value);
                                 }
                             }
+                        }
 
-                            //if (sref.Data.Contains(originalPlanetName) && sref.Data.IndexOf('\n') < 0)
-                            //{
-                            //    Log.Warning($"Tlk Reference found matching old planet name ({sref.Index}): {originalPlanetName}\n\n{sref.Data}");
-                            //}
+
+                        foreach (var systemMapping in systemNameMapping)
+                        {
+                            //Update TLK references to this system.
+                            bool originalSystemNameIsSingleWord = !systemMapping.Key.Contains(" ");
+                            if (originalSystemNameIsSingleWord)
+                            {
+                                //This is to filter out things like Inti resulting in Intimidate
+                                if (originalString.ContainsWord(systemMapping.Key) && newString.ContainsWord(systemMapping.Key)))
+                                {
+                                    //Do a replace if the whole word is matched only (no partial matches on words).
+                                    newString = newString.Replace(systemMapping.Key, systemMapping.Value);
+                                }
+                            }
+                            else
+                            {
+                                //System with spaces in the names won't (hopefully) match on Contains.
+                                if (originalString.Contains(systemMapping.Key) && newString.Contains(systemMapping.Key))
+                                {
+                                    newString = newString.Replace(systemMapping.Key, systemMapping.Value);
+                                }
+                            }
+                        }
+
+                        foreach (var clusterMapping in clusterNameMapping)
+                        {
+                            //Update TLK references to this cluster.
+                            bool originalClusterNameIsSingleWord = !clusterMapping.Key.Contains(" ");
+                            if (originalClusterNameIsSingleWord)
+                            {
+                                //This is to filter out things like Inti resulting in Intimidate
+                                if (originalString.ContainsWord(clusterMapping.Key) && newString.ContainsWord(clusterMapping.Key))
+                                {
+                                    //Do a replace if the whole word is matched only (no partial matches on words).
+                                    newString = newString.Replace(clusterMapping.Key, clusterMapping.Value);
+
+                                }
+                            }
+                            else
+                            {
+                                //System with spaces in the names won't (hopefully) match on Contains.
+                                if (originalString.Contains(clusterMapping.Key) && newString.Contains(clusterMapping.Key))
+                                {
+                                    newString = newString.Replace(clusterMapping.Key, clusterMapping.Value);
+
+                                }
+                            }
+                        }
+
+                        if (originalString != newString)
+                        {
+                            tf.replaceString(sref.StringID, newString);
                         }
                     }
+                }
 
-                    //This might not be necessary since it seems game has consistent enough planet naming scheme that we can just use general pass
-                    /*if (landableMapID > 0)
+                //This might not be necessary since it seems game has consistent enough planet naming scheme that we can just use general pass
+                /*if (landableMapID > 0)
+                {
+                    //This planet can be landed on
+                    string mapName = levelMap2DA[levelMap2DA.GetRowIndexByName(landableMapID), 0].GetDisplayableValue();
+                    Debug.WriteLine("Map Name:" + mapName);
+                    int mapIndex = int.Parse(mapName.Substring(8));
+                    mapName = "Map" + mapName.Substring(5, 3); //BIOA_>>LOS<<XX
+                    if (mapIndex > 0)
                     {
-                        //This planet can be landed on
-                        string mapName = levelMap2DA[levelMap2DA.GetRowIndexByName(landableMapID), 0].GetDisplayableValue();
-                        Debug.WriteLine("Map Name:" + mapName);
-                        int mapIndex = int.Parse(mapName.Substring(8));
-                        mapName = "Map" + mapName.Substring(5, 3); //BIOA_>>LOS<<XX
-                        if (mapIndex > 0)
+                        mapName += mapIndex; //Used by UNC
+                    }
+
+                    //Replace info in areamap and plot planet tables
+                    for (int a = 0; a < areaMap2DA.RowCount; a++)
+                    {
+                        var labelName = areaMap2DA[a, 0].GetDisplayableValue();
+                        if (labelName.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            mapName += mapIndex; //Used by UNC
-                        }
-    
-                        //Replace info in areamap and plot planet tables
-                        for (int a = 0; a < areaMap2DA.RowCount; a++)
-                        {
-                            var labelName = areaMap2DA[a, 0].GetDisplayableValue();
-                            if (labelName.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase))
+                            //This is the row needing updated
+                            var stringRef = areaMap2DA[a, areaMap2DA.GetColumnIndexByName("Title")].GetIntValue();
+                            var currentStringValue = tf.findDataById(stringRef);
+                            if (currentStringValue != "No Data")
                             {
-                                //This is the row needing updated
-                                var stringRef = areaMap2DA[a, areaMap2DA.GetColumnIndexByName("Title")].GetIntValue();
-                                var currentStringValue = tf.findDataById(stringRef);
-                                if (currentStringValue != "No Data")
+                                string originalStrValue = currentStringValue;
+                                Log.Information("Updating areamap references for mapname " + labelName);
+                                //its in this tlk
+                                int colonIndex = currentStringValue.IndexOf(":", StringComparison.Ordinal);
+                                if (colonIndex > 0)
                                 {
-                                    string originalStrValue = currentStringValue;
-                                    Log.Information("Updating areamap references for mapname " + labelName);
-                                    //its in this tlk
-                                    int colonIndex = currentStringValue.IndexOf(":", StringComparison.Ordinal);
-                                    if (colonIndex > 0)
-                                    {
-                                        currentStringValue = newPlanetName + currentStringValue.Substring(colonIndex);
-                                    }
-                                    else
-                                    {
-                                        currentStringValue = newPlanetName;
-                                    }
-    
-    
-                                    tf.replaceString(stringRef, currentStringValue);
+                                    currentStringValue = newPlanetName + currentStringValue.Substring(colonIndex);
                                 }
+                                else
+                                {
+                                    currentStringValue = newPlanetName;
+                                }
+
+
+                                tf.replaceString(stringRef, currentStringValue);
                             }
                         }
-                    }*/
-                }
+                    }
+                }*/
+
             }
         }
 
@@ -1006,9 +1116,7 @@ namespace MassEffectRandomizer.Classes
             }
 
             string crawl = crawls[random.Next(crawls.Count)].CrawlText;
-            crawl = string.Join(
-                "\n",
-                crawl.Split('\n').Select(s => s.Trim()));
+            crawl = crawl.TrimLines();
             //For length testing.
             //crawl = "It is a period of civil war. Rebel spaceships, striking from a hidden base, " +
             //        "have won their first victory against the evil Galactic Empire. During the battle, Rebel spies " +
@@ -1799,8 +1907,16 @@ namespace MassEffectRandomizer.Classes
         public bool RunMapRandomizerPass
         {
             get => mainWindow.RANDSETTING_MISC_MAPFACES ||
-mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
-mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES;
+                    mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
+                    mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES ||
+                    mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION;
+        }
+
+        public bool RunMapRandomizerPassAllExports
+        {
+            get => mainWindow.RANDSETTING_MISC_MAPFACES ||
+                   mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
+                   mainWindow.RANDSETTING_MISC_INTERPS;
         }
 
         private void RandomizeTalentEffectLevels(IExportEntry export, List<TalkFile> Tlks, Random random)
@@ -2454,6 +2570,7 @@ mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTAN
         private Dictionary<string, string> systemNameMapping;
         private Dictionary<string, string> clusterNameMapping;
         private Dictionary<string, string> planetNameMapping;
+        private List<int> TlksIdsToNotUpdate;
 
         private void RandomizeAINames(ME1Package pacakge, Random random)
         {

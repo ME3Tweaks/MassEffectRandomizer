@@ -5,10 +5,6 @@
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Citadel</PlanetName>
-    <MapBaseNames>
-      <MapBaseName>MapEND</MapBaseName>
-      <MapBaseName>MapSTA</MapBaseName>
-    </MapBaseNames>
     <PlanetDescription>
       Supposedly constructed by the long-extinct Protheans, this colossal deep-space station serves as the capital of the Citadel Council. Gravity is simulated through rotation, and is a comfortable 1.02 standard Gs on the Wards and a light 0.3 standard Gs on the Presidium Ring. (Small sections of graffiti have been found in station sub-structures, suggesting that perhaps the Protheans were not responsible for the bulk of construction. Bemused maintenance workers report that the graffiti is often a variation of ‘Keeper #13489317498813789 was here.’)
 
@@ -209,9 +205,6 @@
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Luna</PlanetName>
-    <MapBaseNames>
-      <MapBaseName>MapUNC51</MapBaseName>
-    </MapBaseNames>
     <PlanetDescription>
       An early source of helium-3, Luna is now mined for materials used in space habitat construction. A folk legend from before space travel in the Sol system once described Luna as being made of cheese, of which kind being debated widely among the population of Earth. While it has long been proven that Luna is in fact not made out of cheese, Neil Armstrong, the first human to step foot on Luna, is said to have thrown a wheel of cheese out of his landing craft upon first touchdown in 1969, in commemoration of this legend. While the wheel has never been recovered, it was supposedly of the Gouda variety. When asked why he chose this type, Neil supposedly replied with  "It is simply the best kind of cheese".
 
@@ -249,9 +242,6 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Eden Prime</PlanetName>
     <PlanetName2>Dorstonis</PlanetName2>
-    <MapBaseNames>
-      <MapBaseName>MapPRO</MapBaseName>
-    </MapBaseNames>
     <PlanetDescription>
       This pastoral world marks the founding of the first Earth colony beyond a mass relay. The biosphere, though slightly thin, is well-suited to both humans and native Earth species. The original Systems Alliance colony was soon augmented by the arrival of corporate developments.
 
@@ -357,9 +347,6 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Noveria</PlanetName>
     <PlanetName2>Grunty Industries</PlanetName2>
-    <MapBaseNames>
-      <MapBaseName>MapICE</MapBaseName>
-    </MapBaseNames>
     <PlanetDescription>
       %PLANETNAME% is a small, frozen terrestrial world, barely habitable by conventional definitions. It is privately run by the %PLANETNAME% Development Corporation, which controls the production facilities that cover the planet. Due to the significant overcrowding of factories on the planet, pollution is widespread, some factories even being surrounded by toxic moats.
 
@@ -959,11 +946,11 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Zavalater</PlanetName>
+    <PlanetName>Zavala</PlanetName>
     <PlanetDescription>
-      An enigmatic terrestrial planet, Zavalater has a atmosphere of nitrogen and argon. It is blisteringly cold and a faint whitish haze can be seen rippling across its blue surface.
+      An enigmatic terrestrial planet, Zavala has an atmosphere of nitrogen and argon. It is blisteringly cold and a faint whitish haze can be seen rippling across its blue surface.
 
-      Three times in the last century, ships stopping to discharge at nearby planets have reported geometric patterns of lights on the dark side of Zavalater. Attempts at closer investigation could not be made, as an asteroid belt of whitish fragments surrounded the planet, and ship transponders were overridden with static laced references to ‘the Traveler’.
+      Three times in the last century, ships stopping to discharge at nearby planets have reported geometric patterns of lights on the dark side of Zavala. Attempts at closer investigation could not be made, as an asteroid belt of whitish fragments surrounded the planet, and ship transponders were overridden with static laced references to ‘the Traveler’.
 
       Orbital Distance: 2.0 AU
       Orbital Period: 2.1 Earth Years
@@ -1167,9 +1154,6 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Virmire</PlanetName>
     <PlanetName2>Mandalore</PlanetName2>
-    <MapBaseNames>
-      <MapBaseName>MapJUG</MapBaseName>
-    </MapBaseNames>
     <PlanetDescription>
       %PLANETNAME% is a lush frontier world, covered in veshok forest, oceans, and rolling grasslands. Unique to the planet and its moon Concordia is beskar ore, a nearly indestructible material akin to iron.
 
@@ -1225,7 +1209,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Charlette II</PlanetName>
     <PlanetDescription>
-      Charlette II is a gas giant, containing trace amounts of oxygen. It appears that there used to be significantly more oxygen, indicating that may have once a cataclysmic event that removed the oxygen from the atmosphere. It has been theorized that a massive fire that engulfed the planet consumed the majority of the planet’s oxygen.
+      Charlette II is a gas giant, containing trace amounts of oxygen. It appears there used to be significantly more oxygen, indicating there may have once been a cataclysmic event that removed the oxygen from the atmosphere. It has been theorized that a massive fire that engulfed the planet consumed the majority of the planet’s oxygen.
 
       Orbital Period: 47.8 Earth Years
       Radius: 32,191 km
@@ -1240,7 +1224,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Telos IV</PlanetName>
     <PlanetDescription>
-      The planet Telos IV was once a world of natural beauty and home to a thriving ecosystem. Decades ago, civil war between two opposing political forces lead to planetary bombardment, destroying significant parts of the ecosystem. A restoration project is underway to restore the planet to its former glory, with the planet sectioned off into chunks using Mass Effect fields.
+      The planet Telos IV was once a world of natural beauty and home to a thriving ecosystem. Decades ago, civil war between two opposing political forces led to planetary bombardment, destroying significant parts of the ecosystem. A restoration project is underway to restore the planet to its former glory, with the planet sectioned off into chunks using mass effect fields.
 
       A space station orbits over the 45 degree northern latitude of the planet, which is used as a staging area and monitoring station for the restoration efforts. The majority of the population of Telos IV lives aboard this space station.
 
@@ -1303,7 +1287,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Ravka</PlanetName>
     <PlanetDescription>
-      Ravka is a cold and intemperate planet that nonetheless has the ability to support life. Os Alta, the capital, is home to the bulk of the population. Known as Suli and led by the Lantsov royal family, the city is protected by an elite legion of biotically superior asari known as Grisha.For years they have held off the incursions of the Shu Han in the south and the Fjerdans in the north. The planet’s climate and remote location ensure very few external visitors, but in recent times, having a winter vacation home in Os Alta has become a status symbol among prominent asari.
+      Ravka is a cold and intemperate planet that nonetheless has the ability to support life. Os Alta, the capital, is home to the bulk of the population. Known as Suli and led by the Lantsov royal family, the city is protected by an elite legion of biotically superior asari known as Grisha. For years they have held off the incursions of the Shu Han in the south and the Fjerdans in the north. The planet’s climate and remote location ensure very few external visitors, but in recent times, having a winter vacation home in Os Alta has become a status symbol among prominent asari.
 
       Orbital Period: 46.6 Earth Years
       Radius: 55,721 km
@@ -1311,6 +1295,7 @@
     </PlanetDescription>
 
     <IsColdOnly>true</IsColdOnly>
+
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>72</RowID>
@@ -1421,14 +1406,11 @@
 
   <RandomizedPlanetInfo>
     <RowID>78</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Ilos</PlanetName>
     <PlanetName2>Valyria</PlanetName2>
-    <MapBaseNames>
-      <MapBaseName>MapLOS</MapBaseName>
-    </MapBaseNames>
     <PlanetDescription>
       %PLANETNAME% was once a verdant world dotted with towering cities, home to a sect of Protheans known as the Freehold. However, all other history has been lost to the Doom of %PLANETNAME%. This massive eruption of volcanoes clouded the atmosphere with ash and turned the oceans to acid. The surface fractured into thousands of small, unstable islands. The cities collapsed into ruin and most of the written history of the planet was lost, along with their advances in science and technology.
 
@@ -1557,9 +1539,9 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Wald Uberlisterin</PlanetName>
     <PlanetDescription>
-      A small, out-of-the-way terrestrial planet, Wald Uberlisterin is nonetheless notable for a castle-like rock formation on the northern pole. This “castle” has become topic of hot contention between anthropologist and geologists, with one side stating the formation is the remnant of an unknown civilization and the other side insisting it is merely the result of tectonic activity.
+      A small, out-of-the-way terrestrial planet, Wald Uberlisterin is nonetheless notable for a castle-like rock formation on the northern pole. This “castle” has become a topic of hot contention between anthropologist and geologists, with one side stating the formation is the remnant of an unknown civilization and the other side insisting it is merely the result of tectonic activity.
 
-      Hoshichiri Heavy Industries, owners of rights to surface mining on the planet, have elected to leave the formation untouched for now, undoubtedly hoping to extort large sums of money in exchange for maintaining its protected status.
+      Hoshichiri Heavy Industries, owners of the rights to surface mining on the planet, have elected to leave the formation untouched for now, undoubtedly hoping to extort large sums of money in exchange for maintaining its protected status.
 
       Orbital Period: 15.1 Earth Years
       Radius: 4645 km
@@ -1614,7 +1596,7 @@
     <PlanetDescription>
       Berk is a small, mostly barren terrestrial world. A thin band of habitable terrain stretches along the coast of its massive ocean. A large island rises from the middle of the ocean and emits a plume of smoke that is visible from space.
 
-      The planet is incapable of supporting plant life due to the sulfuric atmosphere and weak sun. Each of the several varieties of native fauna are well-adapted, however. Possessing scales, wings, and claws, they are well-adapted to living in the rocky outcroppings near the sea.
+      The planet is incapable of supporting plant life due to the sulfuric atmosphere and weak sun. Each of the several varieties of native fauna are well-adapted, however. Possessing scales, wings, and claws, they are able to live and hunt in the rocky outcroppings near the sea.
 
       Orbital Period: 1.7 Earth Years
       Radius: 2843 km
@@ -1652,7 +1634,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Midgar</PlanetName>
     <PlanetDescription>
-      Midgar is a heavily industrialized planet. Home to a powerful energy source simply known as “mako”, the surface is covered by Shinra Company’s massive harvesting installations. The Cetra, original inhabitants of the planet, opposed the aggressive draining of the planet’s resources. They have been largely forced offworld or into hiding.
+      Midgar is a heavily industrialized planet. Home to a powerful energy source simply known as “mako”, the surface is covered by Shinra Company’s massive harvesting installations. The Cetra, original inhabitants of the planet who opposed the aggressive draining of its resources, have been largely forced offworld or into hiding.
 
       With the dominance of eezo, however, mako has been mostly relegated to smaller applications. New research also suggests that long-term exposure may be irreversibly toxic to most species.
 
@@ -1769,7 +1751,7 @@
     <PlanetDescription>
       WARNING: Level 1 Toxic Hazard
 
-      A tropical hothouse of a planet, Zonama Sekot is a lush paradise. The myths of the long extinct Ferroans, preserved only in rudimentary holo-form, state that Zonama is possessed of basic sentience, the spirit of which is called Sekot. Several star charts recovered from ruins indicate the planet may have moved through several different solar systems in its lifetime. The surface does bear massive scorch marks near the equator, giving some credence to the idea of a planet capable of space travel, but no current research can suggest how this feat might be accomplished.
+      A tropical hothouse of a planet, Zonama Sekot is a lush paradise. The myths of the long extinct Ferroans, preserved only in rudimentary holo-form, state that Zonama is possessed of basic sentience, the spirit of which is called Sekot. Star charts recovered from ruins indicate the planet may have moved through several different solar systems in its lifetime. The surface does bear massive scorch marks near the equator, giving some credence to the idea of a planet capable of space travel, but no current research can suggest how this feat might be accomplished.
 
       Surface travel is discouraged due to a virulent strain of spore-borne bacteria in the air.
 
@@ -1883,7 +1865,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Echo II</PlanetName>
     <PlanetDescription>
-      A simple planet with a crust mostly made of obsidian, Echo II is a lifeless planet with an almost glass like surface. Near the north pole are the remains of what appear to be a long range monitoring station, built by an unknown species. This base is the only indication that life ever existed on Echo II.
+      A simple planet with a crust mostly made of obsidian, Echo II is a lifeless planet with an almost glass like surface. Near the north pole are the remains of what appears to be a long range monitoring station, built by an unknown species. This base is the only indication that life ever existed on Echo II.
 
       An investigation into the purpose of the monitoring station yielded few meaningful results; the only salvageable piece of information from the dated technology shows that the station was monitoring a planet in the system that appears to no longer exist.
 
@@ -1902,7 +1884,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Mononoke</PlanetName>
     <PlanetDescription>
-      Traces of sodium in the atmosphere give Mononoke its overall dark grey color, but it is otherwise a typical hydrogen-helium gas giant. An abundance of water vapor in the upper atmosphere account for its white clouds.
+      Traces of sodium in the atmosphere give Mononoke its overall dark grey color, but it is otherwise a typical hydrogen-helium gas giant. An abundance of water vapor in the upper atmosphere accounts for its white clouds.
 
       A long-range probe recorded footage of a brief phenomena in which the surface of the planet appeared to be covered in long, trailing spores.
 
@@ -1961,7 +1943,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Vetus Domum</PlanetName>
     <PlanetDescription>
-      Vetus Domum is a supposed former home planet of an unknown ancient alien species. The surface is a smooth, curvy landscape covered in ash from at least tens of thousands of years ago. Strong planetary winds carry this ash, whittling down any structures that stand out on the surface.
+      Vetus Domum is the supposed former home planet of an unknown ancient alien species. The surface is a smooth, curvy landscape covered in ash from at least tens of thousands of years ago. Strong planetary winds carry this ash, whittling down any structures that stand out on the surface.
 
       Unmanned probes to the surface have shown there to be remains of buildings under the ash that are safe from the harsh wind. No remains of bodies have been detected, indicating the inhabitants may have abandoned the planet before a catastrophic event that made living on the surface uninhabitable. The probes have detected a repeating radio signal emanating from beneath the surface, repeating the word “Prometheus”.
 
@@ -1981,7 +1963,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Niihama</PlanetName>
     <PlanetDescription>
-      Niihama is a heavily industrialized world run entirely by corporations. Genex Chemical, a bioengineering firm, has faced several large-scale uprisings in recent years. With automation rapidly reducing the need for cheap labor, most of the planet’s workforce is unemployed and unable to leave the planet. An extremist faction known as Individual Eleven has claimed responsibility for at least three of the outbreaks.
+      Niihama is a heavily industrialized world run entirely by corporations. Genex Chemical, a bioengineering firm, has faced several large-scale uprisings in recent years. With automation rapidly reducing the need for cheap labor, most of the planet’s workforce is unemployed and unable to leave the surface. An extremist faction known as Individual Eleven has claimed responsibility for at least three of the outbreaks.
 
       Sector 9, a combined-race special ops task force, is working with the planet’s corporate leaders to resolve the situation.
 
@@ -2108,7 +2090,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Cloudbank</PlanetName>
     <PlanetDescription>
-      Cloudbank is a small world almost completely covered by mechanical terraforming. Records salvaged from Goldwalk, the capital city, indicate that this vast disruption of the landscape is due to a rogue robotic force. This force, called the Process, was an ever-evolving system once utilized by the municipal administrators to change the landscape and environment of the city. The architects, in their zeal for ever more perfected technology, lost control when the Process began to develop outside its original limitations and it swiftly consumed the planet.
+      Cloudbank is a small world almost completely covered by mechanical terraforming. Records salvaged from Goldwalk, the capital city, indicate that this vast disruption of the landscape is due to a rogue robotic force. This force, called the Process, was an ever-evolving system once utilized by the municipal administrators to change the landscape and environment of the city. In their zeal for ever more perfected technology, the architects eventually lost control when the Process began to develop outside its original limitations and it swiftly consumed the planet.
 
       Alliance probes of the system show a higher than normal concentration of geth signals. Whether they are somehow tied to the planet’s fate or merely curious bystanders has yet to be determined.
 
@@ -2222,7 +2204,7 @@
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>126</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Liara's Dig Site</PlanetName>
@@ -2254,7 +2236,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Ruta</PlanetName>
     <PlanetDescription>
-      Ruta is a water planet, with a very cold terrestrial atmosphere. Volcanic activity under the planetary ocean and water currents keep the majority of the surface from freezing. A haven for marine life, Ruta has many unexplored secrets in it’s depths.
+      Ruta is a water planet, with a very cold terrestrial atmosphere. Volcanic activity under the planetary ocean and water currents keep the majority of the surface from freezing. A haven for marine life, Ruta has many unexplored secrets in its depths.
 
       A colonized moon of Ruta, Mipha, is considered one of the leading pioneers in medical science. The moon’s capital research facility, named Mipha’s Grace, contributed significantly to the development of Medi-Gel, in partnership with the Sirta Foundation.
 
@@ -2283,6 +2265,7 @@
       Day Length: 16.2 Earth Hours
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>130</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2290,27 +2273,27 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Vigrid</PlanetName>
     <PlanetDescription>
-      Vigrid is an errant
+      Vigrid is a large planet with an errant orbit. Umbra, a nearby black hole, vies with Lumen, the system’s star, for gravitational control of the planet. A small red moon was pulled into the system several decades ago; its orbit is slowly decaying and drawing it nearer to Umbra.
+
+      Two separate probes sent by expeditionary forces noted a strange anomaly. The first probe recorded Vigrid’s position much nearer to Lumen, with a lush and almost golden surface. The second probe, sent several years after the first, noted a shift toward Umbra and a barren surface covered in molten magma. A third probe, Jubileus, has been dispatched by the salarians to record any new developments in the system.
 
       Orbital Period: 1.8 Earth Years
       Radius: 4327 km
       Day Length: 63.9 Earth Hours
       Atmospheric Pressure: 0.52 Earth Atmospheres
-      Surface Temperature: -136 Celsius
+      Surface Temperature: 136 Celsius
       Surface Gravity: 0.46 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>131</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Antirumgon</PlanetName>
+    <PlanetName>Anathema</PlanetName>
     <PlanetDescription>
-      Antirumgon is a small rock and ice planet, with a trace atmosphere of methane and ethane. The frozen surface is mainly composed of carbon with deposits of calcium.
-      Antirumgon has been used as a crude anchorage for Terminus pirates for many years. The shells of temporary dwellings blasted by Alliance frigate patrols dot the surface. But always, the pirates return to ground their ships' drive charges, chip out some water ice, and trade slaves and stories.
-
-      The deeper layers of Antirumgon's interior are semi-liquid slush, due to the presence of methanol. It is thought that bacterium in the deep core create this natural anti-freeze. Some species of Terminus pirate drill through the ice crust to recover this natural alcohol.
+      Anathema is a small, dark planet in a backwater system. The planet itself is of minimal importance. However, astronomers have been able to predict several events in other parts of the galaxy based on careful observation of the unusual star and wind patterns in Anathema’s vicinity. These observations, collected over a span of approximately 350 years, have accurately forecasted everything from ship crashes to supernova stars. A later-published compilation, titled The Nice and Accurate Prophecies, is a popular read among aspiring astronomers and many universities offer trips to Anathema as part of their curriculum.
 
       Orbital Period: 4.0 Earth Years
       Radius: 9508 km
@@ -2490,20 +2473,20 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Zaherux</PlanetName>
+    <PlanetName>Ragnarok</PlanetName>
     <PlanetDescription>
-      Zaherux's nitrogen-argon atmosphere is being blasted away by the solar wind of the blue giant Grissom. Its surface consists of "seas" of loose silica dust, some kilometers deep, which periodically swirl into global sandstorms.
+      Ragnarok is a dry, lifeless planet discovered by the Asari in 2076. The planet is covered in a star bleached tint, indicating a period of intense solar radiation occurred on the planet. Investigations on the planet’s surface found ample evidence suggesting intelligent life was extinguished on Ragnarok around 2021. Further investigation found several inscriptions by inhabitants, detailing the dominant species final days.
 
-      Many unmanned probes to Zaherux have been lost over the years. Though investigation has attributed all to mechanical failure or computational error, a popular extranet meme insists the entire planet is composed of dormant nanotechnology, created millennia ago by a race even more advanced than the Protheans.
+      An intense solar flare impacted the planet, disrupting communications and effectively poisoning anyone not directly shielded from the radiation. This solar flare killed off the majority of the planet’s life in a matter of days. The remaining population, congregated in small camps around the planet, planned for the continuation of the species with their remaining resources.
 
-      According to the story, Zaherux's silica dust is actually "disassembler" robots which periodically awaken to defend themselves. Though discounted by every reputable scientist, this theory has been popularized by a series of sensationalistic texts by asari author Delsae Orthysa.
+      Several of these solar shelters show obvious signs of sabotage, indicating that some members of these encampments became deranged, actively destroying the protective shielding. Study of the local star shows that the solar flare should have ended sometime around 2023, leading to the conclusion that the rest of the population likely starved to death.
 
-      Orbital Period: 266.8 Earth Years
-      Radius: 6729 km
-      Day Length: 51.5 Earth Hours
-      Atmospheric Pressure: 0.32 Earth Atmospheres
-      Surface Temperature: 959 Celsius
-      Surface Gravity: 0.61 G
+      Orbital Period: 1.5 Earth Years
+      Radius: 5729 km
+      Day Length: 31 Earth Hours
+      Atmospheric Pressure: 0.7 Earth Atmospheres
+      Surface Temperature: 28 Celsius
+      Surface Gravity: 1.05 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
 
@@ -3039,17 +3022,17 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Patashi</PlanetName>
+    <PlanetName>Incubuso</PlanetName>
     <PlanetDescription>
-      Patashi is a sun-blasted terrestrial world whose atmosphere was blasted away millennia ago by the star Phoenix. The surface is scorching hot, and mainly composed of iron with deposits of tin.
+      Incubuso is a world with a constant thin cloud cover that makes the surface perpetually dim, limiting the diversity of flora and fauna that can survive there. The majority of the planet is a bog filled with trees that are capable of surviving in very low light conditions due to their extra large leaves.
 
-      Due to its relatively low density, Patashi is tidally locked to Phoenix. Seas of molten light metals cover much of the sunward side.
+      Only four recorded surface expeditions on Incubuso have ever taken place. All have ended in catastrophe when the expedition team commited suicide weeks after landing. The limited data collected by these four teams indicate the local plant life has some form of defense mechanism that can induce nightmare-like hallucinations that can last for several days at a time.
 
       Orbital Period: 0.3 Earth Years
       Radius: 7082 km
       Day Length: 0.3 Earth Years
       Atmospheric Pressure: 0.00 Earth Atmospheres
-      Surface Temperature: 546 Celsius
+      Surface Temperature: 20 Celsius
       Surface Gravity: 0.75 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
@@ -3058,9 +3041,11 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Sylsalto</PlanetName>
+    <PlanetName>Thynome</PlanetName>
     <PlanetDescription>
-      Sylsalto is a standard hydrogen-helium gas giant. It has no remarkable features.
+      Thynome is a standard hydrogen-helium gas giant. It has no remarkable features and contains nothing useful for mining.
+
+      Scans of the micro debris in the planet’s orbit indicates there has been traffic in the area recently, however no ships or stations show up on scans. It is possible that a cloaked ship or station is nearby.
 
       Orbital Period: 36.0 Earth Years
       Radius: 56,621 km
@@ -3072,18 +3057,19 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Vebinok</PlanetName>
+    <PlanetName>Var Hastra</PlanetName>
     <PlanetDescription>
-      Vebinok is a small terrestrial world with a thin atmosphere of krypton and xenon. Its frozen surface is mainly composed of carbonaceous material, water ice, and low-density silicates. Rare but concentrated lodes of light metals have been deposited by asteroid impacts.
+      Sitting a comfortable 500 kilometers above an uninhabited planet of the same name, Var Hastra’s mining station is this the mining hub of the %SYSTEMNAME% system. Hundreds of asteroids of varying sizes orbit of the planet, which are broken down and fed into the processing plants aboard the station.
 
-      One hemisphere of Vebinok is covered by surface deposits of oxidized copper. Approximately 270 years ago a turian bulk gas transport was attacked by pirates in the Phoenix system. Damaged, it made a rough landing on Vebinok. The heat of the landing melted significant quantities of surface ice, and ruptured shipping containers spilled LOX across the surface. Before this evaporated and escaped Vebinok’s weak gravity, it reacted to cause the widespread rust.
+      Unusable materials, manufacturing byproducts, and other waste are bundled up into capsules which are regularly launched directly at the planet from the station. These capsules burn up in the atmosphere, keeping the debris around Var Hastra to a minimum.
 
+      Station Owner: Gunant Breh
       Orbital Period: 94.5 Earth Years
       Radius: 3379 km
       Day Length: 68.3 Earth Hours
       Atmospheric Pressure: 0.27 Earth Atmospheres
       Surface Temperature: -154 Celsius
-      Surface Gravity: 0.28 G
+      Surface Gravity: 0.69 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
@@ -3118,19 +3104,17 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Metgos</PlanetName>
+    <PlanetName>Kaamo</PlanetName>
     <PlanetDescription>
-      WARNING: Level 2 Heat Hazard
+      Kaamo is a bland, desolate planet that has minor settlements along the equator that grow crops to help sustain its only source of income: the Kaamo Club, a space station orbiting the planet. Known for being a lightly policed retreat, it attracts some of the most seedy people in the %SYSTEMNAME% system.
 
-      Metgos is a large terrestrial planet with an atmosphere of carbon dioxide and nitrogen. Its hot surface is mainly composed of nickel with deposits of potassium and heavy metals. It is a mineralogical treasure trove, with concentrated heavy elements constantly being brought to the surface by volcanic activity.
-
-      Metgos is inhospitable and dangerous, and expeditions must be well-prepared to survive any length of time. With its high mass, heat-trapping clouds and constant volcanic venting, Metgos seems well on its way to becoming a Venusian "pressure cooker" world.
+      The ownership has recently changed to a human named Keith T. Maxwell, who appears to be turning the club into a more respectable establishment.
 
       Orbital Period: 2.8 Earth Years
       Radius: 7301 km
       Day Length: 47.2 Earth Hours
       Atmospheric Pressure: 1.00 Earth Atmospheres
-      Surface Temperature: 169 Celsius
+      Surface Temperature: 29 Celsius
       Surface Gravity: 1.1 G
     </PlanetDescription>
   </RandomizedPlanetInfo>

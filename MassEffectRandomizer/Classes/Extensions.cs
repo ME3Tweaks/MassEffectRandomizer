@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace MassEffectRandomizer.Classes
@@ -149,7 +150,7 @@ namespace MassEffectRandomizer.Classes
 
         public static bool ContainsWord(this string s, string word)
         {
-            string[] ar = s.Split(' ', '.'); //Split on space and periods
+            string[] ar = s.Split(' ', '.', ':'); //Split on space and periods
 
             foreach (string str in ar)
             {
@@ -157,6 +158,26 @@ namespace MassEffectRandomizer.Classes
                     return true;
             }
             return false;
+        }
+
+        public static string TrimLines(this string s)
+        {
+
+            List<string> lines = s.Split('\n').ToList();
+
+            //Trim first empty lines
+            while (lines.Count() > 0 && lines[0].Trim() == "")
+            {
+                lines.RemoveAt(0);
+            }
+
+            //Trim trailing newines
+            while (lines.Count() > 0 && lines[lines.Count - 1].Trim() == "")
+            {
+                lines.RemoveAt(lines.Count - 1);
+            }
+
+            return string.Join("\n", lines.Select(x => x.Trim()));
         }
     }
 }
