@@ -25,7 +25,7 @@ namespace MassEffectRandomizer.Classes
     {
 
         private static readonly string[] RandomClusterNameCollection = {
-            "Serpent Cluster","Zero","Artemis","Kamino","Kovac Nebula", "Akkala","Lanayru Verge","Kyramud","Tolase","Kirigiri",
+            "Serpent Cluster","Zero","Phendrana","Kamino","Kovac Nebula", "Akkala","Lanayru Verge","Kyramud","Tolase","Kirigiri",
             "Ascension Sigma", "Epsilon","Rodin","Gilgamesh","Enkidu","Ventus","Agrias","Canopus","Tartarose","Dorgalua","Losstarot",
             "Onyx Tau","Himura", "Baltoy","Arugula", "Wily’s Castle"
         };
@@ -47,6 +47,7 @@ namespace MassEffectRandomizer.Classes
         {
             this.mainWindow = mainWindow;
             TlksIdsToNotUpdate = new List<int>();
+            scottishVowelOrdering = null; //will be set when needed.
         }
 
         public void randomize()
@@ -412,7 +413,8 @@ namespace MassEffectRandomizer.Classes
                                 Log.Information("Randomizing map file: " + files[i]);
                                 loggedFilename = true;
                             }
-                            UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
+                            MakeTextPossiblyScottish(package.LocalTalkFiles, random);
+                            //UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
                         }
 
                         foreach (var talkFile in package.LocalTalkFiles.Where(x => x.Modified))
@@ -757,7 +759,7 @@ namespace MassEffectRandomizer.Classes
                     oldClusterName = tf.findDataById(tlkRef);
                     if (oldClusterName != "No Data")
                     {
-                        systemNameMapping[oldClusterName] = newClusterName;
+                        clusterNameMapping[oldClusterName] = newClusterName;
                         break;
                     }
                 }
@@ -850,9 +852,7 @@ namespace MassEffectRandomizer.Classes
                     var description = rpi.PlanetDescription;
                     if (description != null)
                     {
-                        description = description.Replace("%SYSTEMNAME%", systemName);
-                        description = description.Replace("%PLANETNAME%", newPlanetName);
-                        description = description.TrimLines();
+                        description = description.Replace("%SYSTEMNAME%", systemName).Replace("%PLANETNAME%", newPlanetName).TrimLines();
                     }
 
                     //var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
@@ -879,13 +879,79 @@ namespace MassEffectRandomizer.Classes
                         if (descriptionReference != 0 && description != null)
                         {
                             TlksIdsToNotUpdate.Add(descriptionReference);
+                            Log.Information($"New planet: {newPlanetName}");
                             tf.replaceString(descriptionReference, description);
                             break;
                         }
                     }
                 }
+                else
+                {
+                    Log.Error("No randomization data for galaxy map planet 2da, row id " + i);
+                }
             }
             UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
+        }
+
+
+        static readonly List<char> englishVowels = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
+
+        /// <summary>
+        /// Swap the vowels around
+        /// </summary>
+        /// <param name="Tlks"></param>
+        private void MakeTextPossiblyScottish(List<TalkFile> Tlks, Random random)
+        {
+            if (scottishVowelOrdering == null)
+            {
+                scottishVowelOrdering = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
+                scottishVowelOrdering.Shuffle(random);
+            }
+
+            foreach (TalkFile tf in Tlks)
+            {
+                foreach (var sref in tf.StringRefs)
+                {
+                    if (TlksIdsToNotUpdate.Contains(sref.StringID)) continue; //This string has already been updated and should not be modified.
+                    if (!string.IsNullOrWhiteSpace(sref.Data))
+                    {
+                        string originalString = sref.Data;
+                        if (originalString.Length == 1)
+                        {
+                            continue; //Don't modify I, A
+                        }
+
+                        string[] words = originalString.Split(' ');
+                        for (int j = 0; j < words.Length; j++)
+                        {
+                            string word = words[j];
+                            if (word.Length == 1)
+                            {
+                                continue; //Don't modify I, A
+                            }
+                            char[] newStringAsChars = word.ToArray();
+                            for (int i = 0; i < word.Length; i++)
+                            {
+                                var vowelIndex = englishVowels.IndexOf(word[i]);
+                                if (vowelIndex >= 0)
+                                {
+                                    if (i + 1 < word.Length && englishVowels.Contains(word[i + 1]))
+                                    {
+                                        continue; //don't modify dual vowel first letters.
+                                    }
+                                    else
+                                    {
+                                        newStringAsChars[i] = scottishVowelOrdering[(char)vowelIndex];
+                                    }
+                                }
+                            }
+                            words[j] = new string(newStringAsChars);
+                        }
+                        string rebuiltStr = string.Join(" ", words);
+                        tf.replaceString(sref.StringID, rebuiltStr);
+                    }
+                }
+            }
         }
 
         private void UpdateGalaxyMapReferencesForTLKs(List<TalkFile> Tlks, bool updateProgressbar)
@@ -948,7 +1014,7 @@ namespace MassEffectRandomizer.Classes
                             if (originalSystemNameIsSingleWord)
                             {
                                 //This is to filter out things like Inti resulting in Intimidate
-                                if (originalString.ContainsWord(systemMapping.Key) && newString.ContainsWord(systemMapping.Key)))
+                                if (originalString.ContainsWord(systemMapping.Key) && newString.ContainsWord(systemMapping.Key))
                                 {
                                     //Do a replace if the whole word is matched only (no partial matches on words).
                                     newString = newString.Replace(systemMapping.Key, systemMapping.Value);
@@ -1039,8 +1105,8 @@ namespace MassEffectRandomizer.Classes
                         }
                     }
                 }*/
-
             }
+            MakeTextPossiblyScottish(Tlks, new Random());
         }
 
         private void DumpPlanetTexts(IExportEntry export, TalkFile tf)
@@ -1908,8 +1974,9 @@ namespace MassEffectRandomizer.Classes
         {
             get => mainWindow.RANDSETTING_MISC_MAPFACES ||
                     mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
-                    mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES ||
-                    mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION;
+                    mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES
+                 || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
+                ;
         }
 
         public bool RunMapRandomizerPassAllExports
@@ -2571,6 +2638,7 @@ namespace MassEffectRandomizer.Classes
         private Dictionary<string, string> clusterNameMapping;
         private Dictionary<string, string> planetNameMapping;
         private List<int> TlksIdsToNotUpdate;
+        private List<char> scottishVowelOrdering;
 
         private void RandomizeAINames(ME1Package pacakge, Random random)
         {
