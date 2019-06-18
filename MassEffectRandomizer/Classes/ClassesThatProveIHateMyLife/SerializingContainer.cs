@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+/// <summary>
+/// From ME3Explorer, Ancient Edition
+/// </summary>
 namespace MassEffectRandomizer.Classes.ClassesThatProveIHateMyLife
 {
     public struct SerializingContainer

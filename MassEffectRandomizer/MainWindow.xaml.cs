@@ -203,6 +203,8 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_ENEMYAIDISTANCES { get; set; }
         public bool RANDSETTING_MISC_INTERPS { get; set; }
         public bool RANDSETTING_WACK_OPENINGCUTSCENE { get; set; }
+        public bool RANDSETTING_WACK_FACEFX { get; set; }
+        public bool RANDSETTING_WACK_SCOTTISH { get; set; }
 
 
         //MAKO 

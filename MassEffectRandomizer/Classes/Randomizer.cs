@@ -305,7 +305,17 @@ namespace MassEffectRandomizer.Classes
                 string bdtspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_UNC", "CookedPC", "Maps");
                 string pspath = Path.Combine(Utilities.GetGamePath(), "DLC", "DLC_Vegas", "CookedPC", "Maps");
 
-                string[] files = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_")).ToArray();
+                var filesEnum = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories);
+                string[] files = null;
+                if (!mainWindow.RANDSETTING_WACK_FACEFX)
+                {
+                    files = filesEnum.Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_")).ToArray();
+                }
+                else
+                {
+                    files = filesEnum.ToArray();
+                }
+
                 if (Directory.Exists(bdtspath))
                 {
                     files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_"))).ToArray();
@@ -398,6 +408,16 @@ namespace MassEffectRandomizer.Classes
                                     RandomizeInterpTrackMove(exp, random, amount);
                                     package.ShouldSave = true;
                                 }
+                                else if (mainWindow.RANDSETTING_WACK_FACEFX && exp.ClassName == "FaceFXAnimSet")
+                                {
+                                    if (!loggedFilename)
+                                    {
+                                        Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
+                                    //Method contains SHouldSave in it (due to try catch).
+                                    RandomizeFaceFX(exp, random);
+                                }
                             }
                         }
 
@@ -406,14 +426,14 @@ namespace MassEffectRandomizer.Classes
                             RandomizeAINames(package, random);
                         }
 
-                        if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION && package.LocalTalkFiles.Any())
+                        if (mainWindow.RANDSETTING_WACK_SCOTTISH && package.LocalTalkFiles.Any())
                         {
                             if (!loggedFilename)
                             {
                                 Log.Information("Randomizing map file: " + files[i]);
                                 loggedFilename = true;
                             }
-                            MakeTextPossiblyScottish(package.LocalTalkFiles, random);
+                            MakeTextPossiblyScottish(package.LocalTalkFiles, random, false);
                             //UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
                         }
 
@@ -453,6 +473,13 @@ namespace MassEffectRandomizer.Classes
                 ModifiedFiles[p.FileName] = p.FileName;
             }
 
+            if (mainWindow.RANDSETTING_WACK_SCOTTISH)
+            {
+                MakeTextPossiblyScottish(Tlks, random, true);
+                //UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
+            }
+
+
             bool saveGlobalTLK = false;
             foreach (TalkFile tf in Tlks)
             {
@@ -467,6 +494,30 @@ namespace MassEffectRandomizer.Classes
             if (saveGlobalTLK)
             {
                 globalTLK.save();
+            }
+        }
+
+        private void RandomizeFaceFX(IExportEntry exp, Random random)
+        {
+            //TODO: FIX FACE FX CODE FOR ME1
+            try
+            {
+                ME1FaceFXAnimSet animSet = new ME1FaceFXAnimSet(exp);
+                for (int i = 0; i < animSet.Data.Data.Count(); i++)
+                {
+                    var faceFxline = animSet.Data.Data[i];
+                    for (int j = 0; j < faceFxline.points.Length; j++)
+                    {
+                        faceFxline.points[j].weight = random.NextFloat(-20, 20);
+                    }
+                }
+                Log.Information("Randomized FaceFX for export " + exp.UIndex);
+                animSet.Save();
+                exp.FileRef.ShouldSave = true;
+            }
+            catch (Exception e)
+            {
+                //Do nothing for now.
             }
         }
 
@@ -900,7 +951,7 @@ namespace MassEffectRandomizer.Classes
         /// Swap the vowels around
         /// </summary>
         /// <param name="Tlks"></param>
-        private void MakeTextPossiblyScottish(List<TalkFile> Tlks, Random random)
+        private void MakeTextPossiblyScottish(List<TalkFile> Tlks, Random random, bool updateProgressbar)
         {
             if (scottishVowelOrdering == null)
             {
@@ -908,11 +959,27 @@ namespace MassEffectRandomizer.Classes
                 scottishVowelOrdering.Shuffle(random);
             }
 
+            int currentTlkIndex = 0;
             foreach (TalkFile tf in Tlks)
             {
+                currentTlkIndex++;
+                int max = tf.StringRefs.Count();
+                int current = 0;
+                if (updateProgressbar)
+                {
+                    mainWindow.CurrentOperationText = $"Applying Scottish accent [{currentTlkIndex}/{Tlks.Count()}]";
+                    mainWindow.ProgressBar_Bottom_Max = tf.StringRefs.Length;
+                    mainWindow.ProgressBarIndeterminate = false;
+                }
+
                 foreach (var sref in tf.StringRefs)
                 {
+                    current++;
                     if (TlksIdsToNotUpdate.Contains(sref.StringID)) continue; //This string has already been updated and should not be modified.
+                    if (updateProgressbar)
+                    {
+                        mainWindow.CurrentProgressValue = current;
+                    }
                     if (!string.IsNullOrWhiteSpace(sref.Data))
                     {
                         string originalString = sref.Data;
@@ -1106,7 +1173,6 @@ namespace MassEffectRandomizer.Classes
                     }
                 }*/
             }
-            MakeTextPossiblyScottish(Tlks, new Random());
         }
 
         private void DumpPlanetTexts(IExportEntry export, TalkFile tf)
@@ -1972,18 +2038,26 @@ namespace MassEffectRandomizer.Classes
 
         public bool RunMapRandomizerPass
         {
-            get => mainWindow.RANDSETTING_MISC_MAPFACES ||
-                    mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
-                    mainWindow.RANDSETTING_MISC_INTERPS || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES
-                 || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
-                ;
+            get => mainWindow.RANDSETTING_MISC_MAPFACES
+                   || mainWindow.RANDSETTING_MISC_MAPPAWNSIZES
+                   || mainWindow.RANDSETTING_MISC_HAZARDS
+                   || mainWindow.RANDSETTING_MISC_INTERPS
+                   || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES
+                   || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
+                   || mainWindow.RANDSETTING_WACK_FACEFX
+                   || mainWindow.RANDSETTING_WACK_SCOTTISH
+            ;
         }
 
         public bool RunMapRandomizerPassAllExports
         {
-            get => mainWindow.RANDSETTING_MISC_MAPFACES ||
-                   mainWindow.RANDSETTING_MISC_MAPPAWNSIZES || mainWindow.RANDSETTING_MISC_HAZARDS ||
-                   mainWindow.RANDSETTING_MISC_INTERPS;
+            get => mainWindow.RANDSETTING_MISC_MAPFACES
+                   || mainWindow.RANDSETTING_MISC_MAPPAWNSIZES
+                   || mainWindow.RANDSETTING_MISC_HAZARDS
+                   || mainWindow.RANDSETTING_WACK_FACEFX
+                   || mainWindow.RANDSETTING_MISC_INTERPS
+                   || mainWindow.RANDSETTING_WACK_SCOTTISH
+            ;
         }
 
         private void RandomizeTalentEffectLevels(IExportEntry export, List<TalkFile> Tlks, Random random)

@@ -149,7 +149,9 @@
                                     <fonts:OutlinedTextBlock Text="Weapons" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="Randomize initial 4 starting weapons" Margin="3" ToolTip="Randomizes the starting guns you get.&#xA;Due to how the game is coded, you will be forced to randomly get one of every weapon - otherwise the game will crash on the inventory screen." IsChecked="{Binding RANDSETTING_WEAPONS_STARTINGEQUIPMENT}" />
-                                        <CheckBox Content="Randomize weapon stats" Margin="3" IsChecked="{Binding RANDSETTING_WEAPONS_EFFECTLEVELS}" IsEnabled="False" ToolTip="This feature is not yet complete and cannot be used at this time"/>
+                                        <!--<CheckBox Content="Randomize weapon stats" Margin="3" IsChecked="{Binding RANDSETTING_WEAPONS_EFFECTLEVELS}" IsEnabled="False" ToolTip="This feature is not yet complete and cannot be used at this time"/>-->
+                                        <CheckBox Content="Randomize squad armor/amp" ToolTip="Randomizes the starting armor and amp for the squad" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_INVENTORY}" />
+
                                     </StackPanel>
                                 </StackPanel>
                                 <!--<StackPanel>
@@ -173,7 +175,28 @@
                                         <CheckBox Content="Randomize GUI music" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
                                         <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}" />
                                         <CheckBox Content="Randomize game over text" ToolTip="Randomize the game over title text" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GAMEOVERTEXT}" />
-                                        <CheckBox Name="Checkbox_RandomizeBioMorphFaceMaps" Content="Randomize BioMorphFaces in maps" ToolTip="Randomize humanoid faces through the headmorph" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPFACES}" />
+                                        
+                                    </StackPanel>
+
+                                    <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
+                                    <StackPanel Margin="10,0,0,0">
+                                        <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes, ragdoll physics, and may make enemies immune to gun damage (but not melee)&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
+                                        <CheckBox Content="Randomly randomize movement interpolations" Foreground="Red" ToolTip="Warning: This breaks a lot of stuff I'm suref&#xA;Slightly changes the movement and rotations of interpolations of everything&#xA;This setting will not apply to all interpolations, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPS}" />
+                                        <CheckBox Content="Randomize opening cutscene" Foreground="Red" ToolTip="Modifies some of the opening cutscene" Margin="3" IsChecked="{Binding RANDSETTING_WACK_OPENINGCUTSCENE}" />
+                                        <CheckBox Content="Randomize vowels (lol)" ToolTip="Translates game to some weird dialect of Scottish-Like English" Margin="3" IsChecked="{Binding RANDSETTING_WACK_SCOTTISH}" />
+
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="1">
+                                <StackPanel>
+                                    <fonts:OutlinedTextBlock Text="Pawns" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
+                                    <StackPanel Margin="10,0,0,0">
+                                        <CheckBox Content="Randomize the iconic female Shepard face" ToolTip="Randomize the face morph used for the female default shepard&#xA;Iconic male Shepard cannot be randomized as his face is not a biomorphface" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_ICONICFACE}" />
+                                        <CheckBox Content="Randomize premade character creator faces" ToolTip="Generate some nightmare fuel in the preset faces for each gender" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR}" />
+                                        <CheckBox Content="Randomize premade character creator skin tone" ToolTip="Randomize skin tone colors for premade shepards" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE}" />
+                                        <CheckBox Content="Randomize squadmate faces" ToolTip="Randomize the face morphs used by squadmates that support face morphs" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCHFACE}" />
+                                        <CheckBox Name="Checkbox_RandomizeBioMorphFaceMaps" Content="Randomize NPC faces" ToolTip="Randomize humanoid faces through the headmorph" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPFACES}" />
                                         <StackPanel>
                                             <StackPanel Orientation="Horizontal" Margin="45,0,0,0">
                                                 <TextBlock Text="Randomization amount: " IsEnabled="False"/>
@@ -202,24 +225,7 @@
                                                 </Style>
                                             </StackPanel.Style>
                                         </StackPanel>
-                                    </StackPanel>
-
-                                    <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
-                                    <StackPanel Margin="10,0,0,0">
-                                        <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes, ragdoll physics, and may make enemies immune to gun damage (but not melee)&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
-                                        <CheckBox Content="Randomly randomize movement interpolations" Foreground="Red" ToolTip="Warning: This breaks a lot of stuff I'm suref&#xA;Slightly changes the movement and rotations of interpolations of everything&#xA;This setting will not apply to all interpolations, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPS}" />
-                                        <CheckBox Content="Randomize opening cutscene" Foreground="Red" ToolTip="Modifies some of the opening cutscene" Margin="3" IsChecked="{Binding RANDSETTING_WACK_OPENINGCUTSCENE}" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel Grid.Row="0" Grid.Column="1">
-                                <StackPanel>
-                                    <fonts:OutlinedTextBlock Text="Player &amp; Squad" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
-                                    <StackPanel Margin="10,0,0,0">
-                                        <CheckBox Content="Randomize the iconic female Shepard face" ToolTip="Randomize the face morph used for the female default shepard&#xA;Iconic male Shepard cannot be randomized as his face is not a biomorphface" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_ICONICFACE}" />
-                                        <CheckBox Content="Randomize premade character creator faces" ToolTip="Generate some nightmare fuel in the preset faces for each gender" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR}" />
-                                        <CheckBox Content="Randomize premade character creator skin tone" ToolTip="Randomize skin tone colors for premade shepards" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE}" />
-                                        <CheckBox Content="Randomize squadmate faces" ToolTip="Randomize the face morphs used by squadmates that support face morphs" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCHFACE}" />
+                                        <CheckBox Content="Randomize FaceFX animations" ToolTip="Randomize the face animations used in map files" Margin="3" IsChecked="{Binding RANDSETTING_WACK_FACEFX}" />
                                         <!--<CheckBox Name="Checkbox_RandomizeSquadPower" Content="Randomize class powers (requires a new save)" ToolTip="Randomize the powers for each class.&#xA;Requires you to start a new game for it to work as the power list is saved in your save file" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_SHUFFLECLASSTALENTS}" />-->
                                         <!--<CheckBox Content="Allow squadmates to have Spectre Training" Margin="25,0,0,0" ToolTip="Adds unity to the list of powers to reassign." IsChecked="{Binding RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY}">
                                             <CheckBox.Style>
@@ -235,20 +241,21 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </CheckBox.Style>
-                                        </CheckBox>-->
-                                        <CheckBox Content="Randomize talent and power stats" ToolTip="This feature is not yet complete and cannot be used at this time&#xA;Randomizes the stats of talents and powers" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_STATS}"  IsEnabled="False" />
+                                        </CheckBox>
+                                        <CheckBox Content="Randomize talent and power stats" ToolTip="This feature is not yet complete and cannot be used at this time&#xA;Randomizes the stats of talents and powers" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_STATS}"  IsEnabled="False" />-->
+                                        
+                                        
                                         <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles squadmates" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
-                                        <CheckBox Content="Randomize squad armor/amp" ToolTip="Randomizes the starting armor and amp for the squad" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_INVENTORY}" />
                                     </StackPanel>
                                 </StackPanel>
 
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Galaxy Map" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
-                                        <CheckBox Content="Randomize clusters" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_CLUSTERS}" ToolTip="Randomizes the location of each cluster on the main galaxy map"/>
-                                        <CheckBox Content="Randomize systems" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_SYSTEMS}" ToolTip="Randomizes the location of each system in a cluster"/>
+                                        <CheckBox Content="Randomize cluster positions" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_CLUSTERS}" ToolTip="Randomizes the location of each cluster on the main galaxy map"/>
+                                        <CheckBox Content="Randomize system positions" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_SYSTEMS}" ToolTip="Randomizes the location of each system in a cluster"/>
                                         <CheckBox Content="Randomize planet colors" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETCOLOR}" ToolTip="Randomizes the colors used for the 3 layers of each planet"/>
-                                        <CheckBox Name="RandomizePlanetNames_CheckBox" Content="Randomize planet names and descriptions*" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION}" ToolTip="Randomizes the name and descriptions of planets, using new ones written by the ME3Tweaks team.&#xA;Leaves some key and well known ones same-named" />
+                                        <CheckBox Name="RandomizePlanetNames_CheckBox" Content="Rewrite the Galaxy Map" Margin="3" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION}" ToolTip="Randomizes the name and descriptions of planets, using new ones written by the ME3Tweaks team.&#xA;Leaves some key and well known ones same-named" />
                                         <CheckBox Content="Include plot planet names" Margin="25,0,0,0" ToolTip="Enables randomizing plot planet names like Virmire, Noveria, etc" IsChecked="{Binding RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION_PLOTPLANET}">
                                             <CheckBox.Style>
                                                 <Style TargetType="CheckBox" BasedOn="{StaticResource MetroCheckBox}">
