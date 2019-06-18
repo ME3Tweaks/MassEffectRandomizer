@@ -190,6 +190,7 @@ namespace MassEffectRandomizer.Classes.TLK
             }
         }
 
+        public readonly List<int> TlksIdsToNotUpdate = new List<int>();
         public void replaceString(int id, string newString)
         {
             for (int i = 0; i < StringRefs.Length; i++)

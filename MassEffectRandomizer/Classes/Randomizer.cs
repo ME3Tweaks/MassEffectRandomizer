@@ -46,7 +46,6 @@ namespace MassEffectRandomizer.Classes
         public Randomizer(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            TlksIdsToNotUpdate = new List<int>();
             scottishVowelOrdering = null; //will be set when needed.
         }
 
@@ -485,6 +484,11 @@ namespace MassEffectRandomizer.Classes
             {
                 if (tf.Modified)
                 {
+                    //string xawText = tf.findDataById(138077); //Earth.
+                    //Debug.WriteLine($"------------AFTER REPLACEMENT----{tf.export.ObjectName}------------------");
+                    //Debug.WriteLine("New description:\n" + xawText);
+                    //Debug.WriteLine("----------------------------------");
+                    //Debugger.Break(); //Xawin
                     mainWindow.CurrentOperationText = "Saving TLKs";
                     ModifiedFiles[tf.export.FileRef.FileName] = tf.export.FileRef.FileName;
                     tf.saveToExport();
@@ -914,25 +918,28 @@ namespace MassEffectRandomizer.Classes
                     {
                         //Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + newPlanetName);
                         string originalPlanetName = tf.findDataById(planetNameTlkId);
-                        if (newPlanetName == originalPlanetName)
-                        {
-                            break;
-                        }
-                        if (originalPlanetName == "No Data")
+                        if (/*newPlanetName == originalPlanetName && !rpi.PreventShuffle || */originalPlanetName == "No Data")
                         {
                             continue;
                         }
                         //tf.replaceString(planetNameTlkId, newPlanetName); //done in global references pass.
                         planetNameMapping[originalPlanetName] = newPlanetName;
-                        Debug.WriteLine($"{originalPlanetName} -> {newPlanetName}");
-                        Debug.WriteLine("New description:\n" + description);
+
                         //if (originalPlanetName == "Ilos") Debugger.Break();
                         if (descriptionReference != 0 && description != null)
                         {
-                            TlksIdsToNotUpdate.Add(descriptionReference);
+                            tf.TlksIdsToNotUpdate.Add(descriptionReference);
                             Log.Information($"New planet: {newPlanetName}");
+                            //if (descriptionReference == 138077)
+                            //{
+                            //    Debug.WriteLine($"------------SUBSTITUTING----{tf.export.ObjectName}------------------");
+                            //    Debug.WriteLine($"{originalPlanetName} -> {newPlanetName}");
+                            //    Debug.WriteLine("New description:\n" + description);
+                            //    Debug.WriteLine("----------------------------------");
+                            //    Debugger.Break(); //Xawin
+                            //}
                             tf.replaceString(descriptionReference, description);
-                            break;
+                            //break;
                         }
                     }
                 }
@@ -975,7 +982,7 @@ namespace MassEffectRandomizer.Classes
                 foreach (var sref in tf.StringRefs)
                 {
                     current++;
-                    if (TlksIdsToNotUpdate.Contains(sref.StringID)) continue; //This string has already been updated and should not be modified.
+                    if (tf.TlksIdsToNotUpdate.Contains(sref.StringID)) continue; //This string has already been updated and should not be modified.
                     if (updateProgressbar)
                     {
                         mainWindow.CurrentProgressValue = current;
@@ -1039,7 +1046,7 @@ namespace MassEffectRandomizer.Classes
                 foreach (var sref in tf.StringRefs)
                 {
                     current++;
-                    if (TlksIdsToNotUpdate.Contains(sref.StringID)) continue; //This string has already been updated and should not be modified.
+                    if (tf.TlksIdsToNotUpdate.Contains(sref.StringID)) continue; //This string has already been updated and should not be modified.
                     if (updateProgressbar)
                     {
                         mainWindow.CurrentProgressValue = current;
@@ -2711,7 +2718,6 @@ namespace MassEffectRandomizer.Classes
         private Dictionary<string, string> systemNameMapping;
         private Dictionary<string, string> clusterNameMapping;
         private Dictionary<string, string> planetNameMapping;
-        private List<int> TlksIdsToNotUpdate;
         private List<char> scottishVowelOrdering;
 
         private void RandomizeAINames(ME1Package pacakge, Random random)

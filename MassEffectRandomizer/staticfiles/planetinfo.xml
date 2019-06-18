@@ -2970,7 +2970,7 @@
     <RowID>173</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroidBelt>true</IsAsteroidBelt>
     <PlanetName>Metallic Asteroid </PlanetName>
     <PlanetDescription>
       A metal-rich asteroid.
