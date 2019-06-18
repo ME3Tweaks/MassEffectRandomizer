@@ -43,10 +43,12 @@ namespace MassEffectRandomizer.Classes
         private MainWindow mainWindow;
         private BackgroundWorker randomizationWorker;
         private ConcurrentDictionary<string, string> ModifiedFiles;
+        private SortedSet<string> faceFxBoneNames = new SortedSet<string>();
         public Randomizer(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
             scottishVowelOrdering = null; //will be set when needed.
+            mapNamesToFaceFxRandomizationLists = new Dictionary<string, List<string>>();
         }
 
         public void randomize()
@@ -83,6 +85,10 @@ namespace MassEffectRandomizer.Classes
 
                     Debug.WriteLine($"copy /y \"{Path.Combine(backupPath, filepathrel)}\" \"{Path.Combine(gamePath, filepathrel)}\"");
                 }
+            }
+            foreach (var v in faceFxBoneNames)
+            {
+                Debug.WriteLine(v);
             }
         }
 
@@ -327,7 +333,7 @@ namespace MassEffectRandomizer.Classes
                 mainWindow.ProgressBarIndeterminate = false;
                 mainWindow.ProgressBar_Bottom_Max = files.Count();
                 mainWindow.ProgressBar_Bottom_Min = 0;
-                double amount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
+                double morphFaceRandomizationAmount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
                 string[] mapBaseNamesToNotRandomize = { "entrymenu", "biog_uiworld" };
                 for (int i = 0; i < files.Length; i++)
                 {
@@ -353,7 +359,7 @@ namespace MassEffectRandomizer.Classes
                                         loggedFilename = true;
                                     }
 
-                                    RandomizeBioMorphFace(exp, random, amount);
+                                    RandomizeBioMorphFace(exp, random, morphFaceRandomizationAmount);
                                     package.ShouldSave = true;
                                 }
                                 else if (mainWindow.RANDSETTING_MISC_HAZARDS && exp.ClassName == "SequenceReference")
@@ -404,7 +410,7 @@ namespace MassEffectRandomizer.Classes
                                     }
 
                                     //Interpolation randomizer
-                                    RandomizeInterpTrackMove(exp, random, amount);
+                                    RandomizeInterpTrackMove(exp, random, morphFaceRandomizationAmount);
                                     package.ShouldSave = true;
                                 }
                                 else if (mainWindow.RANDSETTING_WACK_FACEFX && exp.ClassName == "FaceFXAnimSet")
@@ -415,7 +421,7 @@ namespace MassEffectRandomizer.Classes
                                         loggedFilename = true;
                                     }
                                     //Method contains SHouldSave in it (due to try catch).
-                                    RandomizeFaceFX(exp, random);
+                                    RandomizeFaceFX(exp, random, 1);
                                 }
                             }
                         }
@@ -500,20 +506,55 @@ namespace MassEffectRandomizer.Classes
                 globalTLK.save();
             }
         }
-
-        private void RandomizeFaceFX(IExportEntry exp, Random random)
+        private Dictionary<string, List<string>> mapNamesToFaceFxRandomizationLists;
+        private void RandomizeFaceFX(IExportEntry exp, Random random, int amount)
         {
-            //TODO: FIX FACE FX CODE FOR ME1
             try
             {
                 ME1FaceFXAnimSet animSet = new ME1FaceFXAnimSet(exp);
                 for (int i = 0; i < animSet.Data.Data.Count(); i++)
                 {
                     var faceFxline = animSet.Data.Data[i];
-                    for (int j = 0; j < faceFxline.points.Length; j++)
+                    if (true)
+                    //if (random.Next(12 - amount) == 0)
                     {
-                        faceFxline.points[j].weight = random.NextFloat(-20, 20);
+                        //Randomize the names used for animation
+                        List<int> usedIndexes = faceFxline.animations.Select(x => x.index).ToList();
+                        usedIndexes.Shuffle(random);
+                        for (int j = 0; j < faceFxline.animations.Length; j++)
+                        {
+                            faceFxline.animations[j].index = usedIndexes[j];
+                        }
                     }
+                    else
+                    {
+                        //Randomize the points
+                        for (int j = 0; j < faceFxline.points.Length; j++)
+                        {
+                            var currentWeight = faceFxline.points[j].weight;
+                            switch (amount)
+                            {
+                                case 1: //A few broken bones
+                                    faceFxline.points[j].weight += random.NextFloat(-.25, .25);
+                                    break;
+                                case 2: //A significant amount of broken bones
+                                    faceFxline.points[j].weight += random.NextFloat(-.5, .5);
+                                    break;
+                                case 3: //That's not how the face is supposed to work
+                                    faceFxline.points[j].weight = random.NextFloat(Math.Max(currentWeight - .5, 1), Math.Min(currentWeight + .5, 1));
+                                    break;
+                                case 4: //Extreme
+                                    faceFxline.points[j].weight = random.NextFloat(-20, 20);
+                                    break;
+                            }
+                        }
+                    }
+                    //Debugging only: Get list of all animation names
+                    //for (int j = 0; j < faceFxline.animations.Length; j++)
+                    //{
+                    //    var animationName = animSet.Header.Names[faceFxline.animations[j].index]; //animation name
+                    //    faceFxBoneNames.Add(animationName);
+                    //}
                 }
                 Log.Information("Randomized FaceFX for export " + exp.UIndex);
                 animSet.Save();

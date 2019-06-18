@@ -193,6 +193,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_GUISFX { get; set; }
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
+        public int RANDSETTING_WACK_FACEFX_AMOUNT { get; set; }
         public bool LogUploaderFlyoutOpen { get; set; }
         public bool DiagnosticsFlyoutOpen { get; set; }
         public bool RANDSETTING_MISC_GAMEOVERTEXT { get; set; }
@@ -218,6 +219,7 @@ namespace MassEffectRandomizer
             Random random = new Random();
             var preseed = random.Next();
             RANDSETTING_MISC_MAPFACES_AMOUNT = .3;
+            RANDSETTING_WACK_FACEFX_AMOUNT = 6;
             ProgressBar_Bottom_Max = 100;
             ProgressBar_Bottom_Min = 0;
             ProgressPanelVisible = Visibility.Visible;

@@ -225,7 +225,36 @@
                                                 </Style>
                                             </StackPanel.Style>
                                         </StackPanel>
-                                        <CheckBox Content="Randomize FaceFX animations" ToolTip="Randomize the face animations used in map files" Margin="3" IsChecked="{Binding RANDSETTING_WACK_FACEFX}" />
+                                        
+                                        <CheckBox Name="Checkbox_RandomizeFaceFX" Content="Randomize FaceFX animations" ToolTip="Randomize the face animations used in map files" Margin="3" IsChecked="{Binding RANDSETTING_WACK_FACEFX}" />
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="45,0,0,0">
+                                                <TextBlock Text="Randomization amount: " IsEnabled="False"/>
+                                                <TextBlock Text="{Binding ElementName=RANDSETTING_WACK_FACEFX_SLIDER, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+                                            <Slider Name="RANDSETTING_WACK_FACEFX_SLIDER" Value="{Binding RANDSETTING_WACK_FACEFX_AMOUNT}" ToolTip="Amount to randomize.&#xA;Larger values result in more pieces of the face that are randomized." Margin="3" Width="200px" Minimum="1" Maximum="32" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" TickPlacement="BottomRight">
+                                                <Slider.Style>
+                                                    <Style TargetType="Slider" BasedOn="{StaticResource MetroSlider}">
+                                                        <Setter Property="IsEnabled" Value="False"></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsChecked,ElementName=Checkbox_RandomizeFaceFX}" Value="True">
+                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Slider.Style>
+                                            </Slider>
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Opacity" Value="0.5"></Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsChecked,ElementName=Checkbox_RandomizeFaceFX}" Value="True">
+                                                            <Setter Property="Opacity" Value="1"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+                                        </StackPanel>
                                         <!--<CheckBox Name="Checkbox_RandomizeSquadPower" Content="Randomize class powers (requires a new save)" ToolTip="Randomize the powers for each class.&#xA;Requires you to start a new game for it to work as the power list is saved in your save file" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_SHUFFLECLASSTALENTS}" />-->
                                         <!--<CheckBox Content="Allow squadmates to have Spectre Training" Margin="25,0,0,0" ToolTip="Adds unity to the list of powers to reassign." IsChecked="{Binding RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY}">
                                             <CheckBox.Style>

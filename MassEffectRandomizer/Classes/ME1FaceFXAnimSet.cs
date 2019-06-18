@@ -166,15 +166,9 @@ namespace MassEffectRandomizer.Classes
     {
         ME1Package pcc;
         public IExportEntry export;
-        public IExportEntry Export { get { return export; } }
+        public IExportEntry Export => export;
         ME3HeaderStruct header;
-        public HeaderStruct Header
-        {
-            get
-            {
-                return header;
-            }
-        }
+        public HeaderStruct Header => header;
         public ME3DataAnimSetStruct Data { get; private set; }
 
         public ME1FaceFXAnimSet()
@@ -296,12 +290,11 @@ namespace MassEffectRandomizer.Classes
                     ControlPoint u = d.points[j];
                     u.time = Container + u.time;
                     u.weight = Container + u.weight;
-
                     u.inTangent = Container + u.inTangent;
                     u.leaveTangent = Container + u.leaveTangent;
                     d.points[j] = u;
                 }
-                if (d.animations.Length > 0)
+                if (d.points.Length > 0)
                 {
                     count2 = 0;
                     if (!Container.isLoading)
@@ -314,7 +307,7 @@ namespace MassEffectRandomizer.Classes
                 }
                 else if (Container.isLoading)
                 {
-                    d.numKeys = new int[0];
+                    d.numKeys = new int[d.animations.Length];
                 }
                 d.FadeInTime = Container + d.FadeInTime;
                 d.FadeOutTime = Container + d.FadeOutTime;
@@ -384,10 +377,10 @@ namespace MassEffectRandomizer.Classes
             m = Container.Memory;
             MemoryStream res = new MemoryStream();
             int start = export.propsEnd();
-            res.Write(export.Data, 0, start); //Copy properties
-            res.WriteValueS32((int)m.Length); //Write length of binary
-            res.WriteStream(m); //Write binary
-            res.WriteValueS32(0); //Write 0 at end
+            res.Write(export.Data, 0, start);
+            res.WriteValueS32((int)m.Length);
+            res.WriteStream(m);
+            res.WriteValueS32(0);
             export.Data = res.ToArray();
         }
 
