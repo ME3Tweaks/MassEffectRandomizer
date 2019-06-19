@@ -563,6 +563,7 @@ namespace MassEffectRandomizer.Classes
                 scalars[1].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(1, 10); //Opacity
                 RandomizeTint(random, vectors[0].GetProp<StructProperty>("ParameterValue"), false);
             }
+            coronaMaterial.WriteProperties(props);
         }
 
         private Dictionary<string, List<string>> mapNamesToFaceFxRandomizationLists;
