@@ -301,6 +301,7 @@
                                             </CheckBox.Style>
                                         </CheckBox>
                                         <CheckBox Content="Randomize planet hazards" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HAZARDS}" ToolTip="Randomizes what hazard you will get on maps that have hazards"/>
+                                        <CheckBox Content="Randomize splash screen" Margin="3" IsChecked="{Binding RANDSETTING_MISC_SPLASH}" ToolTip="Randomizes what the splash planet looks like and some other stuff on the splash"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

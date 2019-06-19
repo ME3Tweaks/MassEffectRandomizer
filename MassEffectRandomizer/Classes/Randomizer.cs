@@ -144,6 +144,7 @@ namespace MassEffectRandomizer.Classes
 
             if (bioc_base_changed)
             {
+                ModifiedFiles[bioc_base.FileName] = bioc_base.FileName;
                 bioc_base.save();
             }
 
@@ -247,9 +248,13 @@ namespace MassEffectRandomizer.Classes
 
             }
 
-            engine.save();
+            if (engine.ShouldSave)
+            {
+                engine.save();
+                ModifiedFiles[engine.FileName] = engine.FileName;
+
+            }
             //RANDOMIZE ENTRYMENU
-            StructProperty iconicFemaleOffsets = null;
             ME1Package entrymenu = new ME1Package(Utilities.GetEntryMenuFile());
             foreach (IExportEntry export in entrymenu.Exports)
             {
@@ -287,10 +292,17 @@ namespace MassEffectRandomizer.Classes
             if (mainWindow.RANDSETTING_CHARACTER_CHARCREATOR)
             {
                 RandomizeCharacterCreatorSingular(random, Tlks);
-
             }
 
-            entrymenu.save();
+            if (mainWindow.RANDSETTING_MISC_SPLASH)
+            {
+                RandomizeSplash(random, entrymenu);
+            }
+            if (entrymenu.ShouldSave)
+            {
+                entrymenu.save();
+                ModifiedFiles[entrymenu.FileName] = entrymenu.FileName;
+            }
 
 
             //RANDOMIZE FACES
@@ -507,6 +519,52 @@ namespace MassEffectRandomizer.Classes
                 globalTLK.save();
             }
         }
+
+        private void RandomizeSplash(Random random, ME1Package entrymenu)
+        {
+            IExportEntry planetMaterial = entrymenu.getUExport(1316);
+            var props = planetMaterial.GetProperties();
+
+            {
+                var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
+                var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
+                for (int i = 0; i < scalars.Count; i++)
+                {
+                    var scalar = scalars[i];
+                    if (i == 0)
+                    {
+                        //Intensity
+                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.2, 1.4);
+                    }
+                    else if (i == 5)
+                    {
+                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.4, 5); // Pan
+                    }
+                    else
+                    {
+                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 1.1);
+                    }
+                }
+                foreach (var vector in vectors)
+                {
+                    var paramValue = vector.GetProp<StructProperty>("ParameterValue");
+                    RandomizeTint(random, paramValue, false);
+                }
+            }
+            planetMaterial.WriteProperties(props);
+
+            //Corona
+            IExportEntry coronaMaterial = entrymenu.getUExport(1317);
+            props = coronaMaterial.GetProperties();
+            {
+                var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
+                var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
+                scalars[0].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.01, 0.05); //Bloom
+                scalars[1].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(1, 10); //Opacity
+                RandomizeTint(random, vectors[0].GetProp<StructProperty>("ParameterValue"), false);
+            }
+        }
+
         private Dictionary<string, List<string>> mapNamesToFaceFxRandomizationLists;
         private void RandomizeFaceFX(IExportEntry exp, Random random, int amount)
         {

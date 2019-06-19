@@ -350,6 +350,7 @@ namespace MassEffectRandomizer.Classes
             set
             {
                 dataChanged = value;
+                FileRef.ShouldSave |= value;
             }
         }
 
