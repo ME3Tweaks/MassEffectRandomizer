@@ -334,6 +334,7 @@ namespace MassEffectRandomizer.Classes
                 mainWindow.ProgressBar_Bottom_Max = files.Count();
                 mainWindow.ProgressBar_Bottom_Min = 0;
                 double morphFaceRandomizationAmount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
+                double faceFXRandomizationAmount = mainWindow.RANDSETTING_WACK_FACEFX_AMOUNT;
                 string[] mapBaseNamesToNotRandomize = { "entrymenu", "biog_uiworld" };
                 for (int i = 0; i < files.Length; i++)
                 {
@@ -421,7 +422,7 @@ namespace MassEffectRandomizer.Classes
                                         loggedFilename = true;
                                     }
                                     //Method contains SHouldSave in it (due to try catch).
-                                    RandomizeFaceFX(exp, random, 1);
+                                    RandomizeFaceFX(exp, random, (int)faceFXRandomizationAmount);
                                 }
                             }
                         }
@@ -515,8 +516,8 @@ namespace MassEffectRandomizer.Classes
                 for (int i = 0; i < animSet.Data.Data.Count(); i++)
                 {
                     var faceFxline = animSet.Data.Data[i];
-                    if (true)
-                    //if (random.Next(12 - amount) == 0)
+                    //if (true)
+                    if (random.Next(10 - amount) == 0)
                     {
                         //Randomize the names used for animation
                         List<int> usedIndexes = faceFxline.animations.Select(x => x.index).ToList();
@@ -541,7 +542,7 @@ namespace MassEffectRandomizer.Classes
                                     faceFxline.points[j].weight += random.NextFloat(-.5, .5);
                                     break;
                                 case 3: //That's not how the face is supposed to work
-                                    faceFxline.points[j].weight = random.NextFloat(Math.Max(currentWeight - .5, 1), Math.Min(currentWeight + .5, 1));
+                                    faceFxline.points[j].weight = random.NextFloat(Math.Max(-1 * Math.Abs(currentWeight) - 1, -1), Math.Min(Math.Abs(currentWeight) + 1, 1));
                                     break;
                                 case 4: //Extreme
                                     faceFxline.points[j].weight = random.NextFloat(-20, 20);

@@ -181,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\ClassesThatProveIHateMyLife\SerializingContainer.cs" />
+    <Compile Include="Classes\Converters\FaceFXRandomizationLevelIntToStringConverter.cs" />
     <Compile Include="Classes\ME1FaceFXAnimSet.cs" />
     <Compile Include="UISupportingFunctions.cs" />
     <Page Include="App.xaml">

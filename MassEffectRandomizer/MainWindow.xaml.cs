@@ -219,7 +219,7 @@ namespace MassEffectRandomizer
             Random random = new Random();
             var preseed = random.Next();
             RANDSETTING_MISC_MAPFACES_AMOUNT = .3;
-            RANDSETTING_WACK_FACEFX_AMOUNT = 6;
+            RANDSETTING_WACK_FACEFX_AMOUNT = 2;
             ProgressBar_Bottom_Max = 100;
             ProgressBar_Bottom_Min = 0;
             ProgressPanelVisible = Visibility.Visible;

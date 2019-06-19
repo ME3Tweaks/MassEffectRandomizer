@@ -18,6 +18,7 @@
                       Width="800">
     <Window.Resources>
         <converters:EnumMatchToBooleanConverter x:Key="enumConverter" />
+        <converters:FaceFXRandomizationLevelIntToStringConverter x:Key="FaceFXRandomizationLevelIntToStringConverter" />
         <FontFamily x:Key="AeroLight">
             pack://application:,,,/fonts/#AeroLight
             <!-- Note: NameOfFont can be font by double clicking
@@ -229,10 +230,9 @@
                                         <CheckBox Name="Checkbox_RandomizeFaceFX" Content="Randomize FaceFX animations" ToolTip="Randomize the face animations used in map files" Margin="3" IsChecked="{Binding RANDSETTING_WACK_FACEFX}" />
                                         <StackPanel>
                                             <StackPanel Orientation="Horizontal" Margin="45,0,0,0">
-                                                <TextBlock Text="Randomization amount: " IsEnabled="False"/>
-                                                <TextBlock Text="{Binding ElementName=RANDSETTING_WACK_FACEFX_SLIDER, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
+                                                <TextBlock Text="{Binding ElementName=RANDSETTING_WACK_FACEFX_SLIDER, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FaceFXRandomizationLevelIntToStringConverter}}" />
                                             </StackPanel>
-                                            <Slider Name="RANDSETTING_WACK_FACEFX_SLIDER" Value="{Binding RANDSETTING_WACK_FACEFX_AMOUNT}" ToolTip="Amount to randomize.&#xA;Larger values result in more pieces of the face that are randomized." Margin="3" Width="200px" Minimum="1" Maximum="32" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" TickPlacement="BottomRight">
+                                            <Slider Name="RANDSETTING_WACK_FACEFX_SLIDER" Value="{Binding RANDSETTING_WACK_FACEFX_AMOUNT}" ToolTip="Amount to randomize.&#xA;Larger values result in more significant amounts of randomization." Margin="3" Width="200px" Minimum="1" Maximum="4" Ticks="1,2,3,4" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" TickPlacement="BottomRight">
                                                 <Slider.Style>
                                                     <Style TargetType="Slider" BasedOn="{StaticResource MetroSlider}">
                                                         <Setter Property="IsEnabled" Value="False"></Setter>
