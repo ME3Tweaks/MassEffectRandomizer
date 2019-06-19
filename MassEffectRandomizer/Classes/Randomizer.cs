@@ -335,11 +335,11 @@ namespace MassEffectRandomizer.Classes
 
                 if (Directory.Exists(bdtspath))
                 {
-                    files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_"))).ToArray();
+                    files = files.Concat(Directory.GetFiles(bdtspath, "*.sfm", SearchOption.AllDirectories)).ToArray();
                 }
                 if (Directory.Exists(pspath))
                 {
-                    files = files.Concat(Directory.GetFiles(pspath, "*.sfm", SearchOption.AllDirectories).Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_"))).ToArray();
+                    files = files.Concat(Directory.GetFiles(pspath, "*.sfm", SearchOption.AllDirectories)).ToArray();
                 }
 
                 mainWindow.ProgressBarIndeterminate = false;
@@ -354,9 +354,10 @@ namespace MassEffectRandomizer.Classes
                     bool loggedFilename = false;
                     mainWindow.CurrentProgressValue = i;
                     mainWindow.CurrentOperationText = "Randomizing map files [" + i + "/" + files.Count() + "]";
-                    var mapBaseName = files[i].ToLower();
+                    var mapBaseName = Path.GetFileNameWithoutExtension(files[i]).ToLower();
                     if (!mapBaseNamesToNotRandomize.Any(x => x.StartsWith(mapBaseName)))
                     {
+                        if (mapBaseName != "bioa_crd00_00_dsg") continue;
                         bool hasLogged = false;
                         ME1Package package = new ME1Package(files[i]);
                         if (RunMapRandomizerPassAllExports)
@@ -396,23 +397,28 @@ namespace MassEffectRandomizer.Classes
                                         }
                                     }
                                 }
-                                else if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES && exp.ClassName == "BioPawn" && random.Next(4) == 0)
+                                else if (exp.ClassName == "BioPawn")
                                 {
-                                    if (!loggedFilename)
+                                    if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES && random.Next(4) == 0)
                                     {
-                                        Log.Information("Randomizing map file: " + files[i]);
-                                        loggedFilename = true;
-                                    }
+                                        if (!loggedFilename)
+                                        {
+                                            Log.Information("Randomizing map file: " + files[i]);
+                                            loggedFilename = true;
+                                        }
 
-                                    //Pawn size randomizer
-                                    RandomizeBioPawnSize(exp, random, 0.4);
-                                    if (random.Next(15) == 0)
+                                        //Pawn size randomizer
+                                        RandomizeBioPawnSize(exp, random, 0.4);
+                                    }
+                                    if (mainWindow.RANDSETTING_PAWN_MATERIALCOLORS)
                                     {
-                                        //Todo: restore from older commits for headmesh scaling.
-                                        //scaleHeadMesh()
+                                        if (!loggedFilename)
+                                        {
+                                            Log.Information("Randomizing map file: " + files[i]);
+                                            loggedFilename = true;
+                                        }
+                                        RandomizePawnMaterialInstances(exp, random);
                                     }
-
-                                    package.ShouldSave = true;
                                 }
                                 else if (mainWindow.RANDSETTING_MISC_INTERPS && exp.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
                                 {
@@ -520,6 +526,52 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        private void RandomizePawnMaterialInstances(IExportEntry exp, Random random)
+        {
+            //var hairMesh = exp.GetProperty<ObjectProperty>("m_oHairMesh");
+            var headMeshObj = exp.GetProperty<ObjectProperty>("m_oHeadMesh");
+            if (headMeshObj != null)
+            {
+                var headMesh = exp.FileRef.getUExport(headMeshObj.Value);
+                var materials = headMesh.GetProperty<ArrayProperty<ObjectProperty>>("Materials");
+                if (materials != null) {
+                    foreach (var materialObj in materials)
+                    {
+                        //MAterialInstanceConstant
+                        IExportEntry material = exp.FileRef.getUExport(materialObj.Value);
+                        var props = material.GetProperties();
+
+                        {
+                            var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
+                            var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
+                            if (scalars != null)
+                            {
+                                for (int i = 0; i < scalars.Count; i++)
+                                {
+                                    var scalar = scalars[i];
+                                    var parameter = scalar.GetProp<NameProperty>("ParameterName");
+                                    var currentValue = scalar.GetProp<FloatProperty>("ParameterValue");
+                                    if (currentValue > 1)
+                                    {
+                                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, currentValue * 1.3);
+                                    }
+                                    else
+                                    {
+                                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 1);
+                                    }
+                                }
+                                //foreach (var vector in vectors)
+                                //{
+                                //    var paramValue = vector.GetProp<StructProperty>("ParameterValue");
+                                //    RandomizeTint(random, paramValue, false);
+                                //}
+                            }
+                        }
+                        material.WriteProperties(props);
+                    }
+                }
+            }
+        }
         private void RandomizeSplash(Random random, ME1Package entrymenu)
         {
             IExportEntry planetMaterial = entrymenu.getUExport(1316);
@@ -2154,6 +2206,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
                    || mainWindow.RANDSETTING_WACK_FACEFX
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
+                   || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS
             ;
         }
 
@@ -2165,6 +2218,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_WACK_FACEFX
                    || mainWindow.RANDSETTING_MISC_INTERPS
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
+                   || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS
             ;
         }
 

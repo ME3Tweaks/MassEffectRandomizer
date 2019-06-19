@@ -185,7 +185,7 @@
                                         <CheckBox Content="Randomly randomize movement interpolations" Foreground="Red" ToolTip="Warning: This breaks a lot of stuff I'm suref&#xA;Slightly changes the movement and rotations of interpolations of everything&#xA;This setting will not apply to all interpolations, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPS}" />
                                         <CheckBox Content="Randomize opening cutscene" Foreground="Red" ToolTip="Modifies some of the opening cutscene" Margin="3" IsChecked="{Binding RANDSETTING_WACK_OPENINGCUTSCENE}" />
                                         <CheckBox Content="Randomize vowels (lol)" ToolTip="Translates game to some weird dialect of Scottish-Like English" Margin="3" IsChecked="{Binding RANDSETTING_WACK_SCOTTISH}" />
-
+                                        <CheckBox Content="Randomize NPC Head Colors" ToolTip="RAndomizes the colors used for NPC heads" Margin="3" IsChecked="{Binding RANDSETTING_PAWN_MATERIALCOLORS}" />
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

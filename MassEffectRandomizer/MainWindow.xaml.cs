@@ -198,6 +198,7 @@ namespace MassEffectRandomizer
         public bool DiagnosticsFlyoutOpen { get; set; }
         public bool RANDSETTING_MISC_GAMEOVERTEXT { get; set; }
         public bool RANDSETTING_MISC_SPLASH { get; set; }
+        public bool RANDSETTING_PAWN_MATERIALCOLORS { get; set; }
 
         //Wackadoodle
         public bool RANDSETTING_MISC_MAPPAWNSIZES { get; set; }
