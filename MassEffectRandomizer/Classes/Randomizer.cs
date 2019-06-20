@@ -524,6 +524,8 @@ namespace MassEffectRandomizer.Classes
             {
                 globalTLK.save();
             }
+
+            AddMERSplash(random);
         }
 
         private void RandomizePawnMaterialInstances(IExportEntry exp, Random random)
@@ -575,7 +577,7 @@ namespace MassEffectRandomizer.Classes
         }
         private void RandomizeSplash(Random random, ME1Package entrymenu)
         {
-            IExportEntry planetMaterial = entrymenu.getUExport(1316);
+           /* IExportEntry planetMaterial = entrymenu.getUExport(1316);
             var props = planetMaterial.GetProperties();
 
             {
@@ -616,7 +618,103 @@ namespace MassEffectRandomizer.Classes
                 scalars[1].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(1, 10); //Opacity
                 RandomizeTint(random, vectors[0].GetProp<StructProperty>("ParameterValue"), false);
             }
-            coronaMaterial.WriteProperties(props);
+            coronaMaterial.WriteProperties(props);*/
+
+            //CameraPan
+            IExportEntry cameraInterpData = entrymenu.getUExport(946);
+            var interpLength = cameraInterpData.GetProperty<FloatProperty>("InterpLength");
+            float animationLength = random.NextFloat(40, 180);;
+            interpLength.Value = animationLength;
+            cameraInterpData.WriteProperty(interpLength);
+
+            IExportEntry cameraInterpTrackMove = entrymenu.getUExport(967);
+            cameraInterpTrackMove.Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpTrackMove967_EntryMenu_CameraPan.bin");
+           var  props = cameraInterpTrackMove.GetProperties(forceReload:true);
+            var posTrack = props.GetProp<StructProperty>("PosTrack");
+            if (posTrack != null)
+            {
+                var points = posTrack.GetProp<ArrayProperty<StructProperty>>("Points");
+                float startx = random.NextFloat(-5200, -3800);
+                float starty = random.NextFloat(13217, 15000);
+                float startz = random.NextFloat(-40000, -38000);
+
+                float peakx = random.NextFloat(-5200, -3800);
+                float peaky = random.NextFloat(13217, 15000);
+                float peakz = random.NextFloat(-40000, -38000);
+
+                if (points != null)
+                {
+                    int i = 0;
+                    foreach (StructProperty s in points)
+                    {
+                        var outVal = s.GetProp<StructProperty>("OutVal");
+                        if (outVal != null)
+                        {
+                            FloatProperty x = outVal.GetProp<FloatProperty>("X");
+                            FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+                            FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+                            x.Value = i == 1 ? peakx : startx;
+                            y.Value = i == 1 ? peaky : starty;
+                            z.Value = i == 1 ? peakz : startz;
+                        }
+
+                        if (i > 0)
+                        {
+                            s.GetProp<FloatProperty>("InVal").Value = i == 1 ? (animationLength / 2) : animationLength;
+                        }
+                        i++;
+                    }
+                }
+            }
+
+            //var eulerTrack = props.GetProp<StructProperty>("EulerTrack");
+            //if (eulerTrack != null)
+            //{
+            //    var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
+            //    if (points != null)
+            //    {
+            //        int i = 0;
+            //        foreach (StructProperty s in points)
+            //        {
+            //            var outVal = s.GetProp<StructProperty>("OutVal");
+            //            if (outVal != null)
+            //            {
+            //                FloatProperty x = outVal.GetProp<FloatProperty>("X");
+            //                FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+            //                FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+            //                if (x.Value != 0)
+            //                {
+            //                    x.Value = x.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+            //                }
+            //                else
+            //                {
+            //                    x.Value = random.NextFloat(0, 360);
+            //                }
+
+            //                if (y.Value != 0)
+            //                {
+            //                    y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+            //                }
+            //                else
+            //                {
+            //                    y.Value = random.NextFloat(0, 360);
+            //                }
+
+            //                if (z.Value != 0)
+            //                {
+            //                    z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+            //                }
+            //                else
+            //                {
+            //                    z.Value = random.NextFloat(0, 360);
+            //                }
+            //            }
+            //            i++;
+            //        }
+            //    }
+            //}
+
+            cameraInterpTrackMove.WriteProperties(props);
         }
 
         private Dictionary<string, List<string>> mapNamesToFaceFxRandomizationLists;

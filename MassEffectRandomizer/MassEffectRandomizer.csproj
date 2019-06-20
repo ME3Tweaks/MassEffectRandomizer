@@ -271,6 +271,7 @@
     <EmbeddedResource Include="staticfiles\merintros\merintro_a.bik" />
     <EmbeddedResource Include="staticfiles\merintros\merintro_b.bik" />
     <EmbeddedResource Include="staticfiles\merintros\merintro_c.bik" />
+    <EmbeddedResource Include="staticfiles\exportreplacements\InterpTrackMove967_EntryMenu_CameraPan.bin" />
     <Resource Include="fonts\aerolight.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
