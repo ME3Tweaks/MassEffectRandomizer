@@ -623,7 +623,7 @@ namespace MassEffectRandomizer.Classes
             //CameraPan
             IExportEntry cameraInterpData = entrymenu.getUExport(946);
             var interpLength = cameraInterpData.GetProperty<FloatProperty>("InterpLength");
-            float animationLength = random.NextFloat(40, 180);;
+            float animationLength = random.NextFloat(20, 30);;
             interpLength.Value = animationLength;
             cameraInterpData.WriteProperty(interpLength);
 
@@ -631,17 +631,63 @@ namespace MassEffectRandomizer.Classes
             cameraInterpTrackMove.Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpTrackMove967_EntryMenu_CameraPan.bin");
            var  props = cameraInterpTrackMove.GetProperties(forceReload:true);
             var posTrack = props.GetProp<StructProperty>("PosTrack");
+            bool ZUp = false;
             if (posTrack != null)
             {
                 var points = posTrack.GetProp<ArrayProperty<StructProperty>>("Points");
-                float startx = random.NextFloat(-5200, -3800);
-                float starty = random.NextFloat(13217, 15000);
-                float startz = random.NextFloat(-40000, -38000);
+                float startx = random.NextFloat(-5100, -4800);
+                float starty = random.NextFloat(13217, 13300);
+                float startz = random.NextFloat(-38000, -300);
 
-                float peakx = random.NextFloat(-5200, -3800);
-                float peaky = random.NextFloat(13217, 15000);
-                float peakz = random.NextFloat(-40000, -38000);
+                startx = -4930;
+                starty = 13212;
+                startz = -39964;
 
+                float peakx = random.NextFloat(-5100, -4800);
+                float peaky = random.NextFloat(13217, 13300);
+                float peakz = random.NextFloat(-40000, -39664);
+                ZUp = peakz > startz;
+
+                if (points != null)
+                {
+                    int i = 0;
+                    foreach (StructProperty s in points)
+                    {
+                        var outVal = s.GetProp<StructProperty>("OutVal");
+                        if (outVal != null)
+                        {
+                            FloatProperty x = outVal.GetProp<FloatProperty>("X");
+                            FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+                            FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+                            //x.Value = i == 1 ? peakx : startx;
+                            y.Value = i == 1 ? peaky : starty;
+                            z.Value = i == 1 ? peakz : startz;
+                        }
+
+                        if (i > 0)
+                        {
+                            s.GetProp<FloatProperty>("InVal").Value = i == 1 ? (animationLength / 2) : animationLength;
+                        }
+                        i++;
+                    }
+                }
+            }
+
+            var eulerTrack = props.GetProp<StructProperty>("EulerTrack");
+            if (eulerTrack != null)
+            {
+                var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
+                float startx = random.NextFloat(-5100, -4800);
+                float starty = random.NextFloat(13217, 13300);
+                float startz = random.NextFloat(-38700, -38500);
+
+                startx = 1.736f;
+                starty = 31.333f;
+                startz = -162.356f;
+
+                float peakx = 1.736f;
+                float peaky = ZUp ? random.NextFloat(-20, 70) : random.NextFloat(-60, 20);
+                float peakz = random.NextFloat(-180, -140);
                 if (points != null)
                 {
                     int i = 0;
@@ -657,64 +703,27 @@ namespace MassEffectRandomizer.Classes
                             y.Value = i == 1 ? peaky : starty;
                             z.Value = i == 1 ? peakz : startz;
                         }
-
                         if (i > 0)
                         {
                             s.GetProp<FloatProperty>("InVal").Value = i == 1 ? (animationLength / 2) : animationLength;
                         }
                         i++;
                     }
+
                 }
             }
 
-            //var eulerTrack = props.GetProp<StructProperty>("EulerTrack");
-            //if (eulerTrack != null)
-            //{
-            //    var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
-            //    if (points != null)
-            //    {
-            //        int i = 0;
-            //        foreach (StructProperty s in points)
-            //        {
-            //            var outVal = s.GetProp<StructProperty>("OutVal");
-            //            if (outVal != null)
-            //            {
-            //                FloatProperty x = outVal.GetProp<FloatProperty>("X");
-            //                FloatProperty y = outVal.GetProp<FloatProperty>("Y");
-            //                FloatProperty z = outVal.GetProp<FloatProperty>("Z");
-            //                if (x.Value != 0)
-            //                {
-            //                    x.Value = x.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-            //                }
-            //                else
-            //                {
-            //                    x.Value = random.NextFloat(0, 360);
-            //                }
-
-            //                if (y.Value != 0)
-            //                {
-            //                    y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-            //                }
-            //                else
-            //                {
-            //                    y.Value = random.NextFloat(0, 360);
-            //                }
-
-            //                if (z.Value != 0)
-            //                {
-            //                    z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-            //                }
-            //                else
-            //                {
-            //                    z.Value = random.NextFloat(0, 360);
-            //                }
-            //            }
-            //            i++;
-            //        }
-            //    }
-            //}
-
             cameraInterpTrackMove.WriteProperties(props);
+
+            var fovCurve = entrymenu.getUExport(964);
+            fovCurve.Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpTrackMove964_EntryMenu_CameraFOV.bin");
+            props = fovCurve.GetProperties(forceReload: true);
+            //var pi = props.GetProp<ArrayProperty<StructProperty>>("Points");
+            //var pi2 = props.GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("OutVal");
+            props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("OutVal").Value = random.NextFloat(25, 75); //FOV
+            props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("InVal").Value = animationLength;
+            props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[2].GetProp<FloatProperty>("InVal").Value = animationLength;
+            fovCurve.WriteProperties(props);
         }
 
         private Dictionary<string, List<string>> mapNamesToFaceFxRandomizationLists;
@@ -904,7 +913,7 @@ namespace MassEffectRandomizer.Classes
                 filesInIndex.Add(@"Movies\MERIntro.bik");
                 File.WriteAllLines(fileIndex, filesInIndex);
             }
-
+            ModifiedFiles[entrymenu.FileName] = entrymenu.FileName;
         }
 
         private static string[] hazardTypes = { "Cold", "Heat", "Toxic", "Radiation", "Vacuum" };
