@@ -43,6 +43,67 @@ namespace MassEffectRandomizer.Classes
         }
     }
 
+    public static class DictionaryExtensions
+    {
+        /// <summary>
+        /// Adds <paramref name="value"/> to List&lt;<typeparamref name="TValue"/>&gt; associated with <paramref name="key"/>. Creates List&lt;<typeparamref name="TValue"/>&gt; if neccesary.
+        /// </summary>
+        public static void AddToListAt<TKey, TValue>(this Dictionary<TKey, List<TValue>> dict, TKey key, TValue value)
+        {
+            if (!dict.TryGetValue(key, out List<TValue> list))
+            {
+                list = new List<TValue>();
+                dict[key] = list;
+            }
+            list.Add(value);
+        }
+
+        public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> kvp, out TKey key, out TValue value)
+        {
+            key = kvp.Key;
+            value = kvp.Value;
+        }
+
+        public static bool ContainsKey<Tkey, TValue>(this List<KeyValuePair<Tkey, TValue>> list, Tkey key)
+        {
+            foreach (var kvp in list)
+            {
+                if (EqualityComparer<Tkey>.Default.Equals(kvp.Key, key))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool TryGetValue<Tkey, TValue>(this List<KeyValuePair<Tkey, TValue>> list, Tkey key, out TValue value)
+        {
+            foreach (var kvp in list)
+            {
+                if (EqualityComparer<Tkey>.Default.Equals(kvp.Key, key))
+                {
+                    value = kvp.Value;
+                    return true;
+                }
+            }
+            value = default;
+            return false;
+        }
+
+        public static void Add<Tkey, TValue>(this List<KeyValuePair<Tkey, TValue>> list, Tkey key, TValue value)
+        {
+            list.Add(new KeyValuePair<Tkey, TValue>(key, value));
+        }
+
+        public static IEnumerable<TValue> Values<Tkey, TValue>(this List<KeyValuePair<Tkey, TValue>> list)
+        {
+            foreach (var kvp in list)
+            {
+                yield return kvp.Value;
+            }
+        }
+    }
+
     public static class RandomExtensions
     {
         public static float NextFloat(

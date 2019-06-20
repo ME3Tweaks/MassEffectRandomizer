@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using Serilog;
+using Object = System.Object;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -94,7 +95,6 @@ namespace MassEffectRandomizer.Classes
 
         private void PerformRandomization(object sender, DoWorkEventArgs e)
         {
-            ME1UnrealObjectInfo.loadfromJSON();
             ModifiedFiles = new ConcurrentDictionary<string, string>(); //this will act as a Set since there is no ConcurrentSet
             Random random = new Random((int)e.Argument);
 
@@ -534,7 +534,8 @@ namespace MassEffectRandomizer.Classes
             {
                 var headMesh = exp.FileRef.getUExport(headMeshObj.Value);
                 var materials = headMesh.GetProperty<ArrayProperty<ObjectProperty>>("Materials");
-                if (materials != null) {
+                if (materials != null)
+                {
                     foreach (var materialObj in materials)
                     {
                         //MAterialInstanceConstant
@@ -676,6 +677,41 @@ namespace MassEffectRandomizer.Classes
             {
                 //Do nothing for now.
             }
+        }
+
+        public void AddMERSplash(Random random)
+        {
+            ME1Package entrymenu = new ME1Package(Utilities.GetEntryMenuFile());
+
+            //Connect attract to BWLogo
+            var attractMovie = entrymenu.getUExport(729);
+            var props = attractMovie.GetProperties();
+            var movieName = props.GetProp<StrProperty>("m_sMovieName");
+            movieName.Value = "merintro";
+            props.GetProp<ArrayProperty<StructProperty>>("OutputLinks")[1].GetProp<ArrayProperty<StructProperty>>("Links")[0].GetProp<ObjectProperty>("LinkedOp").Value = 732; //Bioware logo
+            attractMovie.WriteProperties(props);
+
+            //REwrite ShowSplash to BWLogo
+            var showSplash = entrymenu.getUExport(736);
+            props = showSplash.GetProperties();
+            props.GetProp<ArrayProperty<StructProperty>>("OutputLinks")[0].GetProp<ArrayProperty<StructProperty>>("Links")[1].GetProp<ObjectProperty>("LinkedOp").Value = 729; //attractmovie logo
+            showSplash.WriteProperties(props);
+            entrymenu.save();
+
+            //Extract MER Intro
+            string[] merIntros = { "merintro_a.bik", "merintro_b.bik", "merintro_c.bik" };
+            string merToExtract = merIntros[random.Next(3)];
+            Utilities.ExtractInternalFile("merintros." + merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"), true);
+
+            //Add to fileindex
+            var fileIndex = Utilities.GetGameFile(@"BioGame\CookedPC\FileIndex.txt");
+            var filesInIndex = File.ReadAllLines(fileIndex).ToList();
+            if (!filesInIndex.Any(x => x == @"Movies\MERIntro.bik"))
+            {
+                filesInIndex.Add(@"Movies\MERIntro.bik");
+                File.WriteAllLines(fileIndex, filesInIndex);
+            }
+
         }
 
         private static string[] hazardTypes = { "Cold", "Heat", "Toxic", "Radiation", "Vacuum" };
@@ -1430,7 +1466,7 @@ namespace MassEffectRandomizer.Classes
             StructProperty sp = props.GetProp<StructProperty>("DrawScale3D");
             if (sp == null)
             {
-                var structprops = ME1UnrealObjectInfo.getDefaultStructValue("Vector");
+                var structprops = ME1UnrealObjectInfo.getDefaultStructValue("Vector", true);
                 sp = new StructProperty("Vector", structprops, "DrawScale3D", ME1UnrealObjectInfo.isImmutableStruct("Vector"));
                 props.Add(sp);
             }

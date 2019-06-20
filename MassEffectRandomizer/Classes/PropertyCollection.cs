@@ -39,6 +39,19 @@ namespace MassEffectRandomizer.Classes
             return null;
         }
 
+        public bool TryReplaceProp(UProperty prop)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (this[i].Name.Name == prop.Name.Name)
+                {
+                    this[i] = prop;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void AddOrReplaceProp(UProperty prop)
         {
             for (int i = 0; i < this.Count; i++)
@@ -1303,11 +1316,16 @@ namespace MassEffectRandomizer.Classes
     public class BioMask4Property : UProperty
     {
         byte _value;
-
         public byte Value
         {
             get => _value;
             set => SetProperty(ref _value, value);
+        }
+
+        public BioMask4Property(byte val, NameReference? name = null) : base(name)
+        {
+            Value = val;
+            PropType = PropertyType.BioMask4Property;
         }
 
         public BioMask4Property(MemoryStream stream, NameReference? name = null) : base(name)
@@ -1323,7 +1341,6 @@ namespace MassEffectRandomizer.Classes
             {
                 stream.WritePropHeader(pcc, Name, PropType, 1);
             }
-
             stream.WriteValueU8(Value);
         }
     }
@@ -1333,13 +1350,11 @@ namespace MassEffectRandomizer.Classes
     {
         public NameReference EnumType { get; }
         NameReference _value;
-
         public NameReference Value
         {
             get => _value;
             set => SetProperty(ref _value, value);
         }
-
         public List<NameReference> EnumValues { get; }
 
         public EnumProperty(MemoryStream stream, ME1Package pcc, NameReference enumType, NameReference? name = null) : base(name)
@@ -1351,16 +1366,16 @@ namespace MassEffectRandomizer.Classes
             var eNameNumber = stream.ReadValueS32();
 
             Value = new NameReference(eName, eNameNumber);
-            EnumValues = ME1UnrealObjectInfo.GetEnumValues(enumType, true);
+            EnumValues = ME1UnrealObjectInfo.getEnumValues(enumType, true);
             PropType = PropertyType.ByteProperty;
         }
 
-        public EnumProperty(NameReference value, NameReference enumType, ME1Package pcc, NameReference? name = null) : base(name)
+        public EnumProperty(NameReference value, NameReference enumType, MEGame meGame, NameReference? name = null) : base(name)
         {
             EnumType = enumType;
             NameReference enumVal = value;
             Value = enumVal;
-            EnumValues = ME1UnrealObjectInfo.GetEnumValues(enumType, true);
+            EnumValues = ME1UnrealObjectInfo.getEnumValues(enumType, true);
             PropType = PropertyType.ByteProperty;
         }
 
@@ -1370,15 +1385,14 @@ namespace MassEffectRandomizer.Classes
         /// <param name="enumType">Name of enum</param>
         /// <param name="pcc">PCC to lookup information from</param>
         /// <param name="name">Optional name of EnumProperty</param>
-        public EnumProperty(NameReference enumType, ME1Package pcc, NameReference? name = null) : base(name)
+        public EnumProperty(NameReference enumType, MEGame meGame, NameReference? name = null) : base(name)
         {
             EnumType = enumType;
-            EnumValues = ME1UnrealObjectInfo.GetEnumValues(enumType, true);
+            EnumValues = ME1UnrealObjectInfo.getEnumValues(enumType, true);
             if (EnumValues == null)
             {
                 Debugger.Break();
             }
-
             Value = EnumValues[0];
             PropType = PropertyType.ByteProperty;
         }

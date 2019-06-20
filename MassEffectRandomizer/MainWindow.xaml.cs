@@ -239,6 +239,7 @@ namespace MassEffectRandomizer
 
 
             PerformUpdateCheck();
+
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -334,6 +335,8 @@ namespace MassEffectRandomizer
             ButtonPanelVisible = Visibility.Collapsed;
             ProgressPanelVisible = Visibility.Visible;
             Randomizer randomizer = new Randomizer(this);
+            randomizer.AddMERSplash(new Random());
+            return;
             randomizer.randomize();
         }
 

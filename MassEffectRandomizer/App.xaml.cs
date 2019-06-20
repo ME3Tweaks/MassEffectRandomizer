@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using MassEffectRandomizer.Classes;
 using Serilog;
 using Serilog.Sinks.RollingFile.Extension;
 using System;
@@ -134,6 +135,9 @@ namespace MassEffectRandomizer
             #endregion
             System.Windows.Controls.ToolTipService.ShowOnDisabledProperty.OverrideMetadata(typeof(Control),
            new FrameworkPropertyMetadata(true));
+
+            Log.Information("Loading property lookup DB");
+            ME1UnrealObjectInfo.loadfromJSON();
 
             var application = new App();
             application.InitializeComponent();

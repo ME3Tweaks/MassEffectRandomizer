@@ -134,6 +134,26 @@ namespace MassEffectRandomizer.Classes
             return extractedPath;
         }
 
+        internal static string ExtractInternalFile(string extFile, string destination,bool overwrite)
+        {
+            Log.Information("Extracting file: " + extFile);
+            if (!File.Exists(destination) || overwrite)
+            {
+                using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles." + extFile))
+                {
+                    using (var file = new FileStream(destination, FileMode.Create, FileAccess.Write))
+                    {
+                        stream.CopyTo(file);
+                    }
+                }
+            }
+            else
+            {
+                Log.Warning("File already exists");
+            }
+            return destination;
+        }
+
 
 
         /// <summary> Checks for write access for the given file.
