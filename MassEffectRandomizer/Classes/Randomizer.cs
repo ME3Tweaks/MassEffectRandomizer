@@ -357,7 +357,7 @@ namespace MassEffectRandomizer.Classes
                     var mapBaseName = Path.GetFileNameWithoutExtension(files[i]).ToLower();
                     if (!mapBaseNamesToNotRandomize.Any(x => x.StartsWith(mapBaseName)))
                     {
-                        if (mapBaseName != "bioa_crd00_00_dsg") continue;
+                        if (!mapBaseName.StartsWith("bioa_sta")) continue;
                         bool hasLogged = false;
                         ME1Package package = new ME1Package(files[i]);
                         if (RunMapRandomizerPassAllExports)
@@ -530,11 +530,13 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizePawnMaterialInstances(IExportEntry exp, Random random)
         {
+            //Don't know if this works
+
             //var hairMesh = exp.GetProperty<ObjectProperty>("m_oHairMesh");
-            var headMeshObj = exp.GetProperty<ObjectProperty>("m_oHeadMesh");
-            if (headMeshObj != null)
+            var hairMeshObj = exp.GetProperty<ObjectProperty>("m_oHairMesh");
+            if (hairMeshObj != null)
             {
-                var headMesh = exp.FileRef.getUExport(headMeshObj.Value);
+                var headMesh = exp.FileRef.getUExport(hairMeshObj.Value);
                 var materials = headMesh.GetProperty<ArrayProperty<ObjectProperty>>("Materials");
                 if (materials != null)
                 {
@@ -560,14 +562,15 @@ namespace MassEffectRandomizer.Classes
                                     }
                                     else
                                     {
+                                        Debug.WriteLine("Randomizing parameter " + scalar.GetProp<NameProperty>("ParameterName"));
                                         scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 1);
                                     }
                                 }
-                                //foreach (var vector in vectors)
-                                //{
-                                //    var paramValue = vector.GetProp<StructProperty>("ParameterValue");
-                                //    RandomizeTint(random, paramValue, false);
-                                //}
+                                foreach (var vector in vectors)
+                                {
+                                    var paramValue = vector.GetProp<StructProperty>("ParameterValue");
+                                    RandomizeTint(random, paramValue, false);
+                                }
                             }
                         }
                         material.WriteProperties(props);
@@ -577,76 +580,78 @@ namespace MassEffectRandomizer.Classes
         }
         private void RandomizeSplash(Random random, ME1Package entrymenu)
         {
-           /* IExportEntry planetMaterial = entrymenu.getUExport(1316);
-            var props = planetMaterial.GetProperties();
+            /* IExportEntry planetMaterial = entrymenu.getUExport(1316);
+             var props = planetMaterial.GetProperties();
 
-            {
-                var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
-                var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
-                for (int i = 0; i < scalars.Count; i++)
-                {
-                    var scalar = scalars[i];
-                    if (i == 0)
-                    {
-                        //Intensity
-                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.2, 1.4);
-                    }
-                    else if (i == 5)
-                    {
-                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.4, 5); // Pan
-                    }
-                    else
-                    {
-                        scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 1.1);
-                    }
-                }
-                foreach (var vector in vectors)
-                {
-                    var paramValue = vector.GetProp<StructProperty>("ParameterValue");
-                    RandomizeTint(random, paramValue, false);
-                }
-            }
-            planetMaterial.WriteProperties(props);
+             {
+                 var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
+                 var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
+                 for (int i = 0; i < scalars.Count; i++)
+                 {
+                     var scalar = scalars[i];
+                     if (i == 0)
+                     {
+                         //Intensity
+                         scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.2, 1.4);
+                     }
+                     else if (i == 5)
+                     {
+                         scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.4, 5); // Pan
+                     }
+                     else
+                     {
+                         scalar.GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 1.1);
+                     }
+                 }
+                 foreach (var vector in vectors)
+                 {
+                     var paramValue = vector.GetProp<StructProperty>("ParameterValue");
+                     RandomizeTint(random, paramValue, false);
+                 }
+             }
+             planetMaterial.WriteProperties(props);
 
-            //Corona
-            IExportEntry coronaMaterial = entrymenu.getUExport(1317);
-            props = coronaMaterial.GetProperties();
-            {
-                var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
-                var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
-                scalars[0].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.01, 0.05); //Bloom
-                scalars[1].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(1, 10); //Opacity
-                RandomizeTint(random, vectors[0].GetProp<StructProperty>("ParameterValue"), false);
-            }
-            coronaMaterial.WriteProperties(props);*/
+             //Corona
+             IExportEntry coronaMaterial = entrymenu.getUExport(1317);
+             props = coronaMaterial.GetProperties();
+             {
+                 var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
+                 var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
+                 scalars[0].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.01, 0.05); //Bloom
+                 scalars[1].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(1, 10); //Opacity
+                 RandomizeTint(random, vectors[0].GetProp<StructProperty>("ParameterValue"), false);
+             }
+             coronaMaterial.WriteProperties(props);*/
 
             //CameraPan
             IExportEntry cameraInterpData = entrymenu.getUExport(946);
             var interpLength = cameraInterpData.GetProperty<FloatProperty>("InterpLength");
-            float animationLength = random.NextFloat(20, 30);;
+            float animationLength = random.NextFloat(60, 120); ;
             interpLength.Value = animationLength;
             cameraInterpData.WriteProperty(interpLength);
 
             IExportEntry cameraInterpTrackMove = entrymenu.getUExport(967);
             cameraInterpTrackMove.Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpTrackMove967_EntryMenu_CameraPan.bin");
-           var  props = cameraInterpTrackMove.GetProperties(forceReload:true);
+            var props = cameraInterpTrackMove.GetProperties(forceReload: true);
             var posTrack = props.GetProp<StructProperty>("PosTrack");
             bool ZUp = false;
+            bool CameraRight = false;
             if (posTrack != null)
             {
                 var points = posTrack.GetProp<ArrayProperty<StructProperty>>("Points");
                 float startx = random.NextFloat(-5100, -4800);
                 float starty = random.NextFloat(13217, 13300);
-                float startz = random.NextFloat(-38000, -300);
+                float startz = random.NextFloat(-39950, -39400);
 
-                startx = -4930;
-                starty = 13212;
-                startz = -39964;
+                //startx = -4930;
+                //starty = 13212;
+                //startz = -39964;
 
                 float peakx = random.NextFloat(-5100, -4800);
                 float peaky = random.NextFloat(13217, 13300);
-                float peakz = random.NextFloat(-40000, -39664);
+                float peakz = random.NextFloat(-40000, -39564);
                 ZUp = peakz > startz;
+                CameraRight = peaky > starty;
 
                 if (points != null)
                 {
@@ -677,17 +682,17 @@ namespace MassEffectRandomizer.Classes
             if (eulerTrack != null)
             {
                 var points = eulerTrack.GetProp<ArrayProperty<StructProperty>>("Points");
-                float startx = random.NextFloat(-5100, -4800);
-                float starty = random.NextFloat(13217, 13300);
-                float startz = random.NextFloat(-38700, -38500);
+                //float startx = random.NextFloat(, -4800);
+                float startPitch = random.NextFloat(25, 35);
+                float startYaw = random.NextFloat(-170, -150);
 
-                startx = 1.736f;
-                starty = 31.333f;
-                startz = -162.356f;
+                //startx = 1.736f;
+                //startPitch = 31.333f;
+                //startYaw = -162.356f;
 
-                float peakx = 1.736f;
-                float peaky = ZUp ? random.NextFloat(-20, 70) : random.NextFloat(-60, 20);
-                float peakz = random.NextFloat(-180, -140);
+                float peakx = 1.736f; //Roll
+                float peakPitch = ZUp ? random.NextFloat(-20, 30) : random.NextFloat(-40, 10); //Pitch
+                float peakYaw = CameraRight ? random.NextFloat(-260, -190) : random.NextFloat(-170, -140); //Yaw
                 if (points != null)
                 {
                     int i = 0;
@@ -699,9 +704,9 @@ namespace MassEffectRandomizer.Classes
                             FloatProperty x = outVal.GetProp<FloatProperty>("X");
                             FloatProperty y = outVal.GetProp<FloatProperty>("Y");
                             FloatProperty z = outVal.GetProp<FloatProperty>("Z");
-                            x.Value = i == 1 ? peakx : startx;
-                            y.Value = i == 1 ? peaky : starty;
-                            z.Value = i == 1 ? peakz : startz;
+                            //x.Value = i == 1 ? peakx : startx;
+                            y.Value = i == 1 ? peakPitch : startPitch;
+                            z.Value = i == 1 ? peakYaw : startYaw;
                         }
                         if (i > 0)
                         {
@@ -720,10 +725,28 @@ namespace MassEffectRandomizer.Classes
             props = fovCurve.GetProperties(forceReload: true);
             //var pi = props.GetProp<ArrayProperty<StructProperty>>("Points");
             //var pi2 = props.GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("OutVal");
-            props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("OutVal").Value = random.NextFloat(25, 75); //FOV
-            props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("InVal").Value = animationLength;
+            props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("OutVal").Value = random.NextFloat(45, 90); //FOV
+            props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<FloatProperty>("InVal").Value = animationLength / 2;
             props.GetProp<StructProperty>("FloatTrack").GetProp<ArrayProperty<StructProperty>>("Points")[2].GetProp<FloatProperty>("InVal").Value = animationLength;
             fovCurve.WriteProperties(props);
+
+            var menuTransitionAnimation = entrymenu.getUExport(968);
+            props = menuTransitionAnimation.GetProperties();
+            props.AddOrReplaceProp(new EnumProperty("IMF_RelativeToInitial", "EInterpTrackMoveFrame", MEGame.ME1, "MoveFrame"));
+            props.GetProp<StructProperty>("EulerTrack").GetProp<ArrayProperty<StructProperty>>("Points")[0].GetProp<StructProperty>("OutVal").GetProp<FloatProperty>("X").Value = 0;
+            props.GetProp<StructProperty>("EulerTrack").GetProp<ArrayProperty<StructProperty>>("Points")[0].GetProp<StructProperty>("OutVal").GetProp<FloatProperty>("Y").Value = 0;
+            props.GetProp<StructProperty>("EulerTrack").GetProp<ArrayProperty<StructProperty>>("Points")[0].GetProp<StructProperty>("OutVal").GetProp<FloatProperty>("Z").Value = 0;
+
+            props.GetProp<StructProperty>("EulerTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<StructProperty>("OutVal").GetProp<FloatProperty>("X").Value = random.NextFloat(-180, 180);
+            props.GetProp<StructProperty>("EulerTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<StructProperty>("OutVal").GetProp<FloatProperty>("Y").Value = random.NextFloat(-180, 180);
+            props.GetProp<StructProperty>("EulerTrack").GetProp<ArrayProperty<StructProperty>>("Points")[1].GetProp<StructProperty>("OutVal").GetProp<FloatProperty>("Z").Value = random.NextFloat(-180, 180);
+
+            menuTransitionAnimation.WriteProperties(props);
+
+            var dbStandard = entrymenu.getUExport(730);
+            props = dbStandard.GetProperties();
+            props.GetProp<ArrayProperty<StructProperty>>("OutputLinks")[1].GetProp<ArrayProperty<StructProperty>>("Links")[1].GetProp<ObjectProperty>("LinkedOp").Value = 2926; //Bioware logo
+            dbStandard.WriteProperties(props);
         }
 
         private Dictionary<string, List<string>> mapNamesToFaceFxRandomizationLists;
@@ -820,7 +843,8 @@ namespace MassEffectRandomizer.Classes
             foreach (var outlink in props.GetProp<ArrayProperty<StructProperty>>("OutputLinks"))
             {
                 var links = outlink.GetProp<ArrayProperty<StructProperty>>("Links");
-                foreach(var link in links) { 
+                foreach (var link in links)
+                {
                     link.GetProp<ObjectProperty>("LinkedOp").Value = 2936; //Comparebool
                 }
             }
