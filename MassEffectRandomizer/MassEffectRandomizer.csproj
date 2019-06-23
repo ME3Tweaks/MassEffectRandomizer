@@ -312,6 +312,13 @@
     <EmbeddedResource Include="staticfiles\planetinfo.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="staticfiles\galaxymapimages\factory\planetconcept1.swf" />
+    <EmbeddedResource Include="staticfiles\galaxymapimages\generic\planetconcept4.swf" />
+    <EmbeddedResource Include="staticfiles\galaxymapimages\generic\planetconcept5.swf" />
+    <EmbeddedResource Include="staticfiles\galaxymapimages\generic\ceres.swf" />
+    <EmbeddedResource Include="staticfiles\galaxymapimages\generic\iceworld.swf" />
+    <EmbeddedResource Include="staticfiles\galaxymapimages\generic\reddwarfworld.swf" />
+    <EmbeddedResource Include="staticfiles\galaxymapimages\generic\venus_generic.swf" />
     <EmbeddedResource Include="staticfiles\PermissionsGranter.exe" />
     <EmbeddedResource Include="staticfiles\MassEffectModderNoGui.exe" />
     <EmbeddedResource Include="staticfiles\psychprofiles.xml" />
@@ -325,6 +332,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="staticfiles\galaxymapimages\citadel\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

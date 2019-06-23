@@ -14,7 +14,7 @@
                       Title="Mass Effect Randomizer" 
                       MinHeight="680" 
                       MinWidth="800"
-                      Height="705.333"
+                      Height="750.333"
                       Width="800">
     <Window.Resources>
         <converters:EnumMatchToBooleanConverter x:Key="enumConverter" />
