@@ -41,7 +41,7 @@ namespace MassEffectRandomizer.Classes
             "ADMIRAL AHERN IS DISAPPOINTED", "OH NO!", "SHEPARRRRRRRRDDDDD!"
         };
 
-        private static readonly string[] RandomSystemNameCollection = {"Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini", "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Kerh-S", "Odyssey", "Xi Draconis", "System o’ Hags", "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion", "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan", "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost", "Stealthed Edge"};
+        private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini", "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Kerh-S", "Odyssey", "Xi Draconis", "System o’ Hags", "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion", "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan", "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost", "Stealthed Edge" };
 
         private const string UPDATE_RANDOMIZING_TEXT = "UPDATE_RANDOMIZING_TEXT";
         private MainWindow mainWindow;
@@ -102,7 +102,7 @@ namespace MassEffectRandomizer.Classes
         private void PerformRandomization(object sender, DoWorkEventArgs e)
         {
             ModifiedFiles = new ConcurrentDictionary<string, string>(); //this will act as a Set since there is no ConcurrentSet
-            Random random = new Random((int) e.Argument);
+            Random random = new Random((int)e.Argument);
 
             //Load TLKs
             mainWindow.CurrentOperationText = "Loading TLKs";
@@ -240,7 +240,7 @@ namespace MassEffectRandomizer.Classes
                         //RandomizeLevelUpChallenge(export, random);
                         break;
                     case "Items_ItemEffectLevels":
-                        if (mainWindow.RANDSETTING_WEAPONS_EFFECTLEVELS)
+                        if (mainWindow.RANDSETTING_WEAPONS_EFFECTLEVELS || mainWindow.RANDSETTING_MOVEMENT_MAKO)
                         {
                             RandomizeWeaponStats(export, random);
                         }
@@ -297,12 +297,12 @@ namespace MassEffectRandomizer.Classes
 
                         break;
 
-                    //RandomizeGalaxyMap(random);
-                    //RandomizeGUISounds(random);
-                    //RandomizeMusic(random);
-                    //RandomizeMovementSpeeds(random);
-                    //RandomizeCharacterCreator2DA(random);
-                    //Dump2DAToExcel();
+                        //RandomizeGalaxyMap(random);
+                        //RandomizeGUISounds(random);
+                        //RandomizeMusic(random);
+                        //RandomizeMovementSpeeds(random);
+                        //RandomizeCharacterCreator2DA(random);
+                        //Dump2DAToExcel();
                 }
 
                 if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && export.ClassName == "BioMorphFace" && export.ObjectName.StartsWith("Player_"))
@@ -371,7 +371,7 @@ namespace MassEffectRandomizer.Classes
                 mainWindow.ProgressBar_Bottom_Min = 0;
                 double morphFaceRandomizationAmount = mainWindow.RANDSETTING_MISC_MAPFACES_AMOUNT;
                 double faceFXRandomizationAmount = mainWindow.RANDSETTING_WACK_FACEFX_AMOUNT;
-                string[] mapBaseNamesToNotRandomize = {"entrymenu", "biog_uiworld"};
+                string[] mapBaseNamesToNotRandomize = { "entrymenu", "biog_uiworld" };
                 for (int i = 0; i < files.Length; i++)
                 {
                     //                    int progress = (int)((i / total) * 100);
@@ -467,7 +467,7 @@ namespace MassEffectRandomizer.Classes
                                     }
 
                                     //Method contains SHouldSave in it (due to try catch).
-                                    RandomizeFaceFX(exp, random, (int) faceFXRandomizationAmount);
+                                    RandomizeFaceFX(exp, random, (int)faceFXRandomizationAmount);
                                 }
                             }
                         }
@@ -782,13 +782,13 @@ namespace MassEffectRandomizer.Classes
         }
 
 
-        private static readonly int[] GalaxyMapImageIdsThatArePlotReserved = {1, 7, 8, 116, 117, 118, 119, 120, 121, 122, 123, 124}; //Plot or Sol planets
-        private static readonly int[] GalaxyMapImageIdsThatAreAsteroidReserved = {70}; //Asteroids
-        private static readonly int[] GalaxyMapImageIdsThatAreFactoryReserved = {6}; //Asteroids
-        private static readonly int[] GalaxyMapImageIdsThatAreMSVReserved = {76, 79, 82, 85}; //MSV Ships
-        private static readonly int[] GalaxyMapImageIdsToNeverRandomize = {127, 128}; //no idea what these are
+        private static readonly int[] GalaxyMapImageIdsThatArePlotReserved = { 1, 7, 8, 116, 117, 118, 119, 120, 121, 122, 123, 124 }; //Plot or Sol planets
+        private static readonly int[] GalaxyMapImageIdsThatAreAsteroidReserved = { 70 }; //Asteroids
+        private static readonly int[] GalaxyMapImageIdsThatAreFactoryReserved = { 6 }; //Asteroids
+        private static readonly int[] GalaxyMapImageIdsThatAreMSVReserved = { 76, 79, 82, 85 }; //MSV Ships
+        private static readonly int[] GalaxyMapImageIdsToNeverRandomize = { 127, 128 }; //no idea what these are
 
-        private void RandomizePlanetImages(Random random)
+        private void RandomizePlanetImages(Random random, Dictionary<int, RandomizedPlanetInfo> planetsRowToRPIMapping, Bio2DA planets2DA)
         {
             mainWindow.CurrentOperationText = "Updating galaxy map images";
 
@@ -799,58 +799,36 @@ namespace MassEffectRandomizer.Classes
             //Citadel
 
             //
+            Dictionary<string, List<string>> galaxyMapGroupResources = new Dictionary<string, List<string>>();
+            var resourceItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages.")).ToList();
+            var uniqueNames = new SortedSet<string>();
 
-            var genericImages = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages.generic.")).Select(x => x.Substring(33)).ToList();
-            var citadelImages = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages.citadel.")).Select(x => x.Substring(33)).ToList();
-            var factoryImages = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages.factory.")).Select(x => x.Substring(33)).ToList();
-            var earthImages = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages.earth.")).Select(x => x.Substring(33)).ToList();
-            var msvImages = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages.msv.")).Select(x => x.Substring(33)).ToList();
+            //Get unique image groups
+            foreach (string str in resourceItems)
+            {
+                string[] parts = str.Split('.');
+                if (parts.Length == 5)
+                {
+                    uniqueNames.Add(parts[3]);
+                }
+            }
 
-            genericImages.Shuffle(random);
-            msvImages.Shuffle(random);
-            earthImages.Shuffle(random);
-            factoryImages.Shuffle(random);
-            citadelImages.Shuffle(random);
+            foreach (string groupname in uniqueNames)
+            {
+                galaxyMapGroupResources[groupname] = resourceItems.Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages."+groupname)).ToList();
+                galaxyMapGroupResources[groupname].Shuffle(random);
+            }
 
             foreach (IExportEntry export in galaxyMapImagesBasegame.Exports)
             {
                 if (export.ObjectName.StartsWith("galMap"))
                 {
-                    int id = int.Parse(export.ObjectName.Substring(6));
-                    if (GalaxyMapImageIdsThatArePlotReserved.Contains(id))
-                    {
+                    int exportNameIndex = int.Parse(export.ObjectName.Substring(6));
+                    // TODO: Frr each item in the RPI mapping, install a corresponding SWF.
+                    // Before we have enough images we will need to check if the current RPI row has an assigned image.
+                    // Once we have enoug hiamges we can just assign ever row an image.
+                    //var gropuname = planetsRowToRPIMapping[]
 
-                    }
-                    else if (GalaxyMapImageIdsThatAreAsteroidReserved.Contains(id))
-                    {
-
-                    }
-                    else if (GalaxyMapImageIdsThatAreMSVReserved.Contains(id))
-                    {
-
-                    }
-                    else if (GalaxyMapImageIdsToNeverRandomize.Contains(id))
-                    {
-                        continue; //skip
-                    }
-                    else if (GalaxyMapImageIdsThatAreFactoryReserved.Contains(id))
-                    {
-                        //Factor
-                        if (factoryImages.Count > 0)
-                        {
-                            ReplaceSWFFromResource(export, factoryImages[0]);
-                            factoryImages.RemoveAt(0);
-                        }
-                    }
-                    else
-                    {
-                        //generic
-                        if (genericImages.Count > 0)
-                        {
-                            ReplaceSWFFromResource(export, genericImages[0]);
-                            genericImages.RemoveAt(0);
-                        }
-                    }
                 }
             }
 
@@ -1059,7 +1037,7 @@ namespace MassEffectRandomizer.Classes
             boolValueForMERSkip.WriteProperty(bValue);
 
             //Extract MER Intro
-            string[] merIntros = {"merintro_a.bik", "merintro_b.bik", "merintro_c.bik"};
+            string[] merIntros = { "merintro_a.bik", "merintro_b.bik", "merintro_c.bik" };
             string merToExtract = merIntros[random.Next(3)];
             Utilities.ExtractInternalFile("merintros." + merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"), true);
 
@@ -1076,7 +1054,7 @@ namespace MassEffectRandomizer.Classes
             ModifiedFiles[entrymenu.FileName] = entrymenu.FileName;
         }
 
-        private static string[] hazardTypes = {"Cold", "Heat", "Toxic", "Radiation", "Vacuum"};
+        private static string[] hazardTypes = { "Cold", "Heat", "Toxic", "Radiation", "Vacuum" };
 
         private void RandomizeHazard(IExportEntry export, Random random)
         {
@@ -1260,7 +1238,7 @@ namespace MassEffectRandomizer.Classes
 
             SVehicleSimTank.WriteProperty(torqueCurve);
 
-            if (random.Next(1) == 0)
+            if (random.Next(1) == 0) //DEBUG ONLY!
             {
                 //Reverse the steering to back wheels
                 //Front
@@ -1275,10 +1253,10 @@ namespace MassEffectRandomizer.Classes
                 var RFSteer = RFWheel.GetProperty<FloatProperty>("SteerFactor");
                 var RRSteer = RRWheel.GetProperty<FloatProperty>("SteerFactor");
 
-                LFSteer.Value = -0.4f;
-                LRSteer.Value = 3f;
-                RFSteer.Value = -0.4f;
-                RRSteer.Value = 3f;
+                LFSteer.Value = 0f;
+                LRSteer.Value = 2f;
+                RFSteer.Value = 0f;
+                RRSteer.Value = 2f;
 
                 LFWheel.WriteProperty(LFSteer);
                 RFWheel.WriteProperty(RFSteer);
@@ -1308,18 +1286,19 @@ namespace MassEffectRandomizer.Classes
 
             XElement rootElement = XElement.Parse(fileContents);
             var allMapRandomizationInfo = (from e in rootElement.Elements("RandomizedPlanetInfo")
-                select new RandomizedPlanetInfo
-                {
-                    PlanetName = (string) e.Element("PlanetName"),
-                    PlanetName2 = (string) e.Element("PlanetName2"), //Original name (plot planets only)
-                    PlanetDescription = (string) e.Element("PlanetDescription"),
-                    IsMSV = (bool) e.Element("IsMSV"),
-                    IsAsteroidBelt = (bool) e.Element("IsAsteroidBelt"),
-                    PreventShuffle = (bool) e.Element("PreventShuffle"),
-                    RowID = (int) e.Element("RowID"),
-                    MapBaseNames = e.Elements("MapBaseNames")
-                        .Select(r => r.Value).ToList()
-                }).ToList();
+                                           select new RandomizedPlanetInfo
+                                           {
+                                               PlanetName = (string)e.Element("PlanetName"),
+                                               PlanetName2 = (string)e.Element("PlanetName2"), //Original name (plot planets only)
+                                               PlanetDescription = (string)e.Element("PlanetDescription"),
+                                               IsMSV = (bool)e.Element("IsMSV"),
+                                               IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
+                                               PreventShuffle = (bool)e.Element("PreventShuffle"),
+                                               RowID = (int)e.Element("RowID"),
+                                               MapBaseNames = e.Elements("MapBaseNames")
+                                                   .Select(r => r.Value).ToList(),
+                                               ImageGroup = e.Element("ImageGroup")
+                                           }).ToList();
 
             var msvInfos = allMapRandomizationInfo.Where(x => x.IsMSV).ToList();
             var asteroidInfos = allMapRandomizationInfo.Where(x => x.IsAsteroidBelt).ToList();
@@ -1412,6 +1391,7 @@ namespace MassEffectRandomizer.Classes
             //mainWindow.CurrentProgressValue = 0;
             //mainWindow.ProgressBar_Bottom_Max = planets2DA.RowCount;
             //mainWindow.ProgressBarIndeterminate = false;
+            var rowRPIMap = new Dictionary<int, RandomizedPlanetInfo>();
             for (int i = 0; i < planets2DA.RowCount; i++)
             {
                 //mainWindow.CurrentProgressValue = i;
@@ -1452,6 +1432,8 @@ namespace MassEffectRandomizer.Classes
                         }
                     }
 
+
+                    rowRPIMap[i] = rpi; //Map row in this table to the assigned RPI
                     string newPlanetName = rpi.PlanetName;
                     if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION_PLOTPLANET && rpi.PlanetName2 != null)
                     {
@@ -1506,11 +1488,11 @@ namespace MassEffectRandomizer.Classes
             }
 
             //UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
-            RandomizePlanetImages(random);
+            RandomizePlanetImages(random, rowRPIMap, planets2DA);
         }
 
 
-        static readonly List<char> englishVowels = new List<char>(new char[] {'a', 'e', 'i', 'o', 'u'});
+        static readonly List<char> englishVowels = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
 
         /// <summary>
         /// Swap the vowels around
@@ -1520,7 +1502,7 @@ namespace MassEffectRandomizer.Classes
         {
             if (scottishVowelOrdering == null)
             {
-                scottishVowelOrdering = new List<char>(new char[] {'a', 'e', 'i', 'o', 'u'});
+                scottishVowelOrdering = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
                 scottishVowelOrdering.Shuffle(random);
             }
 
@@ -1575,7 +1557,7 @@ namespace MassEffectRandomizer.Classes
                                     }
                                     else
                                     {
-                                        newStringAsChars[i] = scottishVowelOrdering[(char) vowelIndex];
+                                        newStringAsChars[i] = scottishVowelOrdering[(char)vowelIndex];
                                     }
                                 }
                             }
@@ -1807,11 +1789,11 @@ namespace MassEffectRandomizer.Classes
 
             XElement rootElement = XElement.Parse(fileContents);
             var crawls = (from e in rootElement.Elements("CrawlText")
-                select new OpeningCrawl()
-                {
-                    CrawlText = e.Value,
-                    RequiresFaceRandomizer = e.Element("requiresfacerandomizer") != null && ((bool) e.Element("requiresfacerandomizer"))
-                }).ToList();
+                          select new OpeningCrawl()
+                          {
+                              CrawlText = e.Value,
+                              RequiresFaceRandomizer = e.Element("requiresfacerandomizer") != null && ((bool)e.Element("requiresfacerandomizer"))
+                          }).ToList();
             crawls = crawls.Where(x => x.CrawlText != "").ToList();
 
             if (!mainWindow.RANDSETTING_MISC_MAPFACES)
@@ -1907,7 +1889,7 @@ namespace MassEffectRandomizer.Classes
             mainWindow.CurrentOperationText = "Randomizing Movement Speeds";
 
             Bio2DA movementSpeed2DA = new Bio2DA(export);
-            int[] colsToRandomize = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 17, 18, 19};
+            int[] colsToRandomize = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 17, 18, 19 };
             for (int row = 0; row < movementSpeed2DA.RowNames.Count(); row++)
             {
                 for (int i = 0; i < colsToRandomize.Count(); i++)
@@ -1977,9 +1959,9 @@ namespace MassEffectRandomizer.Classes
         private void RandomizeCharacter(IExportEntry export, Random random)
         {
             bool hasChanges = false;
-            int[] humanLightArmorManufacturers = {373, 374, 375, 379, 383, 451};
-            int[] bioampManufacturers = {341, 342, 343, 345, 410, 496, 497, 498, 526};
-            int[] omnitoolManufacturers = {362, 363, 364, 366, 411, 499, 500, 501, 527};
+            int[] humanLightArmorManufacturers = { 373, 374, 375, 379, 383, 451 };
+            int[] bioampManufacturers = { 341, 342, 343, 345, 410, 496, 497, 498, 526 };
+            int[] omnitoolManufacturers = { 362, 363, 364, 366, 411, 499, 500, 501, 527 };
             List<string> actorTypes = new List<string>();
             actorTypes.Add("BIOG_HumanFemale_Hench_C.hench_humanFemale");
             actorTypes.Add("BIOG_HumanMale_Hench_C.hench_humanmale");
@@ -2004,7 +1986,7 @@ namespace MassEffectRandomizer.Classes
                         var actorNameVal = actorTypes[indexToChoose];
                         actorTypes.RemoveAt(indexToChoose);
                         Console.WriteLine("Character Randomizer HENCH ARCHETYPE [" + row + "][2] value is now " + actorNameVal);
-                        character2da[row, 2].Data = BitConverter.GetBytes((ulong) export.FileRef.findName(actorNameVal));
+                        character2da[row, 2].Data = BitConverter.GetBytes((ulong)export.FileRef.findName(actorNameVal));
                         hasChanges = true;
                     }
                 }
@@ -2080,7 +2062,7 @@ namespace MassEffectRandomizer.Classes
 
             Console.WriteLine("Randomizing Galaxy Map - Systems");
             Bio2DA system2da = new Bio2DA(export);
-            int[] colsToRandomize = {2, 3}; //X,Y
+            int[] colsToRandomize = { 2, 3 }; //X,Y
             for (int row = 0; row < system2da.RowNames.Count(); row++)
             {
                 for (int i = 0; i < colsToRandomize.Count(); i++)
@@ -2113,7 +2095,7 @@ namespace MassEffectRandomizer.Classes
 
             Console.WriteLine("Randomizing Galaxy Map - Planets");
             Bio2DA planet2da = new Bio2DA(export);
-            int[] colsToRandomize = {2, 3}; //X,Y
+            int[] colsToRandomize = { 2, 3 }; //X,Y
             for (int row = 0; row < planet2da.RowNames.Count(); row++)
             {
                 for (int i = 0; i < planet2da.ColumnNames.Count(); i++)
@@ -2204,46 +2186,61 @@ namespace MassEffectRandomizer.Classes
         /// <param name="random">Random number generator</param>
         private void RandomizeWeaponStats(IExportEntry export, Random random)
         {
-            mainWindow.CurrentOperationText = "Randomizing Items - Weapon Stats";
+            mainWindow.CurrentOperationText = "Randomizing Item Levels (only partially implemented)";
 
 
-            Console.WriteLine("Randomizing Items - Item Effect Levels");
+            //Console.WriteLine("Randomizing Items - Item Effect Levels");
             Bio2DA itemeffectlevels2da = new Bio2DA(export);
-            for (int row = 0; row < itemeffectlevels2da.RowNames.Count(); row++)
+
+            if (mainWindow.RANDSETTING_MOVEMENT_MAKO)
             {
-                Bio2DACell propertyCell = itemeffectlevels2da[row, 2];
-                if (propertyCell != null)
+                float makoCannonFiringRate = random.NextFloat(0.1, 3);
+                float makoCannonForce = random.NextFloat(1000, 5000) + random.NextFloat(0, 2000);
+                float makoCannonDamage = 120 / makoCannonFiringRate; //to same damage amount.
+                float damageincrement = random.NextFloat(60, 90);
+                for (int i = 0; i < 10; i++)
                 {
-                    int gameEffect = propertyCell.GetIntValue();
-                    switch (gameEffect)
-                    {
-                        case 15:
-                            //GE_Weap_Damage
-                            ItemEffectLevels.Randomize_GE_Weap_Damage(itemeffectlevels2da, row, random);
-                            break;
-                        case 17:
-                            //GE_Weap_RPS
-                            ItemEffectLevels.Randomize_GE_Weap_RPS(itemeffectlevels2da, row, random);
-                            break;
-                        case 447:
-                            //GE_Weap_Projectiles
-                            ItemEffectLevels.Randomize_GE_Weap_PhysicsForce(itemeffectlevels2da, row, random);
-                            break;
-                        case 1199:
-                            //GE_Weap_HeatPerShot
-                            ItemEffectLevels.Randomize_GE_Weap_HeatPerShot(itemeffectlevels2da, row, random);
-                            break;
-                        case 1201:
-                            //GE_Weap_HeatLossRate
-                            ItemEffectLevels.Randomize_GE_Weap_HeatLossRate(itemeffectlevels2da, row, random);
-                            break;
-                        case 1259:
-                            //GE_Weap_HeatLossRateOH
-                            ItemEffectLevels.Randomize_GE_Weap_HeatLossRateOH(itemeffectlevels2da, row, random);
-                            break;
-                    }
+                    itemeffectlevels2da[598, 4 + i].Data = BitConverter.GetBytes(makoCannonFiringRate); //RPS
+                    itemeffectlevels2da[604, 4 + i].Data = BitConverter.GetBytes(makoCannonDamage + (i * damageincrement)); //Damage
+                    itemeffectlevels2da[617, 4 + i].Data = BitConverter.GetBytes(makoCannonForce);
                 }
             }
+            //Randomize 
+            //for (int row = 0; row < itemeffectlevels2da.RowNames.Count(); row++)
+            //{
+            //    Bio2DACell propertyCell = itemeffectlevels2da[row, 2];
+            //    if (propertyCell != null)
+            //    {
+            //        int gameEffect = propertyCell.GetIntValue();
+            //        switch (gameEffect)
+            //        {
+            //            case 15:
+            //                //GE_Weap_Damage
+            //                ItemEffectLevels.Randomize_GE_Weap_Damage(itemeffectlevels2da, row, random);
+            //                break;
+            //            case 17:
+            //                //GE_Weap_RPS
+            //                ItemEffectLevels.Randomize_GE_Weap_RPS(itemeffectlevels2da, row, random);
+            //                break;
+            //            case 447:
+            //                //GE_Weap_Projectiles
+            //                ItemEffectLevels.Randomize_GE_Weap_PhysicsForce(itemeffectlevels2da, row, random);
+            //                break;
+            //            case 1199:
+            //                //GE_Weap_HeatPerShot
+            //                ItemEffectLevels.Randomize_GE_Weap_HeatPerShot(itemeffectlevels2da, row, random);
+            //                break;
+            //            case 1201:
+            //                //GE_Weap_HeatLossRate
+            //                ItemEffectLevels.Randomize_GE_Weap_HeatLossRate(itemeffectlevels2da, row, random);
+            //                break;
+            //            case 1259:
+            //                //GE_Weap_HeatLossRateOH
+            //                ItemEffectLevels.Randomize_GE_Weap_HeatLossRateOH(itemeffectlevels2da, row, random);
+            //                break;
+            //        }
+            //    }
+            //}
 
             itemeffectlevels2da.Write2DAToExport();
         }
@@ -2280,8 +2277,8 @@ namespace MassEffectRandomizer.Classes
             bool randomizeLevels = true; //will use better later
             Console.WriteLine("Randomizing Starting Weapons");
             Bio2DA startingitems2da = new Bio2DA(export);
-            int[] rowsToRandomize = {0, 1, 2, 3};
-            int[] manufacturers = {324, 325, 326, 327, 412, 436, 502, 503, 504, 525, 582, 583, 584, 598, 599, 600, 601};
+            int[] rowsToRandomize = { 0, 1, 2, 3 };
+            int[] manufacturers = { 324, 325, 326, 327, 412, 436, 502, 503, 504, 525, 582, 583, 584, 598, 599, 600, 601 };
             foreach (int row in rowsToRandomize)
             {
                 //Columns:
@@ -2316,7 +2313,7 @@ namespace MassEffectRandomizer.Classes
             //109 = Intimidate
             //229 = Setup_Player -> Spectre Training
             //228 = Setup_Player_Squad
-            int[] powersToNotReassign = {108, 109};
+            int[] powersToNotReassign = { 108, 109 };
             var powersToReassignPlayerMaster = new List<int>();
             var powersToReassignSquadMaster = new List<int>();
 
@@ -2472,7 +2469,7 @@ namespace MassEffectRandomizer.Classes
 
             //Patch out Destroyer Tutorial as it may cause a softlock as it checks for kaidan throw
             ME1Package Pro10_08_Dsg = new ME1Package(Path.Combine(Utilities.GetGamePath(), "BioGame", "CookedPC", "Maps", "PRO", "DSG", "BIOA_PRO10_08_DSG.SFM"));
-            IExportEntry GDInvulnerabilityCounter = (IExportEntry) Pro10_08_Dsg.getEntry(13521);
+            IExportEntry GDInvulnerabilityCounter = (IExportEntry)Pro10_08_Dsg.getEntry(13521);
             var invulnCount = GDInvulnerabilityCounter.GetProperty<IntProperty>("IntValue");
             if (invulnCount != null && invulnCount.Value != 0)
             {
@@ -2628,8 +2625,8 @@ namespace MassEffectRandomizer.Classes
             return true;*/
         }
 
-        private static string[] TalentEffectsToRandomize_THROW = {"GE_TKThrow_CastingTime", "GE_TKThrow_Kickback", "GE_TKThrow_CooldownTime", "GE_TKThrow_ImpactRadius", "GE_TKThrow_Force"};
-        private static string[] TalentEffectsToRandomize_LIFT = {"GE_TKLift_Force", "GE_TKLift_EffectDuration", "GE_TKLift_ImpactRadius", "GE_TKLift_CooldownTime"};
+        private static string[] TalentEffectsToRandomize_THROW = { "GE_TKThrow_CastingTime", "GE_TKThrow_Kickback", "GE_TKThrow_CooldownTime", "GE_TKThrow_ImpactRadius", "GE_TKThrow_Force" };
+        private static string[] TalentEffectsToRandomize_LIFT = { "GE_TKLift_Force", "GE_TKLift_EffectDuration", "GE_TKLift_ImpactRadius", "GE_TKLift_CooldownTime" };
 
         public bool RunMapRandomizerPass
         {
@@ -2748,71 +2745,71 @@ namespace MassEffectRandomizer.Classes
                         switch (talentID)
                         {
                             case 49: //Throw
-                            {
-                                var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
-                                int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
-
-                                string basicFormat = "%HEADER%\n\nThrows enemies away from the caster with a force of %TOKEN1% Newtons\n\nRadius: %TOKEN2% m\nTime To Cast: %TOKEN3% sec\nRecharge Time: %TOKEN4% sec\nAccuracy Cost: %TOKEN5%%";
-                                int token1row = 175; //Force
-                                int token2row = 173; //impact radius
-                                int token3row = 170; //Casting time
-                                int token4row = 172; //Cooldown
-                                int token5row = 171; //Accuracy cost
-
-                                string force = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string radius = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isMeters: true);
-                                string time = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string cooldown = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string cost = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
-
-                                string header = "Throw";
-                                if (level > 6)
                                 {
-                                    header = "Advanced Throw";
-                                }
+                                    var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
+                                    int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
 
-                                if (level >= 11)
-                                {
-                                    header = "Master Throw";
-                                }
+                                    string basicFormat = "%HEADER%\n\nThrows enemies away from the caster with a force of %TOKEN1% Newtons\n\nRadius: %TOKEN2% m\nTime To Cast: %TOKEN3% sec\nRecharge Time: %TOKEN4% sec\nAccuracy Cost: %TOKEN5%%";
+                                    int token1row = 175; //Force
+                                    int token2row = 173; //impact radius
+                                    int token3row = 170; //Casting time
+                                    int token4row = 172; //Cooldown
+                                    int token5row = 171; //Accuracy cost
 
-                                string formatted = FormatString(basicFormat, header, force, radius, time, cooldown, cost);
-                                talkFiles.ForEach(x => x.replaceString(stringId, formatted));
-                            }
+                                    string force = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string radius = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isMeters: true);
+                                    string time = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cooldown = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cost = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
+
+                                    string header = "Throw";
+                                    if (level > 6)
+                                    {
+                                        header = "Advanced Throw";
+                                    }
+
+                                    if (level >= 11)
+                                    {
+                                        header = "Master Throw";
+                                    }
+
+                                    string formatted = FormatString(basicFormat, header, force, radius, time, cooldown, cost);
+                                    talkFiles.ForEach(x => x.replaceString(stringId, formatted));
+                                }
                                 break;
                             case 50: //Lift
-                            {
-                                var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
-                                int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
-
-                                string basicFormat = "%HEADER%\n\nLifts everything within %TOKEN1% m of the target into the air, rendering enemies immobile and unable to attack. Drops them when it expires.\n\nDuration: %TOKEN2% sec\nRecharge Time: %TOKEN3% sec\nAccuracy Cost: %TOKEN4%%\nLift Force: %TOKEN5% Newtons";
-                                int token1row = 175; //impact radius
-                                int token2row = 189; //duration
-                                int token3row = 186; //recharge
-                                int token4row = 185; //accuacy cost
-                                int token5row = 190; //lift force
-
-                                string radius = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string duration = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string cooldown = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-                                string cost = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
-                                string force = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
-
-
-                                string header = "Lift";
-                                if (level > 6)
                                 {
-                                    header = "Advanced Lift";
-                                }
+                                    var guitlkcolumn = columnPatternStart + 2 + (level * numColumnsPerLevelGui);
+                                    int stringId = talentGUI2DA[i, guitlkcolumn].GetIntValue();
 
-                                if (level >= 11)
-                                {
-                                    header = "Master Lift";
-                                }
+                                    string basicFormat = "%HEADER%\n\nLifts everything within %TOKEN1% m of the target into the air, rendering enemies immobile and unable to attack. Drops them when it expires.\n\nDuration: %TOKEN2% sec\nRecharge Time: %TOKEN3% sec\nAccuracy Cost: %TOKEN4%%\nLift Force: %TOKEN5% Newtons";
+                                    int token1row = 175; //impact radius
+                                    int token2row = 189; //duration
+                                    int token3row = 186; //recharge
+                                    int token4row = 185; //accuacy cost
+                                    int token5row = 190; //lift force
 
-                                string formatted = FormatString(basicFormat, header, radius, duration, cooldown, cost, force);
-                                talkFiles.ForEach(x => x.replaceString(stringId, formatted));
-                            }
+                                    string radius = talentEffectLevels2DA[token1row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string duration = talentEffectLevels2DA[token2row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cooldown = talentEffectLevels2DA[token3row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+                                    string cost = talentEffectLevels2DA[token4row, level + statTableLevelStartColumn].GetTlkDisplayableValue(isPercent: true);
+                                    string force = talentEffectLevels2DA[token5row, level + statTableLevelStartColumn].GetTlkDisplayableValue();
+
+
+                                    string header = "Lift";
+                                    if (level > 6)
+                                    {
+                                        header = "Advanced Lift";
+                                    }
+
+                                    if (level >= 11)
+                                    {
+                                        header = "Master Lift";
+                                    }
+
+                                    string formatted = FormatString(basicFormat, header, radius, duration, cooldown, cost, force);
+                                    talkFiles.ForEach(x => x.replaceString(stringId, formatted));
+                                }
                                 break;
                         }
                     }
@@ -2874,7 +2871,7 @@ namespace MassEffectRandomizer.Classes
                         else
                         {
                             //Level Offset
-                            challenge2da[row, col].Data = BitConverter.GetBytes((int) (challenge2da[row, col].GetIntValue() * multiplier));
+                            challenge2da[row, col].Data = BitConverter.GetBytes((int)(challenge2da[row, col].GetIntValue() * multiplier));
                         }
 
                         Console.WriteLine("[" + row + "][" + col + "]  (" + challenge2da.ColumnNames[col] + ") value is now " + challenge2da[row, 1].GetDisplayableValue());
@@ -2969,7 +2966,7 @@ namespace MassEffectRandomizer.Classes
                             //Make new item
                             string rgbNewName = GetRandomColorRBGStr(random);
                             int newValue = export.FileRef.FindNameOrAdd(rgbNewName);
-                            cell.Data = BitConverter.GetBytes((ulong) newValue); //name is 8 bytes
+                            cell.Data = BitConverter.GetBytes((ulong)newValue); //name is 8 bytes
                             hasChanges = true;
                         }
                     }
@@ -3209,7 +3206,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizePregeneratedHead(IExportEntry export, Random random)
         {
-            int[] floatSliderIndexesToRandomize = {5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 24, 25, 26, 27, 29, 30};
+            int[] floatSliderIndexesToRandomize = { 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 24, 25, 26, 27, 29, 30 };
             Dictionary<int, int> columnMaxDictionary = new Dictionary<int, int>();
             columnMaxDictionary[1] = 7; //basehead
             columnMaxDictionary[2] = 6; //skintone
@@ -3227,7 +3224,7 @@ namespace MassEffectRandomizer.Classes
 
             if (export.ObjectName.Contains("Female"))
             {
-                floatSliderIndexesToRandomize = new int[] {5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 24, 25, 26, 27, 29, 30};
+                floatSliderIndexesToRandomize = new int[] { 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 24, 25, 26, 27, 29, 30 };
                 columnMaxDictionary.Clear();
                 //there are female specific values that must be used
                 columnMaxDictionary[1] = 10; //basehead
@@ -3291,7 +3288,7 @@ namespace MassEffectRandomizer.Classes
             Console.WriteLine(randomizingtext);
             Bio2DA music2da = new Bio2DA(export);
             List<byte[]> names = new List<byte[]>();
-            int[] colsToRandomize = {0, 5, 6, 7, 8, 9, 10, 11, 12};
+            int[] colsToRandomize = { 0, 5, 6, 7, 8, 9, 10, 11, 12 };
             for (int row = 0; row < music2da.RowNames.Count(); row++)
             {
                 foreach (int col in colsToRandomize)
@@ -3378,7 +3375,7 @@ namespace MassEffectRandomizer.Classes
             mainWindow.CurrentOperationText = randomizingtext;
             Console.WriteLine(randomizingtext);
             Bio2DA guisounds2da = new Bio2DA(export);
-            int[] colsToRandomize = {0}; //sound name
+            int[] colsToRandomize = { 0 }; //sound name
             List<byte[]> names = new List<byte[]>();
 
             if (requiredprefix != "music")
@@ -3437,7 +3434,7 @@ namespace MassEffectRandomizer.Classes
         {
             double mantissa = (random.NextDouble() * 2.0) - 1.0;
             double exponent = Math.Pow(2.0, random.Next(-3, 20));
-            return (float) (mantissa * exponent);
+            return (float)(mantissa * exponent);
         }
 
         static string GetRandomColorRBGStr(Random random)

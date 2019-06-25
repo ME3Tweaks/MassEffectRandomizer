@@ -273,6 +273,17 @@
     <EmbeddedResource Include="staticfiles\merintros\merintro_c.bik" />
     <EmbeddedResource Include="staticfiles\exportreplacements\InterpTrackMove967_EntryMenu_CameraPan.bin" />
     <EmbeddedResource Include="staticfiles\exportreplacements\InterpTrackMove964_EntryMenu_CameraFOV.bin" />
+    <None Include="staticfiles\galaxymapimages\citadel\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\city\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\desert\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\destroyedworld\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\earth\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\factory\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\foldweapon\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\generic\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\sky\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\smokey\desktop.ini" />
+    <None Include="staticfiles\galaxymapimages\wilderness\desktop.ini" />
     <Resource Include="fonts\aerolight.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -312,6 +323,38 @@
     <EmbeddedResource Include="staticfiles\planetinfo.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="staticfiles\galaxymapimages\city\canyoncity.swf" />
+    <Content Include="staticfiles\galaxymapimages\city\ellipticalcity.swf" />
+    <Content Include="staticfiles\galaxymapimages\city\islandcity.swf" />
+    <Content Include="staticfiles\galaxymapimages\city\olalandingpad.swf" />
+    <Content Include="staticfiles\galaxymapimages\city\runoffoverall.swf" />
+    <Content Include="staticfiles\galaxymapimages\city\switchbackoverall.swf" />
+    <Content Include="staticfiles\galaxymapimages\desert\bonecolossus.swf" />
+    <Content Include="staticfiles\galaxymapimages\desert\desert.swf" />
+    <Content Include="staticfiles\galaxymapimages\desert\monolithdesert.swf" />
+    <Content Include="staticfiles\galaxymapimages\destroyedworld\fdsidebacklit.swf" />
+    <Content Include="staticfiles\galaxymapimages\destroyedworld\orbitalwasteslandvistas.swf" />
+    <Content Include="staticfiles\galaxymapimages\destroyedworld\reprieve.swf" />
+    <Content Include="staticfiles\galaxymapimages\factory\o2demeterconcept.swf" />
+    <Content Include="staticfiles\galaxymapimages\factory\reclamationfactory.swf" />
+    <Content Include="staticfiles\galaxymapimages\factory\skynomadsgameconcept.swf" />
+    <Content Include="staticfiles\galaxymapimages\factory\unstablemagneticfieldlavaflood.swf" />
+    <Content Include="staticfiles\galaxymapimages\foldweapon\titanfallthefoldweaponexplosion.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\icedesert.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\planetarycoremining.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\rustylug.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\spacewarpmachinesday.swf" />
+    <Content Include="staticfiles\galaxymapimages\sky\militiaabovehorizon.swf" />
+    <Content Include="staticfiles\galaxymapimages\smokey\smokeysrevenge.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\aroundthebend.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\askew.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\azurecove.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\coastal.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\mountainhouse.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\river.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\swamp.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\theoracle.swf" />
+    <Content Include="staticfiles\galaxymapimages\wilderness\treescape.swf" />
     <EmbeddedResource Include="staticfiles\galaxymapimages\factory\planetconcept1.swf" />
     <EmbeddedResource Include="staticfiles\galaxymapimages\generic\planetconcept4.swf" />
     <EmbeddedResource Include="staticfiles\galaxymapimages\generic\planetconcept5.swf" />
@@ -333,9 +376,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="staticfiles\galaxymapimages\citadel\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>if $(ConfigurationName) == Debug ("%25ProgramFiles(x86)%25\Microsoft Visual Studio\2019\Community\Common7\IDE\TextTransform.exe" -a !!build!true "$(ProjectDir)Properties\AssemblyInfo.tt") ELSE ("%25ProgramFiles(x86)%25\Microsoft Visual Studio\2019\Community\Common7\IDE\TextTransform.exe" -a !!revision!true -a !!build!true "$(ProjectDir)Properties\AssemblyInfo.tt")
