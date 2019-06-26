@@ -301,8 +301,8 @@
     <None Include="costura32\lzo2wrapper.dll" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="staticfiles\galaxymapimages\**\*.swf" />
     <EmbeddedResource Include="staticfiles\**\*.bik" />
+    <EmbeddedResource Include="staticfiles\galaxymapimages\**\*.swf" />
     <EmbeddedResource Include="staticfiles\*.xml" />
     <EmbeddedResource Include="staticfiles\*.exe" />
     <EmbeddedResource Include="staticfiles\exportreplacements\*.bin" />
