@@ -301,6 +301,16 @@
     <None Include="costura32\lzo2wrapper.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="staticfiles\galaxymapimages\castle\castellum.swf" />
+    <Content Include="staticfiles\galaxymapimages\castle\thecastle.swf" />
+    <Content Include="staticfiles\galaxymapimages\destroyedworld\dyingspaceport.swf" />
+    <Content Include="staticfiles\galaxymapimages\destroyedworld\thecrab.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\fromthesuntothewheatfield.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\giants.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\randomconcept2.swf" />
+    <Content Include="staticfiles\galaxymapimages\generic\risingmoons.swf" />
+    <Content Include="staticfiles\galaxymapimages\ship\vesperrtu.swf" />
+    <Content Include="staticfiles\galaxymapimages\sky\centauri-0234.swf" />
     <EmbeddedResource Include="staticfiles\galaxymapimages\**\*.swf" />
     <EmbeddedResource Include="staticfiles\**\*.bik" />
     <EmbeddedResource Include="staticfiles\*.xml" />
