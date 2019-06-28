@@ -221,6 +221,26 @@ namespace MassEffectRandomizer.Classes
             return false;
         }
 
+        /// <summary>
+        /// Splits string on space, period and :.  Returns the index of the word or -1 if not found
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="word">Word we are searching for</param>
+        /// <returns></returns>
+        public static int IndexOfWord(this string s, string word)
+        {
+            string[] ar = s.Split(' ', '.', ':'); //Split on space and periods
+
+            int i = 0;
+            foreach (string str in ar)
+            {
+                if (str.ToLower() == word.ToLower())
+                    return i;
+                i++;
+            }
+            return -1;
+        }
+
         public static string TrimLines(this string s)
         {
 

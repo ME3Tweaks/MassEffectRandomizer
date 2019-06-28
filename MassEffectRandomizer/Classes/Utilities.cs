@@ -73,7 +73,7 @@ namespace MassEffectRandomizer.Classes
             string result = string.Empty;
             var items = typeof(MainWindow).Assembly.GetManifestResourceNames();
             using (Stream stream = typeof(MainWindow).Assembly.
-                       GetManifestResourceStream("MassEffectRandomizer.staticfiles." + filename))
+                       GetManifestResourceStream("MassEffectRandomizer.staticfiles.text." + filename))
             {
                 using (StreamReader sr = new StreamReader(stream))
                 {
@@ -119,7 +119,7 @@ namespace MassEffectRandomizer.Classes
             if (!File.Exists(extractedPath) || overwrite)
             {
                 //Extract LZMA so we can compress log for upload
-                using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles." + executableFilename))
+                using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles.executables." + executableFilename))
                 {
                     using (var file = new FileStream(extractedPath, FileMode.Create, FileAccess.Write))
                     {

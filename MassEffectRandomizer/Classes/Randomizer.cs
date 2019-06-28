@@ -21,28 +21,12 @@ using Serilog;
 using Object = System.Object;
 using System.Reflection;
 using System.Globalization;
+using StringComparison = System.StringComparison;
 
 namespace MassEffectRandomizer.Classes
 {
     class Randomizer
     {
-
-        private static readonly string[] RandomClusterNameCollection =
-        {
-            "Serpent Cluster", "Zero", "Phendrana", "Kamino", "Kovac Nebula", "Akkala", "Lanayru Verge", "Kyramud", "Tolase", "Kirigiri",
-            "Ascension Sigma", "Epsilon", "Rodin", "Gilgamesh", "Enkidu", "Ventus", "Agrias", "Canopus", "Tartarose", "Dorgalua", "Losstarot",
-            "Onyx Tau", "Himura", "Baltoy", "Arugula", "Wily’s Castle"
-        };
-
-        private static readonly string[] GameOverTexts =
-        {
-            "CRITICAL MISSION FAILURE", "YA DONE GOOF'D", "YOU DIED", "PRESS F TO PAY YOUR RESPECTS", "REST IN PEACE",
-            "SLEEP WELL", "ARE YOU EVEN TRYING?", "THE CYCLE CONTINUES", "MAY WE MEET AGAIN", "THAT COULD HAVE GONE BETTER",
-            "ADMIRAL AHERN IS DISAPPOINTED", "OH NO!", "SHEPARRRRRRRRDDDDD!"
-        };
-
-        private static readonly string[] RandomSystemNameCollection = { "Lylat", "Cygnus Wing", "Omega-Xis", "Ophiuca", "Godot", "Gemini", "Cepheus", "Boreal", "Lambda Scorpii", "Polaris", "Corvus", "Atreides", "Mira", "Kerh-S", "Odyssey", "Xi Draconis", "System o’ Hags", "Sirius", "Osiris", "Forsaken", "Daibazaal", "Tamriel", "Cintra", "Redania", "Dunwall", "Ouroboros", "Alinos", "Chozodia", "Hollow Bastion", "Mac Anu", "Dol Dona", "Breg Epona", "Tartarga", "Rozarria", "Gondolin", "Nargothrond", "Numenor", "Beleriand", "Valinor", "Thedas", "Vulcan", "Magmoor", "Hulick", "Infinity", "Atlas", "Hypnos", "Janus", "Cosmic Wall", "Gra’tua Cuun", "Ghost", "Stealthed Edge" };
-
         private const string UPDATE_RANDOMIZING_TEXT = "UPDATE_RANDOMIZING_TEXT";
         private MainWindow mainWindow;
         private BackgroundWorker randomizationWorker;
@@ -119,6 +103,7 @@ namespace MassEffectRandomizer.Classes
                     Tlks.Add(tlk);
                 }
             }
+
             ////Test
             //ME1Package test = new ME1Package(@"D:\Origin Games\Mass Effect\BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_06_DSG.SFM");
             //var morphFaces = test.Exports.Where(x => x.ClassName == "BioMorphFace").ToList();
@@ -130,9 +115,10 @@ namespace MassEffectRandomizer.Classes
             if (mainWindow.RANDSETTING_MISC_GAMEOVERTEXT)
             {
                 mainWindow.CurrentOperationText = "Randoming Game Over text";
-                List<string> shuffledGameOverTexts = new List<string>(GameOverTexts);
-                shuffledGameOverTexts.Shuffle(random);
-                var gameOverText = shuffledGameOverTexts[0];
+                string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("gameovertexts.xml");
+                XElement rootElement = XElement.Parse(fileContents);
+                var gameoverTexts = rootElement.Elements("gameovertext").Select(x => x.Value).ToList();
+                var gameOverText = gameoverTexts[random.Next(gameoverTexts.Count)];
                 foreach (TalkFile tlk in Tlks)
                 {
                     tlk.replaceString(157152, gameOverText);
@@ -489,6 +475,16 @@ namespace MassEffectRandomizer.Classes
                             //UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
                         }
 
+                        if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION && package.LocalTalkFiles.Any())
+                        {
+                            if (!loggedFilename)
+                            {
+                                Log.Information("Randomizing map file: " + files[i]);
+                                loggedFilename = true;
+                            }
+                            UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
+                        }
+
                         foreach (var talkFile in package.LocalTalkFiles.Where(x => x.Modified))
                         {
                             talkFile.saveToExport();
@@ -815,7 +811,7 @@ namespace MassEffectRandomizer.Classes
 
             foreach (string groupname in uniqueNames)
             {
-                galaxyMapGroupResources[groupname] = resourceItems.Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages."+groupname)).ToList();
+                galaxyMapGroupResources[groupname] = resourceItems.Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages." + groupname)).ToList();
                 galaxyMapGroupResources[groupname].Shuffle(random);
             }
 
@@ -1300,6 +1296,20 @@ namespace MassEffectRandomizer.Classes
                                                ImageGroup = e.Element("ImageGroup")
                                            }).ToList();
 
+            fileContents = Utilities.GetEmbeddedStaticFilesTextFile("galaxymapclusters.xml");
+            rootElement = XElement.Parse(fileContents);
+            var suffixedClusterNames = rootElement.Elements("suffixedclustername").Select(x => x.Value).ToList(); //Used for assignments
+            var suffixedClusterNamesForPreviousLookup = rootElement.Elements("suffixedclustername").Select(x => x.Value).ToList(); //Used to lookup previous assignments 
+            var vanillaSuffixedClusterNames = rootElement.Elements("originalsuffixedname").Select(x => x.Value).ToList();
+            var nonSuffixedClusterNames = rootElement.Elements("nonsuffixedclustername").Select(x => x.Value).ToList();
+            suffixedClusterNames.Shuffle(random);
+            nonSuffixedClusterNames.Shuffle(random);
+
+            fileContents = Utilities.GetEmbeddedStaticFilesTextFile("galaxymapsystems.xml");
+            rootElement = XElement.Parse(fileContents);
+            var shuffledSystemNames = rootElement.Elements("systemname").Select(x => x.Value).ToList();
+            shuffledSystemNames.Shuffle(random);
+
             var msvInfos = allMapRandomizationInfo.Where(x => x.IsMSV).ToList();
             var asteroidInfos = allMapRandomizationInfo.Where(x => x.IsAsteroidBelt).ToList();
             var planetInfos = allMapRandomizationInfo.Where(x => !x.IsAsteroidBelt && !x.IsMSV && !x.PreventShuffle).ToList();
@@ -1326,20 +1336,16 @@ namespace MassEffectRandomizer.Classes
             //These dictionaries hold the mappings between the old names and new names and will be used in the 
             //map file pass as references to these are also contained in the localized map TLKs.
             systemNameMapping = new Dictionary<string, string>();
-            clusterNameMapping = new Dictionary<string, string>();
+            clusterNameMapping = new Dictionary<string, SuffixedCluster>();
             planetNameMapping = new Dictionary<string, string>();
 
 
             //Cluster Names
             int nameColumnClusters = clusters2DA.GetColumnIndexByName("Name");
 
-            List<string> shuffledClusterNames = new List<string>(RandomClusterNameCollection);
-            shuffledClusterNames.Shuffle(random);
 
             for (int i = 0; i < clusters2DA.RowNames.Count; i++)
             {
-                string newClusterName = shuffledClusterNames[0];
-                shuffledClusterNames.RemoveAt(0);
                 int tlkRef = clusters2DA[i, nameColumnClusters].GetIntValue();
 
                 string oldClusterName = "";
@@ -1348,7 +1354,20 @@ namespace MassEffectRandomizer.Classes
                     oldClusterName = tf.findDataById(tlkRef);
                     if (oldClusterName != "No Data")
                     {
-                        clusterNameMapping[oldClusterName] = newClusterName;
+                        SuffixedCluster suffixedCluster = null;
+                        if (vanillaSuffixedClusterNames.Contains(oldClusterName) || suffixedClusterNamesForPreviousLookup.Contains(oldClusterName))
+                        {
+                            suffixedClusterNamesForPreviousLookup.Remove(oldClusterName);
+                            suffixedCluster = new SuffixedCluster(suffixedClusterNames[0], true);
+                            suffixedClusterNames.RemoveAt(0);
+                        }
+                        else
+                        {
+                            suffixedCluster = new SuffixedCluster(nonSuffixedClusterNames[0], false);
+                            nonSuffixedClusterNames.RemoveAt(0);
+                        }
+
+                        clusterNameMapping[oldClusterName] = suffixedCluster;
                         break;
                     }
                 }
@@ -1358,8 +1377,6 @@ namespace MassEffectRandomizer.Classes
             //Used for resolving %SYSTEMNAME% in planet description and localization VO text
             Dictionary<int, string> systemIdToSystemNameMap = new Dictionary<int, string>();
 
-            List<string> shuffledSystemNames = new List<string>(RandomSystemNameCollection);
-            shuffledSystemNames.Shuffle(random);
 
             int nameColumnSystems = systems2DA.GetColumnIndexByName("Name");
             for (int i = 0; i < systems2DA.RowNames.Count; i++)
@@ -1487,7 +1504,7 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            //UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
+            UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
             RandomizePlanetImages(random, rowRPIMap, planets2DA);
         }
 
@@ -1572,6 +1589,8 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        private readonly static string[] ClusterNamesThatNeedAppended = { "Serpent Nebula", "Horse Head Nebula", "Armstrong Nebula", "Kepler Verge", "Voyager Cluster" };
+
         private void UpdateGalaxyMapReferencesForTLKs(List<TalkFile> Tlks, bool updateProgressbar)
         {
             int currentTlkIndex = 0;
@@ -1585,6 +1604,11 @@ namespace MassEffectRandomizer.Classes
                     mainWindow.CurrentOperationText = $"Applying entropy to galaxy map [{currentTlkIndex}/{Tlks.Count()}]";
                     mainWindow.ProgressBar_Bottom_Max = tf.StringRefs.Length;
                     mainWindow.ProgressBarIndeterminate = false;
+                    //text fixes.
+                    //TODO: CHECK IF ORIGINAL VALUE IS BIOWARE - IF IT ISN'T ITS ALREADY BEEN UPDATED.
+                    tf.replaceString(179694, "Head to the Armstrong Nebula to investigate what the geth are up to."); //Remove cluster after Nebula to ensure the text pass works without cluster cluster.
+                    tf.replaceString(156006, "Go to the Newton System in the Kepler Verge and find the one remaining scientist assigned to the secret project.");
+                    tf.replaceString(136011, "The geth have begun setting up a number of small outposts in the Armstrong Nebula of the Skyllian Verge. You must eliminate these outposts before the incursion becomes a full-scale invasion.");
                 }
 
                 //This is inefficient but not much I can do it about it.
@@ -1610,7 +1634,7 @@ namespace MassEffectRandomizer.Classes
                             if (originalPlanetNameIsSingleWord)
                             {
                                 //This is to filter out things like Inti resulting in Intimidate
-                                if (originalString.ContainsWord(planetMapping.Key) && newString.ContainsWord(planetMapping.Key))
+                                if (originalString.ContainsWord(planetMapping.Key) /*&& newString.ContainsWord(planetMapping.Key)*/) //second statement is disabled as its the same at this point in execution.
                                 {
                                     //Do a replace if the whole word is matched only (no partial matches on words).
                                     newString = newString.Replace(planetMapping.Key, planetMapping.Value);
@@ -1650,27 +1674,71 @@ namespace MassEffectRandomizer.Classes
                             }
                         }
 
+
+
+                        string test1 = "The geth must be stopped. Go to the Kepler Verge and stop them!";
+                        string test2 = "Protect the heart of the Artemis Tau cluster!";
+
+                        // >> test1 Detect types that end with Verge or Nebula, or types that end with an adjective.
+                        // >> >> Determine if new name ends with Verge or Nebula or other terms that have a specific ending type that is an adjective of the area. (Castle for example)
+                        // >> >> >> True: Do an exact replacement
+                        // >> >> >> False: Check if the match is 100% matching on the whole thing. If it is, just replace the string. If it is not, replace the string but append the word "cluster".
+
+                        // >> test 2 Determine if cluster follows the name of the item being replaced.
+                        // >> >> Scan for the original key + cluster appended.
+                        // >> >> >> True: If the new item includes an ending adjective, replace the whold thing with the word cluster included.
+                        // >> >> >> False: If the new item doesn't end with an adjective, replace only the exact original key.
+
                         foreach (var clusterMapping in clusterNameMapping)
                         {
                             //Update TLK references to this cluster.
-                            bool originalClusterNameIsSingleWord = !clusterMapping.Key.Contains(" ");
-                            if (originalClusterNameIsSingleWord)
+                            bool originalclusterNameIsSingleWord = !clusterMapping.Key.Contains(" ");
+                            if (originalclusterNameIsSingleWord)
                             {
-                                //This is to filter out things like Inti resulting in Intimidate
-                                if (originalString.ContainsWord(clusterMapping.Key) && newString.ContainsWord(clusterMapping.Key))
+                                //Go to the Kepler Verge and end the threat.
+                                //Old = Kepler Verge, New = Zoltan Homeworlds
+                                if (originalString.ContainsWord(clusterMapping.Key) && newString.ContainsWord(clusterMapping.Key)) //
                                 {
-                                    //Do a replace if the whole word is matched only (no partial matches on words).
-                                    newString = newString.Replace(clusterMapping.Key, clusterMapping.Value);
 
+                                    //Terribly inefficent
+                                    if (clusterMapping.Value.SuffixedWithCluster && !clusterMapping.Value.Suffixed)
+                                    {
+                                        //Local Cluster
+                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
+                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName); //Go to the Helios cluster...
+                                    }
+                                    else
+                                    {
+                                        //Artemis Tau
+                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
+                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Helios cluster...
+                                    }
+
+                                    newString = newString.Replace(clusterMapping.Key, clusterMapping.Value.ClusterName); //catch the rest of the items.
+                                    Debug.WriteLine(newString);
                                 }
                             }
                             else
                             {
-                                //System with spaces in the names won't (hopefully) match on Contains.
-                                if (originalString.Contains(clusterMapping.Key) && newString.Contains(clusterMapping.Key))
+                                if (newString.Contains(clusterMapping.Key))
                                 {
-                                    newString = newString.Replace(clusterMapping.Key, clusterMapping.Value);
+                                    //Terribly inefficent
 
+                                    if (clusterMapping.Value.SuffixedWithCluster || clusterMapping.Value.Suffixed)
+                                    {
+                                        //Local Cluster
+                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
+                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName); //Go to the Helios cluster...
+                                    }
+                                    else
+                                    {
+                                        //Artemis Tau
+                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
+                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Helios cluster...
+                                    }
+
+                                    newString = newString.Replace(clusterMapping.Key, clusterMapping.Value.ClusterName); //catch the rest of the items.
+                                    Debug.WriteLine(newString);
                                 }
                             }
                         }
@@ -1681,50 +1749,6 @@ namespace MassEffectRandomizer.Classes
                         }
                     }
                 }
-
-                //This might not be necessary since it seems game has consistent enough planet naming scheme that we can just use general pass
-                /*if (landableMapID > 0)
-                {
-                    //This planet can be landed on
-                    string mapName = levelMap2DA[levelMap2DA.GetRowIndexByName(landableMapID), 0].GetDisplayableValue();
-                    Debug.WriteLine("Map Name:" + mapName);
-                    int mapIndex = int.Parse(mapName.Substring(8));
-                    mapName = "Map" + mapName.Substring(5, 3); //BIOA_>>LOS<<XX
-                    if (mapIndex > 0)
-                    {
-                        mapName += mapIndex; //Used by UNC
-                    }
-
-                    //Replace info in areamap and plot planet tables
-                    for (int a = 0; a < areaMap2DA.RowCount; a++)
-                    {
-                        var labelName = areaMap2DA[a, 0].GetDisplayableValue();
-                        if (labelName.StartsWith(mapName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            //This is the row needing updated
-                            var stringRef = areaMap2DA[a, areaMap2DA.GetColumnIndexByName("Title")].GetIntValue();
-                            var currentStringValue = tf.findDataById(stringRef);
-                            if (currentStringValue != "No Data")
-                            {
-                                string originalStrValue = currentStringValue;
-                                Log.Information("Updating areamap references for mapname " + labelName);
-                                //its in this tlk
-                                int colonIndex = currentStringValue.IndexOf(":", StringComparison.Ordinal);
-                                if (colonIndex > 0)
-                                {
-                                    currentStringValue = newPlanetName + currentStringValue.Substring(colonIndex);
-                                }
-                                else
-                                {
-                                    currentStringValue = newPlanetName;
-                                }
-
-
-                                tf.replaceString(stringRef, currentStringValue);
-                            }
-                        }
-                    }
-                }*/
             }
         }
 
@@ -3337,7 +3361,7 @@ namespace MassEffectRandomizer.Classes
         };
 
         private Dictionary<string, string> systemNameMapping;
-        private Dictionary<string, string> clusterNameMapping;
+        private Dictionary<string, SuffixedCluster> clusterNameMapping;
         private Dictionary<string, string> planetNameMapping;
         private List<char> scottishVowelOrdering;
 
@@ -3442,6 +3466,18 @@ namespace MassEffectRandomizer.Classes
             return $"RGB({random.Next(255)},{random.Next(255)},{random.Next(255)})";
         }
 
+        public class SuffixedCluster
+        {
+            public string ClusterName;
+            public bool SuffixedWithCluster;
+            public bool Suffixed;
 
+            public SuffixedCluster(string clusterName, bool suffixed)
+            {
+                this.ClusterName = clusterName;
+                this.Suffixed = suffixed;
+                this.SuffixedWithCluster = clusterName.EndsWith("cluster", StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
     }
 }

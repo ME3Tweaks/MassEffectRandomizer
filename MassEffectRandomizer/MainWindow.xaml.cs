@@ -230,7 +230,7 @@ namespace MassEffectRandomizer
             ButtonPanelVisible = Visibility.Collapsed;
 
             InitializeComponent();
-            SeedTextBox.Text = preseed.ToString();
+            SeedTextBox.Text = 529572808.ToString(); //preseed.ToString();
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
             Title += " " + version;
