@@ -789,6 +789,9 @@ namespace MassEffectRandomizer.Classes
             mainWindow.CurrentOperationText = "Updating galaxy map images";
 
             ME1Package galaxyMapImagesBasegame = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GUI\GUI_SF_GalaxyMap.upk")); //lol demiurge, what were you doing?
+            ME1Package ui2DAPackage = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\2DAs\BIOG_2DA_UI_X.upk")); //lol demiurge, what were you doing?
+            IExportEntry galaxyMapImages2DAExport = ui2DAPackage.getUExport(8);
+            var galaxyMapImages2DA = new Bio2DA(galaxyMapImages2DAExport);
 
             //Plot planets will have specific descriptions so we should probably try to assign specific images to those as random ones won't be very accurate at all
 
@@ -803,7 +806,7 @@ namespace MassEffectRandomizer.Classes
             foreach (string str in resourceItems)
             {
                 string[] parts = str.Split('.');
-                if (parts.Length == 5)
+                if (parts.Length == 6)
                 {
                     uniqueNames.Add(parts[3]);
                 }
@@ -815,16 +818,62 @@ namespace MassEffectRandomizer.Classes
                 galaxyMapGroupResources[groupname].Shuffle(random);
             }
 
-            foreach (IExportEntry export in galaxyMapImagesBasegame.Exports)
+            var mapImageExports = galaxyMapImagesBasegame.Exports.Where(x => x.ObjectName.StartsWith("galMap")); //Original galaxy map images
+            var planet2daRowsWithImages = new List<int>();
+            int imageIndexCol = planets2DA.GetColumnIndexByName("ImageIndex");
+            for (int i = 0; i < planets2DA.RowCount; i++)
             {
-                if (export.ObjectName.StartsWith("galMap"))
+                if (planets2DA[i, imageIndexCol] != null)
                 {
-                    int exportNameIndex = int.Parse(export.ObjectName.Substring(6));
-                    // TODO: Frr each item in the RPI mapping, install a corresponding SWF.
-                    // Before we have enough images we will need to check if the current RPI row has an assigned image.
-                    // Once we have enoug hiamges we can just assign ever row an image.
-                    //var gropuname = planetsRowToRPIMapping[]
+                    planet2daRowsWithImages.Add(i);
+                }
+            }
 
+            foreach (var rpi in planetsRowToRPIMapping)
+            {
+                if (rpi.Value.ImageGroup != null)
+                {
+                    var imageIndexCell = planets2DA[rpi.Key, imageIndexCol];
+                    if (imageIndexCell != null)
+                    {
+                        int imageIndex = imageIndexCell.GetIntValue();
+                        if (imageIndex > 0)
+                        {
+                            if (galaxyMapGroupResources.TryGetValue(rpi.Value.ImageGroup.ToLower(), out var newImagePool))
+                            {
+                                string newImageResource = null;
+                                if (newImagePool.Count > 0)
+                                {
+                                    newImageResource = newImagePool[0];
+                                    newImagePool.RemoveAt(0);
+                                }
+                                else
+                                {
+                                    Debug.WriteLine("Not enough images in group " + rpi.Value.ImageGroup + " to continue randomization.");
+                                    continue;
+                                }
+
+                                var newImageSwf = newImagePool;
+                                int galaxyMapImagesRowIndex = galaxyMapImages2DA.GetRowIndexByName(planets2DA[rpi.Key, imageIndexCol].DisplayableValue);
+
+                                string swfImageExportObjectName = galaxyMapImages2DA[galaxyMapImagesRowIndex, 0].DisplayableValue;
+                                swfImageExportObjectName = swfImageExportObjectName.Substring(swfImageExportObjectName.IndexOf('.') + 1); //TODO: Need to deal with name instances for Pinnacle Station DLC
+                                var matchingExport = mapImageExports.FirstOrDefault(x => x.ObjectName == swfImageExportObjectName);
+                                if (matchingExport != null)
+                                {
+                                    ReplaceSWFFromResource(matchingExport, newImageResource);
+                                }
+                            }
+                            else
+                            {
+                                Debugger.Break(); //WE DON'T HAVE IMAGE FOR THIS GROUP!
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("0 or negative image index, skipping...");
+                        }
+                    }
                 }
             }
 
@@ -835,7 +884,7 @@ namespace MassEffectRandomizer.Classes
         private void ReplaceSWFFromResource(IExportEntry exp, string swfResourcePath)
         {
             Debug.WriteLine($"Replacing {Path.GetFileName(exp.FileRef.FileName)} {exp.Index} {exp.ObjectName} SWF with {swfResourcePath}");
-            var bytes = Utilities.GetEmbeddedStaticFilesBinaryFile(swfResourcePath);
+            var bytes = Utilities.GetEmbeddedStaticFilesBinaryFile(swfResourcePath, true);
             var props = exp.GetProperties();
 
             var rawData = props.GetProp<ArrayProperty<ByteProperty>>("Data");
@@ -1293,7 +1342,7 @@ namespace MassEffectRandomizer.Classes
                                                RowID = (int)e.Element("RowID"),
                                                MapBaseNames = e.Elements("MapBaseNames")
                                                    .Select(r => r.Value).ToList(),
-                                               ImageGroup = e.Element("ImageGroup")
+                                               ImageGroup = e.Element("ImageGroup")?.Value
                                            }).ToList();
 
             fileContents = Utilities.GetEmbeddedStaticFilesTextFile("galaxymapclusters.xml");
@@ -1309,6 +1358,25 @@ namespace MassEffectRandomizer.Classes
             rootElement = XElement.Parse(fileContents);
             var shuffledSystemNames = rootElement.Elements("systemname").Select(x => x.Value).ToList();
             shuffledSystemNames.Shuffle(random);
+
+
+            var everything = new List<string>();
+            everything.AddRange(suffixedClusterNames);
+            everything.AddRange(allMapRandomizationInfo.Select(x => x.PlanetName));
+            everything.AddRange(allMapRandomizationInfo.Where(x => x.PlanetName2 != null).Select(x => x.PlanetName2));
+            everything.AddRange(shuffledSystemNames);
+            everything.AddRange(nonSuffixedClusterNames);
+
+            foreach (var name1 in everything)
+            {
+                foreach (var name2 in everything)
+                {
+                    if (name1.Contains(name2) && name1 != name2)
+                    {
+                        //Debugger.Break();
+                    }
+                }
+            }
 
             var msvInfos = allMapRandomizationInfo.Where(x => x.IsMSV).ToList();
             var asteroidInfos = allMapRandomizationInfo.Where(x => x.IsAsteroidBelt).ToList();
@@ -1342,7 +1410,8 @@ namespace MassEffectRandomizer.Classes
 
             //Cluster Names
             int nameColumnClusters = clusters2DA.GetColumnIndexByName("Name");
-
+            //Used for resolving %SYSTEMNAME% in planet description and localization VO text
+            Dictionary<int, string> clusterIdToClusterNameMap = new Dictionary<int, string>();
 
             for (int i = 0; i < clusters2DA.RowNames.Count; i++)
             {
@@ -1368,6 +1437,7 @@ namespace MassEffectRandomizer.Classes
                         }
 
                         clusterNameMapping[oldClusterName] = suffixedCluster;
+                        clusterIdToClusterNameMap[int.Parse(clusters2DA.RowNames[i])] = suffixedCluster.ClusterName;
                         break;
                     }
                 }
@@ -1375,16 +1445,18 @@ namespace MassEffectRandomizer.Classes
 
             //SYSTEMS
             //Used for resolving %SYSTEMNAME% in planet description and localization VO text
-            Dictionary<int, string> systemIdToSystemNameMap = new Dictionary<int, string>();
+            Dictionary<int, (string clustername, string systemname)> systemIdToSystemNameMap = new Dictionary<int, (string clustername, string systemname)>();
 
 
             int nameColumnSystems = systems2DA.GetColumnIndexByName("Name");
+            int clusterColumnSystems = systems2DA.GetColumnIndexByName("Cluster");
             for (int i = 0; i < systems2DA.RowNames.Count; i++)
             {
 
                 string newSystemName = shuffledSystemNames[0];
                 shuffledSystemNames.RemoveAt(0);
                 int tlkRef = systems2DA[i, nameColumnSystems].GetIntValue();
+                int clusterTableRow = systems2DA[i, clusterColumnSystems].GetIntValue();
 
 
                 string oldSystemName = "";
@@ -1395,7 +1467,7 @@ namespace MassEffectRandomizer.Classes
                     {
                         //tf.replaceString(tlkRef, newSystemName);
                         systemNameMapping[oldSystemName] = newSystemName;
-                        systemIdToSystemNameMap[int.Parse(systems2DA.RowNames[i])] = newSystemName;
+                        systemIdToSystemNameMap[int.Parse(systems2DA.RowNames[i])] = (newSystemName, clusterIdToClusterNameMap[clusterTableRow]);
                         break;
                     }
                 }
@@ -1413,7 +1485,7 @@ namespace MassEffectRandomizer.Classes
             {
                 //mainWindow.CurrentProgressValue = i;
                 int systemId = planets2DA[i, 1].GetIntValue();
-                string systemName = systemIdToSystemNameMap[systemId];
+                (string systemName, string clusterName) systemClusterName = systemIdToSystemNameMap[systemId];
 
                 Bio2DACell descriptionRefCell = planets2DA[i, descCol];
                 int descriptionReference = descriptionRefCell == null ? 0 : descriptionRefCell.GetIntValue();
@@ -1461,7 +1533,7 @@ namespace MassEffectRandomizer.Classes
                     var description = rpi.PlanetDescription;
                     if (description != null)
                     {
-                        description = description.Replace("%SYSTEMNAME%", systemName).Replace("%PLANETNAME%", newPlanetName).TrimLines();
+                        description = description.Replace("%CLUSTERNAME%", systemClusterName.clusterName).Replace("%SYSTEMNAME%", systemClusterName.systemName).Replace("%PLANETNAME%", newPlanetName).TrimLines();
                     }
 
                     //var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
@@ -1606,7 +1678,15 @@ namespace MassEffectRandomizer.Classes
                     mainWindow.ProgressBarIndeterminate = false;
                     //text fixes.
                     //TODO: CHECK IF ORIGINAL VALUE IS BIOWARE - IF IT ISN'T ITS ALREADY BEEN UPDATED.
-                    tf.replaceString(179694, "Head to the Armstrong Nebula to investigate what the geth are up to."); //Remove cluster after Nebula to ensure the text pass works without cluster cluster.
+                    string testStr = tf.findDataById(179694);
+                    if (testStr == "")
+                    {
+                        tf.replaceString(179694, "Head to the Armstrong Nebula to investigate what the geth are up to."); //Remove cluster after Nebula to ensure the text pass works without cluster cluster.
+
+                    }
+                    testStr = tf.findDataById(156006);
+                    testStr = tf.findDataById(136011);
+
                     tf.replaceString(156006, "Go to the Newton System in the Kepler Verge and find the one remaining scientist assigned to the secret project.");
                     tf.replaceString(136011, "The geth have begun setting up a number of small outposts in the Armstrong Nebula of the Skyllian Verge. You must eliminate these outposts before the incursion becomes a full-scale invasion.");
                 }

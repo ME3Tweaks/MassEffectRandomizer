@@ -83,7 +83,7 @@ namespace MassEffectRandomizer
               retainedFileDurationLimit: TimeSpan.FromDays(7),
               fileSizeLimitBytes: 1024 * 1024 * 10) // 10MB
 #if DEBUG
-     // .WriteTo.Debug()
+      .WriteTo.Debug()
 #endif
       .CreateLogger();
             Log.Information("===========================================================================");

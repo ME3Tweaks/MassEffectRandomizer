@@ -135,7 +135,7 @@ namespace MassEffectRandomizer
             /// WHen updating 2DA_AreaMap, labels that begin with these prefixes will be analyzed and updated accordingly by full (if no :) or anything before :.
             /// </summary>
             public List<string> MapBaseNames { get; internal set; }
-            public XElement ImageGroup { get; internal set; }
+            public string ImageGroup { get; internal set; }
         }
 
         public class OpeningCrawl

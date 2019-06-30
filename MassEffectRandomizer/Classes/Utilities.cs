@@ -83,11 +83,11 @@ namespace MassEffectRandomizer.Classes
             return result;
         }
 
-        public static byte[] GetEmbeddedStaticFilesBinaryFile(string filename)
+        public static byte[] GetEmbeddedStaticFilesBinaryFile(string filename, bool fullName = false)
         {
             var items = typeof(MainWindow).Assembly.GetManifestResourceNames();
             using (Stream stream = typeof(MainWindow).Assembly.
-                GetManifestResourceStream("MassEffectRandomizer.staticfiles." + filename))
+                GetManifestResourceStream(fullName ? filename : "MassEffectRandomizer.staticfiles." + filename))
             {
                 byte[] ba = new byte[stream.Length];
                 stream.Read(ba, 0, ba.Length);
@@ -114,7 +114,7 @@ namespace MassEffectRandomizer.Classes
 
         internal static string ExtractInternalStaticExecutable(string executableFilename, bool overwrite)
         {
-            Log.Information("Extracting executable file: "+executableFilename);
+            Log.Information("Extracting executable file: " + executableFilename);
             var extractedPath = Path.Combine(Path.GetTempPath(), executableFilename);
             if (!File.Exists(extractedPath) || overwrite)
             {
@@ -134,7 +134,7 @@ namespace MassEffectRandomizer.Classes
             return extractedPath;
         }
 
-        internal static string ExtractInternalFile(string extFile, string destination,bool overwrite)
+        internal static string ExtractInternalFile(string extFile, string destination, bool overwrite)
         {
             Log.Information("Extracting file: " + extFile);
             if (!File.Exists(destination) || overwrite)

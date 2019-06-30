@@ -364,8 +364,8 @@
       Surface Temperature: -1 Celsius
       Surface Gravity: 0.81
     </PlanetDescription>
+    <ImageGroup>Factory</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>19</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -648,7 +648,6 @@
       Surface Gravity: 0.44 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>34</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1137,7 +1136,7 @@
     <PlanetDescription>
       Nimona is a mid-sized terrestrial planet. Its characteristic deep pink color come from manganese-rich soil. The atmosphere consists mostly of chlorine, often condensing into bright green clouds.
 
-      The planet is often nicknamed "the shapeshifter" due to the ever-changing patterns of the cloud formations. Ships passing through the system will often capture images and upload them to a popular extranet gallery. The most well-known of these images shows a cloud formation that appears much like a dragon breathing fire
+      The planet is often nicknamed "the shapeshifter" due to the ever-changing patterns of the cloud formations. Ships passing through the system will often capture images and upload them to a popular extranet gallery. The most well-known of these images shows a cloud formation that appears much like a dragon breathing fire.
 
       Orbital Period: 90.5 Earth Years
       Radius: 3686 km
@@ -2175,7 +2174,7 @@
     <IsAsteroidBelt>true</IsAsteroidBelt>
     <PlanetName>Distress signal</PlanetName>
     <PlanetDescription>
-      A distress call is coming from this asteroid, however nothing adorns the surface except for a single large tunnel entrance. The distress call signal is weak and appears to be coming from the asteroid’s interior, repeating a message about ‘Giant alien spiders’.
+      A distress call is coming from this asteroid; however, nothing adorns the surface except for a single large tunnel entrance. The distress call signal is weak and appears to be coming from the asteroid’s interior, repeating a message about ‘Giant alien spiders’.
 
       This is almost certainly a trap. Risking the Normandy to save these unknown victims from ‘Giant alien spiders’ is certainly not worth the risk.
 
@@ -2308,17 +2307,19 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Antibaar</PlanetName>
+    <PlanetName>Druidia</PlanetName>
     <PlanetDescription>
-      Antibaar is a cold terrestrial world with an atmosphere of methane and argon.  Its frozen surface is mainly composed of iron with deposits of magnesium. The world has been noted as a possible target for long-term terraforming; if the atmosphere could be increased to the thickness of Earth's, the global average temperature would rise by 10 degree Celcius.
+      Planet Druidia consists of the kingdom of King Roland led by his daughter and heir Princess Vespa. It is a rival planet to Planet Spaceball. It has many natural resources, with the most useful being a large supply of fresh air.
 
-      Antibaar's combination of low temperatures, high speed surface winds, and low visibility make it dangerous to explore on foot.
+      President Skroob and Dark Helmet of rival Planet Spaceball recently attempted to suck the air out of Planet Druidia and use it to save their own planet, but their attempts were stymied by Lone Starr when their ship “Mega Maid” was destroyed.
 
-      Orbital Period: 3.2 Earth Years
-      Radius: 6501 km
-      Day Length: 54.1 Earth Hours
-      Atmospheric Pressure: 0.79 Earth Atmospheres
-      Surface Temperature: -34 Celsius
+      The Druidians have since built a stronger planetary defense shield to defend themselves.
+
+      Orbital Period: 1.2 Earth Years
+      Radius: 5501 km
+      Day Length: 31.1 Earth Hours
+      Atmospheric Pressure: 0.89 Earth Atmospheres
+      Surface Temperature: 22 Celsius
       Surface Gravity: 1.1 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
@@ -2327,86 +2328,93 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Patamalrus</PlanetName>
+    <PlanetName>Spaceball</PlanetName>
     <PlanetDescription>
-      Patamalrus' atmosphere is very similar to Venus in terms of pressure and temperature. Unlike Venus, however, Patamalrus' atmosphere has a significant quantity of oxygen, both free and bound in sulpher dioxides. The surface is largely composed of magnesia with deposits of carbon. It is possible, if unlikely, that simple life may be developing on Patamalrus.
+      As a planet on the verge of a catastrophic collapse, the people of Planet Spaceball seem oblivious of other inhabitable planets in the Milky Way. Due to a lack of proper carbon recycling flora across the surface, the supply of air on the planet has reached critical levels which will soon be unable to sustain the majority of the population.
 
-      Computer modeling suggests that the powerful solar winds from the Tereshkova stars will blow off Patamalrus' atmosphere in a few million years, lowering the temperature on the surface to the -70s.
+      The leader of Planet Spaceball, President Skroob, has been missing for several months following a failed mission to suck the atmosphere out of Planet Druidia. In this last ditch effort to save the planet, the capital ship Spaceball I was destroyed, leading to a vacuum of power in the Planet Spaceball order of succession.
 
       Orbital Period: 15.3 Earth Years
-      Radius: 5831 km
-      Day Length: 47.1 Earth Hours
-      Atmospheric Pressure: 90.47 Earth Atmospheres
-      Surface Temperature: 451 Celsius
+      Radius: 1831 km
+      Day Length: 16 Earth Hours
+      Atmospheric Pressure: 0.61 Earth Atmospheres
+      Surface Temperature: 10 Celsius
       Surface Gravity: 0.78 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>134</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Hunsalra</PlanetName>
+    <PlanetName>Stardew</PlanetName>
     <PlanetDescription>
-      Hunsalra is a small hydrogen-helium gas giant. It has unusually large amounts of nitrogen in the upper atmosphere, which glow purple when ionized by the solar wind. Hunsalra’s convenience as a place to dump drive charge has left its orbit littered with debris "dumped overboard" by visting crews.
+      Stardew is a pastoral planet with a small population of salarians, whose technological savvy has been put to good use improving the agricultural industry. Though the farms are limited in scale and most of Stardew’s inhabitants live in modestly-sized communes, the planet is nonetheless able to sustain a small export of quality foodstuffs.
 
-      Orbital Period: 46.2 Earth Years
+      Joja Corporation has expressed interest in commercializing Stardew’s operations. However, the Citadel economic protection clauses granted to planets dependent on subsistence agriculture have so far made it almost impossible for the corporation to interfere.
+
+      Orbital Period: 2.2 Earth Years
       Radius: 11,496 km
       Day Length: 18.6 Earth Hours
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>135</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Thegeuse</PlanetName>
+    <PlanetName>Godric</PlanetName>
     <PlanetDescription>
-      Thegeuse is a terrestrial world with an atmosphere of chlorine and krypton. The surface is mainly composed of silicates with deposits of carbon. Thegeuse has a low mass for its size, and is tidally locked to the star Tereshkova-A. The temperature difference between the sunward "hot pole" and the dark side "cold pole" creates constant gale-force winds across the terminator.
+      An otherwise unremarkable planet, Godric does have one noticeable feature - a massive crater near the equator. Scientists speculate that a small astral body may have crashed to the surface at some point in the past. The crater, Godric’s Hollow, holds an acid lake for much of the year. Snake-like cracks spread from its edge in all directions.
+
+      A popular extranet webcomic uses Godric as a setting for its villain, a mad salarian mage who split his soul to create objects of immortality and then deposited them at the bottom of the lake.
 
       Orbital Period: 25.3 Earth Years
       Radius: 5130 km
       Day Length: 5.2 Earth Years
       Atmospheric Pressure: 0.49 Earth Atmospheres
-      Surface Temperature: -141 Celsius
+      Surface Temperature: 22 Celsius
       Surface Gravity: 0.47 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>136</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Solmarlon</PlanetName>
+    <PlanetName>Belmont</PlanetName>
     <PlanetDescription>
-      Solmarlon is one of Tereshkova's two outer worlds. Significantly removed from the rest of the system, and with unstable elliptical orbits, it is thought they may have formed within 3 AU of the binary stars, and were hurled outward due to the instability of such an orbit.
-
-      Solmarlon is a hydrogen-helium gas giant with significant quantities of sodium in the upper atmosphere, giving it a distinct grey color.
+      Belmont is a world from another age. Left alone for the majority of the ascendance of the Citadel races, it is technologically backward, but rich in art and architecture. A large castle stands on the surface, preserved from the ravages of time by unknown means. Alliance teams sent to study the structure reported an appearance very similar to the gothic architecture of Old Earth. The recent discovery of the Long Library, though the text in the books is written in an indecipherable language, nonetheless provided valuable information. Most notably, Belmont’s inhabitants bore a striking resemblance to the human vampire. Unfortunately, no trace of them remains, leading many to surmise that they may have simply left their small empire and gone elsewhere.
 
       Orbital Period: 399.7 Earth Years
       Radius: 69,862 km
       Day Length: 14.4 Earth Hours
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>137</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Mawinor</PlanetName>
+    <PlanetName>Vie de Marli</PlanetName>
     <PlanetDescription>
-      Mawinor is the second of Tereshkova's outer worlds. It is essentially a rock of unremarkable ores with some deposits of water ice, but no minerals of value. The frozen surface is composed of silica.
+      Vie de Marli is a planet with several large continents. The largest of these, Dumary, is home to Uroboros City. Founded by multimillionaire volus businessman Arius, the city boasts an impressive array of mining conglomerates who strip the nearby mountains of valuable ore. Skyscraper Sanctum, the headquarters of Uroboros Corporation, towers over the center of the city.
 
-      Like the gas giant Solmarlon, it is thought that Mawinor formed too close to the Tereshkova stars and was thrown outwards by gravitational effects. Computer models suggest it will be ejected from the system in a few hundred thousand years.
+      Most notably, Vie de Marli is also the birthplace of the Argosax Cult, a small tribe that worships a malevolent, multidimensional god. The Cult claims that Uroboros is secretly mining for Arcanas, not ore. The corporation has declined to comment on this accusation.
 
-      Orbital Period: 662.7 Earth Years
+      Orbital Period: 1.7 Earth Years
       Radius: 1170 km
-      Day Length: 61.8 Earth Hours
+      Day Length: 24.8 Earth Hours
       Atmospheric Pressure: 0.00 Earth Atmospheres
-      Surface Temperature: -228 Celsius
+      Surface Temperature: 13 Celsius
       Surface Gravity: 0.08 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>138</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2433,15 +2441,11 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Solcrum</PlanetName>
+    <PlanetName>Sochen</PlanetName>
     <PlanetDescription>
-      WARNING: Level 1 Heat Hazard
+      Sochen is a barren planet with an extensive underground cave network. Sonic scans from low atmosphere reveal an almost palace-like appearance to the structures beneath the surface. The initial probe sent to roam the tunnels was destroyed by a blast of biotic energy in its most rudimentary form. It was able to transmit a few static images before going dark, however, which show intricate carvings on some of the cave walls. The last transmitted image (code-named Mandragora) appears to be a creature of some kind, though it more closely resembles a turnip.
 
-      Solcrum is the largest moon of the gas giant Notanban. It has a trace atmosphere of krypton and xenon. The crust is composed of various metals with deposits of sodium. As with every body in the solar system, the surface is scorching hot and thoroughly irradiated by the blue giant Grissom. Surface excursions without proper protective gear are certain to prove fatal.
-
-      On approach to Notanban, Normandy's passive sensor array intercepted a fragmentary coded transmission from the surface of Solcrum. Attempts to decrypt the message were fruitless; it does not appear to be in any software coding language used by the Citadel races.
-
-      Orbital Distance: 10,367,883 km (from Notanban)
+      Orbital Distance: 10,367,883 km
       Orbital Period: 0.6 Earth Years
       Radius: 4534 km
       Day Length: 0.6 Earth Years
@@ -2456,15 +2460,19 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Benda</PlanetName>
+    <PlanetName>Golmore</PlanetName>
     <PlanetDescription>
-      Benda has a dense atmosphere of sulphur dioxide and chlorine. Though technically classified as a "terrestrial" world, but the surface of the planet has never cooled enough for a crust to form. It is a global sea of molten rock. Like Zaherux, its atmosphere is being blasted away by the solar wind. Once its thick atmosphere is gone, Benda’s surface will be a "mere" 400 degree C.
+      WARNING: Level 1 Toxic Hazard
+
+      Golmore is a planet thickly covered with jungle. A thin blue shimmer can be seen in the upper atmosphere. Ships attempting to pass this unusual barrier are repelled by forces unseen.
+
+      A turian task force stationed in the system noted a single ship descending into the atmosphere in 2113. A ping of its transponder returned a Viera-class freighter running under the name Jagd Difohr, a description matching nothing in any known navy at the time. The ship has not reappeared since.
 
       Orbital Period: 812.3 Earth Years
       Radius: 6788 km
       Day Length: 41.2 Earth Hours
       Atmospheric Pressure: 26.35 Earth Atmospheres
-      Surface Temperature: 3151 Celsius
+      Surface Temperature: 47 Celsius
     </PlanetDescription>
   </RandomizedPlanetInfo>
 
@@ -2495,15 +2503,13 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Notanban</PlanetName>
+    <PlanetName>Darnassus</PlanetName>
     <PlanetDescription>
-      Notanban is a hydrogen-helium gas giant with traces of ammonia. Molecular nitrogen is present in the highest levels of the atmosphere, giving the planet its odd violet tint.
+      Darnassus is a mid-sized terrestrial planet. Swathes of its surface have been burned by fire, but in recent years the plant life has begun to return. Most notable is Teldrassil, the World Tree. An eccentric hanar sect known as the Fandral Druids planted this tree near the planet’s apex as part of a ritual to restore vitality to Darnassus. Under their careful tending, the tree has reached astronomical heights and its crown is visible in the upper atmosphere.
 
-      The upper levels of Notanban's atmosphere are inhabited by "shoals" of tiny ammonia-based lifeforms, no larger or more complex than the plankton of Earth's oceans. Held aloft by air pressure and wind, these bioluminescent creatures constantly flee from the approach of the terminator. Should they be exposed to the light and heat of Grissom, they die.
-
-      Orbital Period: 990.5 Earth Years
+      Orbital Period: 0.5 Earth Years
       Radius: 73,314 km
-      Day Length: 16.9 Earth Hours
+      Day Length: 26.9 Earth Hours
     </PlanetDescription>
   </RandomizedPlanetInfo>
 
@@ -2539,13 +2545,11 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Maji</PlanetName>
+    <PlanetName>Falkreath</PlanetName>
     <PlanetDescription>
-      Maji orbits the Vamshi binary giant stars. Vamshi-A is a blue star of spectral class A4III which burns at half again the temperature of Sol. Vamshi-B is an aging red giant of class M5III, over 220 times the size of Sol.
+      Falkreath is a moderately-sized, chilly planet in a backwater system. A large valley cuts through the southwestern hemisphere. Free from the snow and ice that grips the rest of Falkreath’s surface, this valley is home to one of the galaxy’s largest known graveyards. Originally said to be the final resting place of famed turian Siddgeir, it soon became the resting place of many others who requested to be interred near the honored commander.
 
-      Maji has a thin atmosphere of methane and carbon monoxide. The difference in temperature between the hemisphere facing the suns and that facing deep space causes constant wind, stirring the silica and sodium dust of the surface.
-
-      Unsavory characters from the Terminus Systems occasionally use Maji for forms of cruel sport, dumping slaves, hostages, quarreling shipmates, or even (when bored) vicious animals on the surface. One must kill the other before they will be rescued from the lethal radiation of the giant stars.
+      The valley, known as Helgen, was blockaded in 2172 by the Hierarchy to maintain what little sanctity remained of the site. This has not stopped smugglers from making runs for the sole purpose of dumping bodies, only half of whom have actually requested a Helgen burial.
 
       Orbital Period: 5.9 Earth Years
       Radius: 5727 km
@@ -2555,49 +2559,52 @@
       Surface Gravity: 0.85 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>148</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Almos</PlanetName>
+    <PlanetName>Seath</PlanetName>
     <PlanetDescription>
-      Almos is a hydrogen-helium gas giant with traces of sodium darkening its atmosphere.
+      Seath is a gas giant with unique crystal formations floating up from its surface. Pressurized minerals are formed in the core and explosively dislodged once they become too large. These crystals reflect much of the sun’s light, giving the planet an eerie pale glow and making visual navigation nearly impossible.
+
+      An Alliance tow ship was able to cast a line to one of these crystals and remove it from the atmosphere for further study. Though most of it was sent to a research lab, a small specimen of this Primordial Crystal was gifted to the Citadel and can be viewed in the Mineral Archives.
 
       Orbital Period: 46.7 Earth Years
       Radius: 60,948 km
       Day Length: 67.1 Earth Hours
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>149</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Pregel</PlanetName>
+    <PlanetName>Estus</PlanetName>
     <PlanetDescription>
-      Pregel is an enormous terrestrial world with an atmosphere of chlorine and ethane. Its surface is mainly composed of sulphur with deposits of aluminum. No landing has ever been attempted.
+      Estus is an enormous gas giant that on first glance could be mistaken for a star. Gases in the atmosphere constantly ignite under the heat of the planet’s sun, wreathing the surface in orange flames. Despite the maelstrom, the planet’s geomagnetic field is incredibly strong and can safely discharge even a capital ship’s drive core in very little time, making it a common destination during fleet maneuvers.
+
+      A salarian engineering team recently discovered that Estus’ unique composition of ignited atmospheric gases can be pressurized into a liquid form, after which it can be used to create incredibly strong welds on ship hulls.
 
       Orbital Period: 17.8 Earth Years
       Radius: 10,510 km
       Day Length: 49.8 Earth Hours
       Atmospheric Pressure: 1.0 Earth Atmospheres
-      Surface Temperature: -131 Celsius
+      Surface Temperature: 131 Celsius
       Surface Gravity: 1.1 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>150</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Casbin</PlanetName>
+    <PlanetName>Glaurung</PlanetName>
     <PlanetDescription>
-      Casbin is a classic "pre-garden" terrestrial world, with conditions similar to those on Earth millions of years ago. Its hot, humid atmosphere is mainly composed of nitrogen and carbon dioxide. An increasing amount of the surface is covered by simple lichen and algae. Should no unexpected calamity occur, these tiny plants will change the atmosphere to an Earth-like nitrogen-oxygen mix over the next few millennia.
-
-      Due to its potential for future habitability and sapient life, Casbin has been designated a Sanctuary World by the Citadel Council. Landing is prohibited by law, and any disturbance of the fragile young ecosystem will result in harsh fines and imprisonment.
-
-      At present, the planet is passing through the debris trail of a long-period comet.
+      Glaurung is a gas giant with a large core composed mostly of molten gold. The lack of surface fission makes it an attractive candidate for space-to-surface mining. However, an atmosphere composed largely of toxic gases caused the workers in these stations to sink into delirium. Many began to hallucinate and the ensuing chaos rendered most of the drills inoperable, either due to mechanical destruction or simply because all the workers were dead. The skeletal remains of the stations can still be seen floating in low orbit.
 
       Orbital Period: 1.1 Earth Years
       Radius: 7819 km
@@ -2607,23 +2614,27 @@
       Surface Gravity: 1.1 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>151</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Pomal</PlanetName>
+    <PlanetName>Thayserix</PlanetName>
     <PlanetDescription>
-      Pomal is an enormous terrestrial planet, with a very dense atmosphere of carbon dioxide and sodium. The surface is scorching hot, and mainly composed of sodium oxides and deposits of nickel. There is evidence that Pomal was once covered with broad, shallow seas. Should a probe ever be sent to the surface, a check for ancient fossil life might prove valuable.
+      Thayserix is a nitrogen-based gas giant with a heavy cover of swirling cumulonimbus clouds. Massive rock spires jut into the upper atmosphere and act as electrical conductors during the planet’s frequent lightning storms. Its magnetic field is unusual, consisting of two misaligned poles and a third ‘pseudo-pole’ that heavily distort most navigational instruments. Increases in shield power and computing speed have made a closer approach possible in recent years, though most captains still prefer to avoid the system entirely.
+
+      According to legend, an Altean ship was able to make a surface run of the planet using a freeze ray, but the extinction of their species has made any hope of recreating this feat with current technology nearly impossible.
 
       Orbital Period: 0.5 Earth Years
       Radius: 9616 km
       Day Length: 47.0 Earth Hours
       Atmospheric Pressure: 31.59 Earth Atmospheres
-      Surface Temperature: 492 Celsius
+      Surface Temperature: 49 Celsius
       Surface Gravity: 1.2 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>152</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2703,9 +2714,9 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Clomarthu</PlanetName>
+    <PlanetName>Terraria</PlanetName>
     <PlanetDescription>
-      Clomarthu has a reducing atmosphere of methane and nitrogen. The surface is hot, and mainly composed of sodium with deposits of uranium. In terms of size and orbit, Clomarthu is a virtual twin of Earth, but utterly lacks life.
+      The planet Terraria is a ball of trash made to look like a planet. Due to everyone wanting to try to fix the issue, there are giant holes dug to the core as well as installations that have no discernable value. After several attempts, the Citadel Council, decided that Terraria would be henceforth known as the trash planet and people go to take vacations to dump their trash over the planet. The booming economy due to the people paying for this privilege to the first Terraria makers, the ones known as ‘Guides’, has made the 0 population planet to be one of the richest per capita.
 
       Orbital Period: 1 Earth Year
       Radius: 6028 km
@@ -2777,7 +2788,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>MSV Khenarthi</PlanetName>
     <PlanetDescription>
-      The Khenarthi is a modular conveyor of unknown design, and looks much like a tent drifting through space. The surface is covered with large, crudely-drawn advertising billboards. Attempting to ping the ship resulted in a return transmission showing an image of a feline biped, who ‘has wares if you have coin’. A secondary transmission, poorly encrypted, makes reference to an illicit substance known only as ‘moon sugar’.
+      The Khenarthi is a modular conveyor of unknown design, and looks much like a tent drifting through space. The surface is covered with large, crudely-drawn advertising billboards. Attempting to ping the ship results in a return transmission showing an image of a feline biped, who ‘has wares if you have coin’. A secondary transmission, poorly encrypted, makes reference to an illicit substance known only as ‘moon sugar’.
 
       Registry: Rawl'kha Shipping, Elsweyr
     </PlanetDescription>
@@ -2888,9 +2899,9 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Inti</PlanetName>
+    <PlanetName>Big McLargeHuge</PlanetName>
     <PlanetDescription>
-      Inti is a terrestrial planet with an atmosphere composed of ammonia and helium. Its surface is mainly composed of sodium oxide with deposits of magnesium. Its density is rather low, leaving the planet tide-locked to Matano.
+      This isn’t a real planet. You can erase this. Inti is a terrestrial planet with an atmosphere composed of ammonia and helium. Its surface is mainly composed of sodium oxide with deposits of magnesium. Its density is rather low, leaving the planet tide-locked to Matano.
 
       Inti is an unremarkable world, drawing little more than a cursory scan for surface pirate anchorages when Alliance patrols enter the system.
 
@@ -3087,7 +3098,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Fragmented Asteroid </PlanetName>
     <PlanetDescription>
-      This asteroid appears to be a piece of a larger planet that was blasted away by firepower of unimaginable magnitude. Debris litters the area around it. Ships with high-grade sensor packages can pick up a weak, intermittent transmission that one ship log described as ‘millions of voices crying out in terror.’
+      This asteroid appears to be a piece of a larger planet that was blasted away by firepower of unimaginable magnitude. Debris litters the area around it. Ships with high-grade sensor packages can pick up a weak, intermittent transmission that one ship log describes as ‘millions of voices crying out in terror.’
       Radius: 71 km
     </PlanetDescription>
   </RandomizedPlanetInfo>
@@ -3123,16 +3134,18 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Varmalus</PlanetName>
+    <PlanetName>Typhon</PlanetName>
     <PlanetDescription>
-      Varmalus has a thick atmosphere of nitrogen and helium. Its surface is scorching hot, and mainly composed of alumina with deposits of borax. The planet has an extensive network of subterranean caves, formed over the millennia by volcanic processes. In these relatively cool areas, some primitive life has developed.
+      Millennia ago, Typhon was an advanced research world that often led the way in developing new innovative technologies that benefited the wider galaxy. The Interstellar Manufacturing Corporation, who owned the planet, eventually started expanding into weapons development. In the decades that followed, the IMC developed a new type of weapon called Fold Weapons, which had unmatched destructive power. In the first test of the weapon, the only natural satellite of Typhon, named Orthros, was destroyed.
+
+      The galaxy at large saw the destructive potential of this weapon and moved to intervene before the weapon was completed. The prototype weapon misfired when the IMC used it for planetary defense, ripping the planet apart, killing the entire population when the atmosphere dissipated into space due to loss of sufficient gravity.
 
       Orbital Period: 0.4 Earth Years
       Radius: 9593 km
       Day Length: 19.4 Earth Hours
-      Atmospheric Pressure: 1.3 Earth Atmospheres
-      Surface Temperature: 503 Celsius
-      Surface Gravity: 1.2 G
+      Atmospheric Pressure: 0.03 Earth Atmospheres
+      Surface Temperature: -60 Celsius
+      Surface Gravity: 0.35 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
@@ -3140,16 +3153,22 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Theyar</PlanetName>
+    <PlanetName>Smokey’s Kingdom</PlanetName>
     <PlanetDescription>
-      Theyar is a large gas giant with traces of chlorine and sodium in its atmosphere. It also has a significant amount of water vapor in the clouds of its upper atmosphere.
+      Smokey’s Kingdom is a recently overthrown human settlement colony, originally named USFS Outpost 2. The planet was colonized in 2162 to be a resources mill for human agriculture and other natural resources such as wood that would be exported to other areas in the %CLUSTERNAME%. Due to significant economic dependency on these exports, great care was taken on the planet to ensure the supply chain was not disrupted.
 
-      Theyar was struck by an asteroid at least 12 kilometers in diameter within the last hundred years. The superheating caused by the impactor’s atmospheric passage created a large bank of vicious storms along the equatorial band.
+      An unfortunate camping accident in the Payette Forest lead to a wildfire that burned down 44% of the forest and crippled the local economy. A local resident named Smokey rallied the local residents to pressure the planetary government to punish the ones who destroyed their home, their businesses, and their families. After months of government inaction, Smokey eventually took matters into his own hands and overthrew the planetary government through well-coordinated riots across the backwater world.
 
-      Orbital Period: 12.8 Earth Years
-      Radius: 60,774 km
-      Day Length: 11.8 Earth Hours
+      The citizens now live under the strict dictatorship of Smokey, where any use of fire is grounds for execution.
+
+      Orbital Period: 1.03 Earth Years
+      Radius: 4593 km
+      Day Length: 23.4 Earth Hours
+      Atmospheric Pressure: 1.02 Earth Atmospheres
+      Surface Temperature: 25 Celsius
+      Surface Gravity: 1.0 G
     </PlanetDescription>
+    <ImageGroup>Smokey</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>186</RowID>
@@ -3191,8 +3210,8 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Unidentified Space Facility</PlanetName>
-    <PlanetDescription>This space station appears to have been assembled from used "off the shelf" civilian ship modules of diverse origins. There are no obvious hull markings, and it is not broadcasting any ID signal.</PlanetDescription>
+    <PlanetName>Ishimura</PlanetName>
+    <PlanetDescription>This space station is floating dead in space and appears to have been torn apart by massive arms. Getting too close overwhelms comms with desperate whispers to “make us whole again”. In addition, many crew members on these ships have discovered graffiti scrawled on nearby surfaces, always a double-helix shape and usually in blood, with absolutely no memory of its significance or how it got there.</PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>189</RowID>
@@ -3391,19 +3410,17 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Ontarom</PlanetName>
+    <PlanetName>Haven</PlanetName>
     <PlanetDescription>
-      Though Ontarom's surface is uncomfortably hot, its nitrogen-oxygen atmosphere and abundant, shallow seas make it an ideal candidate for habitation by most known species.
+      Described as a deadly paradise, Haven is a largely uninhabited planet. At first approach, the temperate air, lush vegetation and inviting glow make it feel like a sanctuary. But the planet is rich with disarming dangers that have lured more than one prospector from their prize, and lulled even the most objective explorer from their quest.
 
-      Unfortunately, the orbit of the moon of Thonal has been slowly decaying since the system coalesced. Its proximity is beginning to have tidal effects, and its dynamo-like revolution through Ontarom's magnetic field is generating increasing powerful electrical storms.
-
-      While some have suggested emplacement of mass effect drives in an attempt to lighten the moon and correct its orbit, the scale of such a project - tens of thousands of drives, costing enough to bankrupt the governments of all the Citadel races - make it a pipe dream. A multi-racial effort is underway to catalogue and preserve the unique genetic diversity of Ontarom's vibrant young biosphere. ExoGeni Corp. and Heyuan Genomics represent the Alliance's share of the effort.
+      The first settlers to make landfall on Haven reported a bizarre psychological pull that drove them to the surface. Expeditionary studies show that Haven’s thriving plant life actually developed a pheromone-based attraction mechanism designed to lure prey down to the surface, where they would be consumed and circulated into the system.
 
       Orbital Period: 1.2 Earth Years
-      Radius: 6443 km
+      Radius: 5443 km
       Day Length: 39.1 Earth Hours
-      Atmospheric Pressure: 0.79 Earth Atmospheres
-      Surface Temperature: 58 Celsius
+      Atmospheric Pressure: 0.89 Earth Atmospheres
+      Surface Temperature: 26 Celsius
       Surface Gravity: 0.82 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
@@ -3412,23 +3429,20 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Klencory</PlanetName>
+    <PlanetName>Ashar</PlanetName>
     <PlanetDescription>
-      Klencory is a rock and ice planet with an atmosphere composed of chlorine and argon. The frozen surface is mainly composed of potassium with deposits of Iron.
+      Ashar's catastrophic geothermal activity results in brutal surface temperature, flowing magma, and falling ash. Due to the harsh environment, Ashar has a reputation of being a hideout for outlaws in the %CLUSTERNAME%. Being caught exposed on the surface is nearly a guaranteed deathtrap; if the outlaws don’t kill you, the firestorms that sweep the surface surely will.
 
-      Klencory is famously claimed by the eccentric volus billionaire Kumun Shol. He claims that a vision of a higher being told him to seek on Klencory the "lost crypts of beings of light". These entities were supposedly created at the dawn of time to protect organic life from synthetic "machine devils."
-
-      Shol has been excavating on Klencory's toxic surface for two decades, at great expense. No government has valued the world enough to evict his small army of mercenaries.
+      No government has outlaws valuable enough on Ashar to justify capturing the planet. Some even see it as a sort of “planetary arrest”, one that prevents them from leaving the planet.
 
       Orbital Period: 20.6 Earth Years
       Radius: 7677 km
-      Day Length: 18.3 Earth Hours
-      Atmospheric Pressure: 1.01 Earth Atmospheres
-      Surface Temperature: -109 Celsius
-      Surface Gravity: 0.82 G
+      Day Length: 62.3 Earth Hours
+      Atmospheric Pressure: 1.35 Earth Atmospheres
+      Surface Temperature: 49 Celsius
+      Surface Gravity: 1.39 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>203</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3445,25 +3459,23 @@
       Surface Temperature: -188 Celsius
       Surface Gravity: 0.09 G
     </PlanetDescription>
-
-    <IsColdOnly>true</IsColdOnly>
-
-
-
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>204</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Juncro</PlanetName>
+    <PlanetName>Tundria</PlanetName>
     <PlanetDescription>
-      Juncro is a hydrogen-helium gas giant with traces of chlorine and sodium in its upper atmosphere. Like Uranus is the Sol system, it is "tipped on its side," its north pole facing the star Newton.
+      Tundria is a harsh ice planet with frigid temperatures, low gravity and a thin atmosphere. Towers of frozen gas tower above cryovolcanoes that erupted in the wake of recent tectonic activity.  Notable for its malodorous methane pools and towering icy ridges, only the hardiest and craziest will survive.
 
-      Orbital Period: 60.0 Earth Years
-      Radius: 66,642 km
-      Day Length: 16.8 Earth Hours
+      On the surface is a ghost town named The Dredger, centered around a device of the same name designed to reach below the planet’s icy crust and give access to the planet’s valuable element zero and sulphur deposits. This machine and its town appear to have been abandoned; however, the cause is unknown.
+
+      Radius: 4077 km
+      Day Length: 34.6 Earth Hours
+      Atmospheric Pressure: 0.69 Earth Atmospheres
+      Surface Temperature: -19 Celsius
+      Surface Gravity: 0.75 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
@@ -3471,11 +3483,13 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>MSV Fedele</PlanetName>
+    <PlanetName>Spaceball II</PlanetName>
     <PlanetDescription>
-      The Fedele is a Kowloon class modular conveyor of human design. In addition to the standard cargo bay, the hull has several biological research modules attached.
+      Spaceball II is the new capital ship of the planet Spaceball, brought into service after the destruction of Spaceball I over Druidia. The ship was constructed to be more resilient than the first one by removing the self destruct button, installing more seatbelts, and transforming into a ninja for space combat, instead of a maid. It additionally has been outfitted with anti-Winnebago railguns.
 
-      Registry: Private Owner, Dr. R. Heart
+      The ship appears to be having malfunctioning HyperJets, and is stuck floating adrift. It appears to be mostly powered down; something must have gone catastrophically wrong aboard the ship.
+
+      Registry: Dark Helmet Jr.
     </PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
@@ -3483,17 +3497,18 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Matol</PlanetName>
+    <PlanetName>Necrom</PlanetName>
     <PlanetDescription>
-      Several attempts to chart Matol have been made, but none have been successful. By normal standards a small rock planet, Matol has a dense atmosphere composed of carbon dioxide and argon, with a surprising amount of water vapor. Fogs and rain are common on the barren, lifeless surface.
+      Necrom is a cold planet with low gravity and a thin atmosphere, known for its chimney-like flora which emit thick, toxic fog. Areas of the planet are covered in a mushroom forest that are tall as skyscrapers, complete with phosphorescent lamps tat at night pour light into the winding “streets” below.
 
-      Matol is pleasant enough to be considered a terraforming prospect, though its low mass and the high radiation of the energetic blue star Herschel place it fairly far down on the list.
-      Orbital Period: 207.3 Earth Years
+      Rock formations that appear to be unnatural dot the surface. Some groups on the extranet theorize these are the tombs of the leaders of the race that inhabited the planet many millennia ago.
+
+      Orbital Period: 107.3 Earth Years
       Radius: 4077 km
       Day Length: 34.6 Earth Hours
-      Atmospheric Pressure: 0.49 Earth Atmospheres
+      Atmospheric Pressure: 0.79 Earth Atmospheres
       Surface Temperature: 33 Celsius
-      Surface Gravity: 0.5 G
+      Surface Gravity: 0.7 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
@@ -3740,9 +3755,9 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>MSV New York</PlanetName>
     <PlanetDescription>
-      The New York is a Kowloon class modular conveyor of human design, named after one of the largest metropolitan areas of Earth. The ship is known as a traveling tourist trap, bringing many New York cultural sensations around the galaxy.
+      The MSV New York is a mid-size conveyor of human design, named after one of the largest metropolitan areas of Earth. The ship is famously known around the galaxy as  a traveling tourist trap, bringing many New York cultural sensations to distance worlds.
 
-      This ship appears to be in a shut down state; the systems powered down and the pizza long cold, adrift space. Visual scans show a large poster sized sticker near the rear thrusters, with the faded phrase "We brake for nobody".
+      This ship appears to be in a low power state; most systems are powered down and the pizza has long gone cold. Visual scans show a large poster sized sticker near the rear thrusters, with the faded phrase "We brake for nobody".
 
       Registry: Traveling Rays, Earth
     </PlanetDescription>
@@ -3845,9 +3860,11 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Huningto</PlanetName>
+    <PlanetName>Mustafar</PlanetName>
     <PlanetDescription>
-      Huningto is a Jovian-sized gas giant with a standard hydrogen-helium atmosphere. Traces of methane give the planet its distinct cobalt blue tint. Spectral analysis indicates its extensive ring system is mostly composed of ice crystals. Huningto has an exceptionally powerful magnetic field, which creates strong radio interference throughout the inner system.
+      Mustafar was once a scorching lava world many tens of thousands of years ago, during which it was heavily mined for various resources. Cooling of the planet’s core has led to most lava flows hardening into basalt formations that form elegant patterns across the planet’s surface.
+
+      Historical records about the planet indicate that Mustafar was the turning point of an ancient galactic civil war, where the opposition party was soundly crushed and defeated. Today it lies empty and barren, with little to no value to its visitors.
 
       Orbital Period: 31.8 Earth Years
       Radius: 73,733 km
@@ -3859,13 +3876,18 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
-    <PlanetName>Farcrothu</PlanetName>
+    <PlanetName>Dagobah</PlanetName>
     <PlanetDescription>
-      A standard gas hydrogen-helium gas giant, Farcrothu is only distinguished by its moons; several dozen of them have been sculpted into the likenesses of an arthropodal alien race not yet known to Council science. Radiometric dating suggests the moons were worked over half a million years ago.
+      Largely looked over by the races of the Citadel, Dagobah is one of the only habitable planets in the %CLUSTERNAME%. A cloudy and swampy world of dense foliage, countless living things of all sizes, including reptiles, amphibians, and swarming insects, fill its environs with a hum of constant noise.
 
-      Orbital Period: 112.1 Earth Years
-      Radius: 66,014 km
-      Day Length: 8.4 Earth Hours
+      Explorers landing on the planet often report hallucinations of increasing intensity after being on the surface for more than a few days, which has effectively warded off any long term colonization of the planet.
+
+      Orbital Period: 0.6 Earth Years
+      Radius: 3839 km
+      Day Length: 16 Earth Hours
+      Atmospheric Pressure: 1.2 Earth Atmospheres
+      Surface Temperature: 19 Celsius
+      Surface Gravity: 1.1 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
