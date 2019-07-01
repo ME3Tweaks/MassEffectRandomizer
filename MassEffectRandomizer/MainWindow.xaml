@@ -176,7 +176,7 @@
                                         <CheckBox Content="Randomize GUI music" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
                                         <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}" />
                                         <CheckBox Content="Randomize game over text" ToolTip="Randomize the game over title text" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GAMEOVERTEXT}" />
-                                        
+
                                     </StackPanel>
 
                                     <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
@@ -226,7 +226,7 @@
                                                 </Style>
                                             </StackPanel.Style>
                                         </StackPanel>
-                                        
+
                                         <CheckBox Name="Checkbox_RandomizeFaceFX" Content="Randomize FaceFX animations" ToolTip="Randomize the face animations used in map files" Margin="3" IsChecked="{Binding RANDSETTING_WACK_FACEFX}" />
                                         <StackPanel>
                                             <StackPanel Orientation="Horizontal" Margin="45,0,0,0">
@@ -272,8 +272,8 @@
                                             </CheckBox.Style>
                                         </CheckBox>
                                         <CheckBox Content="Randomize talent and power stats" ToolTip="This feature is not yet complete and cannot be used at this time&#xA;Randomizes the stats of talents and powers" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_STATS}"  IsEnabled="False" />-->
-                                        
-                                        
+
+
                                         <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles squadmates" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
                                     </StackPanel>
                                 </StackPanel>
@@ -309,27 +309,60 @@
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="About">
-                    <ScrollViewer>
-                        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="84" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="130" />
-                                <ColumnDefinition Width="35*" />
-                            </Grid.ColumnDefinitions>
-                            <Image Source="images/masseffectrandomizer.png" Grid.Row="0" Grid.Column="0" Margin="4" ToolTip="Hello!" />
-                            <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,3,0,0">
-                                <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="20" Text="Mass Effect Randomizer" FontWeight="Light" />
-                                <TextBlock x:Name="TextBlock_AssemblyVersion" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" FontWeight="Light" Text="Version" />
-                                <Image HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Source="images/me3tweaks.png" Margin="8,0,0,0" Cursor="Hand" MouseDown="Image_ME3Tweaks_Click" ToolTip="Software developed with love by ME3Tweaks" />
-                            </StackPanel>
-                            <StackPanel HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,3,0,0">
-                                <TextBlock Text=" Mass Effect Randomizer&#xA; Copyright (C) 2019 ME3Tweaks&#xA; &#xA; This program is free software: you can redistribute it and/or modify it under the terms of the&#xA; GNU General Public License as published by the Free Software Foundation, either version 3 of the&#xA; License, or (at your option) any later version.&#xA; This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without&#xA; even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#xA; GNU General Public License for more details.&#xA;&#xA; Mass Effect is a registered trademark of EA INTERNATIONAL (STUDIO&#xA; AND PUBLISHING) LTD. This program has no affiliation with BioWare&#xA; or Electronic Arts." />
-                            </StackPanel>
-                        </Grid>
-                    </ScrollViewer>
+                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="84" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130" />
+                            <ColumnDefinition Width="35*" />
+                        </Grid.ColumnDefinitions>
+                        <Image Source="masseffectrandomizer.ico" Grid.Row="0" Grid.Column="0" Margin="4" ToolTip="Hello!" />
+                        <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,3,0,0">
+                            <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="20" Text="Mass Effect Randomizer" FontWeight="Light" />
+                            <TextBlock x:Name="TextBlock_AssemblyVersion" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" FontWeight="Light" Text="Version" />
+                            <Image HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Source="images/me3tweaks.png" Margin="8,0,0,0" Cursor="Hand" MouseDown="Image_ME3Tweaks_Click" ToolTip="Software developed with love by ME3Tweaks" />
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,3,0,0">
+                            <TextBlock Text=" Mass Effect Randomizer&#xA; Copyright (C) 2019 ME3Tweaks&#xA; &#xA; This program is free software: you can redistribute it and/or modify it under the terms of the&#xA; GNU General Public License as published by the Free Software Foundation, either version 3 of the&#xA; License, or (at your option) any later version.&#xA; This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without&#xA; even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#xA; GNU General Public License for more details.&#xA;&#xA; Mass Effect is a registered trademark of EA INTERNATIONAL (STUDIO&#xA; AND PUBLISHING) LTD. This program has no affiliation with BioWare&#xA; or Electronic Arts." />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Credits">
+                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox Name="ImageCredits_ListBox" ItemsSource="{Binding ImageCredits}" Background="Transparent">
+                        <ListBox.Resources>
+                            <Style TargetType="ListBox">
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="2"/>
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.Resources>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock FontSize="14" FontWeight="Bold" Text="{Binding Path=Title}"/>
+                                    <TextBlock Margin="3,0,3,7"
+                                               Text="{Binding Path=Author}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="Control.Background" Value="Transparent"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ListBox>
+                    </Grid>
                 </TabItem>
             </TabControl>
         </DockPanel>

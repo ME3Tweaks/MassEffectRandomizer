@@ -183,6 +183,7 @@
     <Compile Include="Classes\ClassesThatProveIHateMyLife\SerializingContainer.cs" />
     <Compile Include="Classes\Converters\FaceFXRandomizationLevelIntToStringConverter.cs" />
     <Compile Include="Classes\ME1FaceFXAnimSet.cs" />
+    <Compile Include="Classes\ObservableCollectionExtended.cs" />
     <Compile Include="UISupportingFunctions.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -292,9 +293,6 @@
     <Resource Include="images\me3tweaks.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\masseffectrandomizer.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="images\backdrop.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +302,7 @@
     <EmbeddedResource Include="staticfiles\**\*.bik" />
     <EmbeddedResource Include="staticfiles\galaxymapimages\**\*.swf" />
     <EmbeddedResource Include="staticfiles\text\*.xml" />
+    <EmbeddedResource Include="staticfiles\text\*.txt" />
     <EmbeddedResource Include="staticfiles\executables\*.exe" />
     <EmbeddedResource Include="staticfiles\exportreplacements\*.bin" />
     <Resource Include="images\me3_bg_800x600.jpg" />

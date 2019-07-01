@@ -152,6 +152,49 @@ namespace MassEffectRandomizer
 
         }
 
+        public ObservableCollectionExtended<ImageCredit> ImageCredits { get; } = new ObservableCollectionExtended<ImageCredit>();
+        private void LoadImageCredits()
+        {
+            var textFile = Utilities.GetEmbeddedStaticFilesTextFile("imagecredits.txt").Split('\n');
+            List<ImageCredit> credits = new List<ImageCredit>(330);
+
+            ImageCredit currentCredit = null;
+            for (int i = 0; i < textFile.Length; i++)
+            {
+                var trimmedline = textFile[i].Trim();
+                if (trimmedline.StartsWith("#"))
+                {
+                    continue;
+                }
+
+                if (trimmedline == "" && currentCredit == null)
+                {
+                    currentCredit = new ImageCredit();
+                    continue;
+                }
+
+                if (trimmedline == "")
+                {
+                    credits.Add(currentCredit);
+                    currentCredit = new ImageCredit();
+                    continue;
+                }
+
+                currentCredit.Title = textFile[i].Trim();
+                currentCredit.Author = textFile[i + 1].Trim();
+                currentCredit.InternalName = textFile[i + 2].Trim();
+                currentCredit.Link = textFile[i + 3].Trim();
+                currentCredit.License = textFile[i + 4].Trim();
+                i += 4;
+            }
+
+            if (currentCredit != null)
+            {
+                credits.Add(currentCredit);
+            }
+            ImageCredits.ReplaceAll(credits);
+        }
+
         //RANDOMIZATION OPTION BINDINGS
         //Galaxy Map
         public bool RANDSETTING_GALAXYMAP_PLANETCOLOR { get; set; }
@@ -218,6 +261,7 @@ namespace MassEffectRandomizer
 
         public MainWindow()
         {
+            DataContext = this;
             EmbeddedDllClass.ExtractEmbeddedDlls("lzo2wrapper.dll", Properties.Resources.lzo2wrapper);
             EmbeddedDllClass.LoadDll("lzo2wrapper.dll");
             Random random = new Random();
@@ -228,18 +272,13 @@ namespace MassEffectRandomizer
             ProgressBar_Bottom_Min = 0;
             ProgressPanelVisible = Visibility.Visible;
             ButtonPanelVisible = Visibility.Collapsed;
-
+            LoadImageCredits();
             InitializeComponent();
-            SeedTextBox.Text = 529572808.ToString(); //preseed.ToString();
+            SeedTextBox.Text = 529572808.ToString(); //preseed.ToString(); //DEBUG!
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
             Title += " " + version;
-
-            DataContext = this;
             SelectedRandomizeMode = RandomizationMode.ERandomizationMode_SelectAny;
-
-
-
             PerformUpdateCheck();
 
         }
@@ -346,7 +385,7 @@ namespace MassEffectRandomizer
             {
                 System.Diagnostics.Process.Start("https://me3tweaks.com");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -358,11 +397,11 @@ namespace MassEffectRandomizer
             ProgressBarIndeterminate = true;
             CurrentOperationText = "Checking for application updates";
             var versInfo = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-            var client = new GitHubClient(new ProductHeaderValue("ALOTAddonGUI"));
+            var client = new GitHubClient(new ProductHeaderValue("MassEffectRandomizer"));
             try
             {
                 int myReleaseAge = 0;
-                var releases = await client.Repository.Release.GetAll("Mgamerz", "MassEffectRandomizer");
+                var releases = await client.Repository.Release.GetAll("ME3Tweaks", "MassEffectRandomizer");
                 if (releases.Count > 0)
                 {
                     Log.Information("Fetched application releases from github");
@@ -566,6 +605,15 @@ namespace MassEffectRandomizer
         private void DebugCloseDiagnostics_Click(object sender, RoutedEventArgs e)
         {
             DiagnosticsFlyoutOpen = false;
+        }
+
+        public class ImageCredit : NotifyPropertyChangedBase
+        {
+            public string Title { get; internal set; }
+            public string Author { get; internal set; }
+            public string InternalName { get; internal set; }
+            public string Link { get; internal set; }
+            public string License { get; internal set; }
         }
     }
 }
