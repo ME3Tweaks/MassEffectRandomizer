@@ -17,6 +17,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
@@ -292,7 +293,7 @@ namespace MassEffectRandomizer
                     DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
                     if (child != null && child is T)
                     {
-                        yield return (T) child;
+                        yield return (T)child;
                     }
 
                     foreach (T childOfChild in FindVisualChildren<T>(child))
@@ -493,7 +494,7 @@ namespace MassEffectRandomizer
                                     updateprogresscontroller.SetMessage(message + "\n\n" + downloadedStr);
 
                                     downloadProgress = e.ProgressPercentage;
-                                    updateprogresscontroller.SetProgress((double) e.ProgressPercentage / 100);
+                                    updateprogresscontroller.SetProgress((double)e.ProgressPercentage / 100);
                                 };
                                 updateprogresscontroller.Canceled += async (s, e) =>
                                 {
@@ -614,6 +615,19 @@ namespace MassEffectRandomizer
             public string InternalName { get; internal set; }
             public string Link { get; internal set; }
             public string License { get; internal set; }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            try
+            {
+                var hl = (Hyperlink) sender;
+                System.Diagnostics.Process.Start((hl.DataContext as ImageCredit).Link);
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }

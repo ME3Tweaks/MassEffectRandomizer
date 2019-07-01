@@ -331,38 +331,57 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="Credits">
-                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MaxWidth="800">
+                        <TextBlock DockPanel.Dock="Top" Text="Mass Effect Randomizer's Galaxy Map Randomizer uses the following images. These images were used with written permission to ME3Tweaks, if you want to use them (including in a fork of this product), you must seek your own permission to do so." TextWrapping="Wrap" TextAlignment="Center"/>
                         <ListBox Name="ImageCredits_ListBox" ItemsSource="{Binding ImageCredits}" Background="Transparent">
-                        <ListBox.Resources>
-                            <Style TargetType="ListBox">
-                                <Setter Property="ItemsPanel">
-                                    <Setter.Value>
-                                        <ItemsPanelTemplate>
-                                            <UniformGrid Columns="2"/>
-                                        </ItemsPanelTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListBox.Resources>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock FontSize="14" FontWeight="Bold" Text="{Binding Path=Title}"/>
-                                    <TextBlock Margin="3,0,3,7"
-                                               Text="{Binding Path=Author}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemContainerStyle>
-                            <Style>
-                                <Setter Property="Control.Background" Value="Transparent"/>
-                            </Style>
-                        </ItemsControl.ItemContainerStyle>
-                    </ListBox>
-                    </Grid>
+                            <ListBox.Resources>
+                                <Style TargetType="ListBox">
+                                    <Setter Property="ItemsPanel">
+                                        <Setter.Value>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid Columns="2"/>
+                                            </ItemsPanelTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.Resources>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock>           
+                                        <Hyperlink NavigateUri="{Binding Link}" RequestNavigate="Hyperlink_RequestNavigate">
+                                            <TextBlock FontSize="14" FontWeight="Bold" Text="{Binding Path=Title}"/>
+                                            <Hyperlink.Resources>
+                                                <Style x:Key="{x:Type Hyperlink}" TargetType="{x:Type Hyperlink}">
+                                                    <Setter Property="Foreground" Value="LimeGreen"/>
+                                                    <Setter Property="TextDecorations" Value="Underline"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Foreground" Value="Red"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsEnabled" Value="True">
+                                                            <Setter Property="Cursor" Value="Hand"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Hyperlink.Resources>
+                                        </Hyperlink>
+                                    </TextBlock>
+                                        <TextBlock Text="{Binding Path=Author}"/>
+                                        <TextBlock Text="{Binding Path=License}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Control.Background" Value="Transparent"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ListBox>
+                    </DockPanel>
                 </TabItem>
             </TabControl>
         </DockPanel>
