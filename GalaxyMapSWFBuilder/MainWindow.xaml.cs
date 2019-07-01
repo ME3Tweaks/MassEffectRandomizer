@@ -35,7 +35,12 @@ namespace GalaxyMapSWFBuilder
             DataContext = this;
             LoadCommands();
             InitializeComponent();
-            LoadImagesInternal(@"X:\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed"); //debug on ryzen
+            if (Directory.Exists(@"X:\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed"))
+            {
+                LoadImagesInternal(@"X:\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed"); //debug on ryzen
+            } else if (Directory.Exists(@"C:\Users\Mgamerz\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed")){
+                LoadImagesInternal(@"C:\Users\Mgamerz\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
