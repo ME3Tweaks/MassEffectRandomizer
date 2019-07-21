@@ -15,7 +15,10 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <ListBox Name="ImageList" ItemsSource="{Binding images}" DisplayMemberPath="ShortName" SelectionChanged="ImageList_SelectionChanged"/>
+        <DockPanel>
+            <TextBlock Text="{Binding ImageListText, FallbackValue=ImageListText}" DockPanel.Dock="Bottom" TextAlignment="Center"/>
+            <ListBox Name="ImageList" ItemsSource="{Binding images}" DisplayMemberPath="ShortName" SelectionChanged="ImageList_SelectionChanged"/>
+        </DockPanel>
         <DockPanel Grid.Column="2">
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
                 <Button Content="Run builder" Command="{Binding RunBuilderCommand}" Margin="5, 3" Padding="3,0"/>

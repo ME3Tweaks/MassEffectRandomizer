@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using System.Xml.Linq;
 
 namespace GalaxyMapSWFBuilder
 {
@@ -25,11 +26,13 @@ namespace GalaxyMapSWFBuilder
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public string SelectedPath { get; set; }
+        public string ImageListText { get; set; }
         public ICommand RunBuilderCommand { get; private set; }
         public ICommand LoadImagesCommand { get; private set; }
         public ObservableCollectionExtended<GMImage> images { get; } = new ObservableCollectionExtended<GMImage>();
         public string ImageGroup { get; private set; }
 
+        public List<RandomizedPlanetInfo> AllPlanetInfos;
         public MainWindow()
         {
             DataContext = this;
@@ -38,8 +41,61 @@ namespace GalaxyMapSWFBuilder
             if (Directory.Exists(@"X:\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed"))
             {
                 LoadImagesInternal(@"X:\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed"); //debug on ryzen
-            } else if (Directory.Exists(@"C:\Users\Mgamerz\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed")){
+            }
+            else if (Directory.Exists(@"C:\Users\Mgamerz\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed"))
+            {
                 LoadImagesInternal(@"C:\Users\Mgamerz\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed");
+            }
+            AllPlanetInfos = GetPlanetInfos();
+            if (AllPlanetInfos.Count > 0)
+            {
+                //Run check for PlanetInfos ImageGroup's vs count of Categories
+
+                //Get available groups and build lists of images
+                var availableimagegroups = images.Select(c => c.Category.ToLower()).Distinct().ToList();
+                var imageGroupLists = new Dictionary<string, List<GMImage>>();
+                foreach (var availablegroup in availableimagegroups)
+                {
+                    imageGroupLists[availablegroup] = images.Where(c => c.Category.ToLower() == availablegroup).ToList();
+                }
+
+                var needsMoreImageCounters = new Dictionary<string, int>();
+                foreach (var planetInfo in AllPlanetInfos)
+                {
+                    bool noImage = false;
+                    if (imageGroupLists.TryGetValue(planetInfo.ImageGroup.ToLower(), out List<GMImage> availableImages))
+                    {
+                        if (availableImages.Count > 0)
+                        {
+                            availableImages.RemoveAt(0); //Remove one from the group
+                        }
+                        else
+                        {
+                            noImage = true;
+                        }
+                    }
+                    else
+                    {
+                        noImage = true;
+                    }
+
+                    if (noImage)
+                    {
+                        if (needsMoreImageCounters.TryGetValue(planetInfo.ImageGroup.ToLower(), out int counter))
+                        {
+                            needsMoreImageCounters[planetInfo.ImageGroup.ToLower()] = counter + 1;
+                        }
+                        else
+                        {
+                            needsMoreImageCounters[planetInfo.ImageGroup.ToLower()] = 1;
+                        }
+                    }
+                }
+
+                foreach (var counter in needsMoreImageCounters)
+                {
+                    Debug.WriteLine("Not enough images for group " + counter.Key + ": Needs " + counter.Value + " more images");
+                }
             }
         }
 
@@ -80,7 +136,7 @@ namespace GalaxyMapSWFBuilder
 
         private void RunBuilder()
         {
-            //throw new NotImplementedException();
+            string jpex = @"C:\Program Files (x86)\FFDec\ffdec.bat";
             for (int i = 0; i < images.Count; i++)
             {
                 ImageList.SelectedIndex = i;
@@ -88,7 +144,6 @@ namespace GalaxyMapSWFBuilder
                 //I am too lazy to background thread this.
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
                     new Action(delegate { }));
-                string jpex = @"C:\Program Files (x86)\FFDec\ffdec.bat";
                 Process process = new Process();
                 // Configure the process using the StartInfo properties.
                 process.StartInfo.FileName = jpex;
@@ -127,5 +182,74 @@ namespace GalaxyMapSWFBuilder
                 ImageGroup = gm.Category;
             }
         }
+
+
+
+        #region MER specific code
+        [DebuggerDisplay("RandomPlanetInfo ({PlanetName})")]
+        public class RandomizedPlanetInfo
+        {
+            /// <summary>
+            /// What 0-based row this planet information is for in the Bio2DA
+            /// </summary>
+            public int RowID;
+
+            /// <summary>
+            /// Prevents shuffling this item outside of it's row ID
+            /// </summary>
+            public bool PreventShuffle;
+
+            /// <summary>
+            /// Indicator that this is an MSV planet
+            /// </summary>
+            public bool IsMSV;
+
+            /// <summary>
+            /// Indicator that this is an Asteroid Belt
+            /// </summary>
+            public bool IsAsteroidBelt;
+
+            /// <summary>
+            /// Name to assign for randomization. If this is a plot planet, this value is the original planet name
+            /// </summary>
+            public string PlanetName;
+
+            /// <summary>
+            /// Name used for randomizing if it is a plot planet
+            /// </summary>
+            public string PlanetName2;
+
+            public string PlanetDescription;
+
+            /// <summary>
+            /// WHen updating 2DA_AreaMap, labels that begin with these prefixes will be analyzed and updated accordingly by full (if no :) or anything before :.
+            /// </summary>
+            public List<string> MapBaseNames { get; internal set; }
+            public string ImageGroup { get; internal set; }
+        }
+
+        private List<RandomizedPlanetInfo> GetPlanetInfos()
+        {
+            if (File.Exists(@"C:\Users\mgame\source\repos\MassEffectRandomizer\MassEffectRandomizer\staticfiles\text\planetinfo.xml"))
+            {
+                XElement rootElement = XElement.Load(@"C:\Users\mgame\source\repos\MassEffectRandomizer\MassEffectRandomizer\staticfiles\text\planetinfo.xml");
+                return (from e in rootElement.Elements("RandomizedPlanetInfo")
+                        select new RandomizedPlanetInfo
+                        {
+                            PlanetName = (string)e.Element("PlanetName"),
+                            PlanetName2 = (string)e.Element("PlanetName2"), //Original name (plot planets only)
+                            PlanetDescription = (string)e.Element("PlanetDescription"),
+                            IsMSV = (bool)e.Element("IsMSV"),
+                            IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
+                            PreventShuffle = (bool)e.Element("PreventShuffle"),
+                            RowID = (int)e.Element("RowID"),
+                            MapBaseNames = e.Elements("MapBaseNames")
+                                .Select(r => r.Value).ToList(),
+                            ImageGroup = e.Element("ImageGroup")?.Value ?? "Generic"
+                        }).ToList();
+            }
+            return new List<RandomizedPlanetInfo>();
+        }
+        #endregion
     }
 }
