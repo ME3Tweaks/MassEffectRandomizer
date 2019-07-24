@@ -230,9 +230,14 @@ namespace GalaxyMapSWFBuilder
 
         private List<RandomizedPlanetInfo> GetPlanetInfos()
         {
-            if (File.Exists(@"C:\Users\mgame\source\repos\MassEffectRandomizer\MassEffectRandomizer\staticfiles\text\planetinfo.xml"))
+            string filepath = @"C:\Users\mgame\source\repos\MassEffectRandomizer\MassEffectRandomizer\staticfiles\text\planetinfo.xml";
+            if (!File.Exists(filepath))
             {
-                XElement rootElement = XElement.Load(@"C:\Users\mgame\source\repos\MassEffectRandomizer\MassEffectRandomizer\staticfiles\text\planetinfo.xml");
+                filepath = @"C:\Users\Mgamerz\source\repos\MassEffectRandomizer\MassEffectRandomizer\staticfiles\text\planetinfo.xml";
+            }
+            if (File.Exists(filepath))
+            {
+                XElement rootElement = XElement.Load(filepath);
                 return (from e in rootElement.Elements("RandomizedPlanetInfo")
                         select new RandomizedPlanetInfo
                         {
