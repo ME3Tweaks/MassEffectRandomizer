@@ -96,6 +96,15 @@ namespace GalaxyMapSWFBuilder
                 {
                     Debug.WriteLine("Not enough images for group " + counter.Key + ": Needs " + counter.Value + " more images");
                 }
+
+                foreach (var group in imageGroupLists)
+                {
+                    if (group.Value.Count > 0)
+                    {
+                        Debug.WriteLine("Remaining images in group " + group.Key+": " + group.Value.Count);
+
+                    }
+                }
             }
         }
 
