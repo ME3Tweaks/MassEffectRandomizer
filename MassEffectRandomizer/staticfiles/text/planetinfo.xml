@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <planetinfos>
   <RandomizedPlanetInfo>
     <RowID>0</RowID>
@@ -346,7 +347,8 @@
       Surface Temperature: -216 Celsius
       Surface Gravity: 0.3 G
     </PlanetDescription>
-    `	<ImageGroup>SeaFloor</ImageGroup>
+    `
+    <ImageGroup>SeaFloor</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>18</RowID>
@@ -819,7 +821,8 @@
     <RowID>44</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Metallic Asteroid</PlanetName>
     <PlanetDescription>
       A metal-rich asteroid. There are multiple abandoned mining ships on the surface, with one of them fractured open to the vacuum of space.
@@ -898,7 +901,6 @@
     </PlanetDescription>
     <ImageGroup>RingWorld</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>49</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -911,7 +913,8 @@
     <RowID>50</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Rocky Asteroid</PlanetName>
     <PlanetDescription>
       This large asteroid has several smaller bodies orbiting it.
@@ -1389,7 +1392,6 @@
       Surface Gravity: 0.39 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>77</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1406,7 +1408,6 @@
       Day Length: 17.2 Earth Hours
     </PlanetDescription>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>78</RowID>
     <PreventShuffle>true</PreventShuffle>
@@ -1594,7 +1595,7 @@
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
     <NotPlayable>true</NotPlayable>
-    </RandomizedPlanetInfo>
+  </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>88</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1838,7 +1839,8 @@
     <RowID>102</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Metallic Asteroid</PlanetName>
     <PlanetDescription>
       A metal-rich asteroid.
@@ -1922,7 +1924,6 @@
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>107</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2031,30 +2032,6 @@
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
   </RandomizedPlanetInfo>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <RandomizedPlanetInfo>
     <RowID>113</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2074,7 +2051,6 @@
       Surface Gravity: 0.7 G
     </PlanetDescription>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>114</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2094,7 +2070,6 @@
     </PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>116</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2103,7 +2078,6 @@
     <PlanetName>Asteroid Belt</PlanetName>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>117</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2212,7 +2186,8 @@
     <RowID>123</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Distress signal</PlanetName>
     <PlanetDescription>
       A distress call is coming from this asteroid; however, nothing adorns the surface except for a single large tunnel entrance. The distress call signal is weak and appears to be coming from the asteroid’s interior, repeating a message about ‘giant alien spiders’.
@@ -2235,7 +2210,8 @@
     <RowID>125</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Carbonaceous Asteroid</PlanetName>
     <PlanetDescription>
       A dark, carbon-rich asteroid.
@@ -2426,7 +2402,6 @@
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>136</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2477,7 +2452,8 @@
     <RowID>139</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Carbonaceous Asteroid</PlanetName>
     <PlanetDescription>
       A dark asteroid of mixed carbonaceous materials.
@@ -2543,7 +2519,7 @@
       Surface Temperature: 32 Celsius
       Surface Gravity: 1.05 G
     </PlanetDescription>
-    <ImageGroup>DestroyedWolrd</ImageGroup>
+    <ImageGroup>DestroyedWorld</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>143</RowID>
@@ -2568,12 +2544,12 @@
     <PlanetName>Asteroid Belt</PlanetName>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>145</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Rocky Asteroid</PlanetName>
     <PlanetDescription>
       An asteroid composed of mixed metals and silicates.
@@ -2609,7 +2585,6 @@
     </PlanetDescription>
     <ImageGroup>Ice</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>148</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2819,7 +2794,8 @@
     <RowID>160</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Metallic Asteroid</PlanetName>
     <PlanetDescription>
       A metal-rich asteroid.
@@ -3038,7 +3014,8 @@
     <RowID>173</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Metallic Asteroid</PlanetName>
     <PlanetDescription>
       A metal-rich asteroid.
@@ -3046,7 +3023,6 @@
     </PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>174</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3056,7 +3032,6 @@
     <PlanetDescription>Asteroid Belt Placeholder</PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>175</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3089,7 +3064,6 @@
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>177</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3154,7 +3128,6 @@
     <PlanetDescription>Asteroid Belt Placeholder</PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>181</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3167,7 +3140,6 @@
     </PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>182</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3177,7 +3149,6 @@
     <PlanetDescription>Asteroid Belt Placeholder</PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>183</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3414,7 +3385,6 @@
     </PlanetDescription>
     <ImageGroup>SpaceStation</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>196</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3466,7 +3436,8 @@
     <RowID>199</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Pufferfish Asteroids</PlanetName>
     <PlanetDescription>
       Asteroids in the vicinity bear marks of high-heat weaponry impacts. Sections of melted rock have formed spears pointing outward from their surfaces, an appearance that gave the asteroid cluster its name. The shifting gravity in this area makes travel extremely dangerous. A single asteroid tumbling into the path of a ship can puncture its hull without triggering the kinetic shielding.
@@ -3495,7 +3466,7 @@
       Surface Temperature: 32 Celsius
       Surface Gravity: 0.88 G
     </PlanetDescription>
-    <ImageGroup>Spire</ImageGroup>
+    <ImageGroup>Spikes</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>201</RowID>
@@ -3555,7 +3526,6 @@
     </PlanetDescription>
     <ImageGroup>Ice</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>204</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3590,7 +3560,6 @@
     </PlanetDescription>
     <ImageGroup>Ship</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>206</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3684,7 +3653,8 @@
     <RowID>211</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Rocky Asteroid</PlanetName>
     <PlanetDescription>
       A metal-rich asteroid.
@@ -3796,7 +3766,6 @@
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>216</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3810,7 +3779,8 @@
     <RowID>217</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Carbonaceous Asteroid</PlanetName>
     <PlanetDescription>
       A dark asteroid of mixed carbonaceous materials. This asteroid shows sign of impact by weapons fire.
@@ -3916,7 +3886,6 @@
     </PlanetDescription>
     <ImageGroup>Ship</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>224</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3954,7 +3923,6 @@
     </PlanetDescription>
     <ImageGroup>WaterWorld</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>226</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3972,7 +3940,6 @@
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
   </RandomizedPlanetInfo>
-
   <RandomizedPlanetInfo>
     <RowID>227</RowID>
     <PreventShuffle>false</PreventShuffle>

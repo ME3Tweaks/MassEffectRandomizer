@@ -101,8 +101,11 @@ namespace GalaxyMapSWFBuilder
                 {
                     if (group.Value.Count > 0)
                     {
-                        Debug.WriteLine("Remaining images in group " + group.Key+": " + group.Value.Count);
-
+                        Debug.WriteLine("Remaining images in group " + group.Key + ": " + group.Value.Count);
+                    }
+                    else if (needsMoreImageCounters.FirstOrDefault(x => x.Key == group.Key).Key == null)
+                    {
+                        Debug.WriteLine("Exact amount of images in group " + group.Key + ": " + group.Value.Count);
                     }
                 }
             }
@@ -219,6 +222,11 @@ namespace GalaxyMapSWFBuilder
             public bool IsAsteroidBelt;
 
             /// <summary>
+            /// Indicator that this is an Asteroid
+            /// </summary>
+            public bool IsAsteroid;
+
+            /// <summary>
             /// Name to assign for randomization. If this is a plot planet, this value is the original planet name
             /// </summary>
             public string PlanetName;
@@ -255,12 +263,13 @@ namespace GalaxyMapSWFBuilder
                             PlanetDescription = (string)e.Element("PlanetDescription"),
                             IsMSV = (bool)e.Element("IsMSV"),
                             IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
+                            IsAsteroid = e.Element("IsAsteroid") != null ? (bool)e.Element("IsAsteroid") : false,
                             PreventShuffle = (bool)e.Element("PreventShuffle"),
                             RowID = (int)e.Element("RowID"),
                             MapBaseNames = e.Elements("MapBaseNames")
                                 .Select(r => r.Value).ToList(),
                             ImageGroup = e.Element("ImageGroup")?.Value ?? "Generic"
-                        }).ToList();
+                        }).Where(x=>!x.IsAsteroidBelt).ToList();
             }
             return new List<RandomizedPlanetInfo>();
         }
