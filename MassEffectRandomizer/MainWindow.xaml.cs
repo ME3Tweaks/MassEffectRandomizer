@@ -121,6 +121,11 @@ namespace MassEffectRandomizer
             public bool IsAsteroidBelt;
 
             /// <summary>
+            /// Indicator that this is an Asteroid
+            /// </summary>
+            public bool IsAsteroid;
+
+            /// <summary>
             /// Name to assign for randomization. If this is a plot planet, this value is the original planet name
             /// </summary>
             public string PlanetName;

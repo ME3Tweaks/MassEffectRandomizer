@@ -27,6 +27,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>*Placeholder*</PlanetName>
     <PlanetDescription>*Placeholder*</PlanetDescription>
+    <ImageGroup>Error</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>2</RowID>
@@ -268,6 +269,7 @@
       Surface Temperature: 23 Celsius
       Surface Gravity: 1.04 G
     </PlanetDescription>
+    <ImageGroup>Farm</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>14</RowID>
@@ -358,7 +360,7 @@
     <PlanetName>Noveria</PlanetName>
     <PlanetName2>Grunty Industries</PlanetName2>
     <PlanetDescription>
-      %PLANETNAME% is a small, frozen terrestrial world, barely habitable by conventional definitions. It is privately run by the %PLANETNAME% Development Corporation, which controls the production facilities that cover the planet. Due to the significant overcrowding of factories on the planet, pollution is widespread, with some factories even surrounded by toxic moats.
+      %PLANETNAME% is a small, frozen, terrestrial world, barely habitable by conventional definitions. It is privately run by the %PLANETNAME% Development Corporation, which controls the production facilities that cover the planet. Due to the significant overcrowding of factories, pollution is widespread, with some factories even surrounded by toxic moats.
 
       Secret investigations into the factories have surfaced pictures of incredibly dangerous working conditions, including multiple broken windows going unrepaired, an open elevator shaft that several workers have died in, and a sentient blowtorch that lives in the basement of one of the facilities.
 
@@ -1391,6 +1393,7 @@
       Surface Temperature: 18 Celsius
       Surface Gravity: 0.39 G
     </PlanetDescription>
+    <ImageGroup>Wilderness</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>77</RowID>
@@ -1407,6 +1410,7 @@
       Radius: 52,290 km
       Day Length: 17.2 Earth Hours
     </PlanetDescription>
+    <ImageGroup>Sky</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>78</RowID>
@@ -2050,6 +2054,7 @@
       Surface Temperature: -193 Celsius
       Surface Gravity: 0.7 G
     </PlanetDescription>
+    <ImageGroup>DestroyedWorld</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>114</RowID>
@@ -3681,7 +3686,7 @@
       Surface Temperature: 31 Celsius
       Surface Gravity: 1.1G
     </PlanetDescription>
-    <ImageGroup>Factory</ImageGroup>
+    <ImageGroup>Laboratory</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>213</RowID>

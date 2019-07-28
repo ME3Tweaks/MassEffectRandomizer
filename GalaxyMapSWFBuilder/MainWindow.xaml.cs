@@ -47,6 +47,11 @@ namespace GalaxyMapSWFBuilder
                 LoadImagesInternal(@"C:\Users\Mgamerz\Google Drive\Mass Effect Modding\MER\GalaxyMapImages\processed");
             }
             AllPlanetInfos = GetPlanetInfos();
+            var emptyImageGroups = AllPlanetInfos.Where(x => x.ImageGroup == null).ToList();
+            if (emptyImageGroups.Count > 0)
+            {
+                Debugger.Break();
+            }
             if (AllPlanetInfos.Count > 0)
             {
                 //Run check for PlanetInfos ImageGroup's vs count of Categories
@@ -263,12 +268,12 @@ namespace GalaxyMapSWFBuilder
                             PlanetDescription = (string)e.Element("PlanetDescription"),
                             IsMSV = (bool)e.Element("IsMSV"),
                             IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
-                            IsAsteroid = e.Element("IsAsteroid") != null ? (bool)e.Element("IsAsteroid") : false,
+                            IsAsteroid = e.Element("IsAsteroid") != null && (bool)e.Element("IsAsteroid"),
                             PreventShuffle = (bool)e.Element("PreventShuffle"),
                             RowID = (int)e.Element("RowID"),
                             MapBaseNames = e.Elements("MapBaseNames")
                                 .Select(r => r.Value).ToList(),
-                            ImageGroup = e.Element("ImageGroup")?.Value ?? "Generic"
+                            ImageGroup = e.Element("ImageGroup")?.Value
                         }).Where(x=>!x.IsAsteroidBelt).ToList();
             }
             return new List<RandomizedPlanetInfo>();

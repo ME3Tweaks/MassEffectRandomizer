@@ -793,16 +793,11 @@ namespace MassEffectRandomizer.Classes
             IExportEntry galaxyMapImages2DAExport = ui2DAPackage.getUExport(8);
             var galaxyMapImages2DA = new Bio2DA(galaxyMapImages2DAExport);
 
-            //Plot planets will have specific descriptions so we should probably try to assign specific images to those as random ones won't be very accurate at all
-
-            //Citadel
-
-            //
             Dictionary<string, List<string>> galaxyMapGroupResources = new Dictionary<string, List<string>>();
             var resourceItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages.")).ToList();
             var uniqueNames = new SortedSet<string>();
 
-            //Get unique image groups
+            //Get unique image group categories
             foreach (string str in resourceItems)
             {
                 string[] parts = str.Split('.');
@@ -812,73 +807,107 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
+            //Build group lists
             foreach (string groupname in uniqueNames)
             {
                 galaxyMapGroupResources[groupname] = resourceItems.Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.galaxymapimages." + groupname)).ToList();
                 galaxyMapGroupResources[groupname].Shuffle(random);
             }
 
-            var mapImageExports = galaxyMapImagesBasegame.Exports.Where(x => x.ObjectName.StartsWith("galMap")); //Original galaxy map images
+            //Get all exports for images
+            var mapImageExports = galaxyMapImagesBasegame.Exports.Where(x => x.ObjectName.StartsWith("galMap")).ToList(); //Original galaxy map images
             var planet2daRowsWithImages = new List<int>();
             int imageIndexCol = planets2DA.GetColumnIndexByName("ImageIndex");
+            int descriptionCol = planets2DA.GetColumnIndexByName("Description");
+            int nextAddedImageIndex = int.Parse(galaxyMapImages2DA.RowNames.Last()); //we increment from here.
+            int nextGalaxyMap2DAImageRowIndex = 0; //THIS IS C# BASED
+
+            //var mappedRPIs = planetsRowToRPIMapping.Values.ToList();
+            mainWindow.ProgressBar_Bottom_Max = planets2DA.RowCount;
             for (int i = 0; i < planets2DA.RowCount; i++)
             {
-                if (planets2DA[i, imageIndexCol] != null)
+                mainWindow.CurrentProgressValue = i;
+                if (planets2DA[i, descriptionCol] == null || planets2DA[i, descriptionCol].GetIntValue() == 0)
                 {
-                    planet2daRowsWithImages.Add(i);
+                    continue; //Skip this row, its an asteroid belt (or liara's dig site)
                 }
-            }
 
-            foreach (var rpi in planetsRowToRPIMapping)
-            {
-                if (rpi.Value.ImageGroup != null)
+                //var assignedRPI = mappedRPIs[i];
+                int rowName = int.Parse(planets2DA.RowNames[i]);
+                Debug.WriteLine("Getting RPI via row #: " + planets2DA.RowNames[i]+", using dictionary key " + rowName);
+
+                if (planetsRowToRPIMapping.TryGetValue(rowName, out RandomizedPlanetInfo assignedRPI))
                 {
-                    var imageIndexCell = planets2DA[rpi.Key, imageIndexCol];
-                    if (imageIndexCell != null)
+                    Bio2DACell imageIndexCell = planets2DA[i, imageIndexCol];
+                    bool incrementAddedImageIndex = false;
+                    if (imageIndexCell == null)
                     {
-                        int imageIndex = imageIndexCell.GetIntValue();
-                        if (imageIndex > 0)
+                        imageIndexCell = new Bio2DACell(Bio2DACell.Bio2DADataType.TYPE_INT, BitConverter.GetBytes(++nextAddedImageIndex));
+                        planets2DA[i, imageIndexCol] = imageIndexCell;
+                    }
+                    else if (imageIndexCell.GetIntValue() < 0)
+                    {
+                        imageIndexCell.DisplayableValue = (++nextAddedImageIndex).ToString();
+                    }
+
+                    if (galaxyMapGroupResources.TryGetValue(assignedRPI.ImageGroup.ToLower(), out var newImagePool))
+                    {
+                        string newImageResource = null;
+                        if (newImagePool.Count > 0)
                         {
-                            if (galaxyMapGroupResources.TryGetValue(rpi.Value.ImageGroup.ToLower(), out var newImagePool))
-                            {
-                                string newImageResource = null;
-                                if (newImagePool.Count > 0)
-                                {
-                                    newImageResource = newImagePool[0];
-                                    newImagePool.RemoveAt(0);
-                                }
-                                else
-                                {
-                                    Debug.WriteLine("Not enough images in group " + rpi.Value.ImageGroup + " to continue randomization.");
-                                    continue;
-                                }
-
-                                var newImageSwf = newImagePool;
-                                int galaxyMapImagesRowIndex = galaxyMapImages2DA.GetRowIndexByName(planets2DA[rpi.Key, imageIndexCol].DisplayableValue);
-
-                                string swfImageExportObjectName = galaxyMapImages2DA[galaxyMapImagesRowIndex, 0].DisplayableValue;
-                                swfImageExportObjectName = swfImageExportObjectName.Substring(swfImageExportObjectName.IndexOf('.') + 1); //TODO: Need to deal with name instances for Pinnacle Station DLC
-                                var matchingExport = mapImageExports.FirstOrDefault(x => x.ObjectName == swfImageExportObjectName);
-                                if (matchingExport != null)
-                                {
-                                    ReplaceSWFFromResource(matchingExport, newImageResource);
-                                }
-                            }
-                            else
-                            {
-                                Debugger.Break(); //WE DON'T HAVE IMAGE FOR THIS GROUP!
-                            }
+                            newImageResource = newImagePool[0];
+                            newImagePool.RemoveAt(0);
                         }
                         else
                         {
-                            Debug.WriteLine("0 or negative image index, skipping...");
+                            Debug.WriteLine("Not enough images in group " + assignedRPI.ImageGroup + " to continue randomization.");
+                            continue;
+                        }
+
+                        var newImageSwf = newImagePool;
+
+                        IExportEntry matchingExport = null;
+                        if (nextGalaxyMap2DAImageRowIndex < galaxyMapImages2DA.RowCount)
+                        {
+                            string swfImageExportObjectName = galaxyMapImages2DA[nextGalaxyMap2DAImageRowIndex, "imageResource"].DisplayableValue;
+
+                            //get object name of export inside of GUI_SF_GalaxyMap.upk
+                            swfImageExportObjectName = swfImageExportObjectName.Substring(swfImageExportObjectName.IndexOf('.') + 1); //TODO: Need to deal with name instances for Pinnacle Station DLC. Because it's too hard for them to type a new name.
+
+                            //Fetch export
+                            matchingExport = mapImageExports.FirstOrDefault(x => x.ObjectName == swfImageExportObjectName);
+                        }
+                        else
+                        {
+                            //Not enough exports, clone and make a new one.
+                            matchingExport = mapImageExports[0].Clone();
+                            matchingExport.indexValue = 0;
+                            string objectName = "galMapMER_" + nextAddedImageIndex;
+                            matchingExport.idxObjectName = galaxyMapImagesBasegame.FindNameOrAdd(objectName);
+                            galaxyMapImagesBasegame.addExport(matchingExport);
+                            galaxyMapImages2DA.AddRow(nextAddedImageIndex.ToString());
+                            int nameIndex = ui2DAPackage.FindNameOrAdd("GUI_SF_GalaxyMap." + objectName);
+                            galaxyMapImages2DA[nextGalaxyMap2DAImageRowIndex, "imageResource"] = new Bio2DACell(Bio2DACell.Bio2DADataType.TYPE_NAME, BitConverter.GetBytes((long)nameIndex));
+                        }
+                        nextGalaxyMap2DAImageRowIndex++;
+                        if (matchingExport != null)
+                        {
+                            ReplaceSWFFromResource(matchingExport, newImageResource);
                         }
                     }
                 }
+                else
+                {
+                    Debug.WriteLine("Skipped row: " + rowName);
+                }
             }
 
+            galaxyMapImages2DA.Write2DAToExport();
+            ui2DAPackage.save();
+            ModifiedFiles[ui2DAPackage.FileName] = ui2DAPackage.FileName;
             galaxyMapImagesBasegame.save();
             ModifiedFiles[galaxyMapImagesBasegame.FileName] = galaxyMapImagesBasegame.FileName;
+            planets2DA.Write2DAToExport(); //should save later
         }
 
         private void ReplaceSWFFromResource(IExportEntry exp, string swfResourcePath)
@@ -1338,6 +1367,7 @@ namespace MassEffectRandomizer.Classes
                                                PlanetDescription = (string)e.Element("PlanetDescription"),
                                                IsMSV = (bool)e.Element("IsMSV"),
                                                IsAsteroidBelt = (bool)e.Element("IsAsteroidBelt"),
+                                               IsAsteroid = e.Element("IsAsteroid") != null && (bool)e.Element("IsAsteroid"),
                                                PreventShuffle = (bool)e.Element("PreventShuffle"),
                                                RowID = (int)e.Element("RowID"),
                                                MapBaseNames = e.Elements("MapBaseNames")
@@ -1379,7 +1409,8 @@ namespace MassEffectRandomizer.Classes
             }
 
             var msvInfos = allMapRandomizationInfo.Where(x => x.IsMSV).ToList();
-            var asteroidInfos = allMapRandomizationInfo.Where(x => x.IsAsteroidBelt).ToList();
+            var asteroidInfos = allMapRandomizationInfo.Where(x => x.IsAsteroid).ToList();
+            var asteroidBeltInfos = allMapRandomizationInfo.Where(x => x.IsAsteroidBelt).ToList();
             var planetInfos = allMapRandomizationInfo.Where(x => !x.IsAsteroidBelt && !x.IsMSV && !x.PreventShuffle).ToList();
 
             msvInfos.Shuffle(random);
@@ -1411,7 +1442,7 @@ namespace MassEffectRandomizer.Classes
             //Cluster Names
             int nameColumnClusters = clusters2DA.GetColumnIndexByName("Name");
             //Used for resolving %SYSTEMNAME% in planet description and localization VO text
-            Dictionary<int, string> clusterIdToClusterNameMap = new Dictionary<int, string>();
+            Dictionary<int, SuffixedCluster> clusterIdToClusterNameMap = new Dictionary<int, SuffixedCluster>();
 
             for (int i = 0; i < clusters2DA.RowNames.Count; i++)
             {
@@ -1437,7 +1468,7 @@ namespace MassEffectRandomizer.Classes
                         }
 
                         clusterNameMapping[oldClusterName] = suffixedCluster;
-                        clusterIdToClusterNameMap[int.Parse(clusters2DA.RowNames[i])] = suffixedCluster.ClusterName;
+                        clusterIdToClusterNameMap[int.Parse(clusters2DA.RowNames[i])] = suffixedCluster;
                         break;
                     }
                 }
@@ -1445,7 +1476,7 @@ namespace MassEffectRandomizer.Classes
 
             //SYSTEMS
             //Used for resolving %SYSTEMNAME% in planet description and localization VO text
-            Dictionary<int, (string clustername, string systemname)> systemIdToSystemNameMap = new Dictionary<int, (string clustername, string systemname)>();
+            Dictionary<int, (SuffixedCluster clustername, string systemname)> systemIdToSystemNameMap = new Dictionary<int, (SuffixedCluster clustername, string systemname)>();
 
 
             int nameColumnSystems = systems2DA.GetColumnIndexByName("Name");
@@ -1467,7 +1498,7 @@ namespace MassEffectRandomizer.Classes
                     {
                         //tf.replaceString(tlkRef, newSystemName);
                         systemNameMapping[oldSystemName] = newSystemName;
-                        systemIdToSystemNameMap[int.Parse(systems2DA.RowNames[i])] = (newSystemName, clusterIdToClusterNameMap[clusterTableRow]);
+                        systemIdToSystemNameMap[int.Parse(systems2DA.RowNames[i])] = (clusterIdToClusterNameMap[clusterTableRow], newSystemName);
                         break;
                     }
                 }
@@ -1485,19 +1516,27 @@ namespace MassEffectRandomizer.Classes
             {
                 //mainWindow.CurrentProgressValue = i;
                 int systemId = planets2DA[i, 1].GetIntValue();
-                (string systemName, string clusterName) systemClusterName = systemIdToSystemNameMap[systemId];
+                (SuffixedCluster clusterName, string systemName) systemClusterName = systemIdToSystemNameMap[systemId];
 
                 Bio2DACell descriptionRefCell = planets2DA[i, descCol];
-                int descriptionReference = descriptionRefCell == null ? 0 : descriptionRefCell.GetIntValue();
+                int descriptionReference = descriptionRefCell?.GetIntValue() ?? 0;
 
                 //var rowIndex = int.Parse(planets2DA.RowNames[i]);
                 var info = allMapRandomizationInfo.FirstOrDefault(x => x.RowID == i);
                 if (info != null)
                 {
+                    if (info.IsAsteroidBelt)
+                    {
+                        continue; //we don't care.
+                    }
                     //found original info
                     RandomizedPlanetInfo rpi = null;
                     if (info.PreventShuffle)
                     {
+                        //Shuffle with items of same rowindex.
+                        //Todo post launch.
+
+
                         rpi = info;
                         //Do not use shuffled
 
@@ -1509,7 +1548,7 @@ namespace MassEffectRandomizer.Classes
                             rpi = msvInfos[0];
                             msvInfos.RemoveAt(0);
                         }
-                        else if (info.IsAsteroidBelt)
+                        else if (info.IsAsteroid)
                         {
                             rpi = asteroidInfos[0];
                             asteroidInfos.RemoveAt(0);
@@ -1533,7 +1572,13 @@ namespace MassEffectRandomizer.Classes
                     var description = rpi.PlanetDescription;
                     if (description != null)
                     {
-                        description = description.Replace("%CLUSTERNAME%", systemClusterName.clusterName).Replace("%SYSTEMNAME%", systemClusterName.systemName).Replace("%PLANETNAME%", newPlanetName).TrimLines();
+                        SuffixedCluster clusterName = systemClusterName.clusterName;
+                        string clusterString = systemClusterName.clusterName.ClusterName;
+                        if (!clusterName.Suffixed)
+                        {
+                            clusterString += " cluster";
+                        }
+                        description = description.Replace("%CLUSTERNAME%", clusterString).Replace("%SYSTEMNAME%", systemClusterName.systemName).Replace("%PLANETNAME%", newPlanetName).TrimLines();
                     }
 
                     //var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
@@ -1565,7 +1610,7 @@ namespace MassEffectRandomizer.Classes
                             //    Debug.WriteLine("----------------------------------");
                             //    Debugger.Break(); //Xawin
                             //}
-                            tf.replaceString(descriptionReference, description);
+                            //tf.replaceString(descriptionReference, description);
                             //break;
                         }
                     }
@@ -1576,7 +1621,7 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
+            //UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
             RandomizePlanetImages(random, rowRPIMap, planets2DA);
         }
 
@@ -1825,7 +1870,7 @@ namespace MassEffectRandomizer.Classes
 
                         if (originalString != newString)
                         {
-                            tf.replaceString(sref.StringID, newString);
+                            // tf.replaceString(sref.StringID, newString);
                         }
                     }
                 }
@@ -2739,7 +2784,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_MISC_HAZARDS
                    || mainWindow.RANDSETTING_MISC_INTERPS
                    || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES
-                   || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
+                   //|| mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
                    || mainWindow.RANDSETTING_WACK_FACEFX
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
                    || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS

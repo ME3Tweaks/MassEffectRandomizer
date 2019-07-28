@@ -149,6 +149,34 @@ namespace MassEffectRandomizer.Classes
             RowNames = new List<string>();
         }
 
+        /// <summary>
+        /// Adds a row to the table.
+        /// Not the most efficient way to do this.
+        /// </summary>
+        /// <param name="rowName"></param>
+        public void AddRow(string rowName = null)
+        {
+            var newCells = new Bio2DACell[RowCount + 1, ColumnCount];
+            for (int i = 0; i < RowCount; i++)
+            {
+                for (int j = 0; j < ColumnCount; j++)
+                {
+                    newCells[i, j] = Cells[i, j];
+                }
+            }
+
+            if (rowName != null)
+            {
+                RowNames.Add(rowName);
+            }
+            else
+            {
+                RowNames.Add((int.Parse(RowNames.Last()) + 1).ToString()); //indexed by number
+            }
+
+            Cells = newCells;
+        }
+
         internal string GetColumnNameByIndex(int columnIndex)
         {
             if (columnIndex < ColumnNames.Count && columnIndex >= 0)
@@ -286,6 +314,25 @@ namespace MassEffectRandomizer.Classes
             get => Cells[rowindex, colindex];
             set
             {
+                // set the item for this index. value will be of type Bio2DACell.
+                if (Cells[rowindex, colindex] == null && value != null)
+                {
+                    PopulatedCellCount++;
+                }
+                if (Cells[rowindex, colindex] != null && value == null)
+                {
+                    PopulatedCellCount--;
+                }
+                Cells[rowindex, colindex] = value;
+            }
+        }
+
+        public Bio2DACell this[int rowindex, string columnName]
+        {
+            get => Cells[rowindex, GetColumnIndexByName(columnName)];
+            set
+            {
+                int colindex = GetColumnIndexByName(columnName);
                 // set the item for this index. value will be of type Bio2DACell.
                 if (Cells[rowindex, colindex] == null && value != null)
                 {
