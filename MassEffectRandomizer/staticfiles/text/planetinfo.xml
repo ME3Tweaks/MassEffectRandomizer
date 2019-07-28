@@ -307,7 +307,7 @@
       Radius: 74,333 km
       Day Length: 10.5 Earth Hours
     </PlanetDescription>
-    <ImageGroup>City</ImageGroup>
+    <ImageGroup>Farm</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>16</RowID>
@@ -544,7 +544,7 @@
       Radius: 6694 km
       Day Length: 59.7 Earth Hours
       Atmospheric Pressure: 1.19 Earth Atmospheres
-      Surface Temperature: -178 Celsius
+      Surface Temperature: -16 Celsius
       Surface Gravity: 1.16 G
     </PlanetDescription>
     <ImageGroup>DestroyedWorld</ImageGroup>
@@ -587,7 +587,7 @@
       Surface Temperature: -134 Celsius
       Surface Gravity: 0.7 G
     </PlanetDescription>
-    <ImageGroup>Sky</ImageGroup>
+    <ImageGroup>Ice</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>31</RowID>
@@ -731,7 +731,7 @@
       Surface Temperature: -35 Celsius
       Surface Gravity: 0.86 G
     </PlanetDescription>
-    <ImageGroup>City</ImageGroup>
+    <ImageGroup>Barren</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>39</RowID>
@@ -2113,7 +2113,7 @@
 
   <RandomizedPlanetInfo>
     <RowID>117</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Therum</PlanetName>
@@ -2131,7 +2131,7 @@
       Radius: 6724 km
       Day Length: 28.3 Earth Hours
       Atmospheric Pressure: 0.68 Earth Atmospheres
-      Surface Temperature: 59 Celsius
+      Surface Temperature: 39 Celsius
       Surface Gravity: 1.12 G
     </PlanetDescription>
     <ImageGroup>LavaWorld</ImageGroup>
@@ -3080,7 +3080,7 @@
     <RowID>175</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
-    <IsAsteroidBelt>true</IsAsteroidBelt>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Rocky Asteroid</PlanetName>
     <PlanetDescription>
       This asteroid is unusually thicc.
@@ -3984,7 +3984,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Lavender</PlanetName>
     <PlanetDescription>
-      Lavender is a mostly barren planet, described by thousands of visitors as a haunted world. Six ancient buildings from at least several hundred thousands of years ago are the only notable landmarks on the surface. Inside these towers are hundreds of stone tablets with indiscernible text printed on each of them, each different from the next.
+      Lavender is a mostly barren planet, described by thousands of visitors as a haunted world. Six ancient buildings from several hundred thousand years ago are the only notable landmarks on the surface. Inside these towers are hundreds of stone tablets with indiscernible text printed on each of them, each different from the next.
 
       Extended stays lead to increasing paranoia for nearly all species who grace the planet’s surface. Perhaps the lack of significant vegetation and water on the planet is actually a good omen.
 
@@ -3992,7 +3992,7 @@
       Radius: 12987 km
       Day Length: 16.3 Earth Hours
     </PlanetDescription>
-    <ImageGroup>Generic</ImageGroup>
+    <ImageGroup>Spire</ImageGroup>
   </RandomizedPlanetInfo>
 
   <RandomizedPlanetInfo>

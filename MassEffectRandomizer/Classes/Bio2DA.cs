@@ -154,7 +154,8 @@ namespace MassEffectRandomizer.Classes
         /// Not the most efficient way to do this.
         /// </summary>
         /// <param name="rowName"></param>
-        public void AddRow(string rowName = null)
+        /// <returns>Index of the added row</returns>
+        public int AddRow(string rowName = null)
         {
             var newCells = new Bio2DACell[RowCount + 1, ColumnCount];
             for (int i = 0; i < RowCount; i++)
@@ -175,6 +176,7 @@ namespace MassEffectRandomizer.Classes
             }
 
             Cells = newCells;
+            return RowNames.Count - 1 ;
         }
 
         internal string GetColumnNameByIndex(int columnIndex)
