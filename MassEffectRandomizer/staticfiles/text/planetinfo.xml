@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <planetinfos>
   <RandomizedPlanetInfo>
     <RowID>0</RowID>
@@ -349,8 +348,7 @@
       Surface Temperature: -216 Celsius
       Surface Gravity: 0.3 G
     </PlanetDescription>
-    `
-    <ImageGroup>SeaFloor</ImageGroup>
+    `	<ImageGroup>SeaFloor</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>18</RowID>
@@ -903,6 +901,7 @@
     </PlanetDescription>
     <ImageGroup>RingWorld</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>49</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1395,6 +1394,7 @@
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>77</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -1928,6 +1928,7 @@
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>107</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2036,6 +2037,30 @@
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
   </RandomizedPlanetInfo>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <RandomizedPlanetInfo>
     <RowID>113</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2056,6 +2081,7 @@
     </PlanetDescription>
     <ImageGroup>DestroyedWorld</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>114</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2075,6 +2101,7 @@
     </PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>116</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2083,15 +2110,22 @@
     <PlanetName>Asteroid Belt</PlanetName>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>117</RowID>
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Therum</PlanetName>
-    <PlanetName2>Therum</PlanetName2>
+    <PlanetName2>Tellus</PlanetName2>
     <PlanetDescription>
-      The world of Prima Terra was once a human colony. Years before current times, there were a large group of aliens that attacked Prima Terra. With staunch resistance by the world’s militaries, the aliens were held off for a number of years. Soon though, the world’s leaders were ‘convinced’ that the aliens were going to help Prima Terra ascend to the heavens. The aliens gave the gift of technology to the humans but the price that the humans paid was something that a dwindling number of people fought against. A small change to make eye-sight better, legs that don’t tire, the improvements were embraced by the masses. Years after the last human embraced the improvements, the aliens decided that everyone must leave Prima Terra. Using the decades of propaganda that the humans all fell for, the humans left with little care. After the last humans left, the aliens decided to strip mine the planet, now causing great craters and mining facilities that no human colonist have ever seen before.
+      Decades ago, %PLANETNAME% was once a human colony. In the years prior to the loss of the colony, an unknown species invaded the planet. A staunch resistance by the Alliance staved off the alien invaders for a number of years, but in the following years several of the planetary leaders opened a dialogue with the aliens, attempting to bring an end to the conflict.
+
+      To the population of %PLANETNAME%, it became clear that the aliens were trying to help them ascend to the heavens, and that their original invasion attempts were due to miscommunications between species. The aliens gave a gift of their own technology to the humans, allowing them to enhance their bodies in ways that pleased the masses, such as improvements to human vision and legs that don’t become tired.
+
+      Years after the last human embraced the improvements, the aliens declared that all humans must leave %PLANETNAME% for their salvation. Due to the decades of propaganda that the humans all fell for, nearly all left without a second thought, and the ones that stayed behind have never been heard from again.
+
+      The aliens appear to have decided to strip mine the planet, the surface now covered in craters and mining facilities.
 
       Orbital Period: 6.4 Earth Years
       Radius: 6724 km
@@ -2100,7 +2134,7 @@
       Surface Temperature: 59 Celsius
       Surface Gravity: 1.12 G
     </PlanetDescription>
-    <ImageGroup>???</ImageGroup>
+    <ImageGroup>LavaWorld</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>118</RowID>
@@ -2407,6 +2441,7 @@
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>136</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2549,6 +2584,7 @@
     <PlanetName>Asteroid Belt</PlanetName>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>145</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -2590,6 +2626,7 @@
     </PlanetDescription>
     <ImageGroup>Ice</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>148</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3028,6 +3065,7 @@
     </PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>174</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3037,6 +3075,7 @@
     <PlanetDescription>Asteroid Belt Placeholder</PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>175</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3069,6 +3108,7 @@
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>177</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3133,6 +3173,7 @@
     <PlanetDescription>Asteroid Belt Placeholder</PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>181</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3145,6 +3186,7 @@
     </PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>182</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3154,6 +3196,7 @@
     <PlanetDescription>Asteroid Belt Placeholder</PlanetDescription>
     <ImageGroup>Asteroid</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>183</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3390,6 +3433,7 @@
     </PlanetDescription>
     <ImageGroup>SpaceStation</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>196</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3531,6 +3575,7 @@
     </PlanetDescription>
     <ImageGroup>Ice</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>204</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3565,6 +3610,7 @@
     </PlanetDescription>
     <ImageGroup>Ship</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>206</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3771,6 +3817,7 @@
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>216</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3891,6 +3938,7 @@
     </PlanetDescription>
     <ImageGroup>Ship</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>224</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3928,6 +3976,7 @@
     </PlanetDescription>
     <ImageGroup>WaterWorld</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>226</RowID>
     <PreventShuffle>false</PreventShuffle>
@@ -3945,6 +3994,7 @@
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
   </RandomizedPlanetInfo>
+
   <RandomizedPlanetInfo>
     <RowID>227</RowID>
     <PreventShuffle>false</PreventShuffle>
