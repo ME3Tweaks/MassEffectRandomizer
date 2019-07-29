@@ -2369,9 +2369,9 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Druidia</PlanetName>
     <PlanetDescription>
-      Planet Druidia is the kingdom of King Roland, led by his daughter and heir Princess Vespa. Due to the low natural gravity, the planet was outfitted with a full containment shield to keep the atmosphere intact. Due to this, there is only one port of entry or exit for the planet. Because of this shield and other environmental modifications (such as a gravity naturalizer that increases gravity for things over a certain mass), it is known to have a large supply of fresh air.
+      Planet Druidia is the kingdom of King Roland, led by his daughter and heir Princess Vespa. Due to the low natural gravity, the planet is outfitted with a full containment shield to keep the atmosphere intact, and only allows entry or exit from the planet at the plantary airlock. Because of this shield and other environmental modifications (such as a gravity naturalizer that increases gravity for things over a certain mass), it is known to have a large supply of fresh air.
 
-      President Skroob and Dark Helmet (of rival Planet Spaceball) recently attempted to suck the air out of Planet Druidia through the containment shield’s airlock and use it to save their own planet, but their attempts were stymied by a mercenary named Lone Starr when their ship ‘Mega Maid’ was destroyed.
+      President Skroob and Dark Helmet of rival Planet Spaceball recently attempted to suck the air out of Planet Druidia through the containment shield’s airlock and use it to save their own planet. Their attempts were stymied by a mercenaries Lone Starr and Mog when the capital ship ‘Mega Maid’ was destroyed.
 
       The Druidians have since built a stronger planetary defenses into the containment shield to better protect themselves.
 
@@ -2776,7 +2776,9 @@
     <PlanetDescription>
       The planet Terraria is a ball of garbage floating through space. Originally just a dump of someone’s trash, a large enough accumulation of mass in a single location caused the space waste to form its own gravity well. Tens of thousands of years of space waste from tourism has led to Terraria becoming a recognized celestial body by the Citadel Council.
 
-      There are giant holes dug to the core of the ‘planet’, as well as installations that have no discernable value. In 1744, the Citadel Council decided that Terraria would be henceforth known as ‘the trash planet’. Today, caravans of various species take vacations to dump their trash and make their own mark upon the galaxy. The economy of Terraria is booming due to the fees the planet owners, known as ‘Guides’, charge for this privilege. These fees have made the zero-population planet one of the richest per capita.
+      There are giant holes dug to the core of the ‘planet’, as well as installations that have no discernable value. In 1744, the Citadel Council decided that Terraria would be henceforth known as ‘the trash planet’. Today, caravans of various species take vacations to dump their trash and make their own mark upon the galaxy.
+
+      The economy of Terraria is booming due to the fees the planet owners, known as ‘Guides’, charge for this privilege. These fees have made the zero-population planet one of the richest per capita.
 
       Orbital Period: 1 Earth Year
       Radius: 6028 km

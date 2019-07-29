@@ -1708,7 +1708,7 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            //UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
+            UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
             RandomizePlanetImages(random, rowRPIMap, planets2DA);
             GalaxyMapValidationPass(rowRPIMap, planets2DA);
         }
@@ -1794,7 +1794,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        private readonly static string[] ClusterNamesThatNeedAppended = { "Serpent Nebula", "Horse Head Nebula", "Armstrong Nebula", "Kepler Verge", "Voyager Cluster" };
+        private readonly static string[] ClusterNamesThatNeedAppended = { "serpent nebula", "horse head nebula", "armstrong nebula", "kepler verge", "voyager cluster" };
 
         private void UpdateGalaxyMapReferencesForTLKs(List<TalkFile> Tlks, bool updateProgressbar)
         {
@@ -1914,15 +1914,17 @@ namespace MassEffectRandomizer.Classes
                                 {
 
                                     //Terribly inefficent
+                                    if (originalString.Contains("I'm asking you because the Normandy can get on-site quickly and quietly."))
+                                        Debugger.Break();
                                     if (clusterMapping.Value.SuffixedWithCluster && !clusterMapping.Value.Suffixed)
                                     {
-                                        //Local Cluster
+                                        //Replacing string like Local Cluster
                                         newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
                                         newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName); //Go to the Helios cluster...
                                     }
                                     else
                                     {
-                                        //Artemis Tau
+                                        //Replacing string like Artemis Tau
                                         newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
                                         newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Helios cluster...
                                     }
@@ -3682,7 +3684,13 @@ namespace MassEffectRandomizer.Classes
         public class SuffixedCluster
         {
             public string ClusterName;
+            /// <summary>
+            /// string ends with "cluster"
+            /// </summary>
             public bool SuffixedWithCluster;
+            /// <summary>
+            /// string is suffixed with cluster-style word. Doesn't need cluster appended.
+            /// </summary>
             public bool Suffixed;
 
             public SuffixedCluster(string clusterName, bool suffixed)
