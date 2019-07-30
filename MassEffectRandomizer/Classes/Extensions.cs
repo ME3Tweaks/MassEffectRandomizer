@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -259,6 +260,16 @@ namespace MassEffectRandomizer.Classes
             }
 
             return string.Join("\n", lines.Select(x => x.Trim()));
+        }
+
+        public static string ReplaceInsensitive(this string str, string from, string to)
+        {
+            str = Regex.Replace(str, from, to, RegexOptions.IgnoreCase);
+            return str;
+        }
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
+        {
+            return source?.IndexOf(toCheck, comp) >= 0;
         }
     }
 }
