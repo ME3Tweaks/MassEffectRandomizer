@@ -1979,7 +1979,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        private void DumpPlanetTexts(IExportEntry export, TalkFile tf)
+        public static void DumpPlanetTexts(IExportEntry export, TalkFile tf)
         {
             Bio2DA planets = new Bio2DA(export);
             var planetInfos = new List<RandomizedPlanetInfo>();
@@ -2018,7 +2018,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        string FormatXml(string xml)
+        static string FormatXml(string xml)
         {
             try
             {
