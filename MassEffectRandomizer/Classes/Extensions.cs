@@ -242,6 +242,11 @@ namespace MassEffectRandomizer.Classes
             return -1;
         }
 
+        /// <summary>
+        /// Trims a string by lines - the beginning and end of the string will have all leading whitespace (multiple lines included) and trailing whitespace too
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static string TrimLines(this string s)
         {
 
