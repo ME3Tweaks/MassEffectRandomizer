@@ -30,10 +30,49 @@ The intro text only supports 8 lines of text. If you go over this, it won’t ap
 
     Shepard! Let's go!
   </CrawlText>
-  <CrawlText></CrawlText>
-  <CrawlText></CrawlText>
-  <CrawlText></CrawlText>
-  <CrawlText></CrawlText>
-  <CrawlText></CrawlText>
-  <CrawlText></CrawlText>
+  <CrawlText>
+    A vorcha, a batarian and a quarian are in a skycar, who's driving?
+
+
+
+
+
+
+    C-Sec.
+  </CrawlText>
+  <CrawlText>
+    In 2027, explorers on the moon of the planet Earth discovered the remains of a vehicle left there 55 years before. 81 years later, unable to contain it’s needs for its populations, the people of Earth expanded into the Sol system. In 2144 nuclear war broke out over the last remaining resources of Earth, leaving humanity’s future in peril.
+
+    Then everything changed... We found that we’re just a drop in the bucket of life across the galaxy...
+  </CrawlText>
+  <CrawlText>SAGasglkhasg;lkhasdglh adsdfg hsgklhagdhkshdg kasg;hk as;klhgkasdghsdhkg sldkhf hslfdh sdfj hsjkdfhsdfjksdf f fasdfiyifssdf hjdsfhjsdaf dsfh asdlfj f sjkdfhasdf hsdjfk hasdkljfg asdjfgakdsfg ksdhf alsjdfh kasgdfsdfyouiasdfyerui oqh faskjdfgasdfasndm fbsdfhahalol shdfjahsfdk jalhsfcanyoure adthishsjdflha sdfhadsljf khladsjhflakjhdsfljkhasdfhasdf...</CrawlText>
+  <CrawlText>
+    class Program
+    {
+    static void Main(string[] args)
+    {
+    Console.WriteLine("Hello World!");
+    }
+    }
+  </CrawlText>
+  <CrawlText>
+    [Record Scratch]
+    [Freeze Frame]
+
+    Yup, that’s me. You’re probably wondering how I ended up in this situation.
+
+    I was with a friend on this ship, and I asked to try on their N7 uniform. One unfortunate accident later, and now they think I’m Lieutenant Commander Shepard...
+  </CrawlText>
+  <CrawlText>
+    It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Citadel Council. During the battle, Rebel spies managed to steal secret plans to the Council’s ultimate weapon, the DEATH STAR, an armored space station with enough power to destroy an entire planet.
+
+    Pursued by the Council’s sinister Spectre agents, Commander Anderson races home aboard his starship, custodian of the stolen plans that can save humanity and restore freedom to the galaxy.....
+  </CrawlText>
+  <CrawlText>
+    Captain's Log, October 7, 2183.
+
+    We have just come into orbit of Eden Prime to monitor progress on the Vernio particle fountain, a radically new mining technology. The project has been fraught with problems and is well behind schedule.
+
+    Mister Adams has been assigned to evaluate the situation.
+  </CrawlText>
 </IntroCrawlTexts>

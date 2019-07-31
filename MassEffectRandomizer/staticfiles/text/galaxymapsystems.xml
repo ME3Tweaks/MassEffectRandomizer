@@ -13,10 +13,10 @@
     <systemname>Kerh-S</systemname>
     <systemname>Odyssey</systemname>
     <systemname>Xi Draconis</systemname>
-    <systemname>System o' Hags</systemname>
+    <systemname>Reef</systemname>
+    <systemname>Elvidge</systemname>
     <systemname>Sirius</systemname>
     <systemname>Osiris</systemname>
-    <systemname>Forsaken</systemname>
     <systemname>Daibazaal</systemname>
     <systemname>Tamriel</systemname>
     <systemname>Cintra</systemname>
@@ -41,10 +41,14 @@
     <systemname>Magmoor</systemname>
     <systemname>Nicolas Cage</systemname>
     <systemname>Atlas</systemname>
+    <systemname>Yolanda</systemname>
+    <systemname>Echo Ridge</systemname>
+    <systemname>Canes Venatici</systemname>
+    <systemname>Ethereal</systemname>
     <systemname>Hypnos</systemname>
     <systemname>Janus</systemname>
     <systemname>Cosmic Wall</systemname>
     <systemname>Gra’tua Cuun</systemname>
     <systemname>Stealthed Edge</systemname>
-</systemnames>
+  </systemnames>
 

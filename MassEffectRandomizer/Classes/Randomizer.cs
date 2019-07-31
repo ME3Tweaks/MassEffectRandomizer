@@ -360,11 +360,12 @@ namespace MassEffectRandomizer.Classes
                 string[] mapBaseNamesToNotRandomize = { "entrymenu", "biog_uiworld" };
                 for (int i = 0; i < files.Length; i++)
                 {
-                    //                    int progress = (int)((i / total) * 100);
                     bool loggedFilename = false;
                     mainWindow.CurrentProgressValue = i;
                     mainWindow.CurrentOperationText = "Randomizing map files [" + i + "/" + files.Count() + "]";
                     var mapBaseName = Path.GetFileNameWithoutExtension(files[i]).ToLower();
+                    //Debug.WriteLine(mapBaseName);
+                    //if (mapBaseName != "bioa_nor10_03_dsg") continue;
                     if (!mapBaseNamesToNotRandomize.Any(x => x.StartsWith(mapBaseName)))
                     {
                         //if (!mapBaseName.StartsWith("bioa_sta")) continue;
@@ -463,17 +464,7 @@ namespace MassEffectRandomizer.Classes
                             RandomizeAINames(package, random);
                         }
 
-                        if (mainWindow.RANDSETTING_WACK_SCOTTISH && package.LocalTalkFiles.Any())
-                        {
-                            if (!loggedFilename)
-                            {
-                                Log.Information("Randomizing map file: " + files[i]);
-                                loggedFilename = true;
-                            }
 
-                            MakeTextPossiblyScottish(package.LocalTalkFiles, random, false);
-                            //UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
-                        }
 
                         if (mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION && package.LocalTalkFiles.Any())
                         {
@@ -483,6 +474,17 @@ namespace MassEffectRandomizer.Classes
                                 loggedFilename = true;
                             }
                             UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
+                        }
+
+                        if (mainWindow.RANDSETTING_WACK_SCOTTISH && package.LocalTalkFiles.Any())
+                        {
+                            if (!loggedFilename)
+                            {
+                                Log.Information("Randomizing map file: " + files[i]);
+                                loggedFilename = true;
+                            }
+
+                            MakeTextPossiblyScottish(package.LocalTalkFiles, random, false);
                         }
 
                         foreach (var talkFile in package.LocalTalkFiles.Where(x => x.Modified))
@@ -1709,9 +1711,9 @@ namespace MassEffectRandomizer.Classes
                 }
             }
 
-            UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
-            RandomizePlanetImages(random, rowRPIMap, planets2DA);
-            GalaxyMapValidationPass(rowRPIMap, planets2DA);
+            //UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
+            //RandomizePlanetImages(random, rowRPIMap, planets2DA);
+            //GalaxyMapValidationPass(rowRPIMap, planets2DA);
         }
 
 
@@ -1803,7 +1805,7 @@ namespace MassEffectRandomizer.Classes
                 currentTlkIndex++;
                 int max = tf.StringRefs.Count();
                 int current = 0;
-                if (updateProgressbar)
+                if (updateProgressbar) //this will only be fired on basegame tlk's since they're the only ones that update the progerssbar.
                 {
                     mainWindow.CurrentOperationText = $"Applying entropy to galaxy map [{currentTlkIndex}/{Tlks.Count()}]";
                     mainWindow.ProgressBar_Bottom_Max = tf.StringRefs.Length;
@@ -1918,14 +1920,12 @@ namespace MassEffectRandomizer.Classes
                                     if (clusterMapping.Value.SuffixedWithCluster && !clusterMapping.Value.Suffixed)
                                     {
                                         //Replacing string like Local Cluster
-                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
-                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName); //Go to the Helios cluster...
+                                        newString = newString.ReplaceInsensitive(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
                                     }
                                     else
                                     {
                                         //Replacing string like Artemis Tau
-                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
-                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Helios cluster...
+                                        newString = newString.ReplaceInsensitive(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
                                     }
 
                                     newString = newString.Replace(clusterMapping.Key, clusterMapping.Value.ClusterName); //catch the rest of the items.
@@ -1934,24 +1934,36 @@ namespace MassEffectRandomizer.Classes
                             }
                             else
                             {
-                                if (newString.Contains(clusterMapping.Key))
+                                if (newString.Contains(clusterMapping.Key, StringComparison.InvariantCultureIgnoreCase))
                                 {
                                     //Terribly inefficent
 
                                     if (clusterMapping.Value.SuffixedWithCluster || clusterMapping.Value.Suffixed)
                                     {
                                         //Local Cluster
-                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
-                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName); //Go to the Helios cluster...
+                                        if (VanillaSuffixedClusters.Contains(clusterMapping.Key))
+                                        {
+                                            newString = newString.ReplaceInsensitive(clusterMapping.Key, clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
+                                        }
+                                        else
+                                        {
+                                            newString = newString.ReplaceInsensitive(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName); //Go to the Voyager Cluster and... 
+                                        }
                                     }
                                     else
                                     {
                                         //Artemis Tau
-                                        newString = newString.Replace(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
-                                        newString = newString.Replace(clusterMapping.Key + " cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Helios cluster...
+                                        if (VanillaSuffixedClusters.Contains(clusterMapping.Key.ToLower()))
+                                        {
+                                            newString = newString.ReplaceInsensitive(clusterMapping.Key, clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
+                                        }
+                                        else
+                                        {
+                                            newString = newString.ReplaceInsensitive(clusterMapping.Key + " Cluster", clusterMapping.Value.ClusterName + " cluster"); //Go to the Voyager Cluster and... 
+                                        }
                                     }
 
-                                    newString = newString.Replace(clusterMapping.Key, clusterMapping.Value.ClusterName); //catch the rest of the items.
+                                    newString = newString.ReplaceInsensitive(clusterMapping.Key, clusterMapping.Value.ClusterName); //catch the rest of the items.
                                     Debug.WriteLine(newString);
                                 }
                             }
@@ -1966,7 +1978,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        private void DumpPlanetTexts(IExportEntry export, TalkFile tf)
+        public static void DumpPlanetTexts(IExportEntry export, TalkFile tf)
         {
             Bio2DA planets = new Bio2DA(export);
             var planetInfos = new List<RandomizedPlanetInfo>();
@@ -2005,7 +2017,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        string FormatXml(string xml)
+        static string FormatXml(string xml)
         {
             try
             {
@@ -3698,6 +3710,11 @@ namespace MassEffectRandomizer.Classes
                 this.ClusterName = clusterName;
                 this.Suffixed = suffixed;
                 this.SuffixedWithCluster = clusterName.EndsWith("cluster", StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            public override string ToString()
+            {
+                return $"SuffixedCluster ({ClusterName})";
             }
         }
     }
