@@ -248,6 +248,7 @@ namespace GalaxyMapSWFBuilder
             /// </summary>
             public List<string> MapBaseNames { get; internal set; }
             public string ImageGroup { get; internal set; }
+            public string DLC { get; internal set; }
         }
 
         private List<RandomizedPlanetInfo> GetPlanetInfos()
@@ -273,6 +274,7 @@ namespace GalaxyMapSWFBuilder
                             RowID = (int)e.Element("RowID"),
                             MapBaseNames = e.Elements("MapBaseNames")
                                 .Select(r => r.Value).ToList(),
+                            DLC = e.Element("DLC")?.Value,
                             ImageGroup = e.Element("ImageGroup")?.Value
                         }).Where(x=>!x.IsAsteroidBelt).ToList();
             }

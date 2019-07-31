@@ -1459,6 +1459,7 @@ namespace MassEffectRandomizer.Classes
                                                RowID = (int)e.Element("RowID"),
                                                MapBaseNames = e.Elements("MapBaseNames")
                                                    .Select(r => r.Value).ToList(),
+                                               DLC = e.Element("DLC")?.Value,
                                                ImageGroup = e.Element("ImageGroup")?.Value
                                            }).ToList();
 
@@ -1466,7 +1467,7 @@ namespace MassEffectRandomizer.Classes
             rootElement = XElement.Parse(fileContents);
             var suffixedClusterNames = rootElement.Elements("suffixedclustername").Select(x => x.Value).ToList(); //Used for assignments
             var suffixedClusterNamesForPreviousLookup = rootElement.Elements("suffixedclustername").Select(x => x.Value).ToList(); //Used to lookup previous assignments 
-            var vanillaSuffixedClusterNames = rootElement.Elements("originalsuffixedname").Select(x => x.Value).ToList();
+            VanillaSuffixedClusterNames = rootElement.Elements("originalsuffixedname").Select(x => x.Value).ToList();
             var nonSuffixedClusterNames = rootElement.Elements("nonsuffixedclustername").Select(x => x.Value).ToList();
             suffixedClusterNames.Shuffle(random);
             nonSuffixedClusterNames.Shuffle(random);
@@ -1542,7 +1543,7 @@ namespace MassEffectRandomizer.Classes
                     if (oldClusterName != "No Data")
                     {
                         SuffixedCluster suffixedCluster = null;
-                        if (vanillaSuffixedClusterNames.Contains(oldClusterName) || suffixedClusterNamesForPreviousLookup.Contains(oldClusterName))
+                        if (VanillaSuffixedClusterNames.Contains(oldClusterName) || suffixedClusterNamesForPreviousLookup.Contains(oldClusterName))
                         {
                             suffixedClusterNamesForPreviousLookup.Remove(oldClusterName);
                             suffixedCluster = new SuffixedCluster(suffixedClusterNames[0], true);
@@ -1793,8 +1794,6 @@ namespace MassEffectRandomizer.Classes
                 }
             }
         }
-
-        private readonly static string[] ClusterNamesThatNeedAppended = { "serpent nebula", "horse head nebula", "armstrong nebula", "kepler verge", "voyager cluster" };
 
         private void UpdateGalaxyMapReferencesForTLKs(List<TalkFile> Tlks, bool updateProgressbar)
         {
@@ -3579,6 +3578,7 @@ namespace MassEffectRandomizer.Classes
         private Dictionary<string, SuffixedCluster> clusterNameMapping;
         private Dictionary<string, string> planetNameMapping;
         private List<char> scottishVowelOrdering;
+        private List<string> VanillaSuffixedClusterNames;
 
         private void RandomizeAINames(ME1Package pacakge, Random random)
         {

@@ -142,6 +142,7 @@ namespace MassEffectRandomizer
             /// </summary>
             public List<string> MapBaseNames { get; internal set; }
             public string ImageGroup { get; internal set; }
+            public string DLC { get; internal set; }
         }
 
         public class OpeningCrawl
