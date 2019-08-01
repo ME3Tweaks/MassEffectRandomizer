@@ -275,7 +275,7 @@ namespace GalaxyMapSWFBuilder
                             MapBaseNames = e.Elements("MapBaseNames")
                                 .Select(r => r.Value).ToList(),
                             DLC = e.Element("DLC")?.Value,
-                            ImageGroup = e.Element("ImageGroup")?.Value
+                            ImageGroup = e.Element("ImageGroup")?.Value ?? "Generic"
                         }).Where(x=>!x.IsAsteroidBelt).ToList();
             }
             return new List<RandomizedPlanetInfo>();

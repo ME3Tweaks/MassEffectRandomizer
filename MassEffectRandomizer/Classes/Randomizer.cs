@@ -473,7 +473,7 @@ namespace MassEffectRandomizer.Classes
                                 Log.Information("Randomizing map file: " + files[i]);
                                 loggedFilename = true;
                             }
-                            UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
+                            UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false, false);
                         }
 
                         if (mainWindow.RANDSETTING_WACK_SCOTTISH && package.LocalTalkFiles.Any())
@@ -862,7 +862,8 @@ namespace MassEffectRandomizer.Classes
                         {
                             //Generating new image value
                             imageIndexCell.DisplayableValue = (++nextAddedImageIndex).ToString();
-                        } else
+                        }
+                        else
                         {
                             didntIncrementNextImageIndex = true;
                         }
@@ -891,11 +892,11 @@ namespace MassEffectRandomizer.Classes
                         }
                         else
                         {
-                            string swfImageExportObjectName = galaxyMapImages2DA[rowIndex, "imageResource"].DisplayableValue;
+                            string swfImageExportObjectName = galaxyMapImages2DA[rowIndex, "imageResource"].DisplayableValueIndexed;
                             //get object name of export inside of GUI_SF_GalaxyMap.upk
                             swfImageExportObjectName = swfImageExportObjectName.Substring(swfImageExportObjectName.IndexOf('.') + 1); //TODO: Need to deal with name instances for Pinnacle Station DLC. Because it's too hard for them to type a new name.
                             //Fetch export
-                            matchingExport = mapImageExports.FirstOrDefault(x => x.ObjectName == swfImageExportObjectName);
+                            matchingExport = mapImageExports.FirstOrDefault(x => x.ObjectNameIndexed == swfImageExportObjectName);
                         }
 
                         if (matchingExport != null)
@@ -906,6 +907,11 @@ namespace MassEffectRandomizer.Classes
                         {
                             Debugger.Break();
                         }
+                    }
+                    else
+                    {
+                        string nameTextForRow = planets2DA[i, 5].DisplayableValue;
+                        Debug.WriteLine("Skipped row: " + rowName + ", " + nameTextForRow + ", could not find imagegroup " + assignedRPI.ImageGroup);
                     }
                 }
                 else
@@ -947,10 +953,10 @@ namespace MassEffectRandomizer.Classes
                     if (imageRowReference == -1) continue; //We don't have enough images yet to pass this hurdle
                     //Use this value to find value in UI table
                     int rowIndex = galaxyMapImages2DA.GetRowIndexByName(imageRowReference.ToString());
-                    string exportName = galaxyMapImages2DA[rowIndex, 0].DisplayableValue; //TODO: IMPLEMENT INSTANCED NAME FETCHING
+                    string exportName = galaxyMapImages2DA[rowIndex, 0].DisplayableValueIndexed;
                     exportName = exportName.Substring(exportName.LastIndexOf('.') + 1);
                     //Use this value to find the export in GUI_SF file
-                    var export = galaxyMapImagesBasegame.Exports.FirstOrDefault(x => x.InstancedObjectName == exportName);
+                    var export = galaxyMapImagesBasegame.Exports.FirstOrDefault(x => x.ObjectNameIndexed == exportName);
                     if (export == null)
                     {
                         Debugger.Break();
@@ -1608,7 +1614,7 @@ namespace MassEffectRandomizer.Classes
             ME1Package ui2DAPackage = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\2DAs\BIOG_2DA_UI_X.upk")); //lol demiurge, what were you doing?
             IExportEntry galaxyMapImages2DAExport = ui2DAPackage.getUExport(8);
             //RandomizePlanetImages(random, rowRPIMap, planets2DA, galaxyMapImagesBasegame, galaxyMapImages2DAExport, galaxyMapGroupResources);
-            //UpdateGalaxyMapReferencesForTLKs(Tlks, true); //Update TLKs.
+            //UpdateGalaxyMapReferencesForTLKs(Tlks, true,true); //Update TLKs.
 
             //END BASEGAME===============================
 
@@ -1631,7 +1637,7 @@ namespace MassEffectRandomizer.Classes
                 bdtsplanets.save();
                 ModifiedFiles[bdtsplanets.FileName] = bdtsplanets.FileName;
                 var bdtsTlks = bdtstalkfile.Exports.Where(x => x.ClassName == "BioTlkFile").Select(x => new TalkFile(x)).ToList();
-                UpdateGalaxyMapReferencesForTLKs(bdtsTlks, false); //Update TLKs.
+                UpdateGalaxyMapReferencesForTLKs(bdtsTlks, true, false); //Update TLKs.
             }
             //END BRING DOWN THE SKY=====================
 
@@ -1654,7 +1660,7 @@ namespace MassEffectRandomizer.Classes
                 vegasplanets.save();
                 ModifiedFiles[vegasplanets.FileName] = vegasplanets.FileName;
                 var vegasTlks = vegastalkfile.Exports.Where(x => x.ClassName == "BioTlkFile").Select(x => new TalkFile(x)).ToList();
-                UpdateGalaxyMapReferencesForTLKs(vegasTlks, false); //Update TLKs.
+                UpdateGalaxyMapReferencesForTLKs(vegasTlks, true, false); //Update TLKs.
             }
             //END PINNACLE STATION=======================
 
@@ -1889,7 +1895,7 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        private void UpdateGalaxyMapReferencesForTLKs(List<TalkFile> Tlks, bool updateProgressbar)
+        private void UpdateGalaxyMapReferencesForTLKs(List<TalkFile> Tlks, bool updateProgressbar, bool basegame)
         {
             int currentTlkIndex = 0;
             foreach (TalkFile tf in Tlks)
@@ -1897,7 +1903,7 @@ namespace MassEffectRandomizer.Classes
                 currentTlkIndex++;
                 int max = tf.StringRefs.Count();
                 int current = 0;
-                if (updateProgressbar) //this will only be fired on basegame tlk's since they're the only ones that update the progerssbar.
+                if (basegame) //this will only be fired on basegame tlk's since they're the only ones that update the progerssbar.
                 {
                     mainWindow.CurrentOperationText = $"Applying entropy to galaxy map [{currentTlkIndex}/{Tlks.Count()}]";
                     mainWindow.ProgressBar_Bottom_Max = tf.StringRefs.Length;

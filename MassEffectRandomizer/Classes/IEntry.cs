@@ -55,6 +55,8 @@ namespace MassEffectRandomizer.Classes
         IExportEntry Clone();
 
         int LinkerIndex { get; }
+        string ObjectNameIndexed { get; }
+
         PropertyCollection GetProperties(bool forceReload = false, bool includeNoneProperties = false);
         void WriteProperties(PropertyCollection props);
         int propsEnd();

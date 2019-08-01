@@ -112,6 +112,23 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        public string DisplayableValueIndexed
+        {
+            get
+            {
+                string displayableValue = DisplayableValue;
+                if (Type == Bio2DADataType.TYPE_NAME)
+                {
+                    int instanceIndex = BitConverter.ToInt32(Data, 4);
+                    if (instanceIndex > 0)
+                    {
+                        displayableValue += "_" + instanceIndex;
+                    }
+                }
+                return displayableValue;
+            }
+        }
+
         public override string ToString()
         {
             return GetDisplayableValue();

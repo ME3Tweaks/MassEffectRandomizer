@@ -561,6 +561,19 @@ namespace MassEffectRandomizer.Classes
     [DebuggerDisplay("ME1ExportEntry | {UIndex} = {GetFullPath}")]
     public class ME1ExportEntry : ExportEntry, IExportEntry
     {
+        public string ObjectNameIndexed
+        {
+            get
+            {
+                string displayableValue = ObjectName;
+                if (indexValue > 0)
+                {
+                    displayableValue += "_" + indexValue;
+                }
+                return displayableValue;
+            }
+        }
+
         public ME1ExportEntry(ME1Package pccFile, Stream stream) : base(pccFile)
         {
             //determine header length
