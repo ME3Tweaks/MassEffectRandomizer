@@ -947,10 +947,10 @@ namespace MassEffectRandomizer.Classes
                     if (imageRowReference == -1) continue; //We don't have enough images yet to pass this hurdle
                     //Use this value to find value in UI table
                     int rowIndex = galaxyMapImages2DA.GetRowIndexByName(imageRowReference.ToString());
-                    string exportName = galaxyMapImages2DA[rowIndex, 0].DisplayableValue;
+                    string exportName = galaxyMapImages2DA[rowIndex, 0].DisplayableValue; //TODO: IMPLEMENT INSTANCED NAME FETCHING
                     exportName = exportName.Substring(exportName.LastIndexOf('.') + 1);
                     //Use this value to find the export in GUI_SF file
-                    var export = galaxyMapImagesBasegame.Exports.FirstOrDefault(x => x.ObjectName == exportName);
+                    var export = galaxyMapImagesBasegame.Exports.FirstOrDefault(x => x.InstancedObjectName == exportName);
                     if (export == null)
                     {
                         Debugger.Break();
