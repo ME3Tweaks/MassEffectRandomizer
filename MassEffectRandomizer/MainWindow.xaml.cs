@@ -287,16 +287,6 @@ namespace MassEffectRandomizer
             Title += " " + version;
             SelectedRandomizeMode = RandomizationMode.ERandomizationMode_SelectAny;
             PerformUpdateCheck();
-
-            //BDTS Strings and Bio2DA file
-            //ME1Package bdtsplanets = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk"));
-            //ME1Package bdtstalkfile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\Dialog\DLC_UNC_GlobalTlk.upk"));
-
-            //Pinnacle Station String and Bio2DA file
-            ME1Package vegasplanets = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk"));
-            ME1Package vegastalkfile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\Dialog\DLC_Vegas_GlobalTlk.upk"));
-
-            Randomizer.DumpPlanetTexts(vegasplanets.getUExport(2), new Classes.TLK.TalkFile(vegastalkfile.getUExport(1)));
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
