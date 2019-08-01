@@ -4101,4 +4101,195 @@
     </PlanetDescription>
     <ImageGroup>Rocky</ImageGroup>
   </RandomizedPlanetInfo>
+
+  <!-- Start of Bring Down The Sky -->
+  <RandomizedPlanetInfo>
+    <RowID>0</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>UNC</DLC>
+    <PlanetName>Terra Nova</PlanetName>
+    <PlanetDescription>
+      Terra Nova was one of the Class-1 colonization prospects discovered by the first wave of Alliance surveys in 2150. It was the second human extrasolar colony, and the first beyond the Charon Mass Relay. It currently has the highest population of any Alliance colony.
+
+      Though banded by a harsh equatorial desert, areas closer to the poles are temperate. The pace of development was modest until extensive deposits of platinum were discovered in the 2170s. This rare metal, required in the clean-burning hydrogen fuel cells that power private vehicles, attracted a "platinum rush" of immigrants and investment from throughout Alliance space. In the past twelve years, Terra Nova has seen a 30% rise in population, and growth does not appear to be slowing.
+
+      Colony Founded: 2152
+      Population: 4.4 million
+      Capital: Scott
+
+      Orbital Period: 1.5 Earth Years
+      Radius: 5261 km
+      Day Length: 37.3 Earth Hours
+      Atmospheric Pressure: 0.91 Earth Atmospheres
+      Surface Temperature: 56 Celsius
+      Surface Gravity: 0.95 G
+    </PlanetDescription>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>1</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>UNC</DLC>
+    <PlanetName>Asteroid X57</PlanetName>
+    <PlanetDescription>
+      X57 is a metallic asteroid, originally located at the trailing Lagrange point of the gas giant Borr. With the increased development on Terra Nova, a new orbital port facility was necessary. Due to a shortage of funding, it was decided to "mine out" X57, using the recovered resources to finish out the interior for habitation. The asteroid was decelerated from Borr's orbit using fusion torches, allowing it to fall into the orbit of Terra Nova.
+
+      Recently, communications with the engineering team on X57 have been lost. The fusion torches have reignited, and the asteroid is accelerating towards Terra Nova.
+    </PlanetDescription>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>2</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>UNC</DLC>
+    <PlanetName>Borr</PlanetName>
+    <PlanetDescription>
+      Borr is a huge hydrogen-helium gas giant with over 90 moons. Its striking coloration is caused by the light of ionized hydrogen filtering through an upper cloud deck of sodium. The source of the ionization has not yet been confirmed, but Borr’s mass (equal to six Jupiters) and high temperature suggest it may be a small "brown dwarf", a large gas giant that gained nearly enough mass to ignite into a small star.
+
+      Though Borr's deep gravity well makes mining operations difficult, it is the only gas giant in the system. The hydrogen needed for the local fuel cell industry, combined with the ever-present need for helium-3 fusion torch fuel, make it economical to mine.
+
+      Orbital Period: 3.3 Earth Years
+      Radius: 74,612 km
+      Day Length: 8.8 Earth Hours
+    </PlanetDescription>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>3</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>UNC</DLC>
+    <PlanetName>Loki</PlanetName>
+    <PlanetDescription>
+      Loki is a small terrestrial world with little to recommend it. One hemisphere is largely covered by an ice cap, and the other by craggy basaltic highlands. The rough, varied terrain suggests an ancient cataclysm caused significant damage to the world. This is seemingly reinforced by its unusually elliptical orbit, which reaches 6.5 AU at perigee and 7.1 AU at apogee.
+
+      Penetrating scans of Loki's ice cap reveal a network of crisscrossing subterranean tunnels. Because some of the tunnels were surprisingly regular in shape and size, early expeditions looked for evidence of excavation. It was concluded they formed by natural processes.
+
+      Loki's thin atmosphere is mainly composed of krypton and xenon. When it approaches perigee, frozen sulphur trioxides and dioxides can evaporate into clouds on the hemisphere facing Asgard.
+
+      Orbital Period: 17.8 Earth Years
+      Radius: 3630 km
+      Day Length: 61.3 Earth Hours
+      Atmospheric Pressure: 0.2 Earth Atmospheres
+      Surface Temperature: -135 Celsius
+      Surface Gravity: 0.22 G
+    </PlanetDescription>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>4</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>UNC</DLC>
+    <PlanetName>Tyr</PlanetName>
+    <PlanetDescription>
+      Tyr is compositionally quite similar to Earth. However, it lies over 4 AU from Asgard, and possesses an atmosphere primarily composed of nitrogen and ethane. While a potential target for terraforming, the presence of the "shirt sleeves" habitable Terra Nova in the same system relegated Tyr to a support role.
+
+      Nearly a hundred corporations--human and alien--have constructed extensive teleoperated mining, refining, and manufacturing facilities across the face of Tyr. Combined with the platinum lodes of Terra Nova, the resources they produce are driving development of the local hydrogen fuel cell industries. The Asgard system now supplies nearly 4% of the galactic market.
+
+      Colony Founded: 2156
+      Population: 47,000
+      Capital: Kaldidalur
+
+      Orbital Period: 8 Earth Years
+      Radius: 6332 km
+      Day Length: 46.2 Earth Hours
+      Atmospheric Pressure: 0.8 Earth Atmospheres
+      Surface Temperature: -73 Celsius
+      Surface Gravity: 0.95 G
+    </PlanetDescription>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>5</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>UNC</DLC>
+    <PlanetName>Asteroid X57</PlanetName>
+    <PlanetDescription>Asteroid X57 has been brought under control. Once repairs are complete, the asteroid will be carefully maneuvered into geosynchronous orbit around Terra Nova. Though the batarian terrorists have destroyed several months of work, experts predict it can still open for business before the end of 2184.</PlanetDescription>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>6</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>UNC</DLC>
+    <PlanetName>Asteroid X57</PlanetName>
+  </RandomizedPlanetInfo>
+  <!-- End of BDTS -->
+
+  <!-- Start of Pinnacle Station-->
+  <RandomizedPlanetInfo>
+    <RowID>0</RowID>
+    <PreventShuffle>true</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>Vegas</DLC>
+    <PlanetName>Ahern’s Crab Shack</PlanetName>
+    <PlanetDescription>
+      Considered one of the finest bed and breakfasts in this area of space, Ahern’s Crab Shack is a popular stop for visitors traveling through the area. Founded in 2160 after hanging up his life aboard the high seas, Captain Ahern opened his bed and breakfast hoping to bring his love for seafood to the masses. Featuring a system class dining experience with fresh seafood from nearby planets, it offers something for everyone.
+
+      For adults, they have special fantasy rooms with sound proof walls, for the older folk a history museum for the cluster, and a hyper-realistic combat simulator designed for children. The staff for the combat simulator have found difficulty keeping some of the adults from usurping the leaderboards from the kids.
+
+      Population: 452
+      Radius: 940m
+    </PlanetDescription>
+    <ImageGroup>Restaurant</ImageGroup>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>1</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>Vegas</DLC>
+    <PlanetName>Pinnacle Station</PlanetName>
+    <Description>This planet is unused</Description>
+    <DLC>Vegas</DLC>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>2</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>Vegas</DLC>
+    <PlanetName>Intai'sei</PlanetName>
+    <PlanetDescription>
+      An atmosphere similar to Earth's made Intai'sei an early candidate for human colonization. However, prohibitively high temperatures and an arid climate have proven a hinderance to terraforming and agriculture. A few human cities were founded, but the majority of the human population on Intai'sei remains scattered across the vast deserts, operating wind farms and geological research stations.
+
+      Colony Founded: 2166
+      Population: 150000
+      Capital: Thoreau Mesa
+
+      Orbital Period: 47.8 Earth Years
+      Radius: 5897 km
+      Day Length: 27.6 Earth Hours
+      Atmospheric Pressure: 0.95 Earth Atmospheres
+      Surface Temperature: 46 Celsius
+      Surface Gravity: 0.8 G
+    </PlanetDescription>
+  </RandomizedPlanetInfo>
+  <RandomizedPlanetInfo>
+    <RowID>3</RowID>
+    <PreventShuffle>false</PreventShuffle>
+    <IsMSV>false</IsMSV>
+    <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>false</IsAsteroid>
+    <DLC>Vegas</DLC>
+    <PlanetName>Shepard's Apartment</PlanetName>
+  </RandomizedPlanetInfo>
+  <!-- End of Pinnacle Station -->
 </planetinfos>
