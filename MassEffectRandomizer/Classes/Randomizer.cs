@@ -811,7 +811,7 @@ namespace MassEffectRandomizer.Classes
             foreach (var kvp in planetsRowToRPIMapping)
             {
                 //textBox3.Text += ("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-                Debug.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value.PlanetName);
+                Debug.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value.PlanetName + (kvp.Value.PlanetName2 != null ? $" ({kvp.Value.PlanetName2})" : ""));
             }
             Debug.WriteLine("----------------------------------------------------------------");
             List<int> assignedImageIndexes = new List<int>(); //This is used to generate new indexes for items that vanilla share values with (like MSV ships)
@@ -1619,26 +1619,27 @@ namespace MassEffectRandomizer.Classes
             //END BASEGAME===============================
 
             //BRING DOWN THE SKY (UNC)===================
-            if (File.Exists(Utilities.GetGameFile(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk"))))
-            {
-                ME1Package bdtsplanets = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk"));
-                ME1Package bdtstalkfile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\Dialog\DLC_UNC_GlobalTlk.upk"));
+            //if (File.Exists(Utilities.GetGameFile(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk"))))
+            //{
+            //    ME1Package bdtsplanets = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk"));
+            //    ME1Package bdtstalkfile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\Dialog\DLC_UNC_GlobalTlk.upk"));
 
-                Bio2DA bdtsGalMapX_Planets2DA = new Bio2DA(bdtsplanets.getUExport(3));
-                var rowRPIMapBdts = new Dictionary<int, RandomizedPlanetInfo>();
-                for (int i = 0; i < bdtsGalMapX_Planets2DA.RowCount; i++)
-                {
-                    RandomizePlanetText(bdtsGalMapX_Planets2DA, i, "UNC", Tlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMapBdts, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos);
-                }
-                var galaxyMapImagesBdts = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\GUI\GUI_SF_DLC_GalaxyMap.upk"));
-                ui2DAPackage = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_UI_X.upk"));
-                galaxyMapImages2DAExport = ui2DAPackage.getUExport(2);
-                RandomizePlanetImages(random, rowRPIMapBdts, bdtsGalMapX_Planets2DA, galaxyMapImagesBdts, galaxyMapImages2DAExport, galaxyMapGroupResources);
-                bdtsplanets.save();
-                ModifiedFiles[bdtsplanets.FileName] = bdtsplanets.FileName;
-                var bdtsTlks = bdtstalkfile.Exports.Where(x => x.ClassName == "BioTlkFile").Select(x => new TalkFile(x)).ToList();
-                UpdateGalaxyMapReferencesForTLKs(bdtsTlks, true, false); //Update TLKs.
-            }
+            //    Bio2DA bdtsGalMapX_Planets2DA = new Bio2DA(bdtsplanets.getUExport(3));
+            //    var rowRPIMapBdts = new Dictionary<int, RandomizedPlanetInfo>();
+            //    var bdtsTlks = bdtstalkfile.Exports.Where(x => x.ClassName == "BioTlkFile").Select(x => new TalkFile(x)).ToList();
+
+            //    for (int i = 0; i < bdtsGalMapX_Planets2DA.RowCount; i++)
+            //    {
+            //        RandomizePlanetText(bdtsGalMapX_Planets2DA, i, "UNC", bdtsTlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMapBdts, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos);
+            //    }
+            //    var galaxyMapImagesBdts = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\GUI\GUI_SF_DLC_GalaxyMap.upk"));
+            //    ui2DAPackage = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_UI_X.upk"));
+            //    galaxyMapImages2DAExport = ui2DAPackage.getUExport(2);
+            //    RandomizePlanetImages(random, rowRPIMapBdts, bdtsGalMapX_Planets2DA, galaxyMapImagesBdts, galaxyMapImages2DAExport, galaxyMapGroupResources);
+            //    bdtsplanets.save();
+            //    ModifiedFiles[bdtsplanets.FileName] = bdtsplanets.FileName;
+            //    UpdateGalaxyMapReferencesForTLKs(bdtsTlks, true, false); //Update TLKs.
+            //}
             //END BRING DOWN THE SKY=====================
 
             //PINNACE STATION (VEGAS)====================
@@ -1649,9 +1650,11 @@ namespace MassEffectRandomizer.Classes
 
                 Bio2DA vegasGalMapX_Planets2DA = new Bio2DA(vegasplanets.getUExport(2));
                 var rowRPIMapVegas = new Dictionary<int, RandomizedPlanetInfo>();
+                var vegasTlks = vegastalkfile.Exports.Where(x => x.ClassName == "BioTlkFile").Select(x => new TalkFile(x)).ToList();
+
                 for (int i = 0; i < vegasGalMapX_Planets2DA.RowCount; i++)
                 {
-                    RandomizePlanetText(vegasGalMapX_Planets2DA, i, "Vegas", Tlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMapVegas, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos);
+                    RandomizePlanetText(vegasGalMapX_Planets2DA, i, "Vegas", vegasTlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMapVegas, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos);
                 }
                 var galaxyMapImagesVegas = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\GUI\GUI_SF_PRC2_GalaxyMap.upk"));
                 ui2DAPackage = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_UI_X.upk"));
@@ -1659,8 +1662,11 @@ namespace MassEffectRandomizer.Classes
                 RandomizePlanetImages(random, rowRPIMapVegas, vegasGalMapX_Planets2DA, galaxyMapImagesVegas, galaxyMapImages2DAExport, galaxyMapGroupResources);
                 vegasplanets.save();
                 ModifiedFiles[vegasplanets.FileName] = vegasplanets.FileName;
-                var vegasTlks = vegastalkfile.Exports.Where(x => x.ClassName == "BioTlkFile").Select(x => new TalkFile(x)).ToList();
                 UpdateGalaxyMapReferencesForTLKs(vegasTlks, true, false); //Update TLKs.
+                vegasTlks.ForEach(x => x.saveToExport());
+                vegastalkfile.save();
+                ModifiedFiles[vegastalkfile.FileName] = vegastalkfile.FileName;
+
             }
             //END PINNACLE STATION=======================
 
@@ -1777,12 +1783,19 @@ namespace MassEffectRandomizer.Classes
 
                 //var landableMapID = planets2DA[i, planets2DA.GetColumnIndexByName("Map")].GetIntValue();
                 int planetNameTlkId = planets2DA[tableRow, "Name"].GetIntValue();
+                if (planetNameTlkId == 182210)
+                {
+                    // Pinnacle Station - make new string that is displayed to make sure
+                    // DLC still loads as its tied to the string value for some reason
+                    planets2DA[tableRow, "Name"].DisplayableValue = "183494";
+                }
 
                 //Replace planet description here, as it won't be replaced in the overall pass
                 foreach (TalkFile tf in Tlks)
                 {
                     //Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + newPlanetName);
                     string originalPlanetName = tf.findDataById(planetNameTlkId);
+                    
                     if ( /*newPlanetName == originalPlanetName && !rpi.PreventShuffle || */originalPlanetName == "No Data")
                     {
                         continue;
@@ -1795,7 +1808,7 @@ namespace MassEffectRandomizer.Classes
                     if (descriptionReference != 0 && description != null)
                     {
                         tf.TlksIdsToNotUpdate.Add(descriptionReference);
-                        Log.Information($"New planet: {newPlanetName}");
+                        //Log.Information($"New planet: {newPlanetName}");
                         //if (descriptionReference == 138077)
                         //{
                         //    Debug.WriteLine($"------------SUBSTITUTING----{tf.export.ObjectName}------------------");

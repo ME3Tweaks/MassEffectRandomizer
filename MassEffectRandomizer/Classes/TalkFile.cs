@@ -193,6 +193,10 @@ namespace MassEffectRandomizer.Classes.TLK
         public readonly List<int> TlksIdsToNotUpdate = new List<int>();
         public void replaceString(int id, string newString)
         {
+            if (id == 182210)
+            {
+                id = 183494; //Reassign pinnacel station to ensure dlc loads
+            }
             for (int i = 0; i < StringRefs.Length; i++)
             {
                 if (StringRefs[i].StringID == id)

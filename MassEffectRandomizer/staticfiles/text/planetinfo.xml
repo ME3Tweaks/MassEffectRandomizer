@@ -4237,9 +4237,10 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>Vegas</DLC>
-    <PlanetName>Ahern’s Crab Shack</PlanetName>
+    <PlanetName>Pinnacle Station</PlanetName>
+    <PlanetName2>Ahern’s Crab Shack</PlanetName2>
     <PlanetDescription>
-      Considered one of the finest bed and breakfasts in this area of space, Ahern’s Crab Shack is a popular stop for visitors traveling through the area. Founded in 2160 after hanging up his life aboard the high seas, Captain Ahern opened his bed and breakfast hoping to bring his love for seafood to the masses. Featuring a system class dining experience with fresh seafood from nearby planets, it offers something for everyone.
+      Considered one of the finest bed and breakfasts in this area of space, %PLANETNAME% is a popular stop for visitors traveling through the area. Founded in 2160 after hanging up his life aboard the high seas, Captain Ahern opened his bed and breakfast hoping to bring his love for seafood to the masses. Featuring a system class dining experience with fresh seafood from nearby planets, it offers something for everyone.
 
       For adults, they have special fantasy rooms with sound proof walls, for the older folk a history museum for the cluster, and a hyper-realistic combat simulator designed for children. The staff for the combat simulator have found difficulty keeping some of the adults from usurping the leaderboards from the kids.
 
@@ -4250,12 +4251,13 @@
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>1</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>Vegas</DLC>
     <PlanetName>Pinnacle Station</PlanetName>
+    <PlanetName2>Ahern’s Crab Shack</PlanetName2>
     <Description>This planet is unused</Description>
     <DLC>Vegas</DLC>
   </RandomizedPlanetInfo>
