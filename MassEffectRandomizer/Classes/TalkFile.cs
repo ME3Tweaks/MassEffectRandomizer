@@ -193,10 +193,7 @@ namespace MassEffectRandomizer.Classes.TLK
         public readonly List<int> TlksIdsToNotUpdate = new List<int>();
         public void replaceString(int id, string newString)
         {
-            if (id == 182210)
-            {
-                id = 183494; //Reassign pinnacel station to ensure dlc loads
-            }
+            if (id == 182170) return; //do not modify this string - Pinnacle Station (for DLC loading)
             for (int i = 0; i < StringRefs.Length; i++)
             {
                 if (StringRefs[i].StringID == id)
@@ -204,12 +201,18 @@ namespace MassEffectRandomizer.Classes.TLK
                     //Debug.WriteLine("Setting string " + id + " to " + newString);
                     Log.Information($"Updating {export.ObjectName} string id {id} to {newString.Truncate(135)}{(newString.Length > 135 ? "... (truncated for log)" : "")}");
                     StringRefs[i].Data = newString;
+                    StringRefs[i].Flags = BitConverter.GetBytes(newString == null ? 0 : 1); //should port to me3explorer.
                     Modified = true;
                     return;
                 }
             }
         }
 
+        /// <summary>
+        /// Finds the first null string in the tlk. This can be assigned to since it's a blank string.
+        /// </summary>
+        /// <returns></returns>
+        public int getFirstNullString() => StringRefs.FirstOrDefault(x => x.Data == null).StringID;
         private string GetString(int bitOffset)
         {
             HuffmanNode root = nodes[0];

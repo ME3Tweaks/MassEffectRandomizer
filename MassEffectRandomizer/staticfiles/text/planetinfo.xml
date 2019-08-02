@@ -4105,7 +4105,7 @@
   <!-- Start of Bring Down The Sky -->
   <RandomizedPlanetInfo>
     <RowID>0</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
@@ -4130,16 +4130,17 @@
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>1</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>UNC</DLC>
     <PlanetName>Asteroid X57</PlanetName>
+    <PlanetName2>Shard IV of Corda</PlanetName2>
     <PlanetDescription>
-      X57 is a metallic asteroid, originally located at the trailing Lagrange point of the gas giant Borr. With the increased development on Terra Nova, a new orbital port facility was necessary. Due to a shortage of funding, it was decided to "mine out" X57, using the recovered resources to finish out the interior for habitation. The asteroid was decelerated from Borr's orbit using fusion torches, allowing it to fall into the orbit of Terra Nova.
+      %PLANETNAME% is one of six pieces being brought back together in a state of the art attempt to reconstruct the shattered planet of Corda. Destroyed 16 years ago by an unknown force that escaped through the mass relay network, the Shards of Corda have been drifting apart for years. The recent reconstruction initiative two years ago led to the installation of fusion torches on the surface of the shards in an attempt to bring them to a single rendezvous point, where work on the construction of the planetary core can begin.
 
-      Recently, communications with the engineering team on X57 have been lost. The fusion torches have reignited, and the asteroid is accelerating towards Terra Nova.
+      %PLANETNAME% is currently off course and is on a potential collision course with a nearby human colony.  Impact with the colony will cause catastrophic destruction to the colony and ensure that Corda is never rebuilt.
     </PlanetDescription>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
@@ -4210,22 +4211,29 @@
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>5</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>UNC</DLC>
     <PlanetName>Asteroid X57</PlanetName>
-    <PlanetDescription>Asteroid X57 has been brought under control. Once repairs are complete, the asteroid will be carefully maneuvered into geosynchronous orbit around Terra Nova. Though the batarian terrorists have destroyed several months of work, experts predict it can still open for business before the end of 2184.</PlanetDescription>
+    <PlanetName2>Shard IV of Corda</PlanetName2>
+    <PlanetDescription>
+      %PLANETNAME% has been brought under control and is correcting its vector to the rendezvous point. Though the batarian terrorists have significantly damaged the fusion torches and set the rendezvous back several months, experts predict it can still make within the current calendar year.
+
+      The Corda Coalition would like to thank Commander Shepard and his team aboard the SSV Normandy SR-1 for saving the shard and millions of human lives. The Coalition is planning to install a commemorative Commander Shepard statue in the capital city of Corda when the initial shard bonding is completed, expected in 2187.
+    </PlanetDescription>
+    <ImageGroup>SavedShard</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>6</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>UNC</DLC>
     <PlanetName>Asteroid X57</PlanetName>
+    <PlanetName2>Shard IV of Corda</PlanetName2>
   </RandomizedPlanetInfo>
   <!-- End of BDTS -->
 
@@ -4237,6 +4245,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>Vegas</DLC>
+    <ButtonLabel>Find a seat</ButtonLabel>
     <PlanetName>Pinnacle Station</PlanetName>
     <PlanetName2>Ahern’s Crab Shack</PlanetName2>
     <PlanetDescription>
@@ -4291,7 +4300,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>Vegas</DLC>
-    <PlanetName>Shepard's Apartment</PlanetName>
+    <PlanetName>Little house on the prarie</PlanetName>
   </RandomizedPlanetInfo>
   <!-- End of Pinnacle Station -->
 </planetinfos>
