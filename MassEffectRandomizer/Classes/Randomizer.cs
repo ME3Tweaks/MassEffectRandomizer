@@ -895,8 +895,8 @@ namespace MassEffectRandomizer.Classes
                             if (didntIncrementNextImageIndex)
                             {
                                 Debug.WriteLine("Unused image? Row specified but doesn't exist in this table. Repointing to new image row for image value "+nextAddedImageIndex);
-                                nextAddedImageIndex++; //next image index was not incremented, but we had to create a new export anyways. Increment the counter.
                                 imageIndexCell.DisplayableValue = nextAddedImageIndex.ToString(); //assign the image cell to point to this export row
+                                nextAddedImageIndex++; //next image index was not incremented, but we had to create a new export anyways. Increment the counter.
                             }
                         }
                         else
@@ -938,17 +938,12 @@ namespace MassEffectRandomizer.Classes
             planets2DA.Write2DAToExport(); //should save later
         }
 
-        private void GalaxyMapValidationPass(Dictionary<int, RandomizedPlanetInfo> rowRPIMapping, Bio2DA planets2DA)
+        private void GalaxyMapValidationPass(Dictionary<int, RandomizedPlanetInfo> rowRPIMapping, Bio2DA planets2DA, Bio2DA galaxyMapImages2DA, ME1Package galaxyMapImagesPackage)
         {
             mainWindow.CurrentOperationText = "Running tests on galaxy map images";
             mainWindow.ProgressBarIndeterminate = false;
             mainWindow.ProgressBar_Bottom_Max = rowRPIMapping.Keys.Count;
 
-            ME1Package galaxyMapImagesBasegame = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GUI\GUI_SF_GalaxyMap.upk")); //lol demiurge, what were you doing?
-            ME1Package ui2DAPackage = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\2DAs\BIOG_2DA_UI_X.upk")); //lol demiurge, what were you doing?
-
-            IExportEntry galaxyMapImages2DAExport = ui2DAPackage.getUExport(8);
-            var galaxyMapImages2DA = new Bio2DA(galaxyMapImages2DAExport);
             mainWindow.CurrentProgressValue = 0;
 
             foreach (int i in rowRPIMapping.Keys)
@@ -965,7 +960,7 @@ namespace MassEffectRandomizer.Classes
                     string exportName = galaxyMapImages2DA[rowIndex, 0].DisplayableValueIndexed;
                     exportName = exportName.Substring(exportName.LastIndexOf('.') + 1);
                     //Use this value to find the export in GUI_SF file
-                    var export = galaxyMapImagesBasegame.Exports.FirstOrDefault(x => x.ObjectNameIndexed == exportName);
+                    var export = galaxyMapImagesPackage.Exports.FirstOrDefault(x => x.ObjectNameIndexed == exportName);
                     if (export == null)
                     {
                         Debugger.Break();
@@ -1651,6 +1646,8 @@ namespace MassEffectRandomizer.Classes
                 bdtsTlks.ForEach(x => x.saveToExport());
                 bdtstalkfile.save();
                 ModifiedFiles[bdtstalkfile.FileName] = bdtstalkfile.FileName;
+                GalaxyMapValidationPass(rowRPIMapBdts, bdtsGalMapX_Planets2DA, new Bio2DA(galaxyMapImages2DAExport), galaxyMapImagesBdts);
+
             }
             //END BRING DOWN THE SKY=====================
 
@@ -1694,7 +1691,6 @@ namespace MassEffectRandomizer.Classes
 
             //ME1Package vegastalkfile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\Dialog\DLC_Vegas_GlobalTlk.upk"));
 
-            //GalaxyMapValidationPass(rowRPIMap, planets2DA);
         }
 
         private void BuildSystemClusterMap(Bio2DA systems2DA, List<TalkFile> Tlks, Dictionary<int, (SuffixedCluster clustername, string systemname)> systemIdToSystemNameMap, Dictionary<int, SuffixedCluster> clusterIdToClusterNameMap, List<string> shuffledSystemNames)

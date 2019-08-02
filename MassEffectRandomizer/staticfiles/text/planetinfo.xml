@@ -4142,6 +4142,7 @@
 
       %PLANETNAME% is currently off course and is on a potential collision course with a nearby human colony.  Impact with the colony will cause catastrophic destruction to the colony and ensure that Corda is never rebuilt.
     </PlanetDescription>
+    <ImageGroup>PlanetDestruction</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>2</RowID>
