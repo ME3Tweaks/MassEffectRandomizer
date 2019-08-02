@@ -322,5 +322,7 @@ namespace MassEffectRandomizer.Classes.TLK
             compressor.LoadInputData(this);
             compressor.replaceTlkwithFile(export);
         }
+
+        internal TLKStringRef findDataByValue(string value) => StringRefs.FirstOrDefault(x => x.Data == value);
     }
 }

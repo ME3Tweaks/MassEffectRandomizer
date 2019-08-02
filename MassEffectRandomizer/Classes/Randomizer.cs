@@ -894,7 +894,7 @@ namespace MassEffectRandomizer.Classes
                             galaxyMapImages2DA[newRowIndex, "imageResource"] = new Bio2DACell(Bio2DACell.Bio2DADataType.TYPE_NAME, BitConverter.GetBytes((long)nameIndex));
                             if (didntIncrementNextImageIndex)
                             {
-                                Debug.WriteLine("Unused image? Row specified but doesn't exist in this table. Repointing to new image row for image value "+nextAddedImageIndex);
+                                Debug.WriteLine("Unused image? Row specified but doesn't exist in this table. Repointing to new image row for image value " + nextAddedImageIndex);
                                 imageIndexCell.DisplayableValue = nextAddedImageIndex.ToString(); //assign the image cell to point to this export row
                                 nextAddedImageIndex++; //next image index was not incremented, but we had to create a new export anyways. Increment the counter.
                             }
@@ -1458,7 +1458,8 @@ namespace MassEffectRandomizer.Classes
                                                MapBaseNames = e.Elements("MapBaseNames")
                                                    .Select(r => r.Value).ToList(),
                                                DLC = e.Element("DLC")?.Value,
-                                               ImageGroup = e.Element("ImageGroup")?.Value ?? "Generic" //TODO: TURN THIS OFF FOR RELEASE BUILD AND DEBUG ONCE FULLY IMPLEMENTED
+                                               ImageGroup = e.Element("ImageGroup")?.Value ?? "Generic", //TODO: TURN THIS OFF FOR RELEASE BUILD AND DEBUG ONCE FULLY IMPLEMENTED
+                                               ButtonLabel = e.Element("ButtonLabel")?.Value
                                            }).ToList();
 
             fileContents = Utilities.GetEmbeddedStaticFilesTextFile("galaxymapclusters.xml");
@@ -1647,12 +1648,11 @@ namespace MassEffectRandomizer.Classes
                 bdtstalkfile.save();
                 ModifiedFiles[bdtstalkfile.FileName] = bdtstalkfile.FileName;
                 GalaxyMapValidationPass(rowRPIMapBdts, bdtsGalMapX_Planets2DA, new Bio2DA(galaxyMapImages2DAExport), galaxyMapImagesBdts);
-
             }
             //END BRING DOWN THE SKY=====================
 
             //PINNACE STATION (VEGAS)====================
-            /*if (File.Exists(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk")))
+            if (File.Exists(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk")))
             {
                 ME1Package vegasplanets = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk"));
                 ME1Package vegastalkfile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\Dialog\DLC_Vegas_GlobalTlk.upk"));
@@ -1677,7 +1677,7 @@ namespace MassEffectRandomizer.Classes
                 vegastalkfile.save();
                 ModifiedFiles[vegastalkfile.FileName] = vegastalkfile.FileName;
 
-            }*/
+            }
             //END PINNACLE STATION=======================
 
 
@@ -1821,6 +1821,34 @@ namespace MassEffectRandomizer.Classes
                         //    Debugger.Break(); //Xawin
                         //}
                         tf.replaceString(descriptionReference, description);
+
+                        if (rpi.ButtonLabel != null)
+                        {
+                            Bio2DACell actionLabelCell = planets2DA[tableRow, "ButtonLabel"];
+                            if (actionLabelCell != null)
+                            {
+                                var currentTlkId = actionLabelCell.GetIntValue();
+                                if (tf.findDataById(currentTlkId) != rpi.ButtonLabel)
+                                {
+                                    //Value is different
+                                    //try to find existing value first
+                                    var tlkref = tf.findDataByValue(rpi.ButtonLabel);
+                                    if (tlkref.StringID != 0)
+                                    {
+                                        //We found result
+                                        actionLabelCell.DisplayableValue = tlkref.StringID.ToString(); //Assign cell to this TLK ref
+                                    } else
+                                    {
+                                        int newID = tf.getFirstNullString();
+                                        if (newID == -1) Debugger.Break(); //hopefully we never see this, but if user runs it enough, i guess you could.
+                                        tf.replaceString(newID, rpi.ButtonLabel);
+                                        actionLabelCell.DisplayableValue = newID.ToString(); //Assign cell to new TLK ref
+                                    }
+                                }
+                                
+
+                            }
+                        }
                         //break;
                     }
                 }
@@ -1928,7 +1956,7 @@ namespace MassEffectRandomizer.Classes
 
                 if (basegame) //this will only be fired on basegame tlk's since they're the only ones that update the progerssbar.
                 {
-                    
+
                     //text fixes.
                     //TODO: CHECK IF ORIGINAL VALUE IS BIOWARE - IF IT ISN'T ITS ALREADY BEEN UPDATED.
                     string testStr = tf.findDataById(179694);
@@ -2032,7 +2060,7 @@ namespace MassEffectRandomizer.Classes
                                 //Old = Kepler Verge, New = Zoltan Homeworlds
                                 if (originalString.ContainsWord(clusterMapping.Key) && newString.ContainsWord(clusterMapping.Key)) //
                                 {
-                                    
+
                                     //Terribly inefficent
                                     if (originalString.Contains("I'm asking you because the Normandy can get on-site quickly and quietly."))
                                         Debugger.Break();

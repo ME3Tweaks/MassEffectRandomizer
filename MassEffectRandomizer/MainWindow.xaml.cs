@@ -131,18 +131,34 @@ namespace MassEffectRandomizer
             public string PlanetName;
 
             /// <summary>
-            /// Name used for randomizing if it is a plot planet
+            /// Name used for randomizing if it is a plot planet and the plot planet option is on
             /// </summary>
             public string PlanetName2;
 
+            /// <summary>
+            /// Description of the planet in the Galaxy Map
+            /// </summary>
             public string PlanetDescription;
 
             /// <summary>
             /// WHen updating 2DA_AreaMap, labels that begin with these prefixes will be analyzed and updated accordingly by full (if no :) or anything before :.
+            /// NOTE: THIS IS UNUSED... I THINK
             /// </summary>
             public List<string> MapBaseNames { get; internal set; }
+
+            /// <summary>
+            /// Category of image to use. Ensure there are enough images in the imagegroup folder.
+            /// </summary>
             public string ImageGroup { get; internal set; }
+            /// <summary>
+            /// DLC folder this RPI belongs to. Can be UNC, Vegas, or null. Used with PreventShuffle as some Row ID's will be the same.
+            /// </summary>
             public string DLC { get; internal set; }
+
+            /// <summary>
+            /// Text to assign the action button if the row has an action button (like Land or Survey)
+            /// </summary>
+            public string ButtonLabel { get; set; }
         }
 
         public class OpeningCrawl
@@ -626,7 +642,7 @@ namespace MassEffectRandomizer
         {
             try
             {
-                var hl = (Hyperlink) sender;
+                var hl = (Hyperlink)sender;
                 System.Diagnostics.Process.Start((hl.DataContext as ImageCredit).Link);
             }
             catch (Exception)
