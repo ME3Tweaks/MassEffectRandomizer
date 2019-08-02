@@ -1459,7 +1459,8 @@ namespace MassEffectRandomizer.Classes
                                                    .Select(r => r.Value).ToList(),
                                                DLC = e.Element("DLC")?.Value,
                                                ImageGroup = e.Element("ImageGroup")?.Value ?? "Generic", //TODO: TURN THIS OFF FOR RELEASE BUILD AND DEBUG ONCE FULLY IMPLEMENTED
-                                               ButtonLabel = e.Element("ButtonLabel")?.Value
+                                               ButtonLabel = e.Element("ButtonLabel")?.Value,
+                                               Playable = !(e.Element("NotPlayable") != null && (bool)e.Element("NotPlayable")),
                                            }).ToList();
 
             fileContents = Utilities.GetEmbeddedStaticFilesTextFile("galaxymapclusters.xml");
@@ -1730,7 +1731,19 @@ namespace MassEffectRandomizer.Classes
             (SuffixedCluster clusterName, string systemName) systemClusterName = systemIdToSystemNameMap[systemId];
 
             Bio2DACell descriptionRefCell = planets2DA[tableRow, "Description"];
+            Bio2DACell mapCell = planets2DA[tableRow, "Map"];
+            bool isMap = mapCell != null && mapCell.GetIntValue() > 0;
+
             int descriptionReference = descriptionRefCell?.GetIntValue() ?? 0;
+
+            int numRequiredLandablePlanets = 37;
+            if (dlcName == "UNC")
+            {
+
+            } else if (dlcName == "Vegas")
+            {
+
+            }
 
             //var rowIndex = int.Parse(planets2DA.RowNames[i]);
             var info = allMapRandomizationInfo.FirstOrDefault(x => x.RowID == tableRow && (dlcName != "" ? x.DLC == dlcName : true)); //get non-shuffled information. this implementation will have to be chagned later to accoutn for additional planets

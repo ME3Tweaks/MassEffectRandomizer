@@ -428,6 +428,7 @@
       Surface Gravity: 1.7 G
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>22</RowID>
@@ -807,6 +808,7 @@
       Day Length: 11.5 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>43</RowID>
@@ -951,6 +953,7 @@
       Surface Gravity: 0.7 G
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>53</RowID>
@@ -1191,6 +1194,7 @@
       Day Length: 1.3 Earth Years
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>66</RowID>
@@ -1411,6 +1415,7 @@
       Day Length: 17.2 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>78</RowID>
@@ -1718,6 +1723,7 @@
       Surface Temperature: -124 Celsius
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>94</RowID>
@@ -1910,6 +1916,7 @@
       Day Length: 14.0 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>106</RowID>
@@ -2036,6 +2043,7 @@
       Day Length: 17.7 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
 
 
@@ -2212,6 +2220,7 @@
       Day Length: 2.5 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>122</RowID>
@@ -2538,6 +2547,7 @@
       Surface Temperature: 37 Celsius
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>142</RowID>
@@ -2643,6 +2653,7 @@
       Day Length: 67.1 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>149</RowID>
@@ -2660,6 +2671,7 @@
       Day Length: 49.8 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>150</RowID>
@@ -2668,13 +2680,16 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Glaurung</PlanetName>
     <PlanetDescription>
-      Glaurung is a gas giant with a large core composed mostly of molten gold. The lack of surface fission makes it an attractive candidate for space-to-surface mining. However, an atmosphere composed largely of toxic gases caused the workers in these stations to sink into delirium. Many began to hallucinate and the ensuing chaos rendered most of the drills inoperable, either due to mechanical destruction or simply because all the workers were dead. The skeletal remains of the stations can still be seen floating in low orbit.
+      Glaurung is a gas giant with a large core composed mostly of molten gold. The lack of surface fission makes it an attractive candidate for space-to-surface mining. However, an atmosphere composed largely of toxic gases caused the workers in these stations to sink into delirium. Many began to hallucinate and the ensuing chaos rendered most of the drills inoperable, either due to mechanical destruction or simply because all the workers were dead.
+
+      The skeletal remains of the stations can still be seen floating in low orbit.
 
       Orbital Period: 1.1 Earth Years
       Radius: 7819 km
       Day Length: 44.6 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>151</RowID>
@@ -3147,6 +3162,7 @@
       Day Length: 13.6 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>179</RowID>
@@ -3434,6 +3450,7 @@
       Radius: 6302 km
     </PlanetDescription>
     <ImageGroup>SpaceStation</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
 
   <RandomizedPlanetInfo>
@@ -3957,6 +3974,7 @@
       Day Length: 10.8 Earth Hours
     </PlanetDescription>
     <ImageGroup>Sky</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>225</RowID>
@@ -4222,7 +4240,7 @@
     <PlanetDescription>
       %PLANETNAME% has been brought under control and is correcting its vector to the rendezvous point. Though the batarian terrorists have significantly damaged the fusion torches and set the rendezvous back several months, experts predict it can still make within the current calendar year.
 
-      The Corda Coalition would like to thank Commander Shepard and his team aboard the SSV Normandy SR-1 for saving the shard and millions of human lives. The Coalition is planning to install a commemorative Commander Shepard statue in the capital city of Corda when the initial shard bonding is completed, expected in 2187.
+      The Corda Coalition would like to thank Commander Shepard and the team aboard the SSV Normandy SR-1 for saving the shard and millions of human lives. The Coalition is planning to install a commemorative Commander Shepard statue in the capital city of Corda when the initial shard bonding is completed, expected in 2187.
     </PlanetDescription>
     <ImageGroup>SavedShard</ImageGroup>
   </RandomizedPlanetInfo>

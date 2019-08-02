@@ -159,6 +159,7 @@ namespace MassEffectRandomizer
             /// Text to assign the action button if the row has an action button (like Land or Survey)
             /// </summary>
             public string ButtonLabel { get; set; }
+            public bool Playable { get; internal set; }
         }
 
         public class OpeningCrawl
