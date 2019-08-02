@@ -307,6 +307,11 @@ namespace MassEffectRandomizer.Classes
                 RandomizeSplash(random, entrymenu);
             }
 
+            if (mainWindow.RANDSETTING_MISC_PINNACLESCOREBOARD)
+            {
+                RandomizePinnacleScoreboard(random);
+            }
+
             if (entrymenu.ShouldSave)
             {
                 entrymenu.save();
@@ -553,6 +558,29 @@ namespace MassEffectRandomizer.Classes
             }
             mainWindow.CurrentOperationText = "Finishing up";
             AddMERSplash(random);
+        }
+
+        private void RandomizePinnacleScoreboard(Random random)
+        {
+            mainWindow.CurrentOperationText = "Randomizing Pinnacle Station Scoreboard";
+            ME1Package pinnacleTextures = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Maps\PRC2\bioa_prc2_ccsim05_dsg_LOC_int.SFM"));
+            var resourceItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.pinnaclestationscoreboard")).ToList();
+            resourceItems.Shuffle(random);
+
+            for (int i = 104; i < 118; i++)
+            {
+                var newBinaryResource = resourceItems[0];
+                resourceItems.RemoveAt(0);
+                var textureExport = pinnacleTextures.getUExport(i);
+                var props = textureExport.GetProperties();
+                props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(newBinaryResource), "SourceFilePath"));
+                props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
+                textureExport.WriteProperties(props);
+                var bytes = Utilities.GetEmbeddedStaticFilesBinaryFile(newBinaryResource, true);
+                textureExport.setBinaryData(bytes);
+            }
+            pinnacleTextures.save();
+            ModifiedFiles[pinnacleTextures.FileName] = pinnacleTextures.FileName;
         }
 
         private void RandomizePawnMaterialInstances(IExportEntry exp, Random random)
@@ -1006,9 +1034,7 @@ namespace MassEffectRandomizer.Classes
 
             //Write SWF metadata
             props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(swfResourcePath), "SourceFilePath"));
-            props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString(), "SourceFileTimestamp"));
-            StrProperty sourceFileTimestamp = props.GetProp<StrProperty>("SourceFileTimestamp");
-            sourceFileTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
             exp.WriteProperties(props);
         }
 
@@ -1196,9 +1222,9 @@ namespace MassEffectRandomizer.Classes
             boolValueForMERSkip.WriteProperty(bValue);
 
             //Extract MER Intro
-            string[] merIntros = { "merintro_a.bik", "merintro_b.bik", "merintro_c.bik" };
-            string merToExtract = merIntros[random.Next(3)];
-            Utilities.ExtractInternalFile("merintros." + merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"), true);
+            var merIntros = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.merintros.")).ToList();
+            string merToExtract = merIntros[random.Next(merIntros.Count)];
+            Utilities.ExtractInternalFile(merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"), true, true);
 
             entrymenu.save();
             //Add to fileindex
@@ -1571,7 +1597,7 @@ namespace MassEffectRandomizer.Classes
             BuildSystemClusterMap(systems2DA, Tlks, systemIdToSystemNameMap, clusterIdToClusterNameMap, shuffledSystemNames);
 
 
-            //BRING DOWN THE SKY (UNC)===================
+            //BRING DOWN THE SKY (UNC) SYSTEM===================
             if (File.Exists(Utilities.GetGameFile(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk"))))
             {
                 ME1Package bdtsGalaxyMapX = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk"));
@@ -1583,9 +1609,7 @@ namespace MassEffectRandomizer.Classes
             //END BRING DOWN THE SKY=====================
 
             //PLANETS
-
-
-            //mainWindow.CurrentProgressValue = 0;
+            //mainWindow.CurrentProgressValue = 0;37
             //mainWindow.ProgressBar_Bottom_Max = planets2DA.RowCount;
             //mainWindow.ProgressBarIndeterminate = false;
 
@@ -1612,15 +1636,28 @@ namespace MassEffectRandomizer.Classes
 
             //BASEGAME===================================
             var rowRPIMap = new Dictionary<int, RandomizedPlanetInfo>();
-            //for (int i = 0; i < planets2DA.RowCount; i++)
-            //{
-            //    RandomizePlanetText(planets2DA, i, "", Tlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMap, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos);
-            //}
+            var AlreadyAssignedMustBePlayableRows = new List<int>();
+            for (int i = 0; i < planets2DA.RowCount; i++)
+            {
+                Bio2DACell mapCell = planets2DA[i, "Map"];
+                if (mapCell.GetIntValue() > 0)
+                {
+                    //must be playable
+                    RandomizePlanetText(planets2DA, i, "", Tlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMap, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos, mustBePlayable: true);
+                }
+                AlreadyAssignedMustBePlayableRows.Add(i);
+            }
+
+            for (int i = 0; i < planets2DA.RowCount; i++)
+            {
+                if (AlreadyAssignedMustBePlayableRows.Contains(i)) continue;
+                RandomizePlanetText(planets2DA, i, "", Tlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMap, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos);
+            }
             ME1Package galaxyMapImagesBasegame = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\GUI\GUI_SF_GalaxyMap.upk")); //lol demiurge, what were you doing?
             ME1Package ui2DAPackage = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Packages\2DAs\BIOG_2DA_UI_X.upk")); //lol demiurge, what were you doing?
             IExportEntry galaxyMapImages2DAExport = ui2DAPackage.getUExport(8);
-            //RandomizePlanetImages(random, rowRPIMap, planets2DA, galaxyMapImagesBasegame, galaxyMapImages2DAExport, galaxyMapGroupResources);
-            //UpdateGalaxyMapReferencesForTLKs(Tlks, true,true); //Update TLKs.
+            RandomizePlanetImages(random, rowRPIMap, planets2DA, galaxyMapImagesBasegame, galaxyMapImages2DAExport, galaxyMapGroupResources);
+            UpdateGalaxyMapReferencesForTLKs(Tlks, true, true); //Update TLKs.
 
             //END BASEGAME===============================
 
@@ -1680,18 +1717,6 @@ namespace MassEffectRandomizer.Classes
 
             }
             //END PINNACLE STATION=======================
-
-
-            //Randomizer.DumpPlanetTexts(, new Classes.TLK.TalkFile(vegastalkfile.getUExport(1)));
-
-
-
-
-            //Pinnacle Station String and Bio2DA file
-
-
-            //ME1Package vegastalkfile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\Dialog\DLC_Vegas_GlobalTlk.upk"));
-
         }
 
         private void BuildSystemClusterMap(Bio2DA systems2DA, List<TalkFile> Tlks, Dictionary<int, (SuffixedCluster clustername, string systemname)> systemIdToSystemNameMap, Dictionary<int, SuffixedCluster> clusterIdToClusterNameMap, List<string> shuffledSystemNames)
@@ -1724,7 +1749,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizePlanetText(Bio2DA planets2DA, int tableRow, string dlcName, List<TalkFile> Tlks, Dictionary<int, (SuffixedCluster clustername, string systemname)> systemIdToSystemNameMap,
             List<RandomizedPlanetInfo> allMapRandomizationInfo, Dictionary<int, RandomizedPlanetInfo> rowRPIMap, List<RandomizedPlanetInfo> planetInfos, List<RandomizedPlanetInfo> msvInfos, List<RandomizedPlanetInfo> asteroidInfos,
-            List<RandomizedPlanetInfo> asteroidBeltInfos)
+            List<RandomizedPlanetInfo> asteroidBeltInfos, bool mustBePlayable = false)
         {
             //mainWindow.CurrentProgressValue = i;
             int systemId = planets2DA[tableRow, 1].GetIntValue();
@@ -1736,14 +1761,6 @@ namespace MassEffectRandomizer.Classes
 
             int descriptionReference = descriptionRefCell?.GetIntValue() ?? 0;
 
-            int numRequiredLandablePlanets = 37;
-            if (dlcName == "UNC")
-            {
-
-            } else if (dlcName == "Vegas")
-            {
-
-            }
 
             //var rowIndex = int.Parse(planets2DA.RowNames[i]);
             var info = allMapRandomizationInfo.FirstOrDefault(x => x.RowID == tableRow && (dlcName != "" ? x.DLC == dlcName : true)); //get non-shuffled information. this implementation will have to be chagned later to accoutn for additional planets
@@ -1777,8 +1794,29 @@ namespace MassEffectRandomizer.Classes
                     }
                     else
                     {
-                        rpi = planetInfos[0];
-                        planetInfos.RemoveAt(0);
+
+                        int indexPick = 0;
+                        rpi = planetInfos[indexPick];
+                        Debug.WriteLine("Assigning MustBePlayable: " + rpi.PlanetName);
+                        while (!rpi.Playable && mustBePlayable) //this could error out but since we do things in a specific order it shouldn't
+                        {
+                            indexPick++;
+                            //We need to fetch another RPI
+                            rpi = planetInfos[indexPick];
+                        }
+
+                        planetInfos.RemoveAt(indexPick);
+                        //if (isMap)
+                        //{
+                        //    Debug.WriteLine("IsMapAssigned: " + rpi.PlanetName);
+                        //    numRequiredLandablePlanets--;
+                        //    if (remainingLandablePlanets < numRequiredLandablePlanets)
+                        //    {
+                        //        Debugger.Break(); //we're gonna have a bad time
+                        //    }
+                        //}
+                        //Debug.WriteLine("Assigning planet from pool, is playable: " + rpi.Playable);
+
                     }
                 }
 
@@ -1850,7 +1888,8 @@ namespace MassEffectRandomizer.Classes
                                     {
                                         //We found result
                                         actionLabelCell.DisplayableValue = tlkref.StringID.ToString(); //Assign cell to this TLK ref
-                                    } else
+                                    }
+                                    else
                                     {
                                         int newID = tf.getFirstNullString();
                                         if (newID == -1) Debugger.Break(); //hopefully we never see this, but if user runs it enough, i guess you could.
@@ -1858,7 +1897,7 @@ namespace MassEffectRandomizer.Classes
                                         actionLabelCell.DisplayableValue = newID.ToString(); //Assign cell to new TLK ref
                                     }
                                 }
-                                
+
 
                             }
                         }

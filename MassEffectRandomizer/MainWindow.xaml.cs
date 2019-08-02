@@ -97,7 +97,7 @@ namespace MassEffectRandomizer
             }
         }
 
-        [DebuggerDisplay("RandomPlanetInfo ({PlanetName})")]
+        [DebuggerDisplay("RandomPlanetInfo ({PlanetName}) - Playable: {Playable}")]
         public class RandomizedPlanetInfo
         {
             /// <summary>
@@ -262,6 +262,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_GUISFX { get; set; }
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
+        public bool RANDSETTING_MISC_PINNACLESCOREBOARD { get; set; }
         public int RANDSETTING_WACK_FACEFX_AMOUNT { get; set; }
         public bool LogUploaderFlyoutOpen { get; set; }
         public bool DiagnosticsFlyoutOpen { get; set; }
@@ -649,6 +650,18 @@ namespace MassEffectRandomizer
             catch (Exception)
             {
 
+            }
+        }
+
+
+        private bool? _pinnacleStationInstalled = null;
+        public bool PinnacleStationInstalled
+        {
+            get
+            {
+                if (_pinnacleStationInstalled.HasValue) return _pinnacleStationInstalled.Value;
+                _pinnacleStationInstalled = File.Exists(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk"));
+                return _pinnacleStationInstalled.Value;
             }
         }
     }

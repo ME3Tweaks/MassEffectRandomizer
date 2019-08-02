@@ -134,13 +134,14 @@ namespace MassEffectRandomizer.Classes
             return extractedPath;
         }
 
-        internal static string ExtractInternalFile(string extFile, string destination, bool overwrite)
+        internal static string ExtractInternalFile(string internalResourceName, string destination, bool overwrite, bool fullname)
         {
-            Log.Information("Extracting file: " + extFile);
+            Log.Information("Extracting file: " + internalResourceName);
             if (!File.Exists(destination) || overwrite)
             {
-                using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles." + extFile))
+                using (Stream stream = Utilities.GetResourceStream(fullname ? internalResourceName : "MassEffectRandomizer.staticfiles." + internalResourceName))
                 {
+
                     using (var file = new FileStream(destination, FileMode.Create, FileAccess.Write))
                     {
                         stream.CopyTo(file);
@@ -153,8 +154,6 @@ namespace MassEffectRandomizer.Classes
             }
             return destination;
         }
-
-
 
         /// <summary> Checks for write access for the given file.
         /// </summary>

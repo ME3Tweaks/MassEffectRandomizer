@@ -304,7 +304,7 @@
     <EmbeddedResource Include="staticfiles\text\*.xml" />
     <EmbeddedResource Include="staticfiles\text\*.txt" />
     <EmbeddedResource Include="staticfiles\executables\*.exe" />
-    <EmbeddedResource Include="staticfiles\exportreplacements\*.bin" />
+    <EmbeddedResource Include="staticfiles\exportreplacements\**\*.bin" />
     <Resource Include="images\me3_bg_800x600.jpg" />
     <Content Include="Properties\AssemblyInfo.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
