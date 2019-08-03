@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -491,6 +492,157 @@ namespace MassEffectRandomizer
         private bool CONTINUE_BACKUP_EVEN_IF_VERIFY_FAILS = false;
         private ProgressDialogController backupRestoreController;
         private ProgressDialogController currentProgressDialogController;
+        private static readonly string MANIFEST_LOC = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MassEffectRandomizer");
+
+        private async void FetchManifest()
+        {
+            if (!Directory.Exists(MANIFEST_LOC)) Directory.CreateDirectory(MANIFEST_LOC);
+            using (WebClient webClient = new WebClient())
+            {
+                webClient.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+                Log.Information("Fetching latest manifest from github");
+                Progressbar_Bottom.IsIndeterminate = true;
+                CurrentOperationText = "Downloading latest manifest";
+                if (!File.Exists("DEV_MODE"))
+                {
+                    try
+                    {
+                        //File.Copy(@"C:\Users\mgame\Downloads\Manifest.xml", MANIFEST_LOC);
+                        string url = "https://raw.githubusercontent.com/ME3Tweaks/MassEffectRandomizer/master/manifest.xml";
+                        webClient.DownloadStringCompleted += async (sender, e) =>
+                        {
+                            if (e.Error == null)
+                            {
+                                string pageSourceCode = e.Result;
+                                if (Utilities.TestXMLIsValid(pageSourceCode))
+                                {
+                                    Log.Information("Manifest fetched.");
+                                    try
+                                    {
+                                        File.WriteAllText(MANIFEST_LOC, pageSourceCode);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Error("Unable to write and remove old manifest! We're probably headed towards a crash.");
+                                        Log.Error(App.FlattenException(ex));
+                                    }
+                                    ManifestDownloaded();
+                                }
+                                else
+                                {
+                                    Log.Error("Response from server was not valid XML! " + pageSourceCode);
+                                    if (File.Exists(MANIFEST_LOC))
+                                    {
+                                        Log.Information("Reading cached manifest instead.");
+                                        ManifestDownloaded();
+                                    }
+                                    else
+                                    {
+                                        Log.Error("Local manifest also doesn't exist! No manifest is available.");
+                                        await this.ShowMessageAsync("No Manifest Available", "An error occured downloading or reading the manifest for Mass Effect Randomizer. This manifest details additional files that need to be downloaded that are not bundled with the randomizer, without them, the program will not work. Check the program logs.");
+                                        Environment.Exit(1);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Log.Error("Exception occured getting manifest from server: " + e.Error.ToString());
+                                if (File.Exists(MANIFEST_LOC))
+                                {
+                                    Log.Information("Reading cached manifest instead.");
+                                    ManifestDownloaded();
+                                }
+                                else
+                                {
+                                    Log.Fatal("No local manifest exists to use, exiting...");
+                                    await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for ALOT Installer. There is no local bundled version available. Information that is required to build and install ALOT is not available. Check the program logs.");
+                                    Environment.Exit(1);
+                                }
+                            }
+                            //do something with results 
+                        };
+                        webClient.DownloadStringAsync(new Uri(url));
+                    }
+                    catch (WebException e)
+                    {
+                        Log.Error("WebException occured getting manifest from server: " + e.ToString());
+                        if (File.Exists(MANIFEST_LOC))
+                        {
+                            Log.Information("Reading cached manifest instead.");
+                            ManifestDownloaded();
+                        }
+                        else
+                        {
+                            Log.Fatal("No local manifest exists to use, exiting...");
+                            await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for ALOT Installer. There is no local bundled version available. Information that is required to build and install ALOT is not available. Check the program logs.");
+                            Environment.Exit(1);
+                        }
+                    }
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    Debug.WriteLine(DateTime.Now);
+                    //    Log.Error("Other Exception occured getting manifest from server/reading manifest: " + e.ToString());
+                    //    if (!File.Exists(MANIFEST_LOC) && File.Exists(MANIFEST_BUNDLED_LOC))
+                    //    {
+                    //        Log.Information("Reading bundled manifest instead.");
+                    //        File.Delete(MANIFEST_LOC);
+                    //        File.Copy(MANIFEST_BUNDLED_LOC, MANIFEST_LOC);
+                    //        UsingBundledManifest = true;
+                    //    }
+                    //}
+                } else
+                {
+                    Log.Information("DEV MODE = Using cached manifest");
+                    if (File.Exists(MANIFEST_LOC))
+                    {
+                        Log.Information("Reading cached manifest instead.");
+                        ManifestDownloaded();
+                    }
+                    else
+                    {
+                        Log.Fatal("No local manifest exists to use, exiting...");
+                        await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for ALOT Installer. There is no local bundled version available. Information that is required to build and install ALOT is not available. Check the program logs.");
+                        Environment.Exit(1);
+                    }
+                }
+
+                //if (!File.Exists(MANIFEST_LOC))
+                //{
+                //    Log.Fatal("No local manifest exists to use, exiting...");
+                //    await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for addon. Information that is required to build the addon is not available. Check the program logs.");
+                //    Environment.Exit(1);
+                //}
+
+            }
+        }
+
+        private void ManifestDownloaded()
+        {
+            readManifest();
+            Log.Information("readManifest() has completed.");
+            bool? hasShownFirstRun = Utilities.GetRegistrySettingBool("HasRunFirstRun");
+            if (hasShownFirstRun == null || !(bool)hasShownFirstRun)
+            {
+                Log.Information("Showing first run flyout");
+                //playFirstTimeAnimation();
+            }
+            else
+            {
+                PerformPostStartup();
+            }
+        }
+
+        private void readManifest()
+        {
+
+        }
+
+        private void PerformPostStartup()
+        {
+            ProgressPanelVisible = System.Windows.Visibility.Collapsed;
+            ButtonPanelVisible = System.Windows.Visibility.Visible;
+        }
     }
 
     /// <summary>

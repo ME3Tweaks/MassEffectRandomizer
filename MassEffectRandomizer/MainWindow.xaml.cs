@@ -576,9 +576,7 @@ namespace MassEffectRandomizer
             {
                 Log.Error("Error checking for update: " + e);
             }
-
-            ProgressPanelVisible = Visibility.Collapsed;
-            ButtonPanelVisible = Visibility.Visible;
+            FetchManifest();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

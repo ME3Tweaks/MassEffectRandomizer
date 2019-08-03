@@ -299,6 +299,7 @@
     <None Include="costura32\lzo2wrapper.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="staticfiles\text\bundledmanifest.xml" />
     <EmbeddedResource Include="staticfiles\**\*.bik" />
     <EmbeddedResource Include="staticfiles\galaxymapimages\**\*.swf" />
     <EmbeddedResource Include="staticfiles\text\*.xml" />
