@@ -641,7 +641,7 @@ namespace MassEffectRandomizer
                     if (File.Exists(file.ResolvedDestination))
                     {
                         //Check file
-                        if (Utilities.CalculateMD5(file.ResolvedDestination) == file.MD5)
+                        if (Utilities.CalculateMD5(file.ResolvedDestination) != file.MD5)
                         {
                             Log.Information("File does not match server manifest: " + file.ResolvedDestination + ", queueing for download");
                             filesToDownload.Add(file);
@@ -657,7 +657,7 @@ namespace MassEffectRandomizer
                 int downloadProgress = 0;
                 var totalBytesToDownload = filesToDownload.Sum(x => x.Size);
                 ProgressBar_Bottom_Max = totalBytesToDownload;
-                ProgressBarIndeterminate = true;
+                ProgressBarIndeterminate = false;
                 foreach (var file in filesToDownload)
                 {
                     WebClient downloadClient = new WebClient();
@@ -667,11 +667,32 @@ namespace MassEffectRandomizer
                         file.BytesDownloaded = e.BytesReceived;
                         var bytesDownloaded = filesToDownload.Sum(x => x.BytesDownloaded);
                         CurrentOperationText = ByteSize.FromBytes(bytesDownloaded).ToString() + "/" + ByteSize.FromBytes(totalBytesToDownload).ToString() + " downloaded";
-                        ProgressBarIndeterminate = false;
                         CurrentProgressValue = (int)bytesDownloaded;
                     };
+                    downloadClient.DownloadFileCompleted += (s, e) =>
+                    {
+                        lock (e.UserState)
+                        {
+                            //releases blocked thread
+                            Monitor.Pulse(e.UserState);
+                        }
+                    };
+
                     Directory.CreateDirectory(Directory.GetParent(file.ResolvedDestination).FullName);
-                    downloadClient.DownloadFile(file.Link, file.ResolvedDestination);
+                    var syncObject = new Object();
+                    lock (syncObject)
+                    {
+                        Log.Information("Downloading file: " + file.Link);
+                        downloadClient.DownloadFileAsync(new Uri(file.Link), file.ResolvedDestination, syncObject);
+                        //This would block the thread until download completes
+                        Monitor.Wait(syncObject);
+                        Log.Information("File downloaded: " + file.Link);
+                        string downloadedMD5 = Utilities.CalculateMD5(file.ResolvedDestination);
+                        if (downloadedMD5 != file.MD5)
+                        {
+                            Log.Error("File download has wrong MD5!");
+                        }
+                    }
 
                 }
             };

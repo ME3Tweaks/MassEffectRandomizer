@@ -24,8 +24,8 @@
               destination="merintros/MER_MrTombs.bik" 
               md5="760407cdc96def4b7aa35e541ddac7f2"
               size="6792248"/>
-  <cachedfile link="https://me3tweaks.com/masseffectrandomizer/cachedfiles/MassEffectModder.exe" 
-              destination="executables/MassEffectModder.exe" 
+  <cachedfile link="https://me3tweaks.com/masseffectrandomizer/cachedfiles/MassEffectModderNoGui.exe" 
+              destination="executables/MassEffectModderNoGui.exe" 
               md5="b71d1b5e1036c22ccf4c7afa290cbbd7"
               size="19121308"/>
 </mermanifest>
