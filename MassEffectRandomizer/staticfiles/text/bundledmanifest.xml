@@ -12,8 +12,20 @@
     <supportedhash game="me1" name="Origin - German">8bba14d838d9c95e10d8ceeb5c958976</supportedhash>
   </supportedhashes>
   <!-- Cached Files -->
-  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/merintros/MER_MadMan.bik" destination="merintros/MER_MadMan.bik" md5="94aa9193af527813c04b58352ca09aed"/>
-  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/merintros/MER_TombsCrazy.bik" destination="merintros/MER_TombsCrazy.bik" md5="0fc5fb826e7b1c19ab101e3e02e94268"/>
-  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/merintros/MER_MrTombs.bik" destination="merintros/MER_MrTombs.bik" md5="760407cdc96def4b7aa35e541ddac7f2"/>
-  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/MassEffectModder.exe" destination="executables/MassEffectModder.exe" md5="b71d1b5e1036c22ccf4c7afa290cbbd7"/>
+  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/merintros/MER_MadMan.bik" 
+              destination="merintros/MER_MadMan.bik" 
+              md5="94aa9193af527813c04b58352ca09aed"
+              size="6792200"/>
+  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/merintros/MER_TombsCrazy.bik" 
+              destination="merintros/MER_TombsCrazy.bik"
+              md5="0fc5fb826e7b1c19ab101e3e02e94268"
+              size="6792108"/>
+  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/merintros/MER_MrTombs.bik" 
+              destination="merintros/MER_MrTombs.bik" 
+              md5="760407cdc96def4b7aa35e541ddac7f2"
+              size="6792248"/>
+  <cachedfile link="https://me3tweaks.com/masseffectrandomized/cachedfiles/MassEffectModder.exe" 
+              destination="executables/MassEffectModder.exe" 
+              md5="b71d1b5e1036c22ccf4c7afa290cbbd7"
+              size="19121308"/>
 </mermanifest>

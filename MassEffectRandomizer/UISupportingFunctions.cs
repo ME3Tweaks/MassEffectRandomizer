@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using ByteSizeLib;
 using MahApps.Metro.Controls.Dialogs;
 using MassEffectRandomizer.Classes;
@@ -508,7 +509,7 @@ namespace MassEffectRandomizer
                     try
                     {
                         //File.Copy(@"C:\Users\mgame\Downloads\Manifest.xml", MANIFEST_LOC);
-                        string url = "https://raw.githubusercontent.com/ME3Tweaks/MassEffectRandomizer/master/manifest.xml";
+                        string url = "https://raw.githubusercontent.com/ME3Tweaks/MassEffectRandomizer/master/MassEffectRandomizer/staticfiles/text/bundledmanifest.xml";
                         webClient.DownloadStringCompleted += async (sender, e) =>
                         {
                             if (e.Error == null)
@@ -591,7 +592,8 @@ namespace MassEffectRandomizer
                     //        UsingBundledManifest = true;
                     //    }
                     //}
-                } else
+                }
+                else
                 {
                     Log.Information("DEV MODE = Using cached manifest");
                     if (File.Exists(MANIFEST_LOC))
@@ -635,13 +637,82 @@ namespace MassEffectRandomizer
 
         private void readManifest()
         {
+            var manifestStr = File.ReadAllText(MANIFEST_LOC);
+            XElement rootElement = XElement.Parse(manifestStr);
+            var requiredCachedFiles = (from e in rootElement.Elements("cachedfile")
+                                       select new CachedFile
+                                       {
+                                           Link = (string)e.Attribute("link"),
+                                           Destination = (string)e.Attribute("destination"),
+                                           MD5 = (string)e.Attribute("md5"),
+                                           Size = (int)e.Attribute("size")
+                                       }).ToList();
+            BackgroundWorker bw = new BackgroundWorker();
 
+            bw.DoWork += (a, b) =>
+            {
+                var filesToDownload = new List<CachedFile>();
+                foreach (var file in requiredCachedFiles)
+                {
+                    if (File.Exists(file.ResolvedDestination))
+                    {
+                        //Check file
+                        if (Utilities.CalculateMD5(file.ResolvedDestination) == file.MD5)
+                        {
+                            Log.Information("File does not match server manifest: " + file.ResolvedDestination + ", queueing for download");
+                            filesToDownload.Add(file);
+                        }
+                    }
+                    else
+                    {
+                        //Make directory and add to queue
+                        filesToDownload.Add(file);
+                    }
+                }
+
+                int downloadProgress = 0;
+                var totalBytesToDownload = filesToDownload.Sum(x => x.Size);
+                ProgressBar_Bottom_Max = totalBytesToDownload;
+                ProgressBarIndeterminate = true;
+                foreach (var file in filesToDownload)
+                {
+                    WebClient downloadClient = new WebClient();
+                    downloadClient.Headers["user-agent"] = "MassEffectRandomizer";
+                    downloadClient.DownloadProgressChanged += (s, e) =>
+                    {
+                        file.BytesDownloaded = e.BytesReceived;
+                        var bytesDownloaded = filesToDownload.Sum(x => x.BytesDownloaded);
+                        CurrentOperationText = ByteSize.FromBytes(bytesDownloaded).ToString() + "/" + ByteSize.FromBytes(totalBytesToDownload).ToString() + " downloaded";
+                        ProgressBarIndeterminate = false;
+                        CurrentProgressValue = (int) bytesDownloaded;
+                    };
+                    Directory.CreateDirectory(Directory.GetParent(file.ResolvedDestination).FullName);
+                    downloadClient.DownloadFile(file.Link, file.ResolvedDestination);
+
+                }
+            };
+
+            bw.RunWorkerCompleted += (a, b) =>
+            {
+
+            };
         }
 
         private void PerformPostStartup()
         {
             ProgressPanelVisible = System.Windows.Visibility.Collapsed;
             ButtonPanelVisible = System.Windows.Visibility.Visible;
+        }
+
+        private class CachedFile
+        {
+            public string Link { get; set; }
+            public string Destination { get; set; }
+            public string MD5 { get; set; }
+            public int Size { get; internal set; }
+            public long BytesDownloaded { get; set; }
+            public string ResolvedDestination => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MassEffectRandomizer", Destination);
+
         }
     }
 
