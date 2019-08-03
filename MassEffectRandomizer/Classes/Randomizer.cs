@@ -1224,21 +1224,24 @@ namespace MassEffectRandomizer.Classes
             boolValueForMERSkip.WriteProperty(bValue);
 
             //Extract MER Intro
-            var merIntros = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.merintros.")).ToList();
-            string merToExtract = merIntros[random.Next(merIntros.Count)];
-            Utilities.ExtractInternalFile(merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"), true, true);
-
-            entrymenu.save();
-            //Add to fileindex
-            var fileIndex = Utilities.GetGameFile(@"BioGame\CookedPC\FileIndex.txt");
-            var filesInIndex = File.ReadAllLines(fileIndex).ToList();
-            if (!filesInIndex.Any(x => x == @"Movies\MERIntro.bik"))
+            var merIntroDir = Path.Combine(Utilities.GetAppDataFolder(), "merintros");
+            if (Directory.Exists(merIntroDir))
             {
-                filesInIndex.Add(@"Movies\MERIntro.bik");
-                File.WriteAllLines(fileIndex, filesInIndex);
+                var merIntros = Directory.GetFiles(merIntroDir, "*.bik").ToList();
+                string merToExtract = merIntros[random.Next(merIntros.Count)];
+                File.Copy(merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"),true);
+                entrymenu.save();
+                //Add to fileindex
+                var fileIndex = Utilities.GetGameFile(@"BioGame\CookedPC\FileIndex.txt");
+                var filesInIndex = File.ReadAllLines(fileIndex).ToList();
+                if (filesInIndex.All(x => x != @"Movies\MERIntro.bik"))
+                {
+                    filesInIndex.Add(@"Movies\MERIntro.bik");
+                    File.WriteAllLines(fileIndex, filesInIndex);
+                }
+                ModifiedFiles[entrymenu.FileName] = entrymenu.FileName;
             }
 
-            ModifiedFiles[entrymenu.FileName] = entrymenu.FileName;
         }
 
         private static string[] hazardTypes = { "Cold", "Heat", "Toxic", "Radiation", "Vacuum" };

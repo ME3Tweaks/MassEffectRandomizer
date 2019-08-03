@@ -184,7 +184,7 @@
     <Compile Include="Classes\Converters\FaceFXRandomizationLevelIntToStringConverter.cs" />
     <Compile Include="Classes\ME1FaceFXAnimSet.cs" />
     <Compile Include="Classes\ObservableCollectionExtended.cs" />
-    <Compile Include="UISupportingFunctions.cs" />
+    <Compile Include="MainWindowUIComponents\UISupportingFunctions.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -307,6 +307,7 @@
     <EmbeddedResource Include="staticfiles\executables\*.exe" />
     <EmbeddedResource Include="staticfiles\exportreplacements\**\*.bin" />
     <Resource Include="images\me3_bg_800x600.jpg" />
+    <Resource Include="images\wards.jpg" />
     <Content Include="Properties\AssemblyInfo.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.cs</LastGenOutput>

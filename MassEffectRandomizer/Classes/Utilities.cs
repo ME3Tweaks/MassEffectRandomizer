@@ -65,7 +65,7 @@ namespace MassEffectRandomizer.Classes
 
         internal static string GetAppDataFolder()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\MassEffectRandomizer";
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\MassEffectRandomizer";
         }
 
         public static string GetEmbeddedStaticFilesTextFile(string filename)
