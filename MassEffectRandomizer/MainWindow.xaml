@@ -29,7 +29,7 @@
     </Window.Resources>
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout x:Name="DiagnosticsFlyout" SnapsToDevicePixels="True" TitleVisibility="Collapsed" IsOpen="{Binding DiagnosticsFlyoutOpen}" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="InstallingOverlayFlyout_MouseDown">
+            <Controls:Flyout x:Name="DiagnosticsFlyout" SnapsToDevicePixels="True" TitleVisibility="Collapsed" IsOpen="{Binding DiagnosticsFlyoutOpen}" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="Flyout_Mousedown" MouseDoubleClick="Flyout_Doubleclick">
                 <Border x:Name="InstallingOverlayFlyout_Border" Background="#77000000" >
                     <Grid>
                         <Grid.RowDefinitions>
@@ -57,7 +57,7 @@
                     </Grid>
                 </Border>
             </Controls:Flyout>
-            <Controls:Flyout x:Name="LogUploaderFlyout" SnapsToDevicePixels="True" IsOpenChanged="LogUploaderFlyout_IsOpenChanged" IsOpen="{Binding LogUploaderFlyoutOpen}" TitleVisibility="Collapsed" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="InstallingOverlayFlyout_MouseDown">
+            <Controls:Flyout x:Name="LogUploaderFlyout" SnapsToDevicePixels="True" IsOpenChanged="LogUploaderFlyout_IsOpenChanged" IsOpen="{Binding LogUploaderFlyoutOpen}" TitleVisibility="Collapsed" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="Flyout_Mousedown" MouseDoubleClick="Flyout_Doubleclick">
                 <Border>
                     <Border.Background>
                         <ImageBrush ImageSource="images/me3_bg_800x600.jpg" AlignmentY="Center" Stretch="UniformToFill"/>
@@ -80,9 +80,45 @@
                     </StackPanel>
                 </Border>
             </Controls:Flyout>
+            <Controls:Flyout x:Name="FirstRunFlyout" SnapsToDevicePixels="True" TitleVisibility="Hidden" Theme="Accent" CloseButtonVisibility="Hidden" Position="Top" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDoubleClick="Flyout_Doubleclick" MouseDown="Flyout_Mousedown" IsOpen="{Binding FirstRunFlyoutOpen}">
+                <Border x:Name="FirstRunOverlayFlyout_Border" Padding="10">
+                    <Border.Background>
+                        <ImageBrush ImageSource="images/me3_bg_800x600.jpg" AlignmentY="Center" Stretch="UniformToFill"/>
+                    </Border.Background>
+                    <StackPanel x:Name="panel" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Vertical" UseLayoutRounding="True" Width="630"  Margin="0,85,0,0">
+                        <fonts:OutlinedTextBlock x:Name="FirstRunText_Title" Text="Welcome to Mass Effect Randomizer" FontSize="30" FontWeight="Light" HorizontalAlignment="Center"/>
+                        <fonts:OutlinedTextBlock x:Name="FirstRunText_Summary" TextWrapping="Wrap" Text="Mass Effect Randomizer is a randomizer for the english version of Mass Effect." FontSize="13" TextAlignment="Center"/>
+                        <StackPanel x:Name="FirstRun_MainContent">
+                            <fonts:OutlinedTextBlock  x:Name="FirstRunText_TitleAddon" FontWeight="Light" Text="Do I randomize before or after MEUITM/ALOT?" Margin="0,10,0,0" FontSize="20"/>
+                            <fonts:OutlinedTextBlock  x:Name="FirstRunText_AddonSummary" FontSize="13"  HorizontalAlignment="Left">It is recommended that you run the randomizer before MEUITM/ALOT. You can technically run it after, but you will lose support from the ALOT team if you do so.</fonts:OutlinedTextBlock>
+                            <fonts:OutlinedTextBlock  x:Name="FirstRunText_TitleImport" FontWeight="Light" Margin="0,10,0,0" FontSize="20">Does this work with other mods?</fonts:OutlinedTextBlock>
+
+                            <fonts:OutlinedTextBlock   x:Name="FirstRunText_ImportSummary" FontSize="13" HorizontalAlignment="Left">
+                            Mods that replace files in the game directory itself should work with this randomizer, however translation mods will not work and will not be supported. DLC mods will be mostly unaffected by this program.</fonts:OutlinedTextBlock>
+                        </StackPanel>
+
+                        <fonts:OutlinedTextBlock Text="MER only works on the English version of Mass Effect" FontSize="20" Margin="0,10,0,0"></fonts:OutlinedTextBlock>
+                        <fonts:OutlinedTextBlock Text="This program has very specific code that is tied to the English version of the game. It will not work with others and the program may crash if attempted to be used on those versions." FontSize="13"/>
+
+                        <fonts:OutlinedTextBlock  Text="Be sure to read the directions" FontSize="20" Margin="0,10,0,0"></fonts:OutlinedTextBlock>
+                        <fonts:OutlinedTextBlock  Text="Failure to read the directions may lead you to have a bad experience. Read the directions on ME3Tweaks or NexusMods." FontSize="13"/>
+                        <Button ToolTip="Acknowledges you read this message" HorizontalAlignment="Left" Margin="0,10,0,0" Click="Button_FirstTimeRunDismiss_Click">
+                            <fonts:OutlinedTextBlock Text="Continue" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
+                        </Button>
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type fonts:OutlinedTextBlock}">
+                                <Setter Property="fonts:OutlinedTextBlock.FontFamily" Value="{StaticResource AeroLight}"/>
+                                <Setter Property="fonts:OutlinedTextBlock.Stroke" Value="Black"/>
+                                <Setter Property="fonts:OutlinedTextBlock.Fill" Value="White"/>
+                                <Setter Property="fonts:OutlinedTextBlock.TextWrapping" Value="Wrap"/>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </Border>
+            </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
-    <Border x:Name="FirstRunOverlayFlyout_Border" Padding="10">
+    <Border Padding="10">
         <Border.Background>
             <ImageBrush Opacity="0.3" ImageSource="images/backdrop.jpg" AlignmentY="Center" Stretch="UniformToFill" />
         </Border.Background>
@@ -387,4 +423,5 @@
             </TabControl>
         </DockPanel>
     </Border>
+
 </Controls:MetroWindow>

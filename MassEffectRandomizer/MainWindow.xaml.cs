@@ -4,6 +4,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MassEffectRandomizer.Classes;
 using MassEffectRandomizer.Classes.Updater;
+using Microsoft.Win32;
 using Octokit;
 using Serilog;
 using System;
@@ -56,6 +57,9 @@ namespace MassEffectRandomizer
         public double ProgressBar_Bottom_Max { get; set; }
         public bool ProgressBarIndeterminate { get; set; }
         public Visibility ProgressPanelVisible { get; set; }
+
+        private Randomizer randomizer;
+
         public Visibility ButtonPanelVisible { get; set; }
         ProgressDialogController updateprogresscontroller;
 
@@ -420,7 +424,7 @@ namespace MassEffectRandomizer
         {
             ButtonPanelVisible = Visibility.Collapsed;
             ProgressPanelVisible = Visibility.Visible;
-            Randomizer randomizer = new Randomizer(this);
+            randomizer = new Randomizer(this);
             randomizer.randomize();
         }
 
@@ -582,7 +586,10 @@ namespace MassEffectRandomizer
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             // close all active threads
-            Environment.Exit(0);
+            //if (randomizer != null && randomizer.Busy){
+            //    Environment.Exit(0); //force close threads
+            //}
+            // Let app close itself
         }
 
         private void UpdateDownloadCompleted(object sender, AsyncCompletedEventArgs e)
@@ -617,12 +624,6 @@ namespace MassEffectRandomizer
         private void Diagnostics_Click(object sender, RoutedEventArgs e)
         {
             DiagnosticsFlyoutOpen = true;
-        }
-
-        private void InstallingOverlayFlyout_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-                this.DragMove();
         }
 
         private async void BackupRestore_Click(object sender, RoutedEventArgs e)
@@ -682,6 +683,32 @@ namespace MassEffectRandomizer
                 var test = Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk");
                 _pinnacleStationInstalled = test != null && File.Exists(test);
                 return _pinnacleStationInstalled.Value;
+            }
+        }
+
+        private void Button_FirstTimeRunDismiss_Click(object sender, RoutedEventArgs e)
+        {
+            FirstRunFlyoutOpen = false;
+            bool? hasShownFirstRun = Utilities.GetRegistrySettingBool("HasRunFirstRun");
+            Utilities.WriteRegistryKey(Registry.CurrentUser, REGISTRY_KEY, "HasRunFirstRun", true);
+            PerformPostStartup();
+        }
+
+        private void Flyout_Mousedown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+        private void Flyout_Doubleclick(object sender, MouseButtonEventArgs e)
+        {
+            if (this.WindowState == System.Windows.WindowState.Normal)
+            {
+                this.WindowState = System.Windows.WindowState.Maximized;
+            }
+            else
+            {
+                this.WindowState = System.Windows.WindowState.Normal;
             }
         }
     }

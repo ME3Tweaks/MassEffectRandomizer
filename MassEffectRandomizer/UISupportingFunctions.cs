@@ -164,6 +164,7 @@ namespace MassEffectRandomizer
             }
         }
 
+        public bool FirstRunFlyoutOpen { get; set; }
         private async void RestoreGame(object sender, DoWorkEventArgs e)
         {
             string gamePath = Utilities.GetGamePath(allowMissing: true);
@@ -502,7 +503,7 @@ namespace MassEffectRandomizer
             {
                 webClient.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
                 Log.Information("Fetching latest manifest from github");
-                Progressbar_Bottom.IsIndeterminate = true;
+                ProgressBarIndeterminate = true;
                 CurrentOperationText = "Downloading latest manifest";
                 if (!File.Exists("DEV_MODE"))
                 {
@@ -595,18 +596,8 @@ namespace MassEffectRandomizer
                 }
                 else
                 {
-                    Log.Information("DEV MODE = Using cached manifest");
-                    if (File.Exists(MANIFEST_LOC))
-                    {
-                        Log.Information("Reading cached manifest instead.");
-                        readManifest();
-                    }
-                    else
-                    {
-                        Log.Fatal("No local manifest exists to use, exiting...");
-                        await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for ALOT Installer. There is no local bundled version available. Information that is required to build and install ALOT is not available. Check the program logs.");
-                        Environment.Exit(1);
-                    }
+                    Log.Information("DEV MODE - Using cached manifest");
+                    readManifest();
                 }
 
                 //if (!File.Exists(MANIFEST_LOC))
@@ -621,7 +612,10 @@ namespace MassEffectRandomizer
 
         private void readManifest()
         {
-            var manifestStr = File.ReadAllText(MANIFEST_LOC);
+            var manifestStr = Utilities.GetEmbeddedStaticFilesTextFile("bundledmanifest.xml");
+            if (File.Exists(MANIFEST_LOC)) {
+                File.ReadAllText(MANIFEST_LOC);
+            }
             XElement rootElement = XElement.Parse(manifestStr);
             var requiredCachedFiles = (from e in rootElement.Elements("cachedfile")
                                        select new CachedFile
@@ -654,7 +648,6 @@ namespace MassEffectRandomizer
                     }
                 }
 
-                int downloadProgress = 0;
                 var totalBytesToDownload = filesToDownload.Sum(x => x.Size);
                 ProgressBar_Bottom_Max = totalBytesToDownload;
                 ProgressBarIndeterminate = false;
@@ -704,7 +697,7 @@ namespace MassEffectRandomizer
                 if (hasShownFirstRun == null || !(bool)hasShownFirstRun)
                 {
                     Log.Information("Showing first run flyout");
-                    //playFirstTimeAnimation();
+                    FirstRunFlyoutOpen = true;
                 }
                 else
                 {

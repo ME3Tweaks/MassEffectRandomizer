@@ -40,6 +40,8 @@ namespace MassEffectRandomizer.Classes
             mapNamesToFaceFxRandomizationLists = new Dictionary<string, List<string>>();
         }
 
+        public bool Busy => randomizationWorker != null && randomizationWorker.IsBusy;
+
         public void randomize()
         {
             randomizationWorker = new BackgroundWorker();
