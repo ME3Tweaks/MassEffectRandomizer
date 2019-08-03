@@ -954,7 +954,7 @@ namespace MassEffectRandomizer.Classes
                 else
                 {
                     string nameTextForRow = planets2DA[i, 5].DisplayableValue;
-                    Debug.WriteLine("Skipped row: " + rowName + ", " + nameTextForRow);
+                    Debug.WriteLine("Skipped row: " + rowName + ", " + nameTextForRow + " due to no RPI for this row.");
                 }
             }
 
@@ -1644,8 +1644,8 @@ namespace MassEffectRandomizer.Classes
                 {
                     //must be playable
                     RandomizePlanetText(planets2DA, i, "", Tlks, systemIdToSystemNameMap, allMapRandomizationInfo, rowRPIMap, planetInfos, msvInfos, asteroidInfos, asteroidBeltInfos, mustBePlayable: true);
+                    AlreadyAssignedMustBePlayableRows.Add(i);
                 }
-                AlreadyAssignedMustBePlayableRows.Add(i);
             }
 
             for (int i = 0; i < planets2DA.RowCount; i++)

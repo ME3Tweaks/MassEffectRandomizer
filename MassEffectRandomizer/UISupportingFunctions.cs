@@ -123,6 +123,7 @@ namespace MassEffectRandomizer
                 bool result = (bool)e.Result;
                 if (result)
                 {
+                    _pinnacleStationInstalled = null; //Force reset of this value
                     await this.ShowMessageAsync("Restore completed", "Mass Effect has been restored from backup.");
                 }
                 else
@@ -163,7 +164,7 @@ namespace MassEffectRandomizer
 
         private async void RestoreGame(object sender, DoWorkEventArgs e)
         {
-            string gamePath = Utilities.GetGamePath();
+            string gamePath = Utilities.GetGamePath(allowMissing: true);
             string backupPath = Utilities.GetGameBackupPath();
             BackupWorker.ReportProgress(0, new ThreadCommand(UPDATE_PROGRESSBAR_INDETERMINATE, true));
             BackupWorker.ReportProgress(0, new ThreadCommand(UPDATE_CURRENTPROGRESSDIALOG_TITLE, "Deleting existing game installation"));

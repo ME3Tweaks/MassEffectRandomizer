@@ -177,7 +177,9 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Neptune</PlanetName>
     <PlanetDescription>
-      Neptune is an advanced training facility for combat operations. While used heavily by the Alliance, it is a commercial offering, permitting training for both military and non-military personnel. Through the use of cutting-edge simulation technology, training can be done to a very high degree of realism with low potential psychological impact on the participants in the event of a catastrophic failure. Their most famous simulation takes place in a crashed subway station, aptly named Firebase Neptune. This simulation is designed to improve the participants’ resistance to optical attacks on the battlefield by utilizing purple and white squares to represent walls and ceilings. Viewers of this simulation often call this effect "Eyebleed".
+      Neptune is an advanced training facility for combat operations. While used heavily by the Alliance, it is a commercial offering, permitting training for both military and non-military personnel. Through the use of cutting-edge simulation technology, training can be done to a very high degree of realism with low potential psychological impact on the participants in the event of a catastrophic failure.
+
+      Their most famous simulation takes place in a crashed subway station, aptly named Firebase Neptune. This simulation is designed to improve the participants’ resistance to optical attacks on the battlefield by utilizing purple and white squares to represent walls and ceilings. Viewers of this simulation often call this effect "Eyebleed".
 
       Population (Triton): 70
 
@@ -195,7 +197,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Pluto</PlanetName>
     <PlanetDescription>
-      Pluto is the gravitational "anchor" for the Prothean mass relay to Arcturus. Pluto and the Charon Relay (formerly encased in ice, and considered a moon) orbit each other. Pluto was stripped of its planetary status in the year 2006 after leading scientists on the system’s capital planet, Earth, started betting on an ancient sports game known as "curling". Leaders from multiple countries disagreed with the decision, but were unable to change course, as the lead scientists of space at the time were bound by their bet. Today, Pluto is little more than a staging ground for the Charon Mass Relay.
+      Pluto is the gravitational "anchor" for the Prothean mass relay to Arcturus. Pluto and the Charon Relay (formerly encased in ice, and considered a moon) orbit each other. Pluto was stripped of its planetary status in the year 2006 after leading scientists on the system’s capital planet, Earth, started betting on an ancient sports game known as "curling". Leaders from multiple countries disagreed with the decision, but were unable to change course as the lead scientists of space at the time were bound by their bet. Today, Pluto is little more than a staging ground for the Charon Mass Relay.
 
       Population (gateway stations): 9300
 
@@ -216,7 +218,9 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Luna</PlanetName>
     <PlanetDescription>
-      An early source of helium-3, Luna is now mined for materials used in space habitat construction. A folk legend from before space travel in the Sol system once described Luna as being made of cheese; exactly which kind has been debated widely among the population of Earth. While it has long been proven that Luna is not, in fact, made out of cheese, Neil Armstrong - the first human to step foot on Luna - is said to have thrown a wheel of cheese out of his landing craft upon first touchdown in 1969 to commemorate this legend. While the wheel has never been recovered, it was thought to be of the gouda variety. When asked why he chose this type, Neil supposedly replied with, "It is simply the best kind of cheese".
+      An early source of helium-3, Luna is now mined for materials used in space habitat construction. A folk legend from before space travel in the Sol system once described Luna as being made of cheese; exactly which kind has been debated widely among the population of Earth.
+
+      While it has long been proven that Luna is not, in fact, made out of cheese, Neil Armstrong - the first human to step foot on Luna - is said to have thrown a wheel of cheese out of his landing craft upon first touchdown in 1969 to commemorate this legend. Even though the wheel has never been recovered, it is thought to be of the gouda variety. When asked why he chose this type, Neil supposedly replied with, "It is simply the best kind of cheese".
 
       Colony Founded: 2069
       Population: 4.1 million
@@ -230,6 +234,7 @@
       Surface Temperature: -53 Celsius
     </PlanetDescription>
     <ImageGroup>Luna</ImageGroup>
+    <ButtonLabel>Go exploring</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>12</RowID>
@@ -289,6 +294,7 @@
       Surface Gravity: 5.0 G
     </PlanetDescription>
     <ImageGroup>DestroyedWorld</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>15</RowID>
@@ -375,6 +381,7 @@
       Surface Gravity: 0.81
     </PlanetDescription>
     <ImageGroup>Factory</ImageGroup>
+    <ButtonLabel>Put on boots</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>19</RowID>
@@ -409,6 +416,7 @@
       Surface Gravity: 0.89 G
     </PlanetDescription>
     <ImageGroup>Ocean</ImageGroup>
+    <ButtonLabel>Get sunglasses</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>21</RowID>
@@ -467,6 +475,7 @@
       Surface Gravity: 0.8 G
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>24</RowID>
@@ -791,6 +800,7 @@
       Surface Gravity: 0.28 G
     </PlanetDescription>
     <ImageGroup>Ice</ImageGroup>
+    <ButtonLabel>Go spelunking</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>42</RowID>
@@ -1099,6 +1109,7 @@
       Day Length: 13.7 Earth Hours
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
+    <ButtonLabel>Infiltrate</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>61</RowID>
@@ -1274,6 +1285,7 @@
       Surface Gravity: 1.1 G
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
+    <ButtonLabel>Go sightseeing</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>70</RowID>
@@ -1306,6 +1318,7 @@
       Radius: 55,721 km
       Day Length: 14.6 Earth Hours
     </PlanetDescription>
+    <ButtonLabel>Book hotel</ButtonLabel>
     <ImageGroup>Ice</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
@@ -1379,6 +1392,7 @@
       Surface Gravity: 1.3 G
     </PlanetDescription>
     <ImageGroup>LavaWorld</ImageGroup>
+    <ButtonLabel>Fill water bottles</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>76</RowID>
@@ -1436,6 +1450,7 @@
       Surface Temperature: 38 Celsius
     </PlanetDescription>
     <ImageGroup>DestroyedWorld</ImageGroup>
+    <ButtonLabel>Go looting</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>79</RowID>
@@ -1511,6 +1526,7 @@
       Surface Gravity: 0.83 G
     </PlanetDescription>
     <ImageGroup>Farm</ImageGroup>
+    <ButtonLabel>Investigate</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>83</RowID>
@@ -1528,6 +1544,7 @@
       Day Length: 21.5 Earth Hours
     </PlanetDescription>
     <ImageGroup>SpaceStation</ImageGroup>
+    <ButtonLabel>Investigate</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>84</RowID>
@@ -1664,6 +1681,7 @@
       Surface Gravity: 0.99 G
     </PlanetDescription>
     <ImageGroup>Factory</ImageGroup>
+    <ButtonLabel>Bring gas mask</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>91</RowID>
@@ -1684,6 +1702,7 @@
       Surface Gravity: 2.78 G
     </PlanetDescription>
     <ImageGroup>LavaWorld</ImageGroup>
+    <ButtonLabel>Deploy Bob Ross VI</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>92</RowID>
@@ -1744,6 +1763,7 @@
       Surface Gravity: 10.28 G
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>95</RowID>
@@ -1879,6 +1899,7 @@
       Surface Gravity 1.3 G
     </PlanetDescription>
     <ImageGroup>Spikes</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>104</RowID>
@@ -2008,6 +2029,7 @@
       Surface Gravity: 0.1 G
     </PlanetDescription>
     <ImageGroup>Factory</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>111</RowID>
@@ -2099,9 +2121,10 @@
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>115</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Asteroid Cluster</PlanetName>
     <PlanetDescription>
       A collection of small siliceous asteroids, loosely bound together by gravity.
@@ -2449,6 +2472,7 @@
       Surface Gravity: 0.47 G
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
+    <ButtonLabel>Get SCUBA gear</ButtonLabel>
   </RandomizedPlanetInfo>
 
   <RandomizedPlanetInfo>
@@ -2781,6 +2805,7 @@
       Surface Gravity: 0.9 G
     </PlanetDescription>
     <ImageGroup>WaterWorld</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>156</RowID>
@@ -2978,6 +3003,7 @@
       Surface Gravity: 0.88 G
     </PlanetDescription>
     <ImageGroup>Factory</ImageGroup>
+    <ButtonLabel>Browse towels</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>168</RowID>
@@ -2998,6 +3024,7 @@
       Surface Gravity: 1.15 G
     </PlanetDescription>
     <ImageGroup>City</ImageGroup>
+    <ButtonLabel>Supersize me!</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>169</RowID>
@@ -3059,6 +3086,7 @@
       Surface Gravity: 0.25 G
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
+    <ButtonLabel>Go swimming</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>172</RowID>
@@ -3098,6 +3126,7 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Rocky Asteroid</PlanetName>
     <PlanetDescription>
       This asteroid is unusually thicc.
@@ -3197,6 +3226,7 @@
     <PreventShuffle>false</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
+    <IsAsteroid>true</IsAsteroid>
     <PlanetName>Fragmented Asteroid</PlanetName>
     <PlanetDescription>
       This asteroid appears to be a piece of a larger planet that was blasted away by firepower of unimaginable magnitude. Debris litters the area around it. Ships with high-grade sensor packages can pick up a weak, intermittent transmission that one ship log describes as ‘millions of voices crying out in terror.’
@@ -3313,7 +3343,7 @@
   <RandomizedPlanetInfo>
     <RowID>188</RowID>
     <PreventShuffle>false</PreventShuffle>
-    <IsMSV>false</IsMSV>
+    <IsMSV>true</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Ishimura</PlanetName>
     <PlanetDescription>This space station is floating dead in space and appears to have been torn apart by massive arms. Getting too close overwhelms comms with desperate whispers to ‘make us whole again’. In addition, many crew members on these ships have discovered graffiti scrawled on nearby surfaces, always a double-helix shape and usually in blood, with absolutely no memory of its significance or how it got there.</PlanetDescription>
@@ -3335,6 +3365,7 @@
       Day Length: 234.7 Earth Years
     </PlanetDescription>
     <ImageGroup>Generic</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>190</RowID>
@@ -3436,6 +3467,7 @@
       Surface Gravity: 0.88 G
     </PlanetDescription>
     <ImageGroup>Ocean</ImageGroup>
+    <ButtonLabel>Prepare to attack</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>195</RowID>
@@ -3473,6 +3505,7 @@
       Surface Gravity: 0.79 G
     </PlanetDescription>
     <ImageGroup>City</ImageGroup>
+    <ButtonLabel>Install NetNavi app</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>197</RowID>
@@ -3613,11 +3646,12 @@
       Surface Gravity: 0.75 G
     </PlanetDescription>
     <ImageGroup>Ice</ImageGroup>
+    <ButtonLabel>Bring sweater</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>205</RowID>
     <PreventShuffle>false</PreventShuffle>
-    <IsMSV>false</IsMSV>
+    <IsMSV>true</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <PlanetName>Spaceball II</PlanetName>
     <PlanetDescription>
@@ -3668,6 +3702,7 @@
       Day Length: 19.2 Earth Hours
     </PlanetDescription>
     <ImageGroup>Nightmare</ImageGroup>
+    <ButtonLabel>Be courageous</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>208</RowID>
@@ -3752,6 +3787,7 @@
       Surface Gravity: 1.1G
     </PlanetDescription>
     <ImageGroup>Laboratory</ImageGroup>
+    <ButtonLabel>Infiltrate</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>213</RowID>
@@ -3773,7 +3809,7 @@
       Enjoy the cosmos in the SPACE ZONE! Ride our multi-tiered space elevator to Mecha Saturn, hold in your guts with the SAUCER OF PERIL(TM), or enjoy a raucous round of bumper cars against the local captive species in the DODGEM DOME!
 
       DIVE OF DEATH(TM)
-      A wondrous view from hundreds of meters, with no way down! What’s that below? A 4-foot-deep swimming pool? Test your diving skills with the DIVE OF DEATH! Will you survive the dive?
+      A wondrous view from hundreds of meters in the sky, with no way down! What’s that below? A four foot deep swimming pool? Test your diving skills with the DIVE OF DEATH! Will you survive the dive?
 
       MADAME’S FORTUNE TELLING
       The witch herself will tell you your fortune! For a small fee, I, Gruntilda Winkybunion, will hold your fate in my hands! Please empty your pockets upon entering my tent, and do not discuss your fate with others.
@@ -3835,6 +3871,7 @@
       Surface Gravity: 0.9 G
     </PlanetDescription>
     <ImageGroup>Wilderness</ImageGroup>
+    <NotPlayable>true</NotPlayable>
   </RandomizedPlanetInfo>
 
   <RandomizedPlanetInfo>
@@ -3956,6 +3993,7 @@
       Registry: Traveling Rays, Earth
     </PlanetDescription>
     <ImageGroup>Ship</ImageGroup>
+    <ButtonLabel>Get free pizza</ButtonLabel>
   </RandomizedPlanetInfo>
 
   <RandomizedPlanetInfo>
@@ -4118,6 +4156,7 @@
       Surface Gravity: 2.8 G
     </PlanetDescription>
     <ImageGroup>Rocky</ImageGroup>
+    <ButtonLabel>Sigh…</ButtonLabel>
   </RandomizedPlanetInfo>
 
   <!-- Start of Bring Down The Sky -->
@@ -4161,6 +4200,7 @@
       %PLANETNAME% is currently off course and is on a potential collision course with a nearby human colony.  Impact with the colony will cause catastrophic destruction to the colony and ensure that Corda is never rebuilt.
     </PlanetDescription>
     <ImageGroup>PlanetDestruction</ImageGroup>
+    <ButtonLabel>Save two planets</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>2</RowID>
@@ -4240,7 +4280,7 @@
     <PlanetDescription>
       %PLANETNAME% has been brought under control and is correcting its vector to the rendezvous point. Though the batarian terrorists have significantly damaged the fusion torches and set the rendezvous back several months, experts predict it can still make within the current calendar year.
 
-      The Corda Coalition would like to thank Commander Shepard and the team aboard the SSV Normandy SR-1 for saving the shard and millions of human lives. The Coalition is planning to install a commemorative Commander Shepard statue in the capital city of Corda when the initial shard bonding is completed, expected in 2187.
+      The Corda Coalition would like to thank Commander Shepard and his team aboard the SSV Normandy SR-1 for saving the shard and millions of human lives. The Coalition is planning to install a commemorative Commander Shepard statue in the capital city of Corda when the initial shard bonding is completed, expected in 2187.
     </PlanetDescription>
     <ImageGroup>SavedShard</ImageGroup>
   </RandomizedPlanetInfo>
@@ -4314,7 +4354,7 @@
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>3</RowID>
-    <PreventShuffle>false</PreventShuffle>
+    <PreventShuffle>true</PreventShuffle>
     <IsMSV>false</IsMSV>
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>

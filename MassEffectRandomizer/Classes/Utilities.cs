@@ -201,7 +201,9 @@ namespace MassEffectRandomizer.Classes
 
         internal static string GetGameFile(string subpath)
         {
-            return Path.Combine(GetGamePath(), subpath);
+            var gamePath = GetGamePath();
+            if (gamePath == null) return null;
+            return Path.Combine(gamePath, subpath);
         }
 
         internal static string GetEngineFile()
@@ -265,9 +267,9 @@ namespace MassEffectRandomizer.Classes
         /// <summary>
         /// Gets the currently origin or steam game path.
         /// </summary>
-        /// <param name="gameID"></param>
+        /// <param name="allowMissing">Allow directory to be missing if registry key still exists</param>
         /// <returns></returns>
-        public static String GetGamePath()
+        public static string GetGamePath(bool allowMissing = false)
         {
             Utilities.WriteDebugLog("Looking up game path for Mass Effect.");
 
@@ -286,6 +288,7 @@ namespace MassEffectRandomizer.Classes
             {
                 WriteDebugLog("Found game path via registry: " + path);
                 path = path.TrimEnd(Path.DirectorySeparatorChar);
+                if (allowMissing) return path; //don't do the rest of the check. we don't care
 
                 string GameEXEPath = Path.Combine(path, @"Binaries\MassEffect.exe");
                 WriteDebugLog("GetGamePath Registry EXE Check Path: " + GameEXEPath);

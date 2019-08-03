@@ -361,7 +361,7 @@ namespace MassEffectRandomizer
 
         public async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            string me1Path = Utilities.GetGamePath();
+            string me1Path = Utilities.GetGamePath(allowMissing: true);
 
             //int installedGames = 5;
             bool me1Installed = (me1Path != null);
@@ -382,6 +382,27 @@ namespace MassEffectRandomizer
             {
                 BackupRestoreText = "Restore";
                 BackupRestore_Button.ToolTip = "Click to restore game from " + Environment.NewLine + path;
+
+                string testME1Installed = Utilities.GetGamePath();
+                if (testME1Installed == null)
+                {
+                    Log.Error("Mass Effect detected as installed, but files are missing");
+                    MetroDialogSettings settings = new MetroDialogSettings();
+                    settings.NegativeButtonText = "Cancel";
+                    settings.AffirmativeButtonText = "Restore";
+                    MessageDialogResult result = await this.ShowMessageAsync("Mass Effect detected, but files are missing", "Mass Effect's location was successfully detected, but the game files were not found. This may be due to a failed restore. Would you like to restore your game to the original location?", MessageDialogStyle.AffirmativeAndNegative, settings);
+                    if (result == MessageDialogResult.Affirmative)
+                    {
+                        Log.Error("Mass Effect being restored by user");
+                        RestoreGame();
+                    }
+                    else
+                    {
+                        Log.Error("Exiting due to game not being found");
+                        Environment.Exit(1);
+                    }
+                }
+
             }
             else
             {
@@ -660,7 +681,8 @@ namespace MassEffectRandomizer
             get
             {
                 if (_pinnacleStationInstalled.HasValue) return _pinnacleStationInstalled.Value;
-                _pinnacleStationInstalled = File.Exists(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk"));
+                var test = Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk");
+                _pinnacleStationInstalled = test != null && File.Exists(test);
                 return _pinnacleStationInstalled.Value;
             }
         }
