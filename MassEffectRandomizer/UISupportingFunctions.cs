@@ -493,11 +493,11 @@ namespace MassEffectRandomizer
         private bool CONTINUE_BACKUP_EVEN_IF_VERIFY_FAILS = false;
         private ProgressDialogController backupRestoreController;
         private ProgressDialogController currentProgressDialogController;
-        private static readonly string MANIFEST_LOC = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MassEffectRandomizer");
+        private static readonly string MANIFEST_LOC = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MassEffectRandomizer", "manifest.xml");
 
         private async void FetchManifest()
         {
-            if (!Directory.Exists(MANIFEST_LOC)) Directory.CreateDirectory(MANIFEST_LOC);
+            if (!Directory.Exists(MANIFEST_LOC)) Directory.CreateDirectory(Directory.GetParent(MANIFEST_LOC).FullName);
             using (WebClient webClient = new WebClient())
             {
                 webClient.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
@@ -524,10 +524,10 @@ namespace MassEffectRandomizer
                                     }
                                     catch (Exception ex)
                                     {
-                                        Log.Error("Unable to write and remove old manifest! We're probably headed towards a crash.");
+                                        Log.Error("Unable to write manifest! We're probably headed towards a crash.");
                                         Log.Error(App.FlattenException(ex));
                                     }
-                                    ManifestDownloaded();
+                                    readManifest();
                                 }
                                 else
                                 {
@@ -535,7 +535,7 @@ namespace MassEffectRandomizer
                                     if (File.Exists(MANIFEST_LOC))
                                     {
                                         Log.Information("Reading cached manifest instead.");
-                                        ManifestDownloaded();
+                                        readManifest();
                                     }
                                     else
                                     {
@@ -551,7 +551,7 @@ namespace MassEffectRandomizer
                                 if (File.Exists(MANIFEST_LOC))
                                 {
                                     Log.Information("Reading cached manifest instead.");
-                                    ManifestDownloaded();
+                                    readManifest();
                                 }
                                 else
                                 {
@@ -570,7 +570,7 @@ namespace MassEffectRandomizer
                         if (File.Exists(MANIFEST_LOC))
                         {
                             Log.Information("Reading cached manifest instead.");
-                            ManifestDownloaded();
+                            readManifest();
                         }
                         else
                         {
@@ -599,7 +599,7 @@ namespace MassEffectRandomizer
                     if (File.Exists(MANIFEST_LOC))
                     {
                         Log.Information("Reading cached manifest instead.");
-                        ManifestDownloaded();
+                        readManifest();
                     }
                     else
                     {
@@ -616,22 +616,6 @@ namespace MassEffectRandomizer
                 //    Environment.Exit(1);
                 //}
 
-            }
-        }
-
-        private void ManifestDownloaded()
-        {
-            readManifest();
-            Log.Information("readManifest() has completed.");
-            bool? hasShownFirstRun = Utilities.GetRegistrySettingBool("HasRunFirstRun");
-            if (hasShownFirstRun == null || !(bool)hasShownFirstRun)
-            {
-                Log.Information("Showing first run flyout");
-                //playFirstTimeAnimation();
-            }
-            else
-            {
-                PerformPostStartup();
             }
         }
 
@@ -684,7 +668,7 @@ namespace MassEffectRandomizer
                         var bytesDownloaded = filesToDownload.Sum(x => x.BytesDownloaded);
                         CurrentOperationText = ByteSize.FromBytes(bytesDownloaded).ToString() + "/" + ByteSize.FromBytes(totalBytesToDownload).ToString() + " downloaded";
                         ProgressBarIndeterminate = false;
-                        CurrentProgressValue = (int) bytesDownloaded;
+                        CurrentProgressValue = (int)bytesDownloaded;
                     };
                     Directory.CreateDirectory(Directory.GetParent(file.ResolvedDestination).FullName);
                     downloadClient.DownloadFile(file.Link, file.ResolvedDestination);
@@ -694,8 +678,19 @@ namespace MassEffectRandomizer
 
             bw.RunWorkerCompleted += (a, b) =>
             {
-
+                Log.Information("readManifest() backgroundworker has completed.");
+                bool? hasShownFirstRun = Utilities.GetRegistrySettingBool("HasRunFirstRun");
+                if (hasShownFirstRun == null || !(bool)hasShownFirstRun)
+                {
+                    Log.Information("Showing first run flyout");
+                    //playFirstTimeAnimation();
+                }
+                else
+                {
+                    PerformPostStartup();
+                }
             };
+            bw.RunWorkerAsync();
         }
 
         private void PerformPostStartup()
