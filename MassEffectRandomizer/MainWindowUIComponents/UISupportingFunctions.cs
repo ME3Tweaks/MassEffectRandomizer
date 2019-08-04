@@ -214,7 +214,7 @@ namespace MassEffectRandomizer
             {
                 //Must have admin rights.
                 Log.Information("We need admin rights to create this directory");
-                exe = Utilities.ExtractInternalStaticExecutable("PermissionsGranter.exe", true); //Need to extract permissions granter
+                exe = Path.Combine(Utilities.GetAppDataFolder(), "executables", "PermissionsGranter.exe");
                 args = "\"" + System.Security.Principal.WindowsIdentity.GetCurrent().Name + "\" -create-directory \"" + gamePath.TrimEnd('\\') + "\"";
                 int result = Utilities.runProcessAsAdmin(exe, args);
                 if (result == 0)

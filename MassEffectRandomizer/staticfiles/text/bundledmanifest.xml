@@ -28,4 +28,12 @@
               destination="executables/MassEffectModderNoGui.exe" 
               md5="b71d1b5e1036c22ccf4c7afa290cbbd7"
               size="19121308"/>
+  <cachedfile link="https://me3tweaks.com/masseffectrandomizer/cachedfiles/lzma.exe"
+              destination="executables/lzma.exe"
+              md5="845187008fbd01478fa845b563b73ee3"
+              size="102400"/>
+  <cachedfile link="https://me3tweaks.com/masseffectrandomizer/cachedfiles/PermissionsGranter.exe"
+              destination="executables/PermissionsGranter.exe"
+              md5="952d7c7a5720645a32ca14b31137991f"
+              size="20976"/>
 </mermanifest>

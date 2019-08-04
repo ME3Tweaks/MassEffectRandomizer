@@ -29,34 +29,6 @@
     </Window.Resources>
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout x:Name="DiagnosticsFlyout" SnapsToDevicePixels="True" TitleVisibility="Collapsed" IsOpen="{Binding DiagnosticsFlyoutOpen}" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="Flyout_Mousedown" MouseDoubleClick="Flyout_Doubleclick">
-                <Border x:Name="InstallingOverlayFlyout_Border" Background="#77000000" >
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Orientation="Vertical" UseLayoutRounding="True" x:Name="DiagnosticsOverlayFlyout">
-                            <Controls:ProgressRing x:Name="Installing_Spinner"  IsActive="True" Margin="0,0,0,10" Foreground="White"/>
-                            <TextBlock x:Name="InstallingOverlay_TopLabel" VerticalAlignment="Stretch" FontSize="25" FontWeight="Light" HorizontalAlignment="Center" TextAlignment="Center" Text="Performing Diagnostics">
-                                <TextBlock.Effect>
-                                    <DropShadowEffect
-                                  ShadowDepth="4"
-                                  Direction="330"
-                                  Color="Black"
-                                  Opacity="1"
-                                 BlurRadius="4"/>
-                                </TextBlock.Effect>
-                            </TextBlock>
-                            <Button Content="Debug: Close" HorizontalAlignment="Center" Margin="0,5" Click="DebugCloseDiagnostics_Click" Style="{StaticResource AccentedSquareButtonStyle}"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </Controls:Flyout>
             <Controls:Flyout x:Name="LogUploaderFlyout" SnapsToDevicePixels="True" IsOpenChanged="LogUploaderFlyout_IsOpenChanged" IsOpen="{Binding LogUploaderFlyoutOpen}" TitleVisibility="Collapsed" Theme="Accent" CloseButtonVisibility="Collapsed" Position="Bottom" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:MetroWindow}, Path=ActualHeight}" MouseDown="Flyout_Mousedown" MouseDoubleClick="Flyout_Doubleclick">
                 <Border>
                     <Border.Background>
@@ -140,9 +112,6 @@
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                             <Button Click="Logs_Click" MinWidth="20">
                                 <fonts:OutlinedTextBlock Text="Logs" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
-                            </Button>
-                            <Button Click="Diagnostics_Click" Margin="5,0,0,0" MinWidth="20">
-                                <fonts:OutlinedTextBlock Text="Diagnostics" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
                             </Button>
                             <Button Name="BackupRestore_Button" Click="BackupRestore_Click" Margin="5,0,0,0" MinWidth="20">
                                 <fonts:OutlinedTextBlock Text="{Binding BackupRestoreText, FallbackValue=Backup}" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
