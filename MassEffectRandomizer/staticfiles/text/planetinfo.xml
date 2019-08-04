@@ -4209,16 +4209,20 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>UNC</DLC>
-    <PlanetName>Borr</PlanetName>
+    <PlanetName>Coruscant</PlanetName>
     <PlanetDescription>
-      Borr is a huge hydrogen-helium gas giant with over 90 moons. Its striking coloration is caused by the light of ionized hydrogen filtering through an upper cloud deck of sodium. The source of the ionization has not yet been confirmed, but Borr’s mass (equal to six Jupiters) and high temperature suggest it may be a small "brown dwarf", a large gas giant that gained nearly enough mass to ignite into a small star.
+      Coruscant is an ecumenopolis - a city covered planet - notable for its political influence on Citadel Council affairs. Located conveniently along many trade routes, Coruscant is one of the most densely populated worlds in the Milky Way. It is a pioneer planet in new energy exploration as well as environmental control systems, and is where a significant portion of Council governance is actually performed behind the scenes.
 
-      Though Borr's deep gravity well makes mining operations difficult, it is the only gas giant in the system. The hydrogen needed for the local fuel cell industry, combined with the ever-present need for helium-3 fusion torch fuel, make it economical to mine.
+      Due to the limited size of the Citadel and the high cost of living, Coruscant is typically seen as an acceptable second place for political work in Council space. High rising towers allow the politically elite to have a view of the city for tens of kilometers; the surface and sublevels of the reserved for those unable to make ends meet.
 
-      Orbital Period: 3.3 Earth Years
-      Radius: 74,612 km
-      Day Length: 8.8 Earth Hours
+      It is estimated that the planet generates over 150 trillion credits every single day.
+
+      Population: 1.4 trillion (estimated)
+      Orbital Period: 1.1 Earth Years
+      Radius: 6,120 km
+      Day Length: 23.8 Earth Hours
     </PlanetDescription>
+    <ImageGroup>City</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>3</RowID>
@@ -4227,21 +4231,22 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>UNC</DLC>
-    <PlanetName>Loki</PlanetName>
+    <PlanetName>Delfino</PlanetName>
     <PlanetDescription>
-      Loki is a small terrestrial world with little to recommend it. One hemisphere is largely covered by an ice cap, and the other by craggy basaltic highlands. The rough, varied terrain suggests an ancient cataclysm caused significant damage to the world. This is seemingly reinforced by its unusually elliptical orbit, which reaches 6.5 AU at perigee and 7.1 AU at apogee.
+      Delfino is a dry planet known for its array of ancient castles scattered about its surface. Although they have been long since abandoned, the castles have proven to be very popular archeological study, providing significant detail about their inhabitants and the lives they lived.
 
-      Penetrating scans of Loki's ice cap reveal a network of crisscrossing subterranean tunnels. Because some of the tunnels were surprisingly regular in shape and size, early expeditions looked for evidence of excavation. It was concluded they formed by natural processes.
+      Thousands of years ago, Defino was a temperate planet, hosting a wide range of biomes. A cataclysmic event occurred that caused a significant portion of the planet’s flora to die off, sending the sentient beings into a panic about how to ensure their own survival.
 
-      Loki's thin atmosphere is mainly composed of krypton and xenon. When it approaches perigee, frozen sulphur trioxides and dioxides can evaporate into clouds on the hemisphere facing Asgard.
+      The capital castle was owned by someone named Peach, and a recovered diary from this individual contained several complaints about the constant failure of her guards to provide any meaningful protection from her adversaries. The final entry detailed her plans to harness the power of the stars in an attempt to save her citizens, however if this succeeded is unknown.
 
       Orbital Period: 17.8 Earth Years
-      Radius: 3630 km
-      Day Length: 61.3 Earth Hours
-      Atmospheric Pressure: 0.2 Earth Atmospheres
-      Surface Temperature: -135 Celsius
+      Radius: 4630 km
+      Day Length: 19.3 Earth Hours
+      Atmospheric Pressure: 0.9 Earth Atmospheres
+      Surface Temperature: 27 Celsius
       Surface Gravity: 0.22 G
     </PlanetDescription>
+    <ImageGroup>Castle</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>4</RowID>
@@ -4250,23 +4255,23 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>UNC</DLC>
-    <PlanetName>Tyr</PlanetName>
+    <PlanetName>Scuttle</PlanetName>
     <PlanetDescription>
-      Tyr is compositionally quite similar to Earth. However, it lies over 4 AU from Asgard, and possesses an atmosphere primarily composed of nitrogen and ethane. While a potential target for terraforming, the presence of the "shirt sleeves" habitable Terra Nova in the same system relegated Tyr to a support role.
+      Scuttle is a lightly populated planet covered mostly by forests, with little to make it stand out. While the majority of the population lives in the seventeen official towns of the planet, a few nomadic groups are also known to exist, their membership consisting mostly of exiles from the towns. The planetary technology is limited due to very little investment from outside benefactors, leading most citizens to live a quiet lifestyle.
 
-      Nearly a hundred corporations--human and alien--have constructed extensive teleoperated mining, refining, and manufacturing facilities across the face of Tyr. Combined with the platinum lodes of Terra Nova, the resources they produce are driving development of the local hydrogen fuel cell industries. The Asgard system now supplies nearly 4% of the galactic market.
+      Due to the hostility between some of the nomadic groups and the townships, each town has a designated ‘guardian genie’ who is tasked with protecting the town at all costs.
 
-      Colony Founded: 2156
-      Population: 47,000
-      Capital: Kaldidalur
+      Population: 62,000
+      Capital: Tassel Town
 
       Orbital Period: 8 Earth Years
       Radius: 6332 km
       Day Length: 46.2 Earth Hours
       Atmospheric Pressure: 0.8 Earth Atmospheres
-      Surface Temperature: -73 Celsius
+      Surface Temperature: 21 Celsius
       Surface Gravity: 0.95 G
     </PlanetDescription>
+    <ImageGroup>Wilderness</ImageGroup>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>5</RowID>
@@ -4337,20 +4342,25 @@
     <IsAsteroid>false</IsAsteroid>
     <DLC>Vegas</DLC>
     <PlanetName>Intai'sei</PlanetName>
+    <PlanetName2>Oshiro</PlanetName2>
     <PlanetDescription>
-      An atmosphere similar to Earth's made Intai'sei an early candidate for human colonization. However, prohibitively high temperatures and an arid climate have proven a hinderance to terraforming and agriculture. A few human cities were founded, but the majority of the human population on Intai'sei remains scattered across the vast deserts, operating wind farms and geological research stations.
+      An atmosphere similar to Earth's made %PLANETNAME% an early candidate for human colonization. However, prohibitively high temperatures and an arid climate limit agricultural activities. The majority of the population of %PLANETNAME% lives near the poles where the climate is more favorable for plant life.
+
+      Mount Celeste, a mountain near the equator, has become a tourist attraction in recent years due to the reported positive psychological effects the climb has had for its hikers. It is one of the only remarkable features of planet.
 
       Colony Founded: 2166
-      Population: 150000
-      Capital: Thoreau Mesa
+      Population: 44,000
+      Capital: Madeline
 
-      Orbital Period: 47.8 Earth Years
+      Orbital Period: 27.8 Earth Years
       Radius: 5897 km
       Day Length: 27.6 Earth Hours
       Atmospheric Pressure: 0.95 Earth Atmospheres
       Surface Temperature: 46 Celsius
       Surface Gravity: 0.8 G
     </PlanetDescription>
+    <ImageGroup>Barren</ImageGroup>
+    <ButtonLabel>Netflix and Chill</ButtonLabel>
   </RandomizedPlanetInfo>
   <RandomizedPlanetInfo>
     <RowID>3</RowID>
@@ -4359,7 +4369,7 @@
     <IsAsteroidBelt>false</IsAsteroidBelt>
     <IsAsteroid>false</IsAsteroid>
     <DLC>Vegas</DLC>
-    <PlanetName>Little house on the prarie</PlanetName>
+    <PlanetName>Little house on the Prairie</PlanetName>
   </RandomizedPlanetInfo>
   <!-- End of Pinnacle Station -->
 </planetinfos>
