@@ -35,7 +35,7 @@ namespace MassEffectRandomizer
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             string exePath = assembly.Location;
             string exeFolder = Directory.GetParent(exePath).ToString();
-            LogDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MassEffectRandomizer", "logs");
+            LogDir = Path.Combine(Utilities.GetAppDataFolder(), "logs");
 
 
             string[] args = Environment.GetCommandLineArgs();

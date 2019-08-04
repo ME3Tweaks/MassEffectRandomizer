@@ -33,17 +33,17 @@ namespace MassEffectRandomizer
                 if (info.ALOTVER > 0)
                 {
                     Log.Warning("ALOT is installed. Backup of ALOT installed game is not allowed.");
-                    await this.ShowMessageAsync("ALOT is installed", "You cannot backup an installation that has ALOT already installed. If you have a backup, you can restore it by clicking the game backup button in the Settings menu. Otherwise, delete your game folder and redownload it.");
+                    await this.ShowMessageAsync("ALOT is installed", "You cannot backup an installation that has ALOT already installed. If you have a backup, you can restore it by clicking the restore button in the bottom left corner. Otherwise you will need to delete your game installation and download it again.");
                 }
                 else if (info.MEUITMVER > 0)
                 {
                     Log.Warning("MEUITM is installed. Backup of MEUITM installed game is not allowed.");
-                    await this.ShowMessageAsync("MEUITM is installed", "You cannot backup an installation that has ALOT already installed. If you have a backup, you can restore it by clicking the game backup button in the Settings menu. Otherwise, delete your game folder and redownload it.");
+                    await this.ShowMessageAsync("MEUITM is installed", "You cannot backup an installation that has ALOT already installed. If you have a backup, you can restore it by clicking the restore button in the bottom left corner. Otherwise you will need to delete your game installation and download it again.");
                 }
                 else
                 {
                     Log.Warning("ALOT or MEUITM is installed. Backup of ALOT or MEUITM installed game is not allowed.");
-                    await this.ShowMessageAsync("ALOT is installed", "You cannot backup an installation that has ALOT already installed. If you have a backup, you can restore it by clicking the game backup button in the Settings menu. Otherwise, delete your game folder and redownload it.");
+                    await this.ShowMessageAsync("ALOT/MEUITM is installed", "You cannot backup an installation that has ALOT already installed. If you have a backup, you can restore it by clicking the restore button in the bottom left corner. Otherwise you will need to delete your game installation and download it again.");
                 }
                 return;
             }
@@ -71,7 +71,7 @@ namespace MassEffectRandomizer
             var dir = openFolder.FileName;
             if (!Directory.Exists(dir))
             {
-                Log.Error("User attempting to backup to directory that doesn't exist. Explorer can cause this issue sometimes by allow selection of previous directory.");
+                Log.Error("User attempting to backup to directory that doesn't exist. Explorer can cause this issue sometimes by allowing selection of previous directory.");
                 await this.ShowMessageAsync("Directory does not exist", "The backup destination directory does not exist: " + dir);
                 return;
             }
@@ -135,7 +135,7 @@ namespace MassEffectRandomizer
             }
         }
 
-        public const string REGISTRY_KEY = @"SOFTWARE\ALOTAddon"; //Backup is shared with ALOT Installer
+        public const string ALOT_REGISTRY_KEY = @"SOFTWARE\ALOTAddon"; //Backup is shared with ALOT Installer
 
         private async void BackupCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -143,7 +143,7 @@ namespace MassEffectRandomizer
             string destPath = (string)e.Result;
             if (destPath != null)
             {
-                Utilities.WriteRegistryKey(Registry.CurrentUser, REGISTRY_KEY, "ME1VanillaBackupLocation", destPath);
+                Utilities.WriteRegistryKey(Registry.CurrentUser, ALOT_REGISTRY_KEY, "ME1VanillaBackupLocation", destPath);
             }
 
             //Backup completed, update UI
@@ -194,7 +194,7 @@ namespace MassEffectRandomizer
             }
 
             Log.Information("Reverting lod settings");
-            string exe = Utilities.ExtractInternalStaticExecutable("MassEffectModderNoGui.exe", true);
+            string exe = Path.Combine(Utilities.GetAppDataFolder(), "executables", "MassEffectModderNoGui.exe");
             string args = "--remove-lods --gameid 1";
             Utilities.runProcess(exe, args);
 
@@ -613,10 +613,18 @@ namespace MassEffectRandomizer
         private void readManifest()
         {
             var manifestStr = Utilities.GetEmbeddedStaticFilesTextFile("bundledmanifest.xml");
-            if (File.Exists(MANIFEST_LOC)) {
+            if (File.Exists(MANIFEST_LOC))
+            {
                 File.ReadAllText(MANIFEST_LOC);
             }
             XElement rootElement = XElement.Parse(manifestStr);
+            var supportedHashesList = rootElement.Element("supportedhashes").Descendants("supportedhash");
+            foreach (var item in supportedHashesList)
+            {
+                KeyValuePair<string, string> kvp = new KeyValuePair<string, string>(item.Value, (string)item.Attribute("name"));
+                Utilities.SUPPORTED_HASHES_ME1.Add(kvp);
+            }
+
             var requiredCachedFiles = (from e in rootElement.Elements("cachedfile")
                                        select new CachedFile
                                        {

@@ -386,6 +386,130 @@ namespace MassEffectRandomizer.Classes
             return null;
         }
 
+        public static int GetPartitionDiskBackingType(string partitionLetter)
+        {
+            using (var partitionSearcher = new ManagementObjectSearcher(
+                @"\\localhost\ROOT\Microsoft\Windows\Storage",
+                $"SELECT DiskNumber FROM MSFT_Partition WHERE DriveLetter='{partitionLetter}'"))
+            {
+                try
+                {
+                    var partition = partitionSearcher.Get().Cast<ManagementBaseObject>().Single();
+                    using (var physicalDiskSearcher = new ManagementObjectSearcher(
+                        @"\\localhost\ROOT\Microsoft\Windows\Storage",
+                        $"SELECT Size, Model, MediaType FROM MSFT_PhysicalDisk WHERE DeviceID='{ partition["DiskNumber"] }'"))
+                    {
+                        var physicalDisk = physicalDiskSearcher.Get().Cast<ManagementBaseObject>().Single();
+                        return
+                            (UInt16)physicalDisk["MediaType"];/*||
+                        SSDModelSubstrings.Any(substring => result.Model.ToLower().Contains(substring)); ;*/
+
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Error reading partition type on " + partitionLetter + ": " + e.Message);
+                    return -1;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if a hash string is in the list of supported hashes.
+        /// </summary>
+        /// <param name="game">Game ID</param>
+        /// <param name="hash">Executable hash</param>
+        /// <returns>True if found, false otherwise</returns>
+        public static bool CheckIfHashIsSupported(string hash)
+        {
+            foreach (KeyValuePair<string, string> hashPair in SUPPORTED_HASHES_ME1)
+            {
+                if (hashPair.Key == hash)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static string GetCPUString()
+        {
+            string str = "";
+            ManagementObjectSearcher mosProcessor = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
+            try
+            {
+                foreach (ManagementObject moProcessor in mosProcessor.Get())
+                {
+                    if (str != "")
+                    {
+                        str += "\n";
+                    }
+
+                    if (moProcessor["name"] != null)
+                    {
+                        str += moProcessor["name"].ToString();
+                        str += "\n";
+                    }
+                    if (moProcessor["maxclockspeed"] != null)
+                    {
+                        str += "Maximum reported clock speed: ";
+                        str += moProcessor["maxclockspeed"].ToString();
+                        str += " Mhz\n";
+                    }
+                    if (moProcessor["numberofcores"] != null)
+                    {
+                        str += "Cores: ";
+
+                        str += moProcessor["numberofcores"].ToString();
+                        str += "\n";
+                    }
+                    if (moProcessor["numberoflogicalprocessors"] != null)
+                    {
+                        str += "Logical processors: ";
+                        str += moProcessor["numberoflogicalprocessors"].ToString();
+                        str += "\n";
+                    }
+
+                }
+                return str
+                   .Replace("(TM)", "™")
+                   .Replace("(tm)", "™")
+                   .Replace("(R)", "®")
+                   .Replace("(r)", "®")
+                   .Replace("(C)", "©")
+                   .Replace("(c)", "©")
+                   .Replace("    ", " ")
+                   .Replace("  ", " ").Trim();
+            }
+            catch
+            {
+                return "Access denied: Not authorized to get CPU information\n";
+            }
+        }
+
+        internal static Tuple<bool, string> GetRawGameSourceByHash(string hash)
+        {
+            List<KeyValuePair<string, string>> list = SUPPORTED_HASHES_ME1;
+            foreach (KeyValuePair<string, string> hashPair in list)
+            {
+                if (hashPair.Key == hash)
+                {
+                    return new Tuple<bool, string>(true, "Game source: " + hashPair.Value);
+                }
+            }
+            return new Tuple<bool, string>(false, "Unknown source - this installation is not supported.");
+        }
+
+        public static List<KeyValuePair<string, string>> SUPPORTED_HASHES_ME1 = new List<KeyValuePair<string, string>>();
+
+        public static bool IsWindows10OrNewer()
+        {
+            var os = Environment.OSVersion;
+            return os.Platform == PlatformID.Win32NT &&
+                   (os.Version.Major >= 10);
+        }
+
         public static string GetGameBackupPath()
         {
             string entry = "ME1VanillaBackupLocation";

@@ -508,8 +508,6 @@ namespace MassEffectRandomizer
                             mds.NegativeButtonText = "Later";
                             mds.DefaultButtonFocus = MessageDialogResult.Affirmative;
 
-                            //MessageDialogResult result = await this.ShowMessageAsync("Update Available", "ALOT Installer " + releaseName + " is available. You are currently using version " + versInfo.ToString() + ".\n========================\n" + versionInfo + "\n" + latest.Body + "\n========================\nInstall the update?", MessageDialogStyle.AffirmativeAndNegative, mds);
-                            //upgrade = result == MessageDialogResult.Affirmative;
                             string message = "Mass Effect Randomizer " + releaseName + " is available. You are currently using version " + versInfo.ToString() + "." + versionInfo;
                             UpdateAvailableDialog uad = new UpdateAvailableDialog(message, latest.Body, this);
                             await this.ShowMetroDialogAsync(uad, mds);
@@ -690,7 +688,7 @@ namespace MassEffectRandomizer
         {
             FirstRunFlyoutOpen = false;
             bool? hasShownFirstRun = Utilities.GetRegistrySettingBool("HasRunFirstRun");
-            Utilities.WriteRegistryKey(Registry.CurrentUser, REGISTRY_KEY, "HasRunFirstRun", true);
+            Utilities.WriteRegistryKey(Registry.CurrentUser, App.REGISTRY_KEY, "HasRunFirstRun", true);
             PerformPostStartup();
         }
 

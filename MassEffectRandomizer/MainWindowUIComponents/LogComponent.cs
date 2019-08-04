@@ -4,6 +4,7 @@ using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MassEffectRandomizer.Classes;
+using Microsoft.Win32;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,7 +50,180 @@ namespace MassEffectRandomizer
             File.Delete(temppath);
 
             string eventAndCrashLogs = GetLogsForAppending();
-            return eventAndCrashLogs + "\n\n" + log;
+            string diagnostics = GetSystemInfo();
+            return log + "\n[STARTOFDIAG]\n" + diagnostics + "\n" + eventAndCrashLogs + "\n";
+        }
+
+        private string GetSystemInfo()
+        {
+            string gamePath = Utilities.GetGamePath();
+            StringBuilder diagBuilder = new StringBuilder();
+            diagBuilder.AppendLine("Mass Effect Randomizer " + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + " Game Diagnostic & log");
+            diagBuilder.AppendLine("Diagnostic generated on " + DateTime.Now.ToShortDateString());
+            diagBuilder.AppendLine("System culture: " + Thread.CurrentThread.CurrentCulture.Name);
+            diagBuilder.AppendLine("Game is installed at " + Utilities.GetGamePath());
+            string pathroot = Path.GetPathRoot(gamePath);
+            pathroot = pathroot.Substring(0, 1);
+            if (pathroot == @"\")
+            {
+                diagBuilder.AppendLine("Installation appears to be on a network drive (first character in path is \\)");
+            }
+            else
+            {
+                if (Utilities.IsWindows10OrNewer())
+                {
+                    int backingType = Utilities.GetPartitionDiskBackingType(pathroot);
+                    string type = "Unknown type";
+                    switch (backingType)
+                    {
+                        case 3:
+                            type = "Hard disk drive";
+                            break;
+                        case 4:
+                            type = "Solid state drive";
+                            break;
+                        default:
+                            type += ": " + backingType;
+                            break;
+                    }
+
+                    diagBuilder.AppendLine("Installed on disk type: " + type);
+                }
+            }
+
+            try
+            {
+                ALOTVersionInfo avi = Utilities.GetInstalledALOTInfo();
+
+                string exePath = Utilities.GetGameEXEPath();
+                if (File.Exists(exePath))
+                {
+                    var versInfo = FileVersionInfo.GetVersionInfo(exePath);
+                    diagBuilder.AppendLine("===Executable information");
+                    diagBuilder.AppendLine("Version: " + versInfo.FileMajorPart + "." + versInfo.FileMinorPart + "." + versInfo.FileBuildPart + "." + versInfo.FilePrivatePart);
+                    bool me1LAAEnabled = Utilities.GetME1LAAEnabled();
+                    if (avi != null && !me1LAAEnabled)
+                    {
+                        diagBuilder.AppendLine("[ERROR] -  Large Address Aware: " + me1LAAEnabled + " - ALOT/MEUITM is installed - this being false will almost certainly cause crashes");
+                    }
+                    else
+                    {
+                        diagBuilder.AppendLine("Large Address Aware: " + me1LAAEnabled);
+                    }
+
+                    var hash = Utilities.CalculateMD5(Utilities.GetGameEXEPath());
+                    diagBuilder.AppendLine("[EXEHASH-1]" + hash);
+                    var HASH_SUPPORTED = Utilities.CheckIfHashIsSupported(hash);
+                    Tuple<bool, string> exeInfo = Utilities.GetRawGameSourceByHash(hash);
+                    if (exeInfo.Item1)
+                    {
+                        diagBuilder.AppendLine("$$$" + exeInfo.Item2);
+                    }
+                    else
+                    {
+                        diagBuilder.AppendLine("[ERROR]" + exeInfo.Item2);
+                    }
+
+                    string d3d9file = Path.GetDirectoryName(exePath) + "\\d3d9.dll";
+                    if (File.Exists(d3d9file))
+                    {
+                        diagBuilder.AppendLine("~~~d3d9.dll exists - External dll is hooking via DirectX into game process");
+                    }
+
+                    string fpscounter = Path.GetDirectoryName(exePath) + @"\fpscounter\fpscounter.dll";
+                    if (File.Exists(fpscounter))
+                    {
+                        diagBuilder.AppendLine("~~~fpscounter.dll exists - FPS Counter plugin detected");
+                    }
+
+                    string dinput8 = Path.GetDirectoryName(exePath) + "\\dinput8.dll";
+                    if (File.Exists(dinput8))
+                    {
+                        diagBuilder.AppendLine("~~~dinput8.dll exists - External dll is hooking via input dll into game process");
+                    }
+                }
+
+
+                diagBuilder.AppendLine("===System information");
+                OperatingSystem os = Environment.OSVersion;
+                Version osBuildVersion = os.Version;
+
+                //Windows 10 only
+                string releaseId = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ReleaseId", "").ToString();
+                string productName = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
+                string verLine = "Running " + productName;
+                if (osBuildVersion.Major == 10)
+                {
+                    verLine += " " + releaseId;
+                }
+
+                diagBuilder.AppendLine(verLine);
+                diagBuilder.AppendLine("Version " + osBuildVersion);
+                diagBuilder.AppendLine("");
+                diagBuilder.AppendLine("$$$Processors");
+                diagBuilder.AppendLine(Utilities.GetCPUString());
+                long ramInBytes = Utilities.GetInstalledRamAmount();
+                diagBuilder.AppendLine("$$$System Memory: " + ByteSize.FromKiloBytes(ramInBytes));
+                if (ramInBytes == 0)
+                {
+                    diagBuilder.AppendLine("~~~Unable to get the read amount of physically installed ram. This may be a sign of impending hardware failure in the SMBIOS");
+                }
+
+                ManagementObjectSearcher objvide = new ManagementObjectSearcher("select * from Win32_VideoController");
+                int vidCardIndex = 1;
+                foreach (ManagementObject obj in objvide.Get())
+                {
+                    diagBuilder.AppendLine("");
+                    diagBuilder.AppendLine("$$$Video Card " + vidCardIndex);
+                    diagBuilder.AppendLine("Name: " + obj["Name"]);
+
+                    //Get Memory
+                    string vidKey = @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\";
+                    vidKey += (vidCardIndex - 1).ToString().PadLeft(4, '0');
+                    object returnvalue = null;
+                    try
+                    {
+                        returnvalue = Registry.GetValue(vidKey, "HardwareInformation.qwMemorySize", 0L);
+                    }
+                    catch (Exception ex)
+                    {
+                        diagBuilder.AppendLine("~~~Warning: Unable to read memory size from registry. Reading from WMI instead (" + ex.GetType().ToString() + ")");
+                    }
+
+                    string displayVal = "Unable to read value from registry";
+                    if (returnvalue != null && (long)returnvalue != 0)
+                    {
+                        displayVal = ByteSize.FromBytes((long)returnvalue).ToString();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            UInt32 wmiValue = (UInt32)obj["AdapterRam"];
+                            displayVal = ByteSize.FromBytes((long)wmiValue).ToString();
+                            if (displayVal == "4GB" || displayVal == "4 GB")
+                            {
+                                displayVal += " (possibly more, variable is 32-bit unsigned)";
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            displayVal = "Unable to read value from registry/WMI";
+
+                        }
+                    }
+
+                    diagBuilder.AppendLine("Memory: " + displayVal);
+                    diagBuilder.AppendLine("DriverVersion: " + obj["DriverVersion"]);
+                    vidCardIndex++;
+                }
+            }
+            catch (Exception e)
+            {
+                diagBuilder.AppendLine("[ERROR] Error getting system information: " + App.FlattenException(e));
+            }
+
+            return diagBuilder.ToString();
         }
 
         private void Combobox_LogSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -87,7 +262,8 @@ namespace MassEffectRandomizer
             ProgressDialogController progresscontroller = await this.ShowProgressAsync("Collecting logs", "Mass Effect Randomizer is currently collecting log information, please wait...", true);
             progresscontroller.SetIndeterminate();
 
-            bw.DoWork += (a, b) => {
+            bw.DoWork += (a, b) =>
+            {
                 Log.Information("Collecting log information...");
                 string log = GetSelectedLogText(logfile);
                 //var lzmaExtractedPath = Path.Combine(Path.GetTempPath(), "lzma.exe");
@@ -153,7 +329,7 @@ namespace MassEffectRandomizer
                 progresscontroller.SetMessage("Uploading log to ME3Tweaks log viewer, please wait...");
                 try
                 {
-                    var responseString = await "https://vps.me3tweaks.com/masseffectrandomizer/logupload.php".PostUrlEncodedAsync(new {LogData = Convert.ToBase64String(lzmalog), MassEffectRandomizerVersion = randomizerVer, Type = "log", CrashLog = isPreviousCrashLog}).ReceiveString();
+                    var responseString = await "https://me3tweaks.com/masseffectrandomizer/logservice/logupload.php".PostUrlEncodedAsync(new { LogData = Convert.ToBase64String(lzmalog), MassEffectRandomizerVersion = randomizerVer, Type = "log", CrashLog = isPreviousCrashLog }).ReceiveString();
                     Uri uriResult;
                     bool result = Uri.TryCreate(responseString, UriKind.Absolute, out uriResult)
                                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
@@ -208,12 +384,12 @@ namespace MassEffectRandomizer
                 }
                 Log.Information("Finishing log upload");
                 LogUploaderFlyoutOpen = false;
-                
+
             };
             bw.RunWorkerAsync();
             return ""; //Async requires this
         }
-        
+
 
         private async void Button_SelectLog_Click(object sender, RoutedEventArgs e)
         {
@@ -224,13 +400,15 @@ namespace MassEffectRandomizer
         {
             //GET LOGS
             StringBuilder crashLogs = new StringBuilder();
+            var sevenDaysAgo = DateTime.Now.AddDays(-7);
+
             string logsdir = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\BioWare\Mass Effect\Logs";
             if (Directory.Exists(logsdir))
             {
                 DirectoryInfo info = new DirectoryInfo(logsdir);
-                FileInfo[] files = info.GetFiles().Where(f => f.LastWriteTime > DateTime.Now.AddDays(-7)).OrderByDescending(p => p.LastWriteTime).ToArray();
-                DateTime threeDaysAgo = DateTime.Now.AddDays(-3);
-                Console.WriteLine("---");
+                FileInfo[] files = info.GetFiles().Where(f => f.LastWriteTime > sevenDaysAgo).OrderByDescending(p => p.LastWriteTime).ToArray();
+                crashLogs.AppendLine("[STARTOFME1LOGS]");
+
                 foreach (FileInfo file in files)
                 {
                     Console.WriteLine(file.Name + " " + file.LastWriteTime);
@@ -243,16 +421,8 @@ namespace MassEffectRandomizer
                         if (line.Contains("Critical: appError called"))
                         {
                             crashIndex = index;
-                            reason = "Log file indicates crash occured";
+                            reason = "[Warning] Log file indicates crash occured";
                             Log.Information("Found crash in ME1 log " + file.Name + " on line " + index);
-                            break;
-                        }
-
-                        if (line.Contains("Uninitialized: Log file closed"))
-                        {
-                            crashIndex = index;
-                            reason = "~~~Standard log file";
-                            Log.Information("Found standard log file " + file.Name + " on line " + index);
                             break;
                         }
 
@@ -280,27 +450,33 @@ namespace MassEffectRandomizer
 
             //Get event logs
             EventLog ev = new EventLog("Application");
-            List<string> entries = ev.Entries
+            List<EventLogEntry> entries = ev.Entries
                 .Cast<EventLogEntry>()
-                .Where(z => z.InstanceId == 1001)
-                .Select(GenerateLogString)
-                .Where(x => x.Contains("MassEffect.exe"))
+                .Where(z => z.InstanceId == 1001 && z.TimeGenerated > sevenDaysAgo && GenerateLogString(z).Contains("MassEffect.exe"))
                 .ToList();
 
-            crashLogs.AppendLine("Mass Effect crash logs found in Event Viewer");
             if (entries.Count > 0)
             {
-                entries.ForEach(x=>crashLogs.AppendLine(x));
+                string cutoffStr = "Attached files:";
+                crashLogs.AppendLine("[STARTOFEVENTS]");
+                crashLogs.AppendLine("===Mass Effect crash logs found in Event Viewer");
+                foreach (var entry in entries)
+                {
+                    string str = string.Join("\n", GenerateLogString(entry).Split('\n').ToList().Take(17).ToList());
+                    crashLogs.AppendLine($"!!!MassEffect.exe Event Log {entry.TimeGenerated}\n{str}");
+                }
+                crashLogs.AppendLine("===Mass Effect crash logs found in Event Viewer");
             }
             else
             {
                 crashLogs.AppendLine("No crash events found in Event Viewer");
+                crashLogs.AppendLine("===Mass Effect crash logs found in Event Viewer");
             }
 
             return crashLogs.ToString();
         }
 
-        public string GenerateLogString(EventLogEntry CurrentEntry) => $"====================================================================================\nEvent type: {CurrentEntry.EntryType.ToString()}\nEvent Message: {CurrentEntry.Message + CurrentEntry}\nEvent Time: {CurrentEntry.TimeGenerated.ToShortTimeString()}\nEvent---------------------------------------------------- {CurrentEntry.UserName}\n";
+        public string GenerateLogString(EventLogEntry CurrentEntry) => $"Event type: {CurrentEntry.EntryType.ToString()}\nEvent Message: {CurrentEntry.Message + CurrentEntry}\nEvent Time: {CurrentEntry.TimeGenerated.ToShortTimeString()}\nEvent {CurrentEntry.UserName}\n";
     }
 
     class LogItem
