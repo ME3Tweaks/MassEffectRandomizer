@@ -314,6 +314,11 @@ namespace MassEffectRandomizer.Classes
                 RandomizePinnacleScoreboard(random);
             }
 
+            if (mainWindow.RANDSETTING_MISC_BDTS)
+            {
+                RandomizeBDTS(random);
+            }
+
             if (entrymenu.ShouldSave)
             {
                 entrymenu.save();
@@ -415,6 +420,37 @@ namespace MassEffectRandomizer.Classes
                                         }
                                     }
                                 }
+                                else if (mainWindow.RANDSETTING_MISC_STARCOLORS)
+                                {
+                                    if (exp.ClassName == "BioSunFlareComponent" || exp.ClassName == "BioSunFlareStreakComponent")
+                                    {
+                                        if (!loggedFilename)
+                                        {
+                                            Log.Information("Randomizing map file: " + files[i]);
+                                            loggedFilename = true;
+                                        }
+                                        var tint = exp.GetProperty<StructProperty>("FlareTint");
+                                        if (tint != null)
+                                        {
+                                            RandomizeTint(random, tint, false);
+                                            exp.WriteProperty(tint);
+                                        }
+                                    }
+                                    else if (exp.ClassName == "BioSunActor")
+                                    {
+                                        if (!loggedFilename)
+                                        {
+                                            Log.Information("Randomizing map file: " + files[i]);
+                                            loggedFilename = true;
+                                        }
+                                        var tint = exp.GetProperty<StructProperty>("SunTint");
+                                        if (tint != null)
+                                        {
+                                            RandomizeTint(random, tint, false);
+                                            exp.WriteProperty(tint);
+                                        }
+                                    }
+                                }
                                 else if (exp.ClassName == "BioPawn")
                                 {
                                     if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES && random.Next(4) == 0)
@@ -439,6 +475,15 @@ namespace MassEffectRandomizer.Classes
 
                                         RandomizePawnMaterialInstances(exp, random);
                                     }
+                                }
+                                else if (exp.ClassName == "HeightFogComponent" && mainWindow.RANDSETTING_MISC_HEIGHTFOG)
+                                {
+                                    if (!loggedFilename)
+                                    {
+                                        Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
+                                    RandomizeHeightFogComponent(exp, random);
                                 }
                                 else if (mainWindow.RANDSETTING_MISC_INTERPS && exp.ClassName == "InterpTrackMove" /* && random.Next(4) == 0*/)
                                 {
@@ -499,6 +544,7 @@ namespace MassEffectRandomizer.Classes
 
                         if (package.ShouldSave || package.TlksModified)
                         {
+                            Debug.WriteLine("Saving package: " + package.FileName);
                             ModifiedFiles[package.FileName] = package.FileName;
                             package.save();
                         }
@@ -510,7 +556,7 @@ namespace MassEffectRandomizer.Classes
             {
                 mainWindow.CurrentOperationText = "Randomizing opening cutscene";
                 RandomizeOpeningCrawl(random, Tlks);
-                RandomizeOpeningSequence(random);
+                //RandomizeOpeningSequence(random); //this was just sun tint. Part of sun tint randomizer 
                 Log.Information("Applying fly-into-earth interp modification");
                 ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\NOR\LAY\BIOA_NOR10_13_LAY.SFM"));
                 p.getUExport(220).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_EarthCardIntro_220.bin");
@@ -560,6 +606,26 @@ namespace MassEffectRandomizer.Classes
             }
             mainWindow.CurrentOperationText = "Finishing up";
             AddMERSplash(random);
+        }
+
+        private void RandomizeHeightFogComponent(IExportEntry exp, Random random)
+        {
+            var properties = exp.GetProperties();
+            var lightColor = properties.GetProp<StructProperty>("LightColor");
+            if (lightColor != null)
+            {
+                lightColor.GetProp<ByteProperty>("R").Value = (byte)random.Next(256);
+                lightColor.GetProp<ByteProperty>("G").Value = (byte)random.Next(256);
+                lightColor.GetProp<ByteProperty>("B").Value = (byte)random.Next(256);
+
+                var density = properties.GetProp<FloatProperty>("Density");
+                if (density != null)
+                {
+                    var twentyPercent = random.NextFloat(-density * .05, density * 0.75);
+                    density.Value = density + twentyPercent;
+                }
+                exp.WriteProperties(properties);
+            }
         }
 
         private void RandomizePinnacleScoreboard(Random random)
@@ -637,40 +703,55 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        private void RandomizeBDTS(Random random)
+        {
+            //Randomize planet in the sky
+            ME1Package bdtsPlanetFile = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Maps\UNC52\LAY\BIOA_UNC52_00_LAY.SFM"));
+            IExportEntry planetMaterial = bdtsPlanetFile.getUExport(1546); //BIOA_DLC_UNC52_T.GXM_EarthDup
+            RandomizePlanetMaterialInstanceConstant(planetMaterial, random, realistic: true);
+            bdtsPlanetFile.save();
+            ModifiedFiles[bdtsPlanetFile.FileName] = bdtsPlanetFile.FileName;
+
+            //Randomize the Bio2DA talent table for the turrets
+            ME1Package bdtsTalents = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_Talents_X.upk"));
+            Bio2DA talentEffectLevels = new Bio2DA(bdtsTalents.getUExport(2));
+
+            for (int i = 0; i < talentEffectLevels.RowCount; i++)
+            {
+                string rowEffect = talentEffectLevels[i, "GameEffect_Label"].DisplayableValue;
+                if (rowEffect.EndsWith("Cooldown") || rowEffect.EndsWith("CastingTime"))
+                {
+                    float newValue = random.NextFloat(0, 1);
+                    if (random.Next(2) == 0) newValue = 0.01f;
+                    for (int j = 1; j < 12; j++)
+                    {
+                        talentEffectLevels[i, "Level" + j].DisplayableValue = newValue.ToString();
+                    }
+                }
+                else if (rowEffect.EndsWith("TravelSpeed"))
+                {
+                    int newValue = random.Next(2000) + 2000;
+                    for (int j = 1; j < 12; j++)
+                    {
+                        talentEffectLevels[i, "Level" + j].DisplayableValue = newValue.ToString();
+                    }
+                }
+            }
+
+            talentEffectLevels.Write2DAToExport();
+            bdtsTalents.save();
+            ModifiedFiles[bdtsTalents.FileName] = bdtsTalents.FileName;
+
+        }
+
         private void RandomizeSplash(Random random, ME1Package entrymenu)
         {
             IExportEntry planetMaterial = entrymenu.getUExport(1316);
-            var props = planetMaterial.GetProperties();
-
-            {
-                var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
-                var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
-                scalars[0].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 1.0); //Horizon Atmosphere Intensity
-                if (random.Next(4) == 0)
-                {
-                    scalars[2].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 0.7); //Atmosphere Min (how gas-gianty it looks)
-                }
-                else
-                {
-                    scalars[2].GetProp<FloatProperty>("ParameterValue").Value = 0; //Atmosphere Min (how gas-gianty it looks)
-                }
-
-                scalars[3].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.5, 1.5); //Atmosphere Tiling U
-                scalars[4].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.5, 1.5); //Atmosphere Tiling V
-                scalars[4].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.5, 4); //Atmosphere Speed
-                scalars[5].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.5, 12); //Atmosphere Fall off...? seems like corona intensity
-
-                foreach (var vector in vectors)
-                {
-                    var paramValue = vector.GetProp<StructProperty>("ParameterValue");
-                    RandomizeTint(random, paramValue, false);
-                }
-            }
-            planetMaterial.WriteProperties(props);
+            RandomizePlanetMaterialInstanceConstant(planetMaterial, random);
 
             //Corona
             IExportEntry coronaMaterial = entrymenu.getUExport(1317);
-            props = coronaMaterial.GetProperties();
+            var props = coronaMaterial.GetProperties();
             {
                 var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
                 var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
@@ -808,6 +889,35 @@ namespace MassEffectRandomizer.Classes
             dbStandard.WriteProperties(props);
         }
 
+        private void RandomizePlanetMaterialInstanceConstant(IExportEntry planetMaterial, Random random, bool realistic = false)
+        {
+            var props = planetMaterial.GetProperties();
+            {
+                var scalars = props.GetProp<ArrayProperty<StructProperty>>("ScalarParameterValues");
+                var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
+                scalars[0].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 1.0); //Horizon Atmosphere Intensity
+                if (random.Next(4) == 0)
+                {
+                    scalars[2].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0, 0.7); //Atmosphere Min (how gas-gianty it looks)
+                }
+                else
+                {
+                    scalars[2].GetProp<FloatProperty>("ParameterValue").Value = 0; //Atmosphere Min (how gas-gianty it looks)
+                }
+
+                scalars[3].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.5, 1.5); //Atmosphere Tiling U
+                scalars[4].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.5, 1.5); //Atmosphere Tiling V
+                scalars[5].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(.5, 4); //Atmosphere Speed
+                scalars[6].GetProp<FloatProperty>("ParameterValue").Value = random.NextFloat(0.5, 12); //Atmosphere Fall off...? seems like corona intensity
+
+                foreach (var vector in vectors)
+                {
+                    var paramValue = vector.GetProp<StructProperty>("ParameterValue");
+                    RandomizeTint(random, paramValue, false);
+                }
+            }
+            planetMaterial.WriteProperties(props);
+        }
 
         private static readonly int[] GalaxyMapImageIdsThatArePlotReserved = { 1, 7, 8, 116, 117, 118, 119, 120, 121, 122, 123, 124 }; //Plot or Sol planets
         private static readonly int[] GalaxyMapImageIdsThatAreAsteroidReserved = { 70 }; //Asteroids
@@ -1229,7 +1339,7 @@ namespace MassEffectRandomizer.Classes
             {
                 var merIntros = Directory.GetFiles(merIntroDir, "*.bik").ToList();
                 string merToExtract = merIntros[random.Next(merIntros.Count)];
-                File.Copy(merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"),true);
+                File.Copy(merToExtract, Utilities.GetGameFile(@"BioGame\CookedPC\Movies\merintro.bik"), true);
                 entrymenu.save();
                 //Add to fileindex
                 var fileIndex = Utilities.GetGameFile(@"BioGame\CookedPC\FileIndex.txt");
@@ -2579,7 +2689,7 @@ namespace MassEffectRandomizer.Classes
             ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\PRO\CIN\BIOA_GLO00_A_Opening_Flyby_CIN.SFM"));
             foreach (var ex in p.Exports)
             {
-                if (ex.ClassName == "BioSunFlareComponent")
+                if (ex.ClassName == "BioSunFlareComponent" || ex.ClassName == "BioSunFlareStreakComponent")
                 {
                     var tint = ex.GetProperty<StructProperty>("FlareTint");
                     if (tint != null)
@@ -2597,7 +2707,6 @@ namespace MassEffectRandomizer.Classes
                         ex.WriteProperty(tint);
                     }
                 }
-
             }
 
             p.save();
@@ -3089,7 +3198,8 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_MISC_HAZARDS
                    || mainWindow.RANDSETTING_MISC_INTERPS
                    || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES
-                   //|| mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
+                   || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
+                   || mainWindow.RANDSETTING_MISC_HEIGHTFOG
                    || mainWindow.RANDSETTING_WACK_FACEFX
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
                    || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS
@@ -3101,6 +3211,7 @@ namespace MassEffectRandomizer.Classes
             get => mainWindow.RANDSETTING_MISC_MAPFACES
                    || mainWindow.RANDSETTING_MISC_MAPPAWNSIZES
                    || mainWindow.RANDSETTING_MISC_HAZARDS
+                   | mainWindow.RANDSETTING_MISC_HEIGHTFOG
                    || mainWindow.RANDSETTING_WACK_FACEFX
                    || mainWindow.RANDSETTING_MISC_INTERPS
                    || mainWindow.RANDSETTING_WACK_SCOTTISH

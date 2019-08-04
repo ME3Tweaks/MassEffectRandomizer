@@ -267,6 +267,9 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
         public bool RANDSETTING_MISC_PINNACLESCOREBOARD { get; set; }
+        public bool RANDSETTING_MISC_BDTS { get; set; }
+        public bool RANDSETTING_MISC_HEIGHTFOG { get; set; }
+        public bool RANDSETTING_MISC_STARCOLORS { get; set; }
         public int RANDSETTING_WACK_FACEFX_AMOUNT { get; set; }
         public bool LogUploaderFlyoutOpen { get; set; }
         public bool DiagnosticsFlyoutOpen { get; set; }
@@ -681,6 +684,17 @@ namespace MassEffectRandomizer
                 var test = Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Packages\2DAs\BIOG_2DA_Vegas_GalaxyMap_X.upk");
                 _pinnacleStationInstalled = test != null && File.Exists(test);
                 return _pinnacleStationInstalled.Value;
+            }
+        }
+        private bool? _bdtsInstalled = null;
+        public bool BringDownTheSkyInstalled
+        {
+            get
+            {
+                if (_bdtsInstalled.HasValue) return _bdtsInstalled.Value;
+                var test = Utilities.GetGameFile(@"DLC\DLC_UNC\CookedPC\Packages\2DAs\BIOG_2DA_UNC_GalaxyMap_X.upk");
+                _bdtsInstalled = test != null && File.Exists(test);
+                return _bdtsInstalled.Value;
             }
         }
 
