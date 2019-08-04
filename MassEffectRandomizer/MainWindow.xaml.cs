@@ -269,6 +269,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_PINNACLESCOREBOARD { get; set; }
         public bool RANDSETTING_MISC_BDTS { get; set; }
         public bool RANDSETTING_MISC_HEIGHTFOG { get; set; }
+        public bool RANDSETTING_MISC_STARCOLORS { get; set; }
         public int RANDSETTING_WACK_FACEFX_AMOUNT { get; set; }
         public bool LogUploaderFlyoutOpen { get; set; }
         public bool DiagnosticsFlyoutOpen { get; set; }

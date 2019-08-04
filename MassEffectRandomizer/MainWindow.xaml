@@ -213,10 +213,8 @@
                                         <CheckBox Content="Randomize GUI music" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
                                         <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}" />
                                         <CheckBox Content="Randomize game over text" ToolTip="Randomize the game over title text" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GAMEOVERTEXT}" />
-
-                                        <CheckBox Content="Randomize Fog Colors" ToolTip="Randomizes the colors of fog and slightly tweaks their densities" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HEIGHTFOG}"/>
-
-                                        
+                                        <CheckBox Content="Randomize fog colors" ToolTip="Randomizes the colors of fog and slightly tweaks their densities" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HEIGHTFOG}"/>
+                                        <CheckBox Content="Randomize star (in-sky) colors" ToolTip="Randomizes the colors of stars in the sky of levels. Note that not all stars are affected as some are designed differently. This won't change the color of the lighting as that is precomputed" Margin="3" IsChecked="{Binding RANDSETTING_MISC_STARCOLORS}"/>
                                         <CheckBox Content="Randomize Pinnacle Station scoreboard" ToolTip="Randomize the scoreboard names at Pinnacle Station" Margin="3" IsChecked="{Binding RANDSETTING_MISC_PINNACLESCOREBOARD}" IsEnabled="{Binding PinnacleStationInstalled}" />
                                         <CheckBox Content="Randomize Bring Down The Sky" ToolTip="Randomize various parts of Bring Down The Sky. Will make the DLC more difficult" Margin="3" IsChecked="{Binding RANDSETTING_MISC_BDTS}" IsEnabled="{Binding BringDownTheSkyInstalled}" />
                                     </StackPanel>

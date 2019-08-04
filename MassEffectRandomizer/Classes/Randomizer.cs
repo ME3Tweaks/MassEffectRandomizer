@@ -420,6 +420,37 @@ namespace MassEffectRandomizer.Classes
                                         }
                                     }
                                 }
+                                else if (mainWindow.RANDSETTING_MISC_STARCOLORS)
+                                {
+                                    if (exp.ClassName == "BioSunFlareComponent" || exp.ClassName == "BioSunFlareStreakComponent")
+                                    {
+                                        if (!loggedFilename)
+                                        {
+                                            Log.Information("Randomizing map file: " + files[i]);
+                                            loggedFilename = true;
+                                        }
+                                        var tint = exp.GetProperty<StructProperty>("FlareTint");
+                                        if (tint != null)
+                                        {
+                                            RandomizeTint(random, tint, false);
+                                            exp.WriteProperty(tint);
+                                        }
+                                    }
+                                    else if (exp.ClassName == "BioSunActor")
+                                    {
+                                        if (!loggedFilename)
+                                        {
+                                            Log.Information("Randomizing map file: " + files[i]);
+                                            loggedFilename = true;
+                                        }
+                                        var tint = exp.GetProperty<StructProperty>("SunTint");
+                                        if (tint != null)
+                                        {
+                                            RandomizeTint(random, tint, false);
+                                            exp.WriteProperty(tint);
+                                        }
+                                    }
+                                }
                                 else if (exp.ClassName == "BioPawn")
                                 {
                                     if (mainWindow.RANDSETTING_MISC_MAPPAWNSIZES && random.Next(4) == 0)
@@ -525,7 +556,7 @@ namespace MassEffectRandomizer.Classes
             {
                 mainWindow.CurrentOperationText = "Randomizing opening cutscene";
                 RandomizeOpeningCrawl(random, Tlks);
-                RandomizeOpeningSequence(random);
+                //RandomizeOpeningSequence(random); //this was just sun tint. Part of sun tint randomizer 
                 Log.Information("Applying fly-into-earth interp modification");
                 ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\NOR\LAY\BIOA_NOR10_13_LAY.SFM"));
                 p.getUExport(220).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_EarthCardIntro_220.bin");
@@ -590,8 +621,8 @@ namespace MassEffectRandomizer.Classes
                 var density = properties.GetProp<FloatProperty>("Density");
                 if (density != null)
                 {
-                    var twentyPercent = random.NextFloat(-density * .2, density * .2);
-                    density.Value = twentyPercent;
+                    var twentyPercent = random.NextFloat(-density * .05, density * 0.75);
+                    density.Value = density + twentyPercent;
                 }
                 exp.WriteProperties(properties);
             }
@@ -690,7 +721,7 @@ namespace MassEffectRandomizer.Classes
                 string rowEffect = talentEffectLevels[i, "GameEffect_Label"].DisplayableValue;
                 if (rowEffect.EndsWith("Cooldown") || rowEffect.EndsWith("CastingTime"))
                 {
-                    float newValue = random.NextFloat(0,1);
+                    float newValue = random.NextFloat(0, 1);
                     if (random.Next(2) == 0) newValue = 0.01f;
                     for (int j = 1; j < 12; j++)
                     {
@@ -2658,7 +2689,7 @@ namespace MassEffectRandomizer.Classes
             ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\PRO\CIN\BIOA_GLO00_A_Opening_Flyby_CIN.SFM"));
             foreach (var ex in p.Exports)
             {
-                if (ex.ClassName == "BioSunFlareComponent")
+                if (ex.ClassName == "BioSunFlareComponent" || ex.ClassName == "BioSunFlareStreakComponent")
                 {
                     var tint = ex.GetProperty<StructProperty>("FlareTint");
                     if (tint != null)
@@ -2676,7 +2707,6 @@ namespace MassEffectRandomizer.Classes
                         ex.WriteProperty(tint);
                     }
                 }
-
             }
 
             p.save();
