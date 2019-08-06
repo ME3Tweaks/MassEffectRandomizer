@@ -280,7 +280,7 @@ namespace MassEffectRandomizer
 
             //verify vanilla
             Log.Information("Verifying game: Mass Effect");
-            string exe = Utilities.ExtractInternalStaticExecutable("MassEffectModderNoGui.exe", true);
+            string exe = Path.Combine(Utilities.GetAppDataFolder(), "executables" ,"MassEffectModderNoGui.exe");
             string args = "--check-game-data-vanilla --gameid 1 --ipc";
             List<string> acceptedIPC = new List<string>();
             acceptedIPC.Add("TASK_PROGRESS");

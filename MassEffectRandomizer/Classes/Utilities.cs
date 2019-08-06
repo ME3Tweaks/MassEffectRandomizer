@@ -112,27 +112,27 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        internal static string ExtractInternalStaticExecutable(string executableFilename, bool overwrite)
-        {
-            Log.Information("Extracting executable file: " + executableFilename);
-            var extractedPath = Path.Combine(Path.GetTempPath(), executableFilename);
-            if (!File.Exists(extractedPath) || overwrite)
-            {
-                //Extract LZMA so we can compress log for upload
-                using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles.executables." + executableFilename))
-                {
-                    using (var file = new FileStream(extractedPath, FileMode.Create, FileAccess.Write))
-                    {
-                        stream.CopyTo(file);
-                    }
-                }
-            }
-            else
-            {
-                Log.Warning("File already extracted, using that one instead.");
-            }
-            return extractedPath;
-        }
+        //internal static string ExtractInternalStaticExecutable(string executableFilename, bool overwrite)
+        //{
+        //    Log.Information("Extracting executable file: " + executableFilename);
+        //    var extractedPath = Path.Combine(Path.GetTempPath(), executableFilename);
+        //    if (!File.Exists(extractedPath) || overwrite)
+        //    {
+        //        //Extract LZMA so we can compress log for upload
+        //        using (Stream stream = Utilities.GetResourceStream("MassEffectRandomizer.staticfiles.executables." + executableFilename))
+        //        {
+        //            using (var file = new FileStream(extractedPath, FileMode.Create, FileAccess.Write))
+        //            {
+        //                stream.CopyTo(file);
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Log.Warning("File already extracted, using that one instead.");
+        //    }
+        //    return extractedPath;
+        //}
 
         internal static string ExtractInternalFile(string internalResourceName, string destination, bool overwrite, bool fullname)
         {
@@ -862,6 +862,41 @@ namespace MassEffectRandomizer.Classes
                     return WIN32_EXCEPTION_ELEVATED_CODE;
                 }
             }
+        }
+
+        public static void SetLocation(IExportEntry export, float x, float y, float z)
+        {
+            StructProperty prop = export.GetProperty<StructProperty>("location");
+            SetLocation(prop, x, y, z);
+            export.WriteProperty(prop);
+        }
+
+        public static void SetLocation(StructProperty prop, float x, float y, float z)
+        {
+            prop.GetProp<FloatProperty>("X").Value = x;
+            prop.GetProp<FloatProperty>("Y").Value = y;
+            prop.GetProp<FloatProperty>("Z").Value = z;
+        }
+
+        public static void SetRotation(IExportEntry export, float newDirectionDegrees)
+        {
+            StructProperty prop = export.GetProperty<StructProperty>("rotation");
+            if (prop == null)
+            {
+                PropertyCollection p = new PropertyCollection();
+                p.Add(new IntProperty(0, "Pitch"));
+                p.Add(new IntProperty(0, "Yaw"));
+                p.Add(new IntProperty(0, "Roll"));
+                prop = new StructProperty("Rotator", p, "Rotation", true);
+            }
+            SetRotation(prop, newDirectionDegrees);
+            export.WriteProperty(prop);
+        }
+
+        public static void SetRotation(StructProperty prop, float newDirectionDegrees)
+        {
+            int newYaw = (int ) ((newDirectionDegrees / 360) * 65535);
+            prop.GetProp<IntProperty>("Yaw").Value = newYaw;
         }
 
         private static void SetAttrSafe(XmlNode node, params XmlAttribute[] attrList)

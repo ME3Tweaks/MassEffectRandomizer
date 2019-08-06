@@ -359,7 +359,7 @@ namespace MassEffectRandomizer.Classes
 
             if (mainWindow.RANDSETTING_MISC_ENDINGART)
             {
-                RandomizeEndingArt(random);
+                RandomizeEnding(random);
             }
 
             if (entrymenu.ShouldSave)
@@ -651,9 +651,9 @@ namespace MassEffectRandomizer.Classes
             AddMERSplash(random);
         }
 
-        private void RandomizeEndingArt(Random random)
+        private void RandomizeEnding(Random random)
         {
-            mainWindow.CurrentOperationText = "Randomizing end-screen art";
+            mainWindow.CurrentOperationText = "Randomizing ending";
             ME1Package backdropFile = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\CRD\BIOA_CRD00.SFM"));
             var paragonItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.endingbackdrops.paragon")).ToList();
             var renegadeItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.endingbackdrops.renegade")).ToList();
@@ -681,6 +681,43 @@ namespace MassEffectRandomizer.Classes
 
             backdropFile.save();
             ModifiedFiles[backdropFile.FileName] = backdropFile.FileName;
+
+
+            ME1Package finalCutsceneFile = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\CRD\DSG\\BIOA_CRD00_00_DSG.SFM"));
+            var weaponTypes = (new[] {"STW_AssaultRifle", "STW_Pistol", "STW_SniperRifle", "STW_ShotGun"}).ToList();
+            weaponTypes.Shuffle(random);
+            Log.Information("Ending randomizer, setting renegade weapon to " +weaponTypes[0]);
+            var setWeapon = finalCutsceneFile.getUExport(979);
+            props = setWeapon.GetProperties();
+            var eWeapon = props.GetProp<EnumProperty>("eWeapon");
+            eWeapon.Value = weaponTypes[0];
+            setWeapon.WriteProperties(props);
+
+            //Move Executor to Renegade
+            var executor = finalCutsceneFile.getUExport(922);
+            Utilities.SetLocation(executor, -25365, 20971, 430);
+            Utilities.SetRotation(executor, -30);
+
+            //Move SubShep to Paragon
+            var subShep = finalCutsceneFile.getUExport(922);
+            Utilities.SetLocation(subShep, -21271, 8367, -2347);
+            Utilities.SetRotation(subShep, -15);
+
+            //Ensure the disable light environment has references to our new pawns so they are property lit.
+            var toggleLightEnviro = finalCutsceneFile.getUExport(985);
+            props = toggleLightEnviro.GetProperties();
+            var linkedVars = props.GetProp<ArrayProperty<StructProperty>>("VariableLinks")[0].GetProp<ArrayProperty<ObjectProperty>>("LinkedVariables"); //Shared True
+            if (linkedVars.Count == 1)
+            {
+                linkedVars.Add(new ObjectProperty(2621)); //executor
+                linkedVars.Add(new ObjectProperty(2620)); //subshep
+            }
+
+
+            toggleLightEnviro.WriteProperties(props);
+
+            finalCutsceneFile.save();
+            ModifiedFiles[finalCutsceneFile.FileName] = finalCutsceneFile.FileName;
         }
 
         private void RandomizeHeightFogComponent(IExportEntry exp, Random random)

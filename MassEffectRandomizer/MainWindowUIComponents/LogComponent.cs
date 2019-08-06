@@ -277,7 +277,7 @@ namespace MassEffectRandomizer
                 //    }
                 //}
 
-                var lzmaExtractedPath = Utilities.ExtractInternalStaticExecutable("lzma.exe", false);
+                var lzmaExtractedPath = Path.Combine(Utilities.GetAppDataFolder(), "executables", "lzma.exe");
 
 
                 if (log == null)
