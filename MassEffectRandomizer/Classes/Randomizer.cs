@@ -357,6 +357,11 @@ namespace MassEffectRandomizer.Classes
                 RandomizeBDTS(random);
             }
 
+            if (mainWindow.RANDSETTING_MISC_ENDINGART)
+            {
+                RandomizeEndingArt(random);
+            }
+
             if (entrymenu.ShouldSave)
             {
                 entrymenu.save();
@@ -644,6 +649,38 @@ namespace MassEffectRandomizer.Classes
             }
             mainWindow.CurrentOperationText = "Finishing up";
             AddMERSplash(random);
+        }
+
+        private void RandomizeEndingArt(Random random)
+        {
+            mainWindow.CurrentOperationText = "Randomizing end-screen art";
+            ME1Package backdropFile = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\CRD\BIOA_CRD00.SFM"));
+            var paragonItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.endingbackdrops.paragon")).ToList();
+            var renegadeItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.endingbackdrops.renegade")).ToList();
+            paragonItems.Shuffle(random);
+            renegadeItems.Shuffle(random);
+            var paragonTexture = backdropFile.getUExport(1067);
+            var renegadeConversationTexture = backdropFile.getUExport(1068); //For backdrop of anderson/udina conversation
+            var renegadeTexture = backdropFile.getUExport(1069);
+
+            paragonTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(paragonItems[0],true));
+            renegadeTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(renegadeItems[0], true));
+
+            Log.Information("Backdrop randomizer, setting paragon backdrop to " + Path.GetFileName(paragonItems[0]));
+            Log.Information("Backdrop randomizer, setting renegade backdrop to " + Path.GetFileName(renegadeItems[0]));
+
+            var props = paragonTexture.GetProperties();
+            props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(paragonItems[0]), "SourceFilePath"));
+            props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
+            paragonTexture.WriteProperties(props);
+
+            props = renegadeTexture.GetProperties();
+            props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(renegadeItems[0]), "SourceFilePath"));
+            props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
+            renegadeTexture.WriteProperties(props);
+
+            backdropFile.save();
+            ModifiedFiles[backdropFile.FileName] = backdropFile.FileName;
         }
 
         private void RandomizeHeightFogComponent(IExportEntry exp, Random random)

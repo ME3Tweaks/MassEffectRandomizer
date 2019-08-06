@@ -188,6 +188,7 @@
                                         <CheckBox Content="Randomize star (in-sky) colors" ToolTip="Randomizes the colors of stars in the sky of levels. Note that not all stars are affected as some are designed differently. This won't change the color of the lighting as that is precomputed" Margin="3" IsChecked="{Binding RANDSETTING_MISC_STARCOLORS}"/>
                                         <CheckBox Content="Randomize Pinnacle Station scoreboard" ToolTip="Randomize the scoreboard names at Pinnacle Station" Margin="3" IsChecked="{Binding RANDSETTING_MISC_PINNACLESCOREBOARD}" IsEnabled="{Binding PinnacleStationInstalled}" />
                                         <CheckBox Content="Randomize Bring Down The Sky" ToolTip="Randomize various parts of Bring Down The Sky. Will make the DLC more difficult" Margin="3" IsChecked="{Binding RANDSETTING_MISC_BDTS}" IsEnabled="{Binding BringDownTheSkyInstalled}" />
+                                        <CheckBox Content="Randomize game ending screen" ToolTip="Changes the art shown at the very end of the game" Margin="3" IsChecked="{Binding RANDSETTING_MISC_ENDINGART}" />
                                     </StackPanel>
 
                                     <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
