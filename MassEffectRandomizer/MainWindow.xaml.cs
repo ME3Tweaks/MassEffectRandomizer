@@ -253,7 +253,8 @@ namespace MassEffectRandomizer
         //private bool _randsetting_talents_shuffle_allowsquadmateunity;
         //public bool RANDSETTING_TALENTS_SHUFFLE_ALLOWSQUADMATEUNITY { get { return _randsetting_talents_shuffle_allowsquadmateunity; } set { SetProperty(ref _randsetting_talents_shuffle_allowsquadmateunity, value); } }
 
-
+        // SIZESIXTEENS SPECIFIC
+        public bool STREAMER_MODE_SIZESIXTEENS { get; set; }
 
         //MOVEMENT
         public bool RANDSETTING_MOVEMENT_CREATURESPEED { get; set; }

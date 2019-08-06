@@ -85,6 +85,44 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        private void RandomizeFerosColonistBattle(Random random, List<TalkFile> Tlks)
+        {
+            mainWindow.CurrentOperationText = "Randoming Feros Colonists";
+            ME1Package battlePackage = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\WAR\DSG\BIOA_WAR20_03c_DSG.SFM"));
+            var bioChallengeScaledPawns = battlePackage.Exports.Where(x => x.ClassName == "BioPawnChallengeScaledType" && x.ObjectName != "MIN_ZombieThorian").ToList();
+
+            string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("colonistnames.xml");
+            XElement rootElement = XElement.Parse(fileContents);
+            var colonistnames = rootElement.Elements("colonistname").Select(x => x.Value).ToList();
+
+            foreach (var export in bioChallengeScaledPawns)
+            {
+                var strRef = export.GetProperty<StringRefProperty>("ActorGameNameStrRef");
+                var newStrRef = Tlks[0].getFirstNullString();
+                Log.Information($"Assigning Feros Colonist name {export.UIndex} => {colonistnames[0]}");
+                strRef.Value = newStrRef;
+                Tlks.ForEach(x => x.replaceString(newStrRef, colonistnames[0]));
+                colonistnames.RemoveAt(0);
+                export.WriteProperty(strRef);
+            }
+
+            //Randomly disable squadmates from not targeting enemies (ensuring your teammates try to kill them)
+            int[] saveTheColonistPMCheckExports = new int[] { 1434, 1437, 1440 };
+            foreach (var saveColonist in saveTheColonistPMCheckExports)
+            {
+                if (random.Next(8) == 0)
+                {
+                    // 1 in 6 chance your squadmates don't listen to your command
+                    var export = battlePackage.getUExport(saveColonist);
+                    var props = export.GetProperties();
+                    props.GetProp<ArrayProperty<StructProperty>>("OutputLinks")[0].GetProp<ArrayProperty<StructProperty>>("Links").Clear();
+                    export.WriteProperties(props);
+                }
+            }
+
+            battlePackage.save();
+        }
+
         private void PerformRandomization(object sender, DoWorkEventArgs e)
         {
             ModifiedFiles = new ConcurrentDictionary<string, string>(); //this will act as a Set since there is no ConcurrentSet
@@ -654,8 +692,6 @@ namespace MassEffectRandomizer.Classes
         private void RandomizePawnMaterialInstances(IExportEntry exp, Random random)
         {
             //Don't know if this works
-
-            //var hairMesh = exp.GetProperty<ObjectProperty>("m_oHairMesh");
             var hairMeshObj = exp.GetProperty<ObjectProperty>("m_oHairMesh");
             if (hairMeshObj != null)
             {
@@ -665,7 +701,7 @@ namespace MassEffectRandomizer.Classes
                 {
                     foreach (var materialObj in materials)
                     {
-                        //MAterialInstanceConstant
+                        //MaterialInstanceConstant
                         IExportEntry material = exp.FileRef.getUExport(materialObj.Value);
                         var props = material.GetProperties();
 
