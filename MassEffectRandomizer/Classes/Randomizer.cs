@@ -679,6 +679,12 @@ namespace MassEffectRandomizer.Classes
             props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
             renegadeTexture.WriteProperties(props);
 
+            int texturePackageNameIndex = backdropFile.findName("BIOA_END20_T");
+            if (texturePackageNameIndex != -1)
+            {
+                backdropFile.replaceName(texturePackageNameIndex, "BIOA_END20_MER_T");
+            }
+
             backdropFile.save();
             ModifiedFiles[backdropFile.FileName] = backdropFile.FileName;
 
