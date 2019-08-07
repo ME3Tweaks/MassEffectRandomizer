@@ -27,6 +27,88 @@ namespace MassEffectRandomizer.Classes
 {
     class Randomizer
     {
+
+        private static string[] acceptableTagsForPawnShuffling =
+        {
+            "HMF_Asari_Captain_",
+            "HMF_Asari_Comm_",
+            "HMF_Asari_Communication_",
+            "HMM_Joker_",
+            "Hench_away01_",
+            "Hench_away02_",
+            "Hench_away_",
+            "Joker_",
+            "Saren_",
+            "WAR30_02I_AsariCommando",
+            "WAR30_02b_AsariCommando",
+            "WAR30_02g_AsariCommando",
+            "WAR30_20a_AsariCommandoF",
+            "WAR40_06_Lizbeth",
+            "WAR40_EthanJeong",
+            "WAR40_Juliana",
+            "WAR50_Lizbeth",
+            "end95_asari_councilor",
+            "end95_human_ambassador",
+            "end95_salarian_councilor",
+            "end95_turian_councilor",
+            "hench_asari",
+            "hench_humanMale",
+            "hench_humanfemale",
+            "hench_humanfemale_cockpit",
+            "hench_humanmale",
+            "hench_humanmale_cockpit",
+            "hench_jenkins",
+            "hench_pilot_cockpit",
+            "hench_pilot_joker",
+            "ice20_anoleisinplaza",
+            "ice20_giannainplaza",
+            "ice60_deadasari",
+            "ice70_tartakovsky",
+            "nor10_doctor_medical",
+            "nor10_jenkins",
+            "nor10_navigator",
+            "nor_cutscene_crew2",
+            "nor_hmm_crew1",
+            "npcf_prop_Captain",
+            "npcf_prop_Rescuer",
+            "npch_END70B_Saren",
+            "npch_JUG8007_Saren",
+            "npch_JUG8013_Saren",
+            "npch_Sal_Fanatic01",
+            "npch_watcher",
+            "npcn_Sal_Indoctrinate01",
+            "npcn_Sal_Indoctrinate02",
+            "npcn_Sal_Indoctrinate03",
+            "npcn_Sal_Indoctrinate04",
+            "player",
+            "prc1_CapSoldier0",
+            "prc1_batarian_soldier",
+            "prc1_batarian_soldier02",
+            "prc1_brother",
+            "prc1_capSoldier1",
+            "prc1_hmf_sci1",
+            "prc1_hmm_sc1",
+            "prc1_hmm_sci2",
+            "prc1_kate",
+            "prc1_leader",
+            "prc1_lieutenantactor",
+            "prc1_surveyor",
+            "prop_END20_Trooper01",
+            "prop_END20_Trooper02",
+            "prop_end70C_SarenMonster",
+            "prop_npcf_NorCrew01",
+            "prop_npcf_NorCrew02",
+            "prop_npcf_NorCrew03",
+            "sta20_avina",
+            "sta30_amb_dockworker",
+            "sta60_doctor_michel",
+            "sta60_fist_thug1",
+            "sta60_fist_thug2",
+            "sta60_fist_thug3",
+            "sta60_garrus",
+            "sta60_schells"
+        };
+
         private const string UPDATE_RANDOMIZING_TEXT = "UPDATE_RANDOMIZING_TEXT";
         private MainWindow mainWindow;
         private BackgroundWorker randomizationWorker;
@@ -347,6 +429,8 @@ namespace MassEffectRandomizer.Classes
                 RandomizeSplash(random, entrymenu);
             }
 
+            
+
             if (mainWindow.RANDSETTING_MISC_PINNACLESCOREBOARD)
             {
                 RandomizePinnacleScoreboard(random);
@@ -493,6 +577,21 @@ namespace MassEffectRandomizer.Classes
                                             exp.WriteProperty(tint);
                                         }
                                     }
+                                } else if (exp.ClassName == "SeqAct_Interp" && mainWindow.RANDSETTING_MISC_INTERPPAWNS)
+                                {
+                                    if (!loggedFilename)
+                                    {
+                                        //Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
+
+                                    //Pawn size randomizer
+                                    if (exp.FileRef.FileName.Contains("GLO"))
+                                    {
+                                        Debug.WriteLine(exp.FileRef.FileName);
+                                        Debugger.Break();
+                                    }
+                                    RandomizeInterpPawns(exp, random);
                                 }
                                 else if (exp.ClassName == "BioPawn")
                                 {
@@ -997,6 +1096,72 @@ namespace MassEffectRandomizer.Classes
             props = dbStandard.GetProperties();
             props.GetProp<ArrayProperty<StructProperty>>("OutputLinks")[1].GetProp<ArrayProperty<StructProperty>>("Links")[1].GetProp<ObjectProperty>("LinkedOp").Value = 2926; //Bioware logo
             dbStandard.WriteProperties(props);
+        }
+
+        private void RandomizeInterpPawns(IExportEntry export, Random random)
+        {
+            var variableLinks = export.GetProperty<ArrayProperty<StructProperty>>("VariableLinks");
+
+            List<ObjectProperty> pawnsToShuffle = new List<ObjectProperty>();
+            var playerRefs = new List<IExportEntry>();
+            foreach (var variableLink in variableLinks)
+            {
+                var expectedType = variableLink.GetProp<ObjectProperty>("ExpectedType");
+                var expectedTypeStr = export.FileRef.getEntry(expectedType.Value).ObjectName;
+                if (expectedTypeStr == "SeqVar_Object" || expectedTypeStr == "SeqVar_Player" || expectedTypeStr == "BioSeqVar_ObjectFindByTag")
+                {
+                    //Investigate the links
+                    var linkedVariables = variableLink.GetProp<ArrayProperty<ObjectProperty>>("LinkedVariables");
+                    foreach (var objRef in linkedVariables)
+                    {
+                        var linkedObj = export.FileRef.getUExport(objRef.Value).GetProperty<ObjectProperty>("ObjValue");
+                        if (linkedObj != null)
+                        {
+                            var linkedObjectEntry = export.FileRef.getEntry(linkedObj.Value);
+                            var linkedObjName = linkedObjectEntry.ObjectName;
+                            if (linkedObjName == "BioPawn" && linkedObjectEntry is IExportEntry bioPawnExport)
+                            {
+                                var flyingpawn = bioPawnExport.GetProperty<BoolProperty>("bCanFly")?.Value;
+                                if (flyingpawn == null || flyingpawn == false)
+                                {
+                                    pawnsToShuffle.Add(objRef); //pointer to this node
+                                }
+                            }
+                        }
+
+                        string className = export.FileRef.getUExport(objRef.Value).ClassName;
+                        if (className == "SeqVar_Player")
+                        {
+                            playerRefs.Add(export.FileRef.getUExport(objRef.Value));
+                            pawnsToShuffle.Add(objRef); //pointer to this node
+                        } else if (className == "BioSeqVar_ObjectFindByTag")
+                        {
+                            var tagToFind = export.FileRef.getUExport(objRef.Value).GetProperty<StrProperty>("m_sObjectTagToFind")?.Value;
+                            if (tagToFind != null && acceptableTagsForPawnShuffling.Contains(tagToFind))
+                            {
+                                pawnsToShuffle.Add(objRef); //pointer to this node
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (pawnsToShuffle.Count > 1)
+            {
+                Log.Information("Randoming pawns in interp: "+export.GetFullPath);
+                foreach(var refx in playerRefs)
+                {
+                    refx.WriteProperty(new BoolProperty(true,"bReturnsPawns")); //Ensure the object returns pawns. It should, but maybe it doesn't.
+                }
+
+                var newAssignedValues = pawnsToShuffle.Select(x=>x.Value).ToList();
+                newAssignedValues.Shuffle(random);
+                for(int i = 0; i < pawnsToShuffle.Count; i++)
+                {
+                    pawnsToShuffle[i].Value = newAssignedValues[i];
+                }
+                export.WriteProperty(variableLinks);
+            }
         }
 
         private void RandomizePlanetMaterialInstanceConstant(IExportEntry planetMaterial, Random random, bool realistic = false)
@@ -3307,6 +3472,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_MISC_MAPPAWNSIZES
                    || mainWindow.RANDSETTING_MISC_HAZARDS
                    || mainWindow.RANDSETTING_MISC_INTERPS
+                   || mainWindow.RANDSETTING_MISC_INTERPPAWNS
                    || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES
                    || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
                    || mainWindow.RANDSETTING_MISC_HEIGHTFOG
@@ -3326,6 +3492,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_MISC_INTERPS
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
                    || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS
+                   || mainWindow.RANDSETTING_MISC_INTERPPAWNS
             ;
         }
 

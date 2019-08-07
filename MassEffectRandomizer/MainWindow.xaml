@@ -189,6 +189,7 @@
                                         <CheckBox Content="Randomize Pinnacle Station scoreboard" ToolTip="Randomize the scoreboard names at Pinnacle Station" Margin="3" IsChecked="{Binding RANDSETTING_MISC_PINNACLESCOREBOARD}" IsEnabled="{Binding PinnacleStationInstalled}" />
                                         <CheckBox Content="Randomize Bring Down The Sky" ToolTip="Randomize various parts of Bring Down The Sky. Will make the DLC more difficult" Margin="3" IsChecked="{Binding RANDSETTING_MISC_BDTS}" IsEnabled="{Binding BringDownTheSkyInstalled}" />
                                         <CheckBox Content="Randomize game ending screen" ToolTip="Changes the art shown at the very end of the game" Margin="3" IsChecked="{Binding RANDSETTING_MISC_ENDINGART}" />
+                                        <CheckBox Content="Randomize pawns in cutscenes" ToolTip="Randomize who appears in what position in a cutscene. May create ridiculous things." Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPPAWNS}" />
                                     </StackPanel>
 
                                     <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />

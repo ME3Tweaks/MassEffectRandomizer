@@ -210,6 +210,15 @@ namespace MassEffectRandomizer.Classes
             return str.Substring(0, maxLength);
         }
 
+        public static bool StartsWithAny(this string input, params char[] beginnings)
+        {
+            foreach (var x in beginnings)
+                if (input.StartsWith(x.ToString()))
+                    return true;
+
+            return false;
+        }
+
         public static bool ContainsWord(this string s, string word)
         {
             string[] ar = s.Split(' ', '.', ':'); //Split on space and periods
