@@ -266,6 +266,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_GUIMUSIC { get; set; }
         public bool RANDSETTING_MISC_GUISFX { get; set; }
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
+        public bool RANDSETTING_MISC_INTERPPAWNS { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
         public bool RANDSETTING_MISC_PINNACLESCOREBOARD { get; set; }
         public bool RANDSETTING_MISC_BDTS { get; set; }
