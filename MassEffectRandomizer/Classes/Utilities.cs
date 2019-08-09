@@ -878,6 +878,42 @@ namespace MassEffectRandomizer.Classes
             prop.GetProp<FloatProperty>("Z").Value = z;
         }
 
+        private static void RepointAllVariableReferencesToNode(IExportEntry targetNode, IExportEntry newNode, List<IExportEntry> exceptions = null)
+        {
+            var sequence = targetNode.FileRef.getUExport(targetNode.GetProperty<ObjectProperty>("ParentSequence").Value);
+            var sequenceObjects = sequence.GetProperty<ArrayProperty<ObjectProperty>>("SequenceObjects");
+            foreach (var seqObjRef in sequenceObjects)
+            {
+                var saveProps = false;
+                var seqObj = targetNode.FileRef.getUExport(seqObjRef.Value);
+                var props = seqObj.GetProperties();
+                var variableLinks = props.GetProp<ArrayProperty<StructProperty>>("VariableLinks");
+                if (variableLinks != null)
+                {
+                    foreach (var variableLink in variableLinks)
+                    {
+                        var linkedVars = variableLink.GetProp<ArrayProperty<ObjectProperty>>("LinkedVariables");
+                        if (linkedVars != null)
+                        {
+                            foreach (var linkedVar in linkedVars)
+                            {
+                                if (linkedVar.Value == targetNode.UIndex)
+                                {
+                                    linkedVar.Value = newNode.UIndex; //repoint
+                                    saveProps = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (saveProps)
+                {
+                    seqObj.WriteProperties(props);
+                }
+            }
+        }
+
         public static void SetRotation(IExportEntry export, float newDirectionDegrees)
         {
             StructProperty prop = export.GetProperty<StructProperty>("rotation");

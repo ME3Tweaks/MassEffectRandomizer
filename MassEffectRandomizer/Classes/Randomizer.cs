@@ -11,6 +11,7 @@ using Microsoft.WindowsAPICodePack.Taskbar;
 using System.IO;
 using System.Windows;
 using System.Collections.Concurrent;
+using System.Diagnostics.Eventing.Reader;
 using MassEffectRandomizer.Classes.TLK;
 using static MassEffectRandomizer.Classes.RandomizationAlgorithms.TalentEffectLevels;
 using static MassEffectRandomizer.MainWindow;
@@ -429,7 +430,7 @@ namespace MassEffectRandomizer.Classes
                 RandomizeSplash(random, entrymenu);
             }
 
-            
+
 
             if (mainWindow.RANDSETTING_MISC_PINNACLESCOREBOARD)
             {
@@ -577,21 +578,24 @@ namespace MassEffectRandomizer.Classes
                                             exp.WriteProperty(tint);
                                         }
                                     }
-                                } else if (exp.ClassName == "SeqAct_Interp" && mainWindow.RANDSETTING_MISC_INTERPPAWNS)
+                                }
+                                else if (exp.ClassName == "SeqAct_Interp" && mainWindow.RANDSETTING_MISC_INTERPPAWNS)
                                 {
                                     if (!loggedFilename)
                                     {
                                         //Log.Information("Randomizing map file: " + files[i]);
                                         loggedFilename = true;
                                     }
-
-                                    //Pawn size randomizer
-                                    if (exp.FileRef.FileName.Contains("GLO"))
-                                    {
-                                        Debug.WriteLine(exp.FileRef.FileName);
-                                        Debugger.Break();
-                                    }
                                     RandomizeInterpPawns(exp, random);
+                                }
+                                else if (exp.ClassName == "BioLookAtDefinition" && mainWindow.RANDSETTING_PAWN_BIOLOOKATDEFINITION)
+                                {
+                                    if (!loggedFilename)
+                                    {
+                                        //Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
+                                    RandomizeBioLookAtDefinition(exp, random);
                                 }
                                 else if (exp.ClassName == "BioPawn")
                                 {
@@ -750,6 +754,30 @@ namespace MassEffectRandomizer.Classes
             AddMERSplash(random);
         }
 
+        private void RandomizeBioLookAtDefinition(IExportEntry export, Random random)
+        {
+            Log.Information("Randomizing BioLookAtDefinition " + export.UIndex);
+            var boneDefinitions = export.GetProperty<ArrayProperty<StructProperty>>("BoneDefinitions");
+            if (boneDefinitions != null)
+            {
+                foreach (var item in boneDefinitions)
+                {
+                    if (item.GetProp<NameProperty>("m_nBoneName").Value.Name.StartsWith("Eye"))
+                    {
+                        item.GetProp<FloatProperty>("m_fLimit").Value = random.Next(1, 5);
+                        item.GetProp<FloatProperty>("m_fUpDownLimit").Value = random.Next(1, 5);
+                    }
+                    else
+                    {
+                        item.GetProp<FloatProperty>("m_fLimit").Value = random.Next(1, 170);
+                        item.GetProp<FloatProperty>("m_fUpDownLimit").Value = random.Next(70, 170);
+                    }
+                    
+                }
+            }
+            export.WriteProperty(boneDefinitions);
+        }
+
         private void RandomizeEnding(Random random)
         {
             mainWindow.CurrentOperationText = "Randomizing ending";
@@ -762,7 +790,7 @@ namespace MassEffectRandomizer.Classes
             var renegadeConversationTexture = backdropFile.getUExport(1068); //For backdrop of anderson/udina conversation
             var renegadeTexture = backdropFile.getUExport(1069);
 
-            paragonTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(paragonItems[0],true));
+            paragonTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(paragonItems[0], true));
             renegadeTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(renegadeItems[0], true));
 
             Log.Information("Backdrop randomizer, setting paragon backdrop to " + Path.GetFileName(paragonItems[0]));
@@ -789,9 +817,9 @@ namespace MassEffectRandomizer.Classes
 
 
             ME1Package finalCutsceneFile = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\CRD\DSG\\BIOA_CRD00_00_DSG.SFM"));
-            var weaponTypes = (new[] {"STW_AssaultRifle", "STW_Pistol", "STW_SniperRifle", "STW_ShotGun"}).ToList();
+            var weaponTypes = (new[] { "STW_AssaultRifle", "STW_Pistol", "STW_SniperRifle", "STW_ShotGun" }).ToList();
             weaponTypes.Shuffle(random);
-            Log.Information("Ending randomizer, setting renegade weapon to " +weaponTypes[0]);
+            Log.Information("Ending randomizer, setting renegade weapon to " + weaponTypes[0]);
             var setWeapon = finalCutsceneFile.getUExport(979);
             props = setWeapon.GetProperties();
             var eWeapon = props.GetProp<EnumProperty>("eWeapon");
@@ -1140,7 +1168,8 @@ namespace MassEffectRandomizer.Classes
                         {
                             playerRefs.Add(export.FileRef.getUExport(objRef.Value));
                             pawnsToShuffle.Add(objRef); //pointer to this node
-                        } else if (className == "BioSeqVar_ObjectFindByTag")
+                        }
+                        else if (className == "BioSeqVar_ObjectFindByTag")
                         {
                             var tagToFind = export.FileRef.getUExport(objRef.Value).GetProperty<StrProperty>("m_sObjectTagToFind")?.Value;
                             if (tagToFind != null && acceptableTagsForPawnShuffling.Contains(tagToFind))
@@ -1154,15 +1183,15 @@ namespace MassEffectRandomizer.Classes
 
             if (pawnsToShuffle.Count > 1)
             {
-                Log.Information("Randoming pawns in interp: "+export.GetFullPath);
-                foreach(var refx in playerRefs)
+                Log.Information("Randoming pawns in interp: " + export.GetFullPath);
+                foreach (var refx in playerRefs)
                 {
-                    refx.WriteProperty(new BoolProperty(true,"bReturnsPawns")); //Ensure the object returns pawns. It should, but maybe it doesn't.
+                    refx.WriteProperty(new BoolProperty(true, "bReturnsPawns")); //Ensure the object returns pawns. It should, but maybe it doesn't.
                 }
 
-                var newAssignedValues = pawnsToShuffle.Select(x=>x.Value).ToList();
+                var newAssignedValues = pawnsToShuffle.Select(x => x.Value).ToList();
                 newAssignedValues.Shuffle(random);
-                for(int i = 0; i < pawnsToShuffle.Count; i++)
+                for (int i = 0; i < pawnsToShuffle.Count; i++)
                 {
                     pawnsToShuffle[i].Value = newAssignedValues[i];
                 }
@@ -3485,6 +3514,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_WACK_FACEFX
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
                    || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS
+                   || mainWindow.RANDSETTING_PAWN_BIOLOOKATDEFINITION
             ;
         }
 
@@ -3499,6 +3529,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
                    || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS
                    || mainWindow.RANDSETTING_MISC_INTERPPAWNS
+                   || mainWindow.RANDSETTING_PAWN_BIOLOOKATDEFINITION
             ;
         }
 
