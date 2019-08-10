@@ -290,6 +290,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_WACK_OPENINGCUTSCENE { get; set; }
         public bool RANDSETTING_WACK_FACEFX { get; set; }
         public bool RANDSETTING_WACK_SCOTTISH { get; set; }
+        public bool RANDSETTING_PAWN_BIOLOOKATDEFINITION { get; set; }
 
 
         //MAKO 
