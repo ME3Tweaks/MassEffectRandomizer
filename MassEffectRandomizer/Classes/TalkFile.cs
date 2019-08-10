@@ -212,7 +212,7 @@ namespace MassEffectRandomizer.Classes.TLK
         /// Finds the first null string in the tlk. This can be assigned to since it's a blank string.
         /// </summary>
         /// <returns></returns>
-        public int getFirstNullString() => StringRefs.FirstOrDefault(x => x.Data == null).StringID;
+        public int getFirstNullString() => StringRefs.FirstOrDefault(x => x.Data == null && x.StringID > 0).StringID;
         private string GetString(int bitOffset)
         {
             HuffmanNode root = nodes[0];

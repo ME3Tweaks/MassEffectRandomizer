@@ -723,7 +723,6 @@ namespace MassEffectRandomizer.Classes
             if (mainWindow.RANDSETTING_WACK_SCOTTISH)
             {
                 MakeTextPossiblyScottish(Tlks, random, true);
-                //UpdateGalaxyMapReferencesForTLKs(package.LocalTalkFiles, false);
             }
 
 
@@ -772,7 +771,7 @@ namespace MassEffectRandomizer.Classes
                         item.GetProp<FloatProperty>("m_fLimit").Value = random.Next(1, 170);
                         item.GetProp<FloatProperty>("m_fUpDownLimit").Value = random.Next(70, 170);
                     }
-                    
+
                 }
             }
             export.WriteProperty(boneDefinitions);
@@ -1466,6 +1465,7 @@ namespace MassEffectRandomizer.Classes
         {
             try
             {
+                Log.Information($"Randomizing FaceFX export {exp.UIndex}");
                 ME1FaceFXAnimSet animSet = new ME1FaceFXAnimSet(exp);
                 for (int i = 0; i < animSet.Data.Data.Count(); i++)
                 {
@@ -1496,10 +1496,13 @@ namespace MassEffectRandomizer.Classes
                                     faceFxline.points[j].weight += random.NextFloat(-.5, .5);
                                     break;
                                 case 3: //That's not how the face is supposed to work
-                                    faceFxline.points[j].weight = random.NextFloat(Math.Max(-1 * Math.Abs(currentWeight) - 1, -1), Math.Min(Math.Abs(currentWeight) + 1, 1));
+                                    faceFxline.points[j].weight = random.NextFloat(Math.Max(-1 * Math.Abs(currentWeight) - 1.3, -1.3), Math.Min(Math.Abs(currentWeight) * 1.3, 1.3));
                                     break;
                                 case 4: //Extreme
                                     faceFxline.points[j].weight = random.NextFloat(-20, 20);
+                                    break;
+                                default:
+                                    Debugger.Break();
                                     break;
                             }
                         }
@@ -1515,11 +1518,11 @@ namespace MassEffectRandomizer.Classes
 
                 Log.Information("Randomized FaceFX for export " + exp.UIndex);
                 animSet.Save();
-                exp.FileRef.ShouldSave = true;
             }
             catch (Exception e)
             {
                 //Do nothing for now.
+                Log.Error("AnimSet error! "+App.FlattenException((e)));
             }
         }
 
@@ -2083,7 +2086,7 @@ namespace MassEffectRandomizer.Classes
             IExportEntry galaxyMapImages2DAExport = ui2DAPackage.getUExport(8);
             RandomizePlanetImages(random, rowRPIMap, planets2DA, galaxyMapImagesBasegame, galaxyMapImages2DAExport, galaxyMapGroupResources);
             UpdateGalaxyMapReferencesForTLKs(Tlks, true, true); //Update TLKs.
-
+            planets2DA.Write2DAToExport();
             //END BASEGAME===============================
 
             //BRING DOWN THE SKY (UNC)===================
@@ -2188,7 +2191,7 @@ namespace MassEffectRandomizer.Classes
 
 
             //var rowIndex = int.Parse(planets2DA.RowNames[i]);
-            var info = allMapRandomizationInfo.FirstOrDefault(x => x.RowID == tableRow && (dlcName != "" ? x.DLC == dlcName : true)); //get non-shuffled information. this implementation will have to be chagned later to accoutn for additional planets
+            var info = allMapRandomizationInfo.FirstOrDefault(x => x.RowID == tableRow && (dlcName == "" || x.DLC == dlcName)); //get non-shuffled information. this implementation will have to be chagned later to accoutn for additional planets
             if (info != null)
             {
                 if (info.IsAsteroidBelt)
@@ -2275,13 +2278,16 @@ namespace MassEffectRandomizer.Classes
                     //Debug.WriteLine("Setting planet name on row index (not rowname!) " + i + " to " + newPlanetName);
                     string originalPlanetName = tf.findDataById(planetNameTlkId);
 
-                    if ( /*newPlanetName == originalPlanetName && !rpi.PreventShuffle || */originalPlanetName == "No Data")
+                    if (originalPlanetName == "No Data")
                     {
                         continue;
                     }
 
-                    //tf.replaceString(planetNameTlkId, newPlanetName); //done in global references pass.
-                    planetNameMapping[originalPlanetName] = newPlanetName;
+                    if (!info.IsAsteroid)
+                    {
+                        //We don't want to do a planet mapping as this might overwrite existing text somewhere, and nothing mentions an asteroid directly.
+                        planetNameMapping[originalPlanetName] = newPlanetName;
+                    }
 
                     //if (originalPlanetName == "Ilos") Debugger.Break();
                     if (descriptionReference != 0 && description != null)
@@ -2326,7 +2332,29 @@ namespace MassEffectRandomizer.Classes
 
                             }
                         }
-                        //break;
+                    }
+
+                    if (info.IsAsteroid)
+                    {
+                        //Since some asteroid names change and/or are shared amongst themselves, we have to add names if they don't exist.
+                        if (originalPlanetName != rpi.PlanetName)
+                        {
+                            var newTlkValue = tf.findDataByValue(rpi.PlanetName);
+                            if (newTlkValue.StringID == 0)
+                            {
+                                //Doesn't exist
+                                var newId = tf.getFirstNullString();
+                                tf.replaceString(newId, rpi.PlanetName);
+                                planets2DA[tableRow, "Name"].DisplayableValue = newId.ToString();
+                                Log.Information("Assigned asteroid new TLK ID: " + newId);
+                            }
+                            else
+                            {
+                                //Exists - repoint to that TLK value
+                                planets2DA[tableRow, "Name"].DisplayableValue = newTlkValue.StringID.ToString();
+                                Log.Information("Repointed asteroid new existing string ID: " + newTlkValue.StringID);
+                            }
+                        }
                     }
                 }
             }
