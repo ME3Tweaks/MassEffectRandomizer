@@ -136,7 +136,7 @@ namespace MassEffectRandomizer.Classes
                 seed = new Random().Next();
                 mainWindow.SeedTextBox.Text = seed.ToString();
             }
-
+            Log.Information("-------------------------STARTING RANDOMIZER WITH SEED " + seed + "--------------------------");
             randomizationWorker.RunWorkerAsync(seed);
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Indeterminate, mainWindow);
         }
@@ -430,13 +430,22 @@ namespace MassEffectRandomizer.Classes
             }
 
             
+            if (mainWindow.RANDSETTING_MAP_EDENPRIME)
+            {
+                RandomizeEdenPrime(random);
+            }
 
-            if (mainWindow.RANDSETTING_MISC_PINNACLESCOREBOARD)
+            if (mainWindow.RANDSETTING_MAP_FEROS)
+            {
+                RandomizeFerosColonistBattle(random, Tlks);
+            }
+
+            if (mainWindow.RANDSETTING_MAP_PINNACLESTATION)
             {
                 RandomizePinnacleScoreboard(random);
             }
 
-            if (mainWindow.RANDSETTING_MISC_BDTS)
+            if (mainWindow.RANDSETTING_MAP_BDTS)
             {
                 RandomizeBDTS(random);
             }
@@ -748,6 +757,11 @@ namespace MassEffectRandomizer.Classes
             }
             mainWindow.CurrentOperationText = "Finishing up";
             AddMERSplash(random);
+        }
+
+        private void RandomizeEdenPrime(Random random)
+        {
+
         }
 
         private void RandomizeEnding(Random random)
