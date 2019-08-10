@@ -430,7 +430,7 @@ namespace MassEffectRandomizer.Classes
                 RandomizeSplash(random, entrymenu);
             }
 
-            
+
             if (mainWindow.RANDSETTING_MAP_EDENPRIME)
             {
                 RandomizeEdenPrime(random);
@@ -760,6 +760,63 @@ namespace MassEffectRandomizer.Classes
             }
             mainWindow.CurrentOperationText = "Finishing up";
             AddMERSplash(random);
+        }
+
+        private void RandomizeEdenPrime(Random random)
+        {
+            ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\PRO\DSG\BIOA_PRO10_08_DSG.SFM"));
+            Log.Information("Applying sovereign drawscale pre-randomization modifications");
+            p.getUExport(5640).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.SovereignInterpTrackFloatDrawScale_5640_PRO08DSG.bin");
+            p.getUExport(5643).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.SovereignInterpTrackMove_5643_PRO08DSG.bin");
+
+            IExportEntry drawScaleExport = p.getUExport(5640);
+            var floatTrack = drawScaleExport.GetProperty<StructProperty>("FloatTrack");
+            {
+                var points = floatTrack?.GetProp<ArrayProperty<StructProperty>>("Points");
+                if (points != null)
+                {
+                    for (int i = 0; i < points.Count - 1; i++)
+                    {
+                        var s = points[i];
+                        var outVal = s.GetProp<FloatProperty>("OutVal");
+                        if (outVal != null)
+                        {
+                            outVal.Value = random.NextFloat(-15, 95);
+                        }
+                    }
+                }
+            }
+
+            drawScaleExport.WriteProperty(floatTrack);
+
+            IExportEntry movementExport = p.getUExport(5643);
+            var props = movementExport.GetProperties();
+            var posTrack = props.GetProp<StructProperty>("PosTrack");
+            if (posTrack != null)
+            {
+                var points = posTrack.GetProp<ArrayProperty<StructProperty>>("Points");
+                if (points != null)
+                {
+                    for (int i = 1; i < 5; i++)
+                    {
+                        var s = points[i];
+                        var outVal = s.GetProp<StructProperty>("OutVal");
+                        if (outVal != null)
+                        {
+                            FloatProperty x = outVal.GetProp<FloatProperty>("X");
+                            FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+                            FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+                            x.Value += random.NextFloat(-3000,3000);
+                            y.Value += random.NextFloat(-3000, 3000);
+                            z.Value = random.NextFloat(-106400, 392000);
+                        }
+                    }
+                }
+            }
+
+            movementExport.WriteProperties(props);
+            p.save();
+            ModifiedFiles[p.FileName] = p.FileName;
         }
 
         private void RandomizeBioLookAtDefinition(IExportEntry export, Random random)
@@ -1258,7 +1315,7 @@ namespace MassEffectRandomizer.Classes
             int imageIndexCol = planets2DA.GetColumnIndexByName("ImageIndex");
             int descriptionCol = planets2DA.GetColumnIndexByName("Description");
             int nextAddedImageIndex = int.Parse(galaxyMapImages2DA.RowNames.Last()) + 1000; //we increment from here. //+1000 to ensure we don't have overlap between DLC
-            //int nextGalaxyMap2DAImageRowIndex = 0; //THIS IS C# BASED
+                                                                                            //int nextGalaxyMap2DAImageRowIndex = 0; //THIS IS C# BASED
 
             //var mappedRPIs = planetsRowToRPIMapping.Values.ToList();
 
@@ -1362,7 +1419,7 @@ namespace MassEffectRandomizer.Classes
                             string swfImageExportObjectName = galaxyMapImages2DA[rowIndex, "imageResource"].DisplayableValueIndexed;
                             //get object name of export inside of GUI_SF_GalaxyMap.upk
                             swfImageExportObjectName = swfImageExportObjectName.Substring(swfImageExportObjectName.IndexOf('.') + 1); //TODO: Need to deal with name instances for Pinnacle Station DLC. Because it's too hard for them to type a new name.
-                            //Fetch export
+                                                                                                                                      //Fetch export
                             matchingExport = mapImageExports.FirstOrDefault(x => x.ObjectNameIndexed == swfImageExportObjectName);
                         }
 
@@ -1413,7 +1470,7 @@ namespace MassEffectRandomizer.Classes
                 {
                     int imageRowReference = planets2DA[i, "ImageIndex"].GetIntValue();
                     if (imageRowReference == -1) continue; //We don't have enough images yet to pass this hurdle
-                    //Use this value to find value in UI table
+                                                           //Use this value to find value in UI table
                     int rowIndex = galaxyMapImages2DA.GetRowIndexByName(imageRowReference.ToString());
                     string exportName = galaxyMapImages2DA[rowIndex, 0].DisplayableValueIndexed;
                     exportName = exportName.Substring(exportName.LastIndexOf('.') + 1);
@@ -1531,7 +1588,7 @@ namespace MassEffectRandomizer.Classes
             catch (Exception e)
             {
                 //Do nothing for now.
-                Log.Error("AnimSet error! "+App.FlattenException((e)));
+                Log.Error("AnimSet error! " + App.FlattenException((e)));
             }
         }
 
@@ -3530,7 +3587,7 @@ namespace MassEffectRandomizer.Classes
                 //{
                 //classtalents[row, 1].Data = BitConverter.GetBytes(random.Next(1, 12));
                 //}
-            }
+            }oi
             classtalents.Write2DAToExport();
             return true;*/
         }
