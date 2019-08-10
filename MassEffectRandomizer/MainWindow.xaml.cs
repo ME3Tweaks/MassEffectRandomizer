@@ -274,6 +274,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_STARCOLORS { get; set; }
         public bool RANDSETTING_MAP_EDENPRIME { get; set; }
         public bool RANDSETTING_MAP_FEROS { get; set; }
+        public bool RANDSETTING_MAP_NOVERIA { get; set; }
         public bool RANDSETTING_MISC_ENDINGART { get; set; }
         public int RANDSETTING_WACK_FACEFX_AMOUNT { get; set; }
         public bool LogUploaderFlyoutOpen { get; set; }
