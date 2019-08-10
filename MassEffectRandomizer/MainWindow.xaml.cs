@@ -268,10 +268,12 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_MAPFACES { get; set; }
         public bool RANDSETTING_MISC_INTERPPAWNS { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
-        public bool RANDSETTING_MISC_PINNACLESCOREBOARD { get; set; }
-        public bool RANDSETTING_MISC_BDTS { get; set; }
+        public bool RANDSETTING_MAP_PINNACLESTATION { get; set; }
+        public bool RANDSETTING_MAP_BDTS { get; set; }
         public bool RANDSETTING_MISC_HEIGHTFOG { get; set; }
         public bool RANDSETTING_MISC_STARCOLORS { get; set; }
+        public bool RANDSETTING_MAP_EDENPRIME { get; set; }
+        public bool RANDSETTING_MAP_FEROS { get; set; }
         public bool RANDSETTING_MISC_ENDINGART { get; set; }
         public int RANDSETTING_WACK_FACEFX_AMOUNT { get; set; }
         public bool LogUploaderFlyoutOpen { get; set; }

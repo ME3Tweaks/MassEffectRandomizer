@@ -186,12 +186,11 @@
                                         <CheckBox Content="Randomize game over text" ToolTip="Randomize the game over title text" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GAMEOVERTEXT}" />
                                         <CheckBox Content="Randomize fog colors" ToolTip="Randomizes the colors of fog and slightly tweaks their densities" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HEIGHTFOG}"/>
                                         <CheckBox Content="Randomize star (in-sky) colors" ToolTip="Randomizes the colors of stars in the sky of levels. Note that not all stars are affected as some are designed differently. This won't change the color of the lighting as that is precomputed" Margin="3" IsChecked="{Binding RANDSETTING_MISC_STARCOLORS}"/>
-                                        <CheckBox Content="Randomize Pinnacle Station scoreboard" ToolTip="Randomize the scoreboard names at Pinnacle Station" Margin="3" IsChecked="{Binding RANDSETTING_MISC_PINNACLESCOREBOARD}" IsEnabled="{Binding PinnacleStationInstalled}" />
-                                        <CheckBox Content="Randomize Bring Down The Sky" ToolTip="Randomize various parts of Bring Down The Sky. Will make the DLC more difficult" Margin="3" IsChecked="{Binding RANDSETTING_MISC_BDTS}" IsEnabled="{Binding BringDownTheSkyInstalled}" />
                                         <CheckBox Content="Randomize game ending screen" ToolTip="Changes the art shown at the very end of the game" Margin="3" IsChecked="{Binding RANDSETTING_MISC_ENDINGART}" />
                                         <CheckBox Content="Randomize pawns in cutscenes" ToolTip="Randomize who appears in what position in a cutscene. May create ridiculous things&#10;This will cover more cutscenes in a future update" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPPAWNS}" />
                                     </StackPanel>
-
+                                    
+                                    
                                     <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
                                         <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes, ragdoll physics, and may make enemies immune to gun damage (but not melee)&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
@@ -293,7 +292,14 @@
                                         <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles squadmates" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
                                     </StackPanel>
                                 </StackPanel>
+                                <fonts:OutlinedTextBlock Text="Maps" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
 
+                                <StackPanel Margin="10,0,0,0">
+                                    <CheckBox Content="Randomize Pinnacle Station" ToolTip="Randomize the scoreboard names at Pinnacle Station" Margin="3" IsChecked="{Binding RANDSETTING_MAP_PINNACLESTATION}" IsEnabled="{Binding PinnacleStationInstalled}" />
+                                    <CheckBox Content="Randomize Bring Down The Sky" ToolTip="Randomize various parts of Bring Down The Sky. Will make the DLC more difficult" Margin="3" IsChecked="{Binding RANDSETTING_MAP_BDTS}" IsEnabled="{Binding BringDownTheSkyInstalled}" />
+                                    <CheckBox Content="Randomize Eden Prime" ToolTip="Randomizes different parts of Eden Prime" Margin="3" IsChecked="{Binding RANDSETTING_MAP_EDENPRIME}" />
+                                    <CheckBox Content="Randomize Feros" ToolTip="Randomizes different parts of Feros" Margin="3" IsChecked="{Binding RANDSETTING_MAP_FEROS}" />
+                                </StackPanel>
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Galaxy Map" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                     <StackPanel Margin="10,0,0,0">
