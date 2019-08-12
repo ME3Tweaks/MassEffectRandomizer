@@ -270,6 +270,7 @@ namespace MassEffectRandomizer
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
         public bool RANDSETTING_MAP_PINNACLESTATION { get; set; }
         public bool RANDSETTING_MAP_BDTS { get; set; }
+        public bool RANDSETTING_MAP_CITADEL { get; set; }
         public bool RANDSETTING_MISC_HEIGHTFOG { get; set; }
         public bool RANDSETTING_MISC_STARCOLORS { get; set; }
         public bool RANDSETTING_MAP_EDENPRIME { get; set; }

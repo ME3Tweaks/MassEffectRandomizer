@@ -168,6 +168,29 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        private void RandomizeBioWaypointSet(IExportEntry export, Random random)
+        {
+            var waypointReferences = export.GetProperty<ArrayProperty<StructProperty>>("WaypointReferences");
+            if (waypointReferences != null)
+            {
+                //Get list of valid targets
+                var pcc = export.FileRef;
+                var waypoints = pcc.Exports.Where(x => x.ClassName == "BioPathPoint" || x.ClassName == "PathNode").ToList();
+                waypoints.Shuffle(random);
+
+                foreach (var waypoint in waypointReferences)
+                {
+                    var nav = waypoint.GetProp<ObjectProperty>("Nav");
+                    if (nav != null && nav.Value > 0)
+                    {
+                        nav.Value = waypoints[0].UIndex;
+                        waypoints.RemoveAt(0);
+                    }
+                }
+            }
+            export.WriteProperty(waypointReferences);
+        }
+
         private void RandomizeNoveria(Random random, List<TalkFile> Tlks)
         {
             mainWindow.CurrentOperationText = "Randoming Noveria";
@@ -505,6 +528,11 @@ namespace MassEffectRandomizer.Classes
                 RandomizeBDTS(random);
             }
 
+            if (mainWindow.RANDSETTING_MAP_CITADEL)
+            {
+                RandomizeCitadel(random);
+            }
+
             if (mainWindow.RANDSETTING_MISC_ENDINGART)
             {
                 RandomizeEnding(random);
@@ -814,6 +842,18 @@ namespace MassEffectRandomizer.Classes
             }
             mainWindow.CurrentOperationText = "Finishing up";
             AddMERSplash(random);
+        }
+
+        private void RandomizeCitadel(Random random)
+        {
+            ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG\BIOA_STA70_02A_DSG.SFM"));
+            RandomizeBioWaypointSet(p.getUExport(3320), random);
+            RandomizeBioWaypointSet(p.getUExport(3321), random);
+            if (p.ShouldSave)
+            {
+                p.save();
+                ModifiedFiles[p.FileName] = p.FileName;
+            }
         }
 
         private void RandomizeEdenPrime(Random random)

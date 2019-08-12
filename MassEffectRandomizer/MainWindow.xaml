@@ -300,6 +300,7 @@
                                     <CheckBox Content="Randomize Eden Prime" ToolTip="Randomizes different parts of Eden Prime" Margin="3" IsChecked="{Binding RANDSETTING_MAP_EDENPRIME}" />
                                     <CheckBox Content="Randomize Feros" ToolTip="Randomizes different parts of Feros" Margin="3" IsChecked="{Binding RANDSETTING_MAP_FEROS}" />
                                     <CheckBox Content="Randomize Noveria" ToolTip="Randomizes different parts of Noveria" Margin="3" IsChecked="{Binding RANDSETTING_MAP_NOVERIA}" />
+                                    <CheckBox Content="Randomize Citadel" ToolTip="Randomizes different parts of the Citadel" Margin="3" IsChecked="{Binding RANDSETTING_MAP_CITADEL}" />
                                 </StackPanel>
                                 <StackPanel>
                                     <fonts:OutlinedTextBlock Text="Galaxy Map" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
