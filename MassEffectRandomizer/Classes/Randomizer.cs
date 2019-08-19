@@ -22,6 +22,8 @@ using Serilog;
 using Object = System.Object;
 using System.Reflection;
 using System.Globalization;
+using System.Numerics;
+using Octokit;
 using StringComparison = System.StringComparison;
 
 namespace MassEffectRandomizer.Classes
@@ -183,8 +185,16 @@ namespace MassEffectRandomizer.Classes
                     var nav = waypoint.GetProp<ObjectProperty>("Nav");
                     if (nav != null && nav.Value > 0)
                     {
-                        nav.Value = waypoints[0].UIndex;
-                        waypoints.RemoveAt(0);
+                        IExportEntry currentPoint = export.FileRef.getUExport(nav.Value);
+                        if (currentPoint.ClassName == "BioPathPoint" || currentPoint.ClassName == "PathNode")
+                        {
+                            nav.Value = waypoints[0].UIndex;
+                            waypoints.RemoveAt(0);
+                        }
+                        else
+                        {
+                            Log.Warning("SKIPPING NODE TYPE " + currentPoint.ClassName);
+                        }
                     }
                 }
             }
@@ -846,6 +856,9 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeCitadel(Random random)
         {
+            Log.Information("Randomizing BioWaypointSet for STA70 Citadel Tower");
+
+            //Randomize Waypoint Set for Council Chambers
             ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG\BIOA_STA70_02A_DSG.SFM"));
             RandomizeBioWaypointSet(p.getUExport(3320), random);
             RandomizeBioWaypointSet(p.getUExport(3321), random);
@@ -853,6 +866,80 @@ namespace MassEffectRandomizer.Classes
             {
                 p.save();
                 ModifiedFiles[p.FileName] = p.FileName;
+            }
+
+            //Randomize Waypoint Set for Requisitions Wards Room (walking Asari)
+            p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_11A_DSG.SFM"));
+            RandomizeBioWaypointSet(p.getUExport(2832), random);
+            if (p.ShouldSave)
+            {
+                p.save();
+                ModifiedFiles[p.FileName] = p.FileName;
+            }
+
+            //Randomize Scan the Keepers
+            Log.Information("Randomizing Scan the Keepers");
+            string fileContents = Utilities.GetEmbeddedStaticFilesTextFile("stakeepers.xml");
+            XElement rootElement = XElement.Parse(fileContents);
+            var keeperDefinitions = (from e in rootElement.Elements("keeper")
+                                     select new KeeperDefinition
+                                     {
+                                         STAFile = (string)e.Attribute("file"),
+                                         KismetTeleportBoolUIndex = (int)e.Attribute("teleportflagexport"),
+                                         PawnExportUIndex = (int)e.Attribute("export"),
+                                     }).ToList();
+
+
+            var keeperRandomizationInfo = (from e in rootElement.Elements("keeperlocation")
+                                           select new KeeperLocation
+                                           {
+                                               STAFile = (string)e.Attribute("file"),
+                                               Position = new Vector3
+                                               {
+                                                   X = (float)e.Attribute("positionx"),
+                                                   Y = (float)e.Attribute("positiony"),
+                                                   Z = (float)e.Attribute("positionz")
+                                               },
+                                               Yaw = e.Attribute("Yaw") == null ? 0 : ((int)e.Attribute("Yaw"))
+                                           }).ToList();
+            keeperRandomizationInfo.Shuffle(random);
+            string STABase = Utilities.GetGameFile(@"BIOGame\CookedPC\Maps\STA\DSG");
+            var uniqueFiles = keeperDefinitions.Select(x => x.STAFile).Distinct();
+
+            foreach (string staFile in uniqueFiles)
+            {
+                Log.Information("Randomizing Keepers in "+staFile);
+                string filepath = Path.Combine(STABase, staFile);
+                ME1Package staPackage = new ME1Package(filepath);
+                var keepersToRandomize = keeperDefinitions.Where(x => x.STAFile == staFile).ToList();
+                var keeperRandomizationInfoForThisLevel = keeperRandomizationInfo.Where(x => x.STAFile == staFile).ToList();
+                foreach (var keeper in keepersToRandomize)
+                {
+                    //Set location
+                    var newRandomizationInfo = keeperRandomizationInfoForThisLevel[0];
+                    keeperRandomizationInfoForThisLevel.RemoveAt(0);
+                    IExportEntry bioPawn = staPackage.getUExport(keeper.PawnExportUIndex);
+                    Utilities.SetLocation(bioPawn, newRandomizationInfo.Position);
+                    if (newRandomizationInfo.Yaw != 0)
+                    {
+                        Utilities.SetRotation(bioPawn, newRandomizationInfo.Yaw);
+                    }
+
+                    // Unset the "Teleport to ActionStation" bool
+                    if (keeper.KismetTeleportBoolUIndex != 0)
+                    {
+                        //Has teleport bool
+                        IExportEntry teleportBool = staPackage.getUExport(keeper.KismetTeleportBoolUIndex);
+                        teleportBool.WriteProperty(new IntProperty(0, "bValue")); //teleport false
+                    }
+                }
+
+
+                if (staPackage.ShouldSave)
+                {
+                    staPackage.save();
+                    ModifiedFiles[staPackage.FileName] = staPackage.FileName;
+                }
             }
         }
 
@@ -4533,6 +4620,20 @@ namespace MassEffectRandomizer.Classes
             {
                 return $"SuffixedCluster ({ClusterName})";
             }
+        }
+
+        public class KeeperLocation
+        {
+            public Vector3 Position;
+            public int Yaw;
+            public string STAFile;
+        }
+
+        public class KeeperDefinition
+        {
+            public string STAFile;
+            public int PawnExportUIndex;
+            public int KismetTeleportBoolUIndex;
         }
     }
 }

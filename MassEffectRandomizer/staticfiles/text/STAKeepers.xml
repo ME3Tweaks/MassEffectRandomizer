@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<keeperrandomizer>
+  <!-- Citadel Tower - Don’t randomize Chorbans (not shown below) -->
+  <keeper file="BIOA_STA70_02A_DSG.SFM" export="2516" teleportflagexport="8724"/>
+  <keeper file="BIOA_STA70_02A_DSG.SFM" export="2522" teleportflagexport="8703"/>
+  <keeper file="BIOA_STA70_02A_DSG.SFM" export="2504" teleportflagexport="0"/>
+
+  <!-- 0 cause we don't need it -->
+  <!-- Presidium - Don’t randomize keeper by Avina (not shown below)-->
+  <keeper file="BIOA_STA20_00_DSG.SFM" export="1350" teleportflagexport="3429"/>
+  <keeper file="BIOA_STA20_00_DSG.SFM" export="1352" teleportflagexport="3381"/>
+  <keeper file="BIOA_STA20_00_DSG.SFM" export="1353" teleportflagexport="3357"/>
+  <keeper file="BIOA_STA20_00_DSG.SFM" export="1354" teleportflagexport="3393"/>
+  <keeper file="BIOA_STA20_00_DSG.SFM" export="1355" teleportflagexport="3405"/>
+  <keeper file="BIOA_STA20_00_DSG.SFM" export="1356" teleportflagexport="3417"/>
+  <keeper file="BIOA_STA20_00_DSG.SFM" export="1357" teleportflagexport="3441"/>
+
+  <!-- Teleport not needed, already false -->
+  <!-- Normandy Area
+  <keeper file="BIOA_STA30_02A_DSG.SFM" export="517"/> -->
+
+
+  <!-- Teleporter export is in ActionStations for some reason -->
+  <!-- C-SEC Requesitions Room. too small to keep loaded in memory/ move keeper
+  <keeper file="BIOA_STA30_03A_DSG.SFM" export="881" teleportflagexport="2704"/>-->
+
+  <!-- C-SEC -->
+  <keeper file="BIOA_STA30_05a_DSG.SFM" export="1225" teleportflagexport="3644"/>
+
+  <!-- Wards STA60 -->
+  <keeper file="BIOA_STA60_02a_DSG.SFM" export="1275" teleportflagexport="4757"/>
+
+  <!-- Keeper in the room with the yellow hair dude who is your fan
+  <keeper file="BIOA_STA60_08B_DSG.SFM" export="546" teleportflagexport="2245"/> -->
+
+  <keeper file="BIOA_STA60_08_DSG.SFM" export="953" teleportflagexport="3845"/>
+  <keeper file="BIOA_STA60_09casino_DSG.SFM" export="1562" teleportflagexport="4833"/>
+
+  <keeper file="BIOA_STA60_11A_DSG.SFM" export="2274" teleportflagexport="6958"/>
+
+
+
+  <keeper file="BIOA_STA70_02side_DSG.SFM" export="1132" teleportflagexport="3839"/>
+
+
+
+
+
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="-1972" positiony="-9845" positionz="396" yaw="61379"/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="-7857" positiony="8023" positionz="650" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="-4943" positiony="7544" positionz="814" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="4170" positiony="16152" positionz="1661" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="5624" positiony="4742" positionz="1280" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="4130" positiony="6384" positionz="1340" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="4776" positiony="8042" positionz="1280" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="865" positiony="-3818" positionz="245" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="4047" positiony="12156" positionz="880" yaw=""/>
+  <keeperlocation file="BIOA_STA20_00_DSG.SFM" positionx="2839" positiony="7435" positionz="308" yaw=""/>
+
+  <!-- normandy landing area. Do not randomize
+	<keeperlocation file="BIOA_STA30_02A_DSG.SFM" positionx="" positiony="" positionz="" yaw=""/> -->
+  
+  
+  <!-- C-SEC Requesitions Room. too small to keep loaded in memory/ move keeper-->
+  <!--<keeperlocation file="BIOA_STA30_03A_DSG.SFM" positionx="-2502" positiony="747" positionz="-21115" yaw=""/>-->
+
+  <keeperlocation file="BIOA_STA30_05a_DSG.SFM" positionx="-2502" positiony="747" positionz="-21115" yaw=""/>
+
+  <keeperlocation file="BIOA_STA60_02a_DSG.SFM" positionx="-11653" positiony="-1047" positionz="-30654" yaw=""/>
+
+  <!-- fan guy room. DO NOT RANDOMIZE 
+	<keeperlocation file="BIOA_STA60_08B_DSG.SFM" positionx="" positiony="" positionz="" yaw=""/> -->
+
+  
+  <keeperlocation file="BIOA_STA60_08_DSG.SFM" positionx="-10883" positiony="8684" positionz="-30654" yaw=""/>
+
+  <keeperlocation file="BIOA_STA60_09casino_DSG.SFM" positionx="-9285" positiony="1966" positionz="-29744" yaw=""/>
+  <keeperlocation file="BIOA_STA60_09casino_DSG.SFM" positionx="10737" positiony="137" positionz="-30062" yaw=""/>
+
+  <!-- That requestitions room-->
+  <keeperlocation file="BIOA_STA60_11A_DSG.SFM" positionx="562" positiony="2038" positionz="-15705" yaw=""/>
+  <keeperlocation file="BIOA_STA60_11A_DSG.SFM" positionx="-105" positiony="4457" positionz="-15609" yaw=""/>
+
+  <keeperlocation file="BIOA_STA70_02A_DSG.SFM" positionx="-6513" positiony="-4967" positionz="61800" yaw=""/>
+  <keeperlocation file="BIOA_STA70_02A_DSG.SFM" positionx="-7709" positiony="-5134" positionz="62089" yaw=""/>
+  <keeperlocation file="BIOA_STA70_02A_DSG.SFM" positionx="-7751" positiony="-9008" positionz="62088" yaw=""/>
+
+  <keeperlocation file="BIOA_STA70_02side_DSG.SFM" positionx="967" positiony="-8448" positionz="61142" yaw=""/>
+  <keeperlocation file="BIOA_STA70_02side_DSG.SFM" positionx="308" positiony="-6318" positionz="61564" yaw=""/>
+
+
+</keeperrandomizer>

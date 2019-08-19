@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 using System.ComponentModel;
 using System.Management;
 using Serilog;
+using System.Numerics;
 
 namespace MassEffectRandomizer.Classes
 {
@@ -1060,6 +1061,11 @@ namespace MassEffectRandomizer.Classes
                 var bytes = BitConverter.GetBytes(productVal);
                 Log.Information("Antivirus info: " + virusCheckerName + " with state " + bytes[1].ToString("X2") + " " + bytes[2].ToString("X2") + " " + bytes[3].ToString("X2"));
             }
+        }
+
+        internal static void SetLocation(IExportEntry bioPawn, Vector3 position)
+        {
+            SetLocation(bioPawn, position.X, position.Y, position.Z);
         }
 
         public static bool isAntivirusRunning()
