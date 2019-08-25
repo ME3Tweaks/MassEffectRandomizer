@@ -303,9 +303,6 @@
     <None Include="costura32\lzo2wrapper.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="staticfiles\text\stakeepers.xml" />
-    <Resource Include="staticfiles\text\colonistnames.xml" />
-    <Resource Include="staticfiles\text\bundledmanifest.xml" />
     <EmbeddedResource Include="staticfiles\**\*.bik" />
     <EmbeddedResource Include="staticfiles\galaxymapimages\**\*.swf" />
     <EmbeddedResource Include="staticfiles\text\*.xml" />

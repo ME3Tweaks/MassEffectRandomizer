@@ -149,6 +149,7 @@ namespace MassEffectRandomizer.Classes
         {
             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress, mainWindow);
             mainWindow.CurrentOperationText = "Randomization complete";
+            mainWindow.AllowOptionsChanging = true;
 
             mainWindow.ProgressPanelVisible = System.Windows.Visibility.Collapsed;
             mainWindow.ButtonPanelVisible = System.Windows.Visibility.Visible;
@@ -804,9 +805,33 @@ namespace MassEffectRandomizer.Classes
                 mainWindow.CurrentOperationText = "Randomizing opening cutscene";
                 RandomizeOpeningCrawl(random, Tlks);
                 //RandomizeOpeningSequence(random); //this was just sun tint. Part of sun tint randomizer 
-                Log.Information("Applying fly-into-earth interp modification");
+                //Log.Information("Applying fly-into-earth interp modification");
                 ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\NOR\LAY\BIOA_NOR10_13_LAY.SFM"));
-                p.getUExport(220).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_EarthCardIntro_220.bin");
+                //p.getUExport(220).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_EarthCardIntro_220.bin");
+                Log.Information("Randomizing earth texture");
+
+                var earthItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.earthbackdrops")).ToList();
+                earthItems.Shuffle(random);
+                var newAsset = earthItems[0];
+                newAsset = "MassEffectRandomizer.staticfiles.exportreplacements.earthbackdrops.illidiumvista.bin"; //DEBUG ONLY
+                var earthTexture = p.getUExport(508);
+                earthTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(newAsset, true));
+                var props = earthTexture.GetProperties();
+                props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(newAsset), "SourceFilePath"));
+                props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
+                earthTexture.WriteProperties(props);
+                earthTexture.idxObjectName = p.FindNameOrAdd("earthMER"); //ensure unique name
+
+                //DEBUG ONLY: NO INTRO MUSIC
+
+#if DEBUG
+                var director = p.getUExport(206);
+                var tracks = director.GetProperty<ArrayProperty<ObjectProperty>>("InterpTracks");
+                var o = tracks.FirstOrDefault(x => x.Value == 227); //ME Music
+                tracks.Remove(o);
+                director.WriteProperty(tracks);
+#endif
+
                 Log.Information("Applying shepard-faces-camera modification");
                 p.getUExport(219).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.InterpMoveTrack_PlayerFaceCameraIntro_219.bin");
                 p.save();
@@ -908,7 +933,7 @@ namespace MassEffectRandomizer.Classes
 
             foreach (string staFile in uniqueFiles)
             {
-                Log.Information("Randomizing Keepers in "+staFile);
+                Log.Information("Randomizing Keepers in " + staFile);
                 string filepath = Path.Combine(STABase, staFile);
                 ME1Package staPackage = new ME1Package(filepath);
                 var keepersToRandomize = keeperDefinitions.Where(x => x.STAFile == staFile).ToList();
@@ -1429,7 +1454,7 @@ namespace MassEffectRandomizer.Classes
 
             if (pawnsToShuffle.Count > 1)
             {
-                Log.Information("Randoming pawns in interp: " + export.GetFullPath);
+                Log.Information("Randomizing pawns in interp: " + export.GetFullPath);
                 foreach (var refx in playerRefs)
                 {
                     refx.WriteProperty(new BoolProperty(true, "bReturnsPawns")); //Ensure the object returns pawns. It should, but maybe it doesn't.
@@ -1743,10 +1768,24 @@ namespace MassEffectRandomizer.Classes
                                     faceFxline.points[j].weight += random.NextFloat(-.5, .5);
                                     break;
                                 case 3: //That's not how the face is supposed to work
-                                    faceFxline.points[j].weight = random.NextFloat(Math.Max(-1 * Math.Abs(currentWeight) - 1.3, -1.3), Math.Min(Math.Abs(currentWeight) * 1.3, 1.3));
+                                    if (random.Next(5) == 0)
+                                    {
+                                        faceFxline.points[j].weight = random.NextFloat(-10, 10);
+                                    }
+                                    else
+                                    {
+                                        faceFxline.points[j].weight *= 8;
+                                    }
                                     break;
                                 case 4: //Extreme
-                                    faceFxline.points[j].weight = random.NextFloat(-20, 20);
+                                    if (random.Next(2) == 0)
+                                    {
+                                        faceFxline.points[j].weight = random.NextFloat(-20, 20);
+                                    }
+                                    else
+                                    {
+                                        faceFxline.points[j].weight *= 20;
+                                    }
                                     break;
                                 default:
                                     Debugger.Break();
@@ -2088,6 +2127,8 @@ namespace MassEffectRandomizer.Classes
             ArrayProperty<StructProperty> points = torqueCurve.GetProp<ArrayProperty<StructProperty>>("Points");
             var minOut = random.Next(4000, 5600);
             var maxOut = random.Next(6000, 22000);
+            minOut = 5600;
+            maxOut = 20000;
             var stepping = (maxOut - minOut) / 3; //starts at 0 with 3 upgrades
             for (int i = 0; i < points.Count; i++)
             {
@@ -2098,7 +2139,7 @@ namespace MassEffectRandomizer.Classes
 
             SVehicleSimTank.WriteProperty(torqueCurve);
 
-            if (random.Next(1) == 0) //DEBUG ONLY!
+            if (mainWindow.RANDSETTING_MOVEMENT_MAKO_WHEELS)
             {
                 //Reverse the steering to back wheels
                 //Front
@@ -2114,9 +2155,9 @@ namespace MassEffectRandomizer.Classes
                 var RRSteer = RRWheel.GetProperty<FloatProperty>("SteerFactor");
 
                 LFSteer.Value = 0f;
-                LRSteer.Value = 2f;
+                LRSteer.Value = 4f;
                 RFSteer.Value = 0f;
-                RRSteer.Value = 2f;
+                RRSteer.Value = 4f;
 
                 LFWheel.WriteProperty(LFSteer);
                 RFWheel.WriteProperty(RFSteer);
@@ -3342,7 +3383,7 @@ namespace MassEffectRandomizer.Classes
 
             if (mainWindow.RANDSETTING_MOVEMENT_MAKO)
             {
-                float makoCannonFiringRate = random.NextFloat(0.1, 3);
+                float makoCannonFiringRate = random.NextFloat(0.5, 4);
                 float makoCannonForce = random.NextFloat(1000, 5000) + random.NextFloat(0, 2000);
                 float makoCannonDamage = 120 / makoCannonFiringRate; //to same damage amount.
                 float damageincrement = random.NextFloat(60, 90);
@@ -4179,25 +4220,25 @@ namespace MassEffectRandomizer.Classes
             }
 
             //Randomize face-zoom in
-            var zoomInOnFaceInterp = biog_uiworld.getUExport(385);
-            var eulerTrack = zoomInOnFaceInterp.GetProperty<StructProperty>("EulerTrack");
-            var points = eulerTrack?.GetProp<ArrayProperty<StructProperty>>("Points");
-            if (points != null)
-            {
-                var s = points[2]; //end point
-                var outVal = s.GetProp<StructProperty>("OutVal");
-                if (outVal != null)
-                {
-                    FloatProperty x = outVal.GetProp<FloatProperty>("X");
-                    //FloatProperty y = outVal.GetProp<FloatProperty>("Y");
-                    //FloatProperty z = outVal.GetProp<FloatProperty>("Z");
-                    x.Value = random.NextFloat(0, 360);
-                    //y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-                    //z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
-                }
-            }
+            //var zoomInOnFaceInterp = biog_uiworld.getUExport(385);
+            //var eulerTrack = zoomInOnFaceInterp.GetProperty<StructProperty>("EulerTrack");
+            //var points = eulerTrack?.GetProp<ArrayProperty<StructProperty>>("Points");
+            //if (points != null)
+            //{
+            //    var s = points[2]; //end point
+            //    var outVal = s.GetProp<StructProperty>("OutVal");
+            //    if (outVal != null)
+            //    {
+            //        FloatProperty x = outVal.GetProp<FloatProperty>("X");
+            //        //FloatProperty y = outVal.GetProp<FloatProperty>("Y");
+            //        //FloatProperty z = outVal.GetProp<FloatProperty>("Z");
+            //        x.Value = random.NextFloat(0, 360);
+            //        //y.Value = y.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+            //        //z.Value = z.Value * random.NextFloat(1 - amount * 3, 1 + amount * 3);
+            //    }
+            //}
 
-            zoomInOnFaceInterp.WriteProperty(eulerTrack);
+            //zoomInOnFaceInterp.WriteProperty(eulerTrack);
             biog_uiworld.save();
             ModifiedFiles[biog_uiworld.FileName] = biog_uiworld.FileName;
 
@@ -4498,7 +4539,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeAINames(ME1Package pacakge, Random random)
         {
-            bool forcedCharge = random.Next(10) == 0;
+            bool forcedCharge = random.Next(1) == 0;
             for (int i = 0; i < pacakge.NameCount; i++)
             {
                 NameReference n = pacakge.getNameEntry(i);

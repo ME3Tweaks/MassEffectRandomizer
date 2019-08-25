@@ -51,6 +51,7 @@ namespace MassEffectRandomizer
             }
         }
 
+        public bool AllowOptionsChanging { get; set; } = true;
         public int CurrentProgressValue { get; set; }
         public string CurrentOperationText { get; set; }
         public double ProgressBar_Bottom_Min { get; set; }
@@ -181,9 +182,12 @@ namespace MassEffectRandomizer
         }
 
         public ObservableCollectionExtended<ImageCredit> ImageCredits { get; } = new ObservableCollectionExtended<ImageCredit>();
-        private void LoadImageCredits()
+        public ObservableCollectionExtended<ImageCredit> ImageCreditsEarth { get; } = new ObservableCollectionExtended<ImageCredit>();
+        public ObservableCollectionExtended<ImageCredit> ImageCreditsEnd { get; } = new ObservableCollectionExtended<ImageCredit>();
+        private List<ImageCredit> LoadImageCredits(string file, bool fourLine)
         {
-            var textFile = Utilities.GetEmbeddedStaticFilesTextFile("imagecredits.txt").Split('\n');
+
+            var textFile = Utilities.GetEmbeddedStaticFilesTextFile(file).Split('\n');
             List<ImageCredit> credits = new List<ImageCredit>(330);
 
             ImageCredit currentCredit = null;
@@ -208,19 +212,28 @@ namespace MassEffectRandomizer
                     continue;
                 }
 
+                if (currentCredit == null) currentCredit = new ImageCredit();
+
+                int offsetIndex = 0;
+                
                 currentCredit.Title = textFile[i].Trim();
-                currentCredit.Author = textFile[i + 1].Trim();
-                currentCredit.InternalName = textFile[i + 2].Trim();
-                currentCredit.Link = textFile[i + 3].Trim();
-                currentCredit.License = textFile[i + 4].Trim();
-                i += 4;
+                currentCredit.Author = textFile[i + (++offsetIndex)].Trim();
+                if (!fourLine)
+                {
+                    currentCredit.InternalName = textFile[i + (++offsetIndex)].Trim();
+                }
+
+                currentCredit.Link = textFile[i + (++offsetIndex)].Trim();
+                currentCredit.License = textFile[i + (++offsetIndex)].Trim();
+                i += offsetIndex;
             }
 
             if (currentCredit != null)
             {
                 credits.Add(currentCredit);
             }
-            ImageCredits.ReplaceAll(credits);
+
+            return credits;
         }
 
         //RANDOMIZATION OPTION BINDINGS
@@ -260,6 +273,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MOVEMENT_CREATURESPEED { get; set; }
 
         public bool RANDSETTING_MOVEMENT_MAKO { get; set; }
+        public bool RANDSETTING_MOVEMENT_MAKO_WHEELS { get; set; }
 
         //Misc
         public bool RANDSETTING_MISC_MUSIC { get; set; }
@@ -312,7 +326,10 @@ namespace MassEffectRandomizer
             ProgressBar_Bottom_Min = 0;
             ProgressPanelVisible = Visibility.Visible;
             ButtonPanelVisible = Visibility.Collapsed;
-            LoadImageCredits();
+            ImageCredits.ReplaceAll(LoadImageCredits("imagecredits.txt", false));
+            ImageCreditsEarth.ReplaceAll(LoadImageCredits("imagecredits_earth.txt", true));
+            ImageCreditsEnd.ReplaceAll(LoadImageCredits("imagecredits_endcard.txt", false));
+
             InitializeComponent();
             SeedTextBox.Text = 529572808.ToString(); //preseed.ToString(); //DEBUG!
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -436,6 +453,7 @@ namespace MassEffectRandomizer
             ButtonPanelVisible = Visibility.Collapsed;
             ProgressPanelVisible = Visibility.Visible;
             randomizer = new Randomizer(this);
+            AllowOptionsChanging = false;
             randomizer.randomize();
         }
 
