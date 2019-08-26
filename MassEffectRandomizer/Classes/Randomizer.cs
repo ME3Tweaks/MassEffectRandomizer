@@ -122,7 +122,6 @@ namespace MassEffectRandomizer.Classes
         {
             this.mainWindow = mainWindow;
             scottishVowelOrdering = null; //will be set when needed.
-            mapNamesToFaceFxRandomizationLists = new Dictionary<string, List<string>>();
         }
 
         public bool Busy => randomizationWorker != null && randomizationWorker.IsBusy;
@@ -813,7 +812,6 @@ namespace MassEffectRandomizer.Classes
                 var earthItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.earthbackdrops")).ToList();
                 earthItems.Shuffle(random);
                 var newAsset = earthItems[0];
-                newAsset = "MassEffectRandomizer.staticfiles.exportreplacements.earthbackdrops.illidiumvista.bin"; //DEBUG ONLY
                 var earthTexture = p.getUExport(508);
                 earthTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(newAsset, true));
                 var props = earthTexture.GetProperties();
@@ -1061,19 +1059,22 @@ namespace MassEffectRandomizer.Classes
             var renegadeConversationTexture = backdropFile.getUExport(1068); //For backdrop of anderson/udina conversation
             var renegadeTexture = backdropFile.getUExport(1069);
 
-            paragonTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(paragonItems[0], true));
-            renegadeTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(renegadeItems[0], true));
+            var paragonItem = paragonItems[0];
+            var renegadeItem = renegadeItems[0];
 
-            Log.Information("Backdrop randomizer, setting paragon backdrop to " + Path.GetFileName(paragonItems[0]));
-            Log.Information("Backdrop randomizer, setting renegade backdrop to " + Path.GetFileName(renegadeItems[0]));
+            paragonTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(paragonItem, true));
+            renegadeTexture.setBinaryData(Utilities.GetEmbeddedStaticFilesBinaryFile(renegadeItem, true));
+
+            Log.Information("Backdrop randomizer, setting paragon backdrop to " + Path.GetFileName(paragonItem));
+            Log.Information("Backdrop randomizer, setting renegade backdrop to " + Path.GetFileName(renegadeItem));
 
             var props = paragonTexture.GetProperties();
-            props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(paragonItems[0]), "SourceFilePath"));
+            props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(paragonItem), "SourceFilePath"));
             props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
             paragonTexture.WriteProperties(props);
 
             props = renegadeTexture.GetProperties();
-            props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(renegadeItems[0]), "SourceFilePath"));
+            props.AddOrReplaceProp(new StrProperty("MASS EFFECT RANDOMIZER - " + Path.GetFileName(renegadeItem), "SourceFilePath"));
             props.AddOrReplaceProp(new StrProperty(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture), "SourceFileTimestamp"));
             renegadeTexture.WriteProperties(props);
 
@@ -1555,8 +1556,8 @@ namespace MassEffectRandomizer.Classes
                     var hasImageResource = galaxyMapGroupResources.TryGetValue(assignedRPI.ImageGroup.ToLower(), out var newImagePool);
                     if (!hasImageResource)
                     {
-                        hasImageResource = galaxyMapGroupResources.TryGetValue("generic", out newImagePool); //DEBUG ONLY!
-                        Debug.WriteLine("WARNING: NO IMAGEGROUP FOR GROUP " + assignedRPI.ImageGroup);
+                        hasImageResource = galaxyMapGroupResources.TryGetValue("generic", out newImagePool); //DEBUG ONLY! KIND OF?
+                        Log.Warning("WARNING: NO IMAGEGROUP FOR GROUP " + assignedRPI.ImageGroup);
                     }
                     if (hasImageResource)
                     {
@@ -1731,8 +1732,6 @@ namespace MassEffectRandomizer.Classes
             exp.WriteProperties(props);
         }
 
-        private Dictionary<string, List<string>> mapNamesToFaceFxRandomizationLists;
-
         private void RandomizeFaceFX(IExportEntry exp, Random random, int amount)
         {
             try
@@ -1778,7 +1777,7 @@ namespace MassEffectRandomizer.Classes
                                     }
                                     break;
                                 case 4: //Extreme
-                                    if (random.Next(2) == 0)
+                                    if (random.Next(6) == 0)
                                     {
                                         faceFxline.points[j].weight = random.NextFloat(-20, 20);
                                     }
