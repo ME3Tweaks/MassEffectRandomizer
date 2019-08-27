@@ -172,6 +172,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeBioWaypointSet(IExportEntry export, Random random)
         {
+            Log.Information("Randomizing BioWaypointSet " + export.UIndex + " in " + Path.GetFileName(export.FileRef.FileName));
             var waypointReferences = export.GetProperty<ArrayProperty<StructProperty>>("WaypointReferences");
             if (waypointReferences != null)
             {
@@ -193,7 +194,7 @@ namespace MassEffectRandomizer.Classes
                         }
                         else
                         {
-                            Log.Warning("SKIPPING NODE TYPE " + currentPoint.ClassName);
+                            Debug.WriteLine("SKIPPING NODE TYPE " + currentPoint.ClassName);
                         }
                     }
                 }
@@ -498,7 +499,8 @@ namespace MassEffectRandomizer.Classes
 
                 if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && export.ClassName == "BioMorphFace" && export.ObjectName.StartsWith("Player_"))
                 {
-                    RandomizeBioMorphFace(export, random, .2);
+                    Log.Information("Randomizing iconic female shepard face by "+ mainWindow.RANDSETTING_CHARACTER_ICONICFACE_AMOUNT);
+                    RandomizeBioMorphFace(export, random, mainWindow.RANDSETTING_CHARACTER_ICONICFACE_AMOUNT);
                 }
             }
 
@@ -574,7 +576,7 @@ namespace MassEffectRandomizer.Classes
 
                 var filesEnum = Directory.GetFiles(path, "*.sfm", SearchOption.AllDirectories);
                 string[] files = null;
-                if (!mainWindow.RANDSETTING_WACK_FACEFX)
+                if (!mainWindow.RANDSETTING_PAWN_FACEFX)
                 {
                     files = filesEnum.Where(x => !Path.GetFileName(x).ToLower().Contains("_loc_")).ToArray();
                 }
@@ -616,7 +618,7 @@ namespace MassEffectRandomizer.Classes
                         {
                             foreach (IExportEntry exp in package.Exports)
                             {
-                                if (mainWindow.RANDSETTING_MISC_MAPFACES && exp.ClassName == "BioMorphFace")
+                                if (mainWindow.RANDSETTING_PAWN_MAPFACES && exp.ClassName == "BioMorphFace")
                                 {
                                     //Face randomizer
                                     if (!loggedFilename)
@@ -744,7 +746,7 @@ namespace MassEffectRandomizer.Classes
                                     RandomizeInterpTrackMove(exp, random, morphFaceRandomizationAmount);
                                     package.ShouldSave = true;
                                 }
-                                else if (mainWindow.RANDSETTING_WACK_FACEFX && exp.ClassName == "FaceFXAnimSet")
+                                else if (mainWindow.RANDSETTING_PAWN_FACEFX && exp.ClassName == "FaceFXAnimSet")
                                 {
                                     if (!loggedFilename)
                                     {
@@ -879,36 +881,46 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeCitadel(Random random)
         {
-            Log.Information("Randomizing BioWaypointSet for STA70 Citadel Tower");
+            Log.Information("Randomizing BioWaypointSets for Citadel");
             mainWindow.CurrentOperationText = "Randomizing Citadel";
-            //Randomize Waypoint Set for Council Chambers
-            ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG\BIOA_STA70_02A_DSG.SFM"));
-            RandomizeBioWaypointSet(p.getUExport(3320), random);
-            RandomizeBioWaypointSet(p.getUExport(3321), random);
-            if (p.ShouldSave)
+
+            int numDone = 0;
+            var staDsg = Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG");
+            var filesToProcess = Directory.GetFiles(staDsg, "*.SFM");
+
+            mainWindow.CurrentProgressValue = 0;
+            mainWindow.ProgressBar_Bottom_Max = filesToProcess.Length;
+            mainWindow.ProgressBarIndeterminate = false;
+
+            foreach (var packageFile in filesToProcess)
             {
-                p.save();
-                ModifiedFiles[p.FileName] = p.FileName;
+                ME1Package p = new ME1Package(packageFile);
+                var waypoints = p.Exports.Where(x => x.ClassName == "BioWaypointSet").ToList();
+                foreach (var waypoint in waypoints)
+                {
+                    RandomizeBioWaypointSet(waypoint, random);
+                }
+                if (p.ShouldSave)
+                {
+                    p.save();
+                    ModifiedFiles[p.FileName] = p.FileName;
+                }
+                mainWindow.CurrentProgressValue++;
             }
 
-            //Randomize Waypoint Set for Requisitions Wards Room (walking Asari)
-            p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_11A_DSG.SFM"));
-            RandomizeBioWaypointSet(p.getUExport(2832), random);
-            if (p.ShouldSave)
-            {
-                p.save();
-                ModifiedFiles[p.FileName] = p.FileName;
-            }
+            mainWindow.CurrentProgressValue = 0;
+            mainWindow.ProgressBar_Bottom_Max = filesToProcess.Length;
+            mainWindow.ProgressBarIndeterminate = true;
 
             //Randomize Citadel Tower sky
-            p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\LAY\BIOA_STA70_02_LAY.SFM"));
-            var skyMaterial = p.getUExport(347);
+            ME1Package package = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\LAY\BIOA_STA70_02_LAY.SFM"));
+            var skyMaterial = package.getUExport(347);
             var data = skyMaterial.Data;
-            data.OverwriteRange(0x168,BitConverter.GetBytes(random.NextFloat(-1.5,1.5)));
+            data.OverwriteRange(0x168, BitConverter.GetBytes(random.NextFloat(-1.5, 1.5)));
             data.OverwriteRange(0x19A, BitConverter.GetBytes(random.NextFloat(-1.5, 1.5)));
             skyMaterial.Data = data;
 
-            var volumeLighting = p.getUExport(859);
+            var volumeLighting = package.getUExport(859);
             var props = volumeLighting.GetProperties();
 
             var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
@@ -922,10 +934,10 @@ namespace MassEffectRandomizer.Classes
 
             volumeLighting.WriteProperties(props);
 
-            if (p.ShouldSave)
+            if (package.ShouldSave)
             {
-                p.save();
-                ModifiedFiles[p.FileName] = p.FileName;
+                package.save();
+                ModifiedFiles[package.FileName] = package.FileName;
             }
 
             //Randomize Scan the Keepers
@@ -1116,7 +1128,7 @@ namespace MassEffectRandomizer.Classes
             ModifiedFiles[backdropFile.FileName] = backdropFile.FileName;
 
 
-            ME1Package finalCutsceneFile = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\CRD\DSG\\BIOA_CRD00_00_DSG.SFM"));
+            ME1Package finalCutsceneFile = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\CRD\DSG\BIOA_CRD00_00_DSG.SFM"));
             var weaponTypes = (new[] { "STW_AssaultRifle", "STW_Pistol", "STW_SniperRifle", "STW_ShotGun" }).ToList();
             weaponTypes.Shuffle(random);
             Log.Information("Ending randomizer, setting renegade weapon to " + weaponTypes[0]);
@@ -1127,8 +1139,8 @@ namespace MassEffectRandomizer.Classes
             setWeapon.WriteProperties(props);
 
             //Move Executor to Renegade
-            var executor = finalCutsceneFile.getUExport(922);
-            Utilities.SetLocation(executor, -25365, 20971, 430);
+            var executor = finalCutsceneFile.getUExport(923);
+            Utilities.SetLocation(executor, -25365, 20947, 430);
             Utilities.SetRotation(executor, -30);
 
             //Move SubShep to Paragon
@@ -3013,7 +3025,7 @@ namespace MassEffectRandomizer.Classes
                           }).ToList();
             crawls = crawls.Where(x => x.CrawlText != "").ToList();
 
-            if (!mainWindow.RANDSETTING_MISC_MAPFACES)
+            if (!mainWindow.RANDSETTING_PAWN_MAPFACES)
             {
                 crawls = crawls.Where(x => !x.RequiresFaceRandomizer).ToList();
             }
@@ -3846,7 +3858,7 @@ namespace MassEffectRandomizer.Classes
 
         public bool RunMapRandomizerPass
         {
-            get => mainWindow.RANDSETTING_MISC_MAPFACES
+            get => mainWindow.RANDSETTING_PAWN_MAPFACES
                    || mainWindow.RANDSETTING_MISC_MAPPAWNSIZES
                    || mainWindow.RANDSETTING_MISC_HAZARDS
                    || mainWindow.RANDSETTING_MISC_INTERPS
@@ -3854,7 +3866,7 @@ namespace MassEffectRandomizer.Classes
                    || mainWindow.RANDSETTING_MISC_ENEMYAIDISTANCES
                    || mainWindow.RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION
                    || mainWindow.RANDSETTING_MISC_HEIGHTFOG
-                   || mainWindow.RANDSETTING_WACK_FACEFX
+                   || mainWindow.RANDSETTING_PAWN_FACEFX
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
                    || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS
                    || mainWindow.RANDSETTING_PAWN_BIOLOOKATDEFINITION
@@ -3863,11 +3875,11 @@ namespace MassEffectRandomizer.Classes
 
         public bool RunMapRandomizerPassAllExports
         {
-            get => mainWindow.RANDSETTING_MISC_MAPFACES
+            get => mainWindow.RANDSETTING_PAWN_MAPFACES
                    || mainWindow.RANDSETTING_MISC_MAPPAWNSIZES
                    || mainWindow.RANDSETTING_MISC_HAZARDS
                    | mainWindow.RANDSETTING_MISC_HEIGHTFOG
-                   || mainWindow.RANDSETTING_WACK_FACEFX
+                   || mainWindow.RANDSETTING_PAWN_FACEFX
                    || mainWindow.RANDSETTING_MISC_INTERPS
                    || mainWindow.RANDSETTING_WACK_SCOTTISH
                    || mainWindow.RANDSETTING_PAWN_MATERIALCOLORS

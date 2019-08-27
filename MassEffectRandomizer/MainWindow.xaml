@@ -14,7 +14,7 @@
                       Title="Mass Effect Randomizer" 
                       MinHeight="680" 
                       MinWidth="800"
-                      Height="900"
+                      Height="915"
                       Width="800">
     <Window.Resources>
         <converters:EnumMatchToBooleanConverter x:Key="enumConverter" />
@@ -26,6 +26,12 @@
              of the font reported.  Its not the same
              as the file name -->
         </FontFamily>
+        <Style TargetType="{x:Type CheckBox}"
+                   BasedOn="{StaticResource MetroCheckBox}">
+            <Style.Resources>
+                <SolidColorBrush x:Key="HighlightBrush" Color="Orchid" />
+            </Style.Resources>
+        </Style>
     </Window.Resources>
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
@@ -96,10 +102,6 @@
             <ImageBrush Opacity="0.3" ImageSource="images/backdrop.jpg" AlignmentY="Center" Stretch="UniformToFill" />
         </Border.Background>
         <DockPanel Margin="7" LastChildFill="True">
-            <StackPanel Margin="5" DockPanel.Dock="Top">
-                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="Mass Effect Randomizer allows you to randomize a variety of variables within Mass Effect. It might break things, but who knows? ¯\_(ツ)_/¯" VerticalAlignment="Top" />
-                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Name="GameLocationTextbox" VerticalAlignment="Top" />
-            </StackPanel>
             <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
                 <StackPanel DockPanel.Dock="Bottom">
                     <StackPanel Visibility="{Binding ProgressPanelVisible}">
@@ -127,12 +129,12 @@
                         <ColumnDefinition Width="50*"/>
                         <ColumnDefinition Width="50*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Vertical" Grid.Column="0" Margin="0,0,0,5">
+                    <StackPanel Orientation="Vertical" Grid.Column="0" Margin="0,0,0,5" IsEnabled="{Binding AllowOptionsChanging}">
                         <RadioButton Content="Select what to randomize" Margin="4" GroupName="ERandomizationMode_SelectAny" ToolTip="Pick and choose what you want to randomize" IsChecked="{Binding Path=SelectedRandomizeMode, Mode=TwoWay,                                   Converter={StaticResource enumConverter},                                  ConverterParameter=ERandomizationMode_SelectAny}" />
                         <RadioButton Content="Randomize a common set of stuff" Margin="4" GroupName="ERandomizationMode_Common" ToolTip="Randomize the game in a mostly safe way" IsChecked="{Binding Path=SelectedRandomizeMode, Mode=TwoWay,                                   Converter={StaticResource enumConverter},                                  ConverterParameter=ERandomizationMode_Common}" />
                         <RadioButton Content="Give me a screed. I want to experience hell." Margin="4" GroupName="ERAndomizationMode_Screed" ToolTip="You want to experience hell itself with full randomization" IsChecked="{Binding Path=SelectedRandomizeMode, Mode=TwoWay,                                   Converter={StaticResource enumConverter},                                  ConverterParameter=ERAndomizationMode_Screed}" />
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Bottom">
+                    <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Bottom"  IsEnabled="{Binding AllowOptionsChanging}">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5" HorizontalAlignment="Right">
                             <TextBlock Text="RNG Seed: " VerticalAlignment="Center"/>
                             <TextBox Name="SeedTextBox" MaxLength="11" Text="PLACEHOLDER" ToolTip="RNG seeds determine the output of the random number generator.&#xA;You can share seed values to produce the same results on another run of the program, assuming you chose the same options."/>
@@ -147,21 +149,26 @@
                     </Style>
                 </TabControl.Resources>
                 <TabItem Header="Options">
+
                     <DockPanel HorizontalAlignment="Center" IsEnabled="{Binding AllowOptionsChanging}">
+                        <StackPanel Margin="5" DockPanel.Dock="Top" Width="Auto">
+                            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="Select randomization options and then choose Randomize to begin randomization." VerticalAlignment="Top" />
+                            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Name="GameLocationTextbox" VerticalAlignment="Top" />
+                        </StackPanel>
                         <ScrollViewer HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Stretch">
                             <Grid Name="randomizationOptionsPanel">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="300px" />
-                                    <ColumnDefinition Width="300px" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Row="0" Grid.Column="0">
                                     <StackPanel>
-                                        <fonts:OutlinedTextBlock Text="Weapons" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
+                                        <fonts:OutlinedTextBlock Text="Inventory" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                         <StackPanel Margin="10,0,0,0">
-                                            <CheckBox Content="Randomize initial 4 starting weapons" Margin="3" ToolTip="Randomizes the starting guns you get.&#xA;Due to how the game is coded, you will be forced to randomly get one of every weapon - otherwise the game will crash on the inventory screen." IsChecked="{Binding RANDSETTING_WEAPONS_STARTINGEQUIPMENT}" />
+                                            <CheckBox Content="Randomize initial 4 starting weapons" Margin="3" ToolTip="Randomizes the starting guns you get.&#xA;Due to how the game is coded, you will be forced to randomly get one of every weapon" IsChecked="{Binding RANDSETTING_WEAPONS_STARTINGEQUIPMENT}" />
                                             <!--<CheckBox Content="Randomize weapon stats" Margin="3" IsChecked="{Binding RANDSETTING_WEAPONS_EFFECTLEVELS}" IsEnabled="False" ToolTip="This feature is not yet complete and cannot be used at this time"/>-->
                                             <CheckBox Content="Randomize squad armor/amp" ToolTip="Randomizes the starting armor and amp for the squad" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_INVENTORY}" />
 
@@ -191,6 +198,9 @@
 
                                                             </DataTrigger>
                                                         </Style.Triggers>
+                                                        <Style.Resources>
+                                                            <SolidColorBrush x:Key="HighlightBrush" Color="Orchid" />
+                                                        </Style.Resources>
                                                     </Style>
                                                 </CheckBox.Style>
 
@@ -198,40 +208,45 @@
                                         </StackPanel>
                                     </StackPanel>
                                     <StackPanel>
-                                        <fonts:OutlinedTextBlock Text="Miscellaneous" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
-                                        <StackPanel Margin="10,0,0,0">
-                                            <CheckBox Content="Randomize music" ToolTip="Randomize music used in gameplay" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MUSIC}" />
-                                            <CheckBox Content="Randomize GUI music" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
-                                            <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}" />
-                                            <CheckBox Content="Randomize game over text" ToolTip="Randomize the game over title text" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GAMEOVERTEXT}" />
-                                            <CheckBox Content="Randomize fog colors" ToolTip="Randomizes the colors of fog and slightly tweaks their densities" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HEIGHTFOG}"/>
-                                            <CheckBox Content="Randomize star (in-sky) colors" ToolTip="Randomizes the colors of stars in the sky of levels. Note that not all stars are affected as some are designed differently. This won't change the color of the lighting as that is precomputed" Margin="3" IsChecked="{Binding RANDSETTING_MISC_STARCOLORS}"/>
-                                            <CheckBox Content="Randomize game ending screen" ToolTip="Changes the art shown at the very end of the game" Margin="3" IsChecked="{Binding RANDSETTING_MISC_ENDINGART}" />
-                                            <CheckBox Content="Randomize splash screen" Margin="3" IsChecked="{Binding RANDSETTING_MISC_SPLASH}" ToolTip="Randomizes what the splash planet looks like and some other stuff on the splash"/>
-                                            <CheckBox Content="Randomize pawns in cutscenes" ToolTip="Randomize who appears in what position in a cutscene. May create ridiculous things&#10;This will cover more cutscenes in a future update" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPPAWNS}" />
-                                        </StackPanel>
-
-
-                                        <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
-                                        <StackPanel Margin="10,0,0,0">
-                                            <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes, ragdoll physics, and may make enemies immune to gun damage (but not melee)&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
-                                            <CheckBox Content="Randomly randomize movement interpolations" Foreground="Red" ToolTip="Warning: This breaks a lot of stuff I'm suref&#xA;Slightly changes the movement and rotations of interpolations of everything&#xA;This setting will not apply to all interpolations, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPS}" />
-                                            <CheckBox Content="Randomize vowels" Foreground="Red"  ToolTip="Translates game to some weird dialect of Scottish-Like English" Margin="3" IsChecked="{Binding RANDSETTING_WACK_SCOTTISH}" />
-                                            <CheckBox Content="Randomize NPC Head Colors" ToolTip="RAndomizes the colors used for NPC heads" Margin="3" IsChecked="{Binding RANDSETTING_PAWN_MATERIALCOLORS}" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Grid.Row="0" Grid.Column="1">
-                                    <StackPanel>
                                         <fonts:OutlinedTextBlock Text="Pawns" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
                                         <StackPanel Margin="10,0,0,0">
-                                            <CheckBox Content="Randomize the iconic female Shepard face" ToolTip="Randomize the face morph used for the female default shepard&#xA;Iconic male Shepard cannot be randomized as his face is not a biomorphface" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_ICONICFACE}" />
+                                            <CheckBox Name="Checkbox_RandomizeIconicFace" Content="Randomize the iconic female Shepard face" ToolTip="Randomize the face morph used for the female default shepard&#xA;Iconic male Shepard cannot be randomized as his face is not a biomorphface" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_ICONICFACE}" />
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="45,0,0,0">
+                                                    <TextBlock Text="Randomization amount: " IsEnabled="False"/>
+                                                    <TextBlock Text="{Binding ElementName=RANDSETTING_CHARACTER_ICONICFACE_SLIDER, Path=Value, UpdateSourceTrigger=PropertyChanged}" />
+                                                </StackPanel>
+                                                <Slider Name="RANDSETTING_CHARACTER_ICONICFACE_SLIDER" Value="{Binding RANDSETTING_CHARACTER_ICONICFACE_AMOUNT}" ToolTip="Amount to randomize.&#xA;Larger values result in more ridiculous faces.&#xA;Default value is 0.3." Margin="3" Width="200px" Minimum=".1" Maximum=".7" Ticks=".1,.2,.3,.4,.5,.6,.7" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" TickPlacement="BottomRight">
+                                                    <Slider.Style>
+                                                        <Style TargetType="Slider" BasedOn="{StaticResource MetroSlider}">
+                                                            <Setter Property="IsEnabled" Value="False"></Setter>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsChecked,ElementName=Checkbox_RandomizeIconicFace}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Slider.Style>
+                                                </Slider>
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
+                                                        <Setter Property="Opacity" Value="0.5"></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsChecked,ElementName=Checkbox_RandomizeIconicFace}" Value="True">
+                                                                <Setter Property="Opacity" Value="1"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </StackPanel.Style>
+                                            </StackPanel>
+
+
                                             <CheckBox Content="Randomize premade character creator faces" ToolTip="Generate some nightmare fuel in the preset faces for each gender" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR}" />
                                             <CheckBox Content="Randomize premade character creator skin tone" ToolTip="Randomize skin tone colors for premade shepards" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE}" />
-                                            <CheckBox Content="Randomize squadmate faces" ToolTip="Randomize the face morphs used by squadmates that support face morphs" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCHFACE}" />
+                                            <CheckBox Content="Randomize squadmate faces" ToolTip="Randomize the face morphs used by squadmates that support face morphs&#10;Due to how Unreal Engine 3 handles loading, their face may change over time if their face is embedded in a level, for a cutscene for example.&#10;This typically only occurs during early game" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCHFACE}" />
                                             <!--<CheckBox Content="Randomize LookAt limits" ToolTip="Randomizes the values the game uses when making a character turn to face a certain point" Margin="3" IsChecked="{Binding RANDSETTING_PAWN_BIOLOOKATDEFINITION}" />-->
 
-                                            <CheckBox Name="Checkbox_RandomizeBioMorphFaceMaps" Content="Randomize NPC faces" ToolTip="Randomize humanoid faces through the headmorph" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPFACES}" />
+                                            <CheckBox Name="Checkbox_RandomizeBioMorphFaceMaps" Content="Randomize NPC faces" ToolTip="Randomize humanoid faces through the headmorph" Margin="3" IsChecked="{Binding RANDSETTING_PAWN_MAPFACES}" />
                                             <StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="45,0,0,0">
                                                     <TextBlock Text="Randomization amount: " IsEnabled="False"/>
@@ -261,7 +276,7 @@
                                                 </StackPanel.Style>
                                             </StackPanel>
 
-                                            <CheckBox Name="Checkbox_RandomizeFaceFX" Content="Randomize FaceFX animations" ToolTip="Randomize the face animations used in map files" Margin="3" IsChecked="{Binding RANDSETTING_WACK_FACEFX}" />
+                                            <CheckBox Name="Checkbox_RandomizeFaceFX" Content="Randomize FaceFX animations" ToolTip="Randomize the face animations used in map files" Margin="3" IsChecked="{Binding RANDSETTING_PAWN_FACEFX}" />
                                             <StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="45,0,0,0">
                                                     <TextBlock Text="{Binding ElementName=RANDSETTING_WACK_FACEFX_SLIDER, Path=Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource FaceFXRandomizationLevelIntToStringConverter}}" />
@@ -309,9 +324,21 @@
                                         <CheckBox Content="Randomize talent and power stats" ToolTip="This feature is not yet complete and cannot be used at this time&#xA;Randomizes the stats of talents and powers" Margin="3" IsChecked="{Binding RANDSETTING_TALENTS_STATS}"  IsEnabled="False" />-->
 
 
-                                            <CheckBox Content="Randomize henchmen actor type" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles squadmates" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
+                                            <CheckBox Content="Randomize henchmen actor type" Foreground="Red" ToolTip="Randomizes the actor type for each henchmen, essentially shuffles squadmates. May cause some dialogue to skip" Margin="3" IsChecked="{Binding RANDSETTING_CHARACTER_HENCH_ARCHETYPES}" />
                                         </StackPanel>
                                     </StackPanel>
+                                    <StackPanel>
+                                        <fonts:OutlinedTextBlock Text="Wackadoodle" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
+                                        <StackPanel Margin="10,0,0,0">
+                                            <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes, ragdoll physics, and may make enemies immune to gun damage (but not melee)&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
+                                            <CheckBox Content="Randomly randomize movement interpolations" Foreground="Red" ToolTip="Warning: This breaks a lot of camera pans, possibly other things&#xA;Slightly changes the movement and rotations of interpolations of everything&#xA;This setting will not apply to all interpolations, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPS}" />
+                                            <CheckBox Content="Randomize vowels" Foreground="Red"  ToolTip="Translates game to some weird dialect of Scottish-Like English.&#10;If you are a streamer this could be fun if you like to read text out loud to your audience" Margin="3" IsChecked="{Binding RANDSETTING_WACK_SCOTTISH}" />
+                                            <CheckBox Content="Randomize NPC Head Colors" ToolTip="Randomizes the colors used for NPC heads" Margin="3" IsChecked="{Binding RANDSETTING_PAWN_MATERIALCOLORS}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1">
+
                                     <fonts:OutlinedTextBlock Text="Maps" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
 
                                     <StackPanel Margin="10,0,0,0">
@@ -342,13 +369,31 @@
 
                                                             </DataTrigger>
                                                         </Style.Triggers>
+                                                        <Style.Resources>
+                                                            <SolidColorBrush x:Key="HighlightBrush" Color="Orchid" />
+                                                        </Style.Resources>
                                                     </Style>
                                                 </CheckBox.Style>
                                             </CheckBox>
                                             <CheckBox Content="Randomize planet hazards" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HAZARDS}" ToolTip="Randomizes what hazard you will get on maps that have hazards"/>
                                         </StackPanel>
                                     </StackPanel>
+                                    <StackPanel>
+                                        <fonts:OutlinedTextBlock Text="Miscellaneous" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="16" StrokeThickness="2" />
+                                        <StackPanel Margin="10,0,0,0">
+                                            <CheckBox Content="Randomize music" ToolTip="Randomize music used in gameplay" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MUSIC}" />
+                                            <CheckBox Content="Randomize GUI music" ToolTip="Randomize music used in GUI areas (like game startup, character creator, etc)" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUIMUSIC}" />
+                                            <CheckBox Content="Randomize GUI sounds" ToolTip="Randomize sound effects for GUI audio" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GUISFX}" />
+                                            <CheckBox Content="Randomize game over text" ToolTip="Randomize the game over title text" Margin="3" IsChecked="{Binding RANDSETTING_MISC_GAMEOVERTEXT}" />
+                                            <CheckBox Content="Randomize fog colors" ToolTip="Randomizes the colors of fog and slightly tweaks their densities" Margin="3" IsChecked="{Binding RANDSETTING_MISC_HEIGHTFOG}"/>
+                                            <CheckBox Content="Randomize 'sun actor' colors" ToolTip="Randomizes the colors of stars in the sky of levels and some stage light sources.&#10;Note that not all stars are affected as some are designed differently.&#10;This won't change the color of the lighting as that is precomputed" Margin="3" IsChecked="{Binding RANDSETTING_MISC_STARCOLORS}"/>
+                                            <CheckBox Content="Randomize game ending screen" ToolTip="Changes the art shown at the very end of the game" Margin="3" IsChecked="{Binding RANDSETTING_MISC_ENDINGART}" />
+                                            <CheckBox Content="Randomize splash screen" Margin="3" IsChecked="{Binding RANDSETTING_MISC_SPLASH}" ToolTip="Randomizes what the splash planet looks like and some other stuff on the splash"/>
+                                            <CheckBox Content="Randomize pawns in cutscenes" ToolTip="Randomize who appears in what position in a cutscene. May create ridiculous things&#10;This will cover more cutscenes in a future update" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPPAWNS}" />
+                                        </StackPanel>
+                                    </StackPanel>
                                 </StackPanel>
+
                             </Grid>
                         </ScrollViewer>
                     </DockPanel>

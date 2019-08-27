@@ -78,15 +78,40 @@ namespace MassEffectRandomizer
 
             if (SelectedRandomizeMode == RandomizationMode.ERandomizationMode_Common)
             {
+                RANDSETTING_WEAPONS_STARTINGEQUIPMENT = true;
+                RANDSETTING_CHARACTER_INVENTORY = true;
+                RANDSETTING_MOVEMENT_MAKO = true;
+                RANDSETTING_CHARACTER_ICONICFACE = true;
+                RANDSETTING_CHARACTER_CHARCREATOR = true;
+                RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE = true;
+                RANDSETTING_CHARACTER_HENCHFACE = true;
+                RANDSETTING_PAWN_MAPFACES = true;
+                RANDSETTING_PAWN_FACEFX = true;
+                RANDSETTING_PAWN_MATERIALCOLORS = true;
+
+                RANDSETTING_WACK_OPENINGCUTSCENE = true;
+                RANDSETTING_MAP_EDENPRIME = true;
+                RANDSETTING_MAP_CITADEL = true;
+                RANDSETTING_MAP_NOVERIA = true;
+                RANDSETTING_MAP_FEROS = true;
+                RANDSETTING_MAP_BDTS = BringDownTheSkyInstalled;
+                RANDSETTING_MAP_PINNACLESTATION = PinnacleStationInstalled;
+
                 RANDSETTING_GALAXYMAP_CLUSTERS = true;
                 RANDSETTING_GALAXYMAP_SYSTEMS = true;
                 RANDSETTING_GALAXYMAP_PLANETCOLOR = true;
-                RANDSETTING_WEAPONS_STARTINGEQUIPMENT = true;
-                RANDSETTING_CHARACTER_INVENTORY = true;
 
-                //testing only
-                RANDSETTING_CHARACTER_HENCH_ARCHETYPES = true;
-                RANDSETTING_CHARACTER_CHARCREATOR = true;
+                RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION = true;
+                RANDSETTING_GALAXYMAP_PLANETNAMEDESCRIPTION_PLOTPLANET = true;
+                RANDSETTING_MISC_HAZARDS = true;
+
+                RANDSETTING_MISC_GAMEOVERTEXT = true;
+                RANDSETTING_MISC_HEIGHTFOG = true;
+                RANDSETTING_MISC_STARCOLORS = true;
+                RANDSETTING_MISC_ENDINGART = true;
+                RANDSETTING_MISC_SPLASH = true;
+                RANDSETTING_MISC_INTERPPAWNS = true;
+
             }
             else if (SelectedRandomizeMode == RandomizationMode.ERAndomizationMode_Screed)
             {
@@ -98,7 +123,8 @@ namespace MassEffectRandomizer
                         cb.IsChecked = true;
                     }
                 }
-
+                RANDSETTING_MAP_BDTS = BringDownTheSkyInstalled;
+                RANDSETTING_MAP_PINNACLESTATION = PinnacleStationInstalled;
             }
         }
 
@@ -215,7 +241,7 @@ namespace MassEffectRandomizer
                 if (currentCredit == null) currentCredit = new ImageCredit();
 
                 int offsetIndex = 0;
-                
+
                 currentCredit.Title = textFile[i].Trim();
                 currentCredit.Author = textFile[i + (++offsetIndex)].Trim();
                 if (!fourLine)
@@ -257,6 +283,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_CHARACTER_CHARCREATOR_SKINTONE { get; set; }
         public bool RANDSETTING_CHARACTER_HENCHFACE { get; set; }
         public bool RANDSETTING_CHARACTER_ICONICFACE { get; set; }
+        public double RANDSETTING_CHARACTER_ICONICFACE_AMOUNT { get; set; }
 
 
         //Talents
@@ -279,7 +306,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_MUSIC { get; set; }
         public bool RANDSETTING_MISC_GUIMUSIC { get; set; }
         public bool RANDSETTING_MISC_GUISFX { get; set; }
-        public bool RANDSETTING_MISC_MAPFACES { get; set; }
+        public bool RANDSETTING_PAWN_MAPFACES { get; set; }
         public bool RANDSETTING_MISC_INTERPPAWNS { get; set; }
         public double RANDSETTING_MISC_MAPFACES_AMOUNT { get; set; }
         public bool RANDSETTING_MAP_PINNACLESTATION { get; set; }
@@ -304,7 +331,7 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_MISC_ENEMYAIDISTANCES { get; set; }
         public bool RANDSETTING_MISC_INTERPS { get; set; }
         public bool RANDSETTING_WACK_OPENINGCUTSCENE { get; set; }
-        public bool RANDSETTING_WACK_FACEFX { get; set; }
+        public bool RANDSETTING_PAWN_FACEFX { get; set; }
         public bool RANDSETTING_WACK_SCOTTISH { get; set; }
         public bool RANDSETTING_PAWN_BIOLOOKATDEFINITION { get; set; }
 
@@ -321,6 +348,7 @@ namespace MassEffectRandomizer
             Random random = new Random();
             var preseed = random.Next();
             RANDSETTING_MISC_MAPFACES_AMOUNT = .3;
+            RANDSETTING_CHARACTER_ICONICFACE_AMOUNT = .3;
             RANDSETTING_WACK_FACEFX_AMOUNT = 2;
             ProgressBar_Bottom_Max = 100;
             ProgressBar_Bottom_Min = 0;

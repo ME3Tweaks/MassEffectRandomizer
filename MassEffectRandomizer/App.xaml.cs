@@ -86,6 +86,8 @@ namespace MassEffectRandomizer
       .WriteTo.Debug()
 #endif
       .CreateLogger();
+            ToolTipService.ShowDurationProperty.OverrideMetadata(
+                typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
             Log.Information("===========================================================================");
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             string version = fvi.FileVersion;
