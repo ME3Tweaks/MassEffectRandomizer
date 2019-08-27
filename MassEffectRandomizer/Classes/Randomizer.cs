@@ -880,7 +880,7 @@ namespace MassEffectRandomizer.Classes
         private void RandomizeCitadel(Random random)
         {
             Log.Information("Randomizing BioWaypointSet for STA70 Citadel Tower");
-
+            mainWindow.CurrentOperationText = "Randomizing Citadel";
             //Randomize Waypoint Set for Council Chambers
             ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG\BIOA_STA70_02A_DSG.SFM"));
             RandomizeBioWaypointSet(p.getUExport(3320), random);
@@ -894,6 +894,34 @@ namespace MassEffectRandomizer.Classes
             //Randomize Waypoint Set for Requisitions Wards Room (walking Asari)
             p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\DSG\BIOA_STA60_11A_DSG.SFM"));
             RandomizeBioWaypointSet(p.getUExport(2832), random);
+            if (p.ShouldSave)
+            {
+                p.save();
+                ModifiedFiles[p.FileName] = p.FileName;
+            }
+
+            //Randomize Citadel Tower sky
+            p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\STA\LAY\BIOA_STA70_02_LAY.SFM"));
+            var skyMaterial = p.getUExport(347);
+            var data = skyMaterial.Data;
+            data.OverwriteRange(0x168,BitConverter.GetBytes(random.NextFloat(-1.5,1.5)));
+            data.OverwriteRange(0x19A, BitConverter.GetBytes(random.NextFloat(-1.5, 1.5)));
+            skyMaterial.Data = data;
+
+            var volumeLighting = p.getUExport(859);
+            var props = volumeLighting.GetProperties();
+
+            var vectors = props.GetProp<ArrayProperty<StructProperty>>("VectorParameterValues");
+            if (vectors != null)
+            {
+                foreach (var vector in vectors)
+                {
+                    RandomizeTint(random, vector.GetProp<StructProperty>("ParameterValue"), false);
+                }
+            }
+
+            volumeLighting.WriteProperties(props);
+
             if (p.ShouldSave)
             {
                 p.save();
@@ -923,7 +951,7 @@ namespace MassEffectRandomizer.Classes
                                                    Y = (float)e.Attribute("positiony"),
                                                    Z = (float)e.Attribute("positionz")
                                                },
-                                               Yaw = e.Attribute("Yaw") == null ? 0 : ((int)e.Attribute("Yaw"))
+                                               Yaw = string.IsNullOrEmpty((string)e.Attribute("yaw")) ? 0 : (int)e.Attribute("yaw")
                                            }).ToList();
             keeperRandomizationInfo.Shuffle(random);
             string STABase = Utilities.GetGameFile(@"BIOGame\CookedPC\Maps\STA\DSG");
@@ -4662,12 +4690,14 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
+        [DebuggerDisplay("KeeperLocation at {Position.X},{Position.Y},{Position.Z}, Rot {Yaw} in {STAFile}")]
         public class KeeperLocation
         {
             public Vector3 Position;
             public int Yaw;
             public string STAFile;
         }
+        [DebuggerDisplay("KeeperDefintion | Teleport UIndex: {KismetTeleportBoolUIndex} BioPawn UIndex:{PawnExportUIndex} | {STAFile}")]
 
         public class KeeperDefinition
         {
