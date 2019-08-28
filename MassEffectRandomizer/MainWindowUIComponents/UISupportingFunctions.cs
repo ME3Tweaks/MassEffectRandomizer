@@ -624,7 +624,7 @@ namespace MassEffectRandomizer
                 KeyValuePair<string, string> kvp = new KeyValuePair<string, string>(item.Value, (string)item.Attribute("name"));
                 Utilities.SUPPORTED_HASHES_ME1.Add(kvp);
             }
-
+            FaqLink = rootElement.Element("faqlink").Value;
             var requiredCachedFiles = (from e in rootElement.Elements("cachedfile")
                                        select new CachedFile
                                        {

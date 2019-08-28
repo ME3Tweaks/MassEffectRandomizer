@@ -30,6 +30,7 @@ namespace MassEffectRandomizer
     /// </summary>
     public partial class MainWindow : MetroWindow, INotifyPropertyChanged
     {
+        private static string FaqLink = "https://me3tweaks.com/masseffectrandomizer/faq";
         public static bool DEBUG_LOGGING { get; internal set; }
 
         public enum RandomizationMode
@@ -776,6 +777,11 @@ namespace MassEffectRandomizer
             {
                 this.WindowState = System.Windows.WindowState.Normal;
             }
+        }
+
+        private void FAQ_Click(object sender, RoutedEventArgs e)
+        {
+            Utilities.OpenWebPage(FaqLink);
         }
     }
 }

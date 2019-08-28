@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <mermanifest version="1.0">
+  <faqlink>https://me3tweaks.com/masseffectrandomizer/faq</faqlink>
   <!-- Executables with hashes that are not in the list are almost always pirated and are not supported.-->
   <supportedhashes>
     <supportedhash game="me1" name="Steam">647b93621389709cab8d268379bd4c47</supportedhash>

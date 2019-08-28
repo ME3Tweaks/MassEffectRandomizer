@@ -118,6 +118,9 @@
                             <Button Name="BackupRestore_Button" Click="BackupRestore_Click" Margin="5,0,0,0" MinWidth="20">
                                 <fonts:OutlinedTextBlock Text="{Binding BackupRestoreText, FallbackValue=Backup}" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
                             </Button>
+                            <Button Name="FAQ_Button" Click="FAQ_Click" Margin="5,0,0,0" MinWidth="20">
+                                <fonts:OutlinedTextBlock Text="FAQ" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
+                            </Button>
                         </StackPanel>
                         <Button DockPanel.Dock="Right" Click="RandomizeButton_Click" Padding="20,0,20,0">
                             <fonts:OutlinedTextBlock Text="Randomize" Fill="#f3fbfe" Stroke="Black" FontFamily="{StaticResource AeroLight}" FontSize="12" StrokeThickness="2" />
