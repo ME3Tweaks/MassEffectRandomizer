@@ -362,7 +362,7 @@ namespace MassEffectRandomizer
             InitializeComponent();
 
 #if DEBUG
-            529572808.ToString();
+            SeedTextBox.Text = 529572808.ToString();
 #else
             SeedTextBox.Text = preseed.ToString();
 #endif
@@ -454,7 +454,7 @@ namespace MassEffectRandomizer
             }
 
             string path = Utilities.GetGameBackupPath();
-            if (path != null && me1Path != null)
+            if (path != null)
             {
                 BackupRestoreText = "Restore";
                 BackupRestore_Button.ToolTip = "Click to restore game from " + Environment.NewLine + path;
@@ -804,6 +804,12 @@ namespace MassEffectRandomizer
         private void FAQ_Click(object sender, RoutedEventArgs e)
         {
             Utilities.OpenWebPage(FaqLink);
+        }
+
+        private void DiscordButton_Click(object sender, RoutedEventArgs e)
+        {
+            //ME3Tweaks Discord
+            Utilities.OpenWebPage(" https://discord.gg/s8HA6dc");
         }
     }
 }
