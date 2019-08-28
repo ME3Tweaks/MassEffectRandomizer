@@ -803,6 +803,8 @@ namespace MassEffectRandomizer.Classes
 
             if (mainWindow.RANDSETTING_WACK_OPENINGCUTSCENE)
             {
+                Log.Information("Randomizing open cutscene");
+                mainWindow.ProgressBarIndeterminate = true;
                 mainWindow.CurrentOperationText = "Randomizing opening cutscene";
                 RandomizeOpeningCrawl(random, Tlks);
                 //RandomizeOpeningSequence(random); //this was just sun tint. Part of sun tint randomizer 
@@ -1008,6 +1010,10 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeEdenPrime(Random random)
         {
+            Log.Information("Randomizing Eden Prime");
+            mainWindow.CurrentOperationText = "Randomizing Eden Prime";
+            mainWindow.ProgressBarIndeterminate = true;
+
             ME1Package p = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\PRO\DSG\BIOA_PRO10_08_DSG.SFM"));
             Log.Information("Applying sovereign drawscale pre-randomization modifications");
             p.getUExport(5640).Data = Utilities.GetEmbeddedStaticFilesBinaryFile("exportreplacements.SovereignInterpTrackFloatDrawScale_5640_PRO08DSG.bin");
@@ -1089,6 +1095,9 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeEnding(Random random)
         {
+            Log.Information("Randomizing ending");
+            mainWindow.ProgressBarIndeterminate = true;
+
             mainWindow.CurrentOperationText = "Randomizing ending";
             ME1Package backdropFile = new ME1Package(Utilities.GetGameFile(@"BioGame\CookedPC\Maps\CRD\BIOA_CRD00.SFM"));
             var paragonItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.endingbackdrops.paragon")).ToList();
@@ -1187,6 +1196,9 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizePinnacleScoreboard(Random random)
         {
+            Log.Information("Randomizing Pinnacle Station scoreboard");
+            mainWindow.ProgressBarIndeterminate = true;
+
             mainWindow.CurrentOperationText = "Randomizing Pinnacle Station Scoreboard";
             ME1Package pinnacleTextures = new ME1Package(Utilities.GetGameFile(@"DLC\DLC_Vegas\CookedPC\Maps\PRC2\bioa_prc2_ccsim05_dsg_LOC_int.SFM"));
             var resourceItems = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(x => x.StartsWith("MassEffectRandomizer.staticfiles.exportreplacements.pinnaclestationscoreboard")).ToList();
@@ -2699,6 +2711,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="Tlks"></param>
         private void MakeTextPossiblyScottish(List<TalkFile> Tlks, Random random, bool updateProgressbar)
         {
+            Log.Information("Making text possibly scottish");
             if (scottishVowelOrdering == null)
             {
                 scottishVowelOrdering = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });

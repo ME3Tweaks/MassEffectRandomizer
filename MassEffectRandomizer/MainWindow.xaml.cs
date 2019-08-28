@@ -360,7 +360,12 @@ namespace MassEffectRandomizer
             ImageCreditsEnd.ReplaceAll(LoadImageCredits("imagecredits_endcard.txt", false));
 
             InitializeComponent();
-            SeedTextBox.Text = 529572808.ToString(); //preseed.ToString(); //DEBUG!
+
+#if DEBUG
+            529572808.ToString();
+#else
+            SeedTextBox.Text = preseed.ToString();
+#endif
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             TextBlock_AssemblyVersion.Text = "Version " + version;
             Title += " " + version;
@@ -477,13 +482,20 @@ namespace MassEffectRandomizer
 
         public string BackupRestoreText { get; set; }
 
-        private void RandomizeButton_Click(object sender, RoutedEventArgs e)
+        private async void RandomizeButton_Click(object sender, RoutedEventArgs e)
         {
-            ButtonPanelVisible = Visibility.Collapsed;
-            ProgressPanelVisible = Visibility.Visible;
-            randomizer = new Randomizer(this);
-            AllowOptionsChanging = false;
-            randomizer.randomize();
+            if (!Utilities.isGameRunning())
+            {
+                ButtonPanelVisible = Visibility.Collapsed;
+                ProgressPanelVisible = Visibility.Visible;
+                randomizer = new Randomizer(this);
+                AllowOptionsChanging = false;
+                randomizer.randomize();
+            }
+            else
+            {
+                await this.ShowMessageAsync("Mass Effect is running", "Cannot randomize the game while Mass Effect is running. Please close the game and try again.");
+            }
         }
 
         private void Image_ME3Tweaks_Click(object sender, MouseButtonEventArgs e)

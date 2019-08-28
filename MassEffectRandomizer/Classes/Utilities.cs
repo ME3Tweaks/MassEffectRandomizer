@@ -1074,7 +1074,7 @@ namespace MassEffectRandomizer.Classes
         }
 
 
-        public static bool isGameRunning(int gameID)
+        public static bool isGameRunning()
         {
             Process[] pname = Process.GetProcessesByName("MassEffect");
             return pname.Length > 0;
