@@ -1079,5 +1079,22 @@ namespace MassEffectRandomizer.Classes
             Process[] pname = Process.GetProcessesByName("MassEffect");
             return pname.Length > 0;
         }
+
+        public static string GetGameLocale()
+        {
+            //does not exist in ini (or ini does not exist).
+            string softwareKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\";
+            string key64 = @"Wow6432Node\";
+            string gameKey = @"BioWare\Mass Effect";
+            string entry = "Locale";
+
+            string locale = (string)Registry.GetValue(softwareKey + gameKey, entry, null);
+            if (locale == null)
+            {
+                locale = (string)Registry.GetValue(softwareKey + key64 + gameKey, entry, null);
+            }
+
+            return locale;
+        }
     }
 }
