@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -355,9 +356,9 @@ namespace MassEffectRandomizer
             ProgressBar_Bottom_Min = 0;
             ProgressPanelVisible = Visibility.Visible;
             ButtonPanelVisible = Visibility.Collapsed;
-            ImageCredits.ReplaceAll(LoadImageCredits("imagecredits.txt", false));
-            ImageCreditsEarth.ReplaceAll(LoadImageCredits("imagecredits_earth.txt", true));
-            ImageCreditsEnd.ReplaceAll(LoadImageCredits("imagecredits_endcard.txt", false));
+            ImageCredits.ReplaceAll(LoadImageCredits("imagecredits.txt", false).OrderBy(x=>x.Author).ThenBy(x=>x.Title));
+            ImageCreditsEarth.ReplaceAll(LoadImageCredits("imagecredits_earth.txt", true).OrderBy(x => x.Author).ThenBy(x => x.Title));
+            ImageCreditsEnd.ReplaceAll(LoadImageCredits("imagecredits_endcard.txt", false).OrderBy(x => x.Author).ThenBy(x => x.Title));
 
             InitializeComponent();
 
