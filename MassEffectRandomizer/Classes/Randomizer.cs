@@ -122,6 +122,7 @@ namespace MassEffectRandomizer.Classes
         {
             this.mainWindow = mainWindow;
             scottishVowelOrdering = null; //will be set when needed.
+            upperScottishVowelOrdering = null;
         }
 
         public bool Busy => randomizationWorker != null && randomizationWorker.IsBusy;
@@ -2703,7 +2704,8 @@ namespace MassEffectRandomizer.Classes
             }
         }
 
-        static readonly List<char> englishVowels = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
+        static readonly List<char> englishVowels = new List<char>(new[] { 'a', 'e', 'i', 'o', 'u' });
+        static readonly List<char> upperCaseVowels = new List<char>(new[] { 'A', 'E', 'I', 'O', 'U' });
 
         /// <summary>
         /// Swap the vowels around
@@ -2716,6 +2718,11 @@ namespace MassEffectRandomizer.Classes
             {
                 scottishVowelOrdering = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
                 scottishVowelOrdering.Shuffle(random);
+                upperScottishVowelOrdering = new List<char>();
+                foreach(var c in scottishVowelOrdering)
+                {
+                    upperScottishVowelOrdering.Add(char.ToUpper(c,CultureInfo.InvariantCulture));
+                }
             }
 
             int currentTlkIndex = 0;
@@ -2760,6 +2767,7 @@ namespace MassEffectRandomizer.Classes
                             char[] newStringAsChars = word.ToArray();
                             for (int i = 0; i < word.Length; i++)
                             {
+                                //Undercase
                                 var vowelIndex = englishVowels.IndexOf(word[i]);
                                 if (vowelIndex >= 0)
                                 {
@@ -2769,7 +2777,22 @@ namespace MassEffectRandomizer.Classes
                                     }
                                     else
                                     {
-                                        newStringAsChars[i] = scottishVowelOrdering[(char)vowelIndex];
+                                        newStringAsChars[i] = scottishVowelOrdering[vowelIndex];
+                                    }
+                                }
+                                else
+                                {
+                                    var upperVowelIndex = upperCaseVowels.IndexOf(word[i]);
+                                    if (upperVowelIndex >= 0)
+                                    {
+                                        if (i + 1 < word.Length && upperCaseVowels.Contains(word[i + 1]))
+                                        {
+                                            continue; //don't modify dual vowel first letters.
+                                        }
+                                        else
+                                        {
+                                            newStringAsChars[i] = upperScottishVowelOrdering[upperVowelIndex];
+                                        }
                                     }
                                 }
                             }
@@ -4587,6 +4610,7 @@ namespace MassEffectRandomizer.Classes
         private Dictionary<string, SuffixedCluster> clusterNameMapping;
         private Dictionary<string, string> planetNameMapping;
         private List<char> scottishVowelOrdering;
+        private List<char> upperScottishVowelOrdering;
         private List<string> VanillaSuffixedClusterNames;
 
         private void RandomizeAINames(ME1Package pacakge, Random random)

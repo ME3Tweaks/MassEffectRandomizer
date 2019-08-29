@@ -932,7 +932,7 @@ namespace MassEffectRandomizer.Classes
 
         public static void SetRotation(StructProperty prop, float newDirectionDegrees)
         {
-            int newYaw = (int ) ((newDirectionDegrees / 360) * 65535);
+            int newYaw = (int)((newDirectionDegrees / 360) * 65535);
             prop.GetProp<IntProperty>("Yaw").Value = newYaw;
         }
 
@@ -1095,6 +1095,59 @@ namespace MassEffectRandomizer.Classes
             }
 
             return locale;
+        }
+
+        public static void RemoveRunAsAdminXPSP3FromME1()
+        {
+            string gamePath = GetGamePath();
+            gamePath += "\\Binaries\\MassEffect.exe";
+            var compatKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers", true);
+            if (compatKey != null)
+            {
+                string compatString = (string)compatKey.GetValue(gamePath, null);
+                if (compatString != null) //has compat setting
+                {
+                    string[] compatsettings = compatString.Split(' ');
+                    List<string> newSettings = new List<string>();
+
+                    foreach (string str in compatsettings)
+                    {
+                        switch (str)
+                        {
+                            case "~":
+                            case "RUNASADMIN":
+                            case "WINXPSP3":
+                                continue;
+                            default:
+                                newSettings.Add(str);
+                                break;
+                        }
+                    }
+
+                    if (newSettings.Count > 0)
+                    {
+                        string newcompatString = "~";
+                        foreach (string compatitem in newSettings)
+                        {
+                            newcompatString += " " + compatitem;
+                        }
+                        if (newcompatString == compatString)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            compatKey.SetValue(gamePath, newcompatString);
+                            Log.Information("New stripped compatibility string: " + newcompatString);
+                        }
+                    }
+                    else
+                    {
+                        compatKey.DeleteValue(gamePath);
+                        Log.Information("Removed compatibility settings for ME1.");
+                    }
+                }
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -246,6 +247,117 @@ namespace MassEffectRandomizer
             e.Result = true;
         }
 
+        private async Task<bool> PerformWriteCheck(bool required)
+        {
+            Log.Information("Performing Write Check...");
+            string me1Path = Utilities.GetGamePath();
+            bool isAdmin = Utilities.IsAdministrator();
+            Utilities.RemoveRunAsAdminXPSP3FromME1();
+
+            bool me1AGEIAKeyNotWritable = false;
+            string args = "";
+            List<string> directories = new List<string>();
+            try
+            {
+                string me1SubPath = Path.Combine(me1Path, @"BioGame\CookedPC\Packages");
+                bool me1Writable = Utilities.IsDirectoryWritable(me1Path) && Utilities.IsDirectoryWritable(me1SubPath);
+                if (!me1Writable)
+                {
+                    Log.Information("ME1 not writable: " + me1Path);
+                    directories.Add(me1Path);
+                }
+                try
+                {
+                    var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\AGEIA Technologies", true);
+                    if (key != null)
+                    {
+                        key.Close();
+                    }
+                    else
+                    {
+                        Log.Information("ME1 AGEIA Technologies key is not present or is not writable.");
+                        me1AGEIAKeyNotWritable = true;
+                    }
+                }
+                catch (SecurityException)
+                {
+                    Log.Information("ME1 AGEIA Technologies key is not writable.");
+                    me1AGEIAKeyNotWritable = true;
+                }
+
+                if (directories.Count() > 0 || me1AGEIAKeyNotWritable)
+                {
+                    foreach (String str in directories)
+                    {
+                        if (args != "")
+                        {
+                            args += " ";
+                        }
+                        args += "\"" + str + "\"";
+                    }
+
+                    if (me1AGEIAKeyNotWritable)
+                    {
+                        args += " -create-hklm-reg-key \"SOFTWARE\\WOW6432Node\\AGEIA Technologies\"";
+                    }
+                    args = "\"" + System.Security.Principal.WindowsIdentity.GetCurrent().Name + "\" " + args;
+                    //need to run write permissions program
+                    if (isAdmin)
+                    {
+                        string exe = Path.Combine(Utilities.GetAppDataFolder(), "executables", "PermissionsGranter.exe");
+                        int result = Utilities.runProcess(exe, args);
+                        if (result == 0)
+                        {
+                            Log.Information("Elevated process returned code 0, directories are hopefully writable now.");
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Error("Elevated process returned code " + result + ", directories probably aren't writable.");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        string message = "Game directory/registry keys are not writable by your user account. Mass Effect Randomizer will attempt to grant access to these folders/registry keys with the PermissionsGranter.exe program:\n";
+                        if (required)
+                        {
+                            message = "The game directory or registry keys for Mass Effect are not writable by your user account. These need to be writable or Mass Effect Randomizer will not be able to work. Please grant administrative privileges to PermissionsGranter.exe to give your account the necessary privileges to the following:\n";
+                        }
+                        foreach (String str in directories)
+                        {
+                            message += "\n" + str;
+                        }
+                        if (me1AGEIAKeyNotWritable)
+                        {
+                            message += "\nRegistry: HKLM\\SOFTWARE\\WOW6432Node\\AGEIA Technologies (Fixes an ME1 launch issue)";
+                        }
+                        await this.ShowMessageAsync("Granting permissions to Mass Effect directories", message);
+                        string exe = Path.Combine(Utilities.GetAppDataFolder(), "executables", "PermissionsGranter.exe");
+                        int result = Utilities.runProcessAsAdmin(exe, args);
+                        if (result == 0)
+                        {
+                            Log.Information("Elevated process returned code 0, directories are hopefully writable now.");
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Error("Elevated process returned code " + result + ", directories probably aren't writable.");
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error checking for write privileges. This may be a significant sign that an installed game is not in a good state.");
+                Log.Error(App.FlattenException(e));
+                await this.ShowMessageAsync("Error checking write privileges", "An error occured while checking write privileges to game folders. This may be a sign that the game is in a bad state.\n\nThe error was:\n" + e.Message);
+                return false;
+            }
+            return true;
+        }
+
         public ConsoleApp BACKGROUND_MEM_PROCESS = null;
         private List<string> BACKGROUND_MEM_PROCESS_ERRORS;
         private List<string> BACKGROUND_MEM_PROCESS_PARSED_ERRORS;
@@ -280,7 +392,7 @@ namespace MassEffectRandomizer
 
             //verify vanilla
             Log.Information("Verifying game: Mass Effect");
-            string exe = Path.Combine(Utilities.GetAppDataFolder(), "executables" ,"MassEffectModderNoGui.exe");
+            string exe = Path.Combine(Utilities.GetAppDataFolder(), "executables", "MassEffectModderNoGui.exe");
             string args = "--check-game-data-vanilla --gameid 1 --ipc";
             List<string> acceptedIPC = new List<string>();
             acceptedIPC.Add("TASK_PROGRESS");
@@ -667,7 +779,7 @@ namespace MassEffectRandomizer
                     {
                         file.BytesDownloaded = e.BytesReceived;
                         var bytesDownloaded = filesToDownload.Sum(x => x.BytesDownloaded);
-                        CurrentOperationText = ByteSize.FromBytes(bytesDownloaded).ToString() + "/" + ByteSize.FromBytes(totalBytesToDownload).ToString() + " downloaded";
+                        CurrentOperationText = "Downloading static supporting files "+ByteSize.FromBytes(bytesDownloaded).ToString() + "/" + ByteSize.FromBytes(totalBytesToDownload).ToString();
                         CurrentProgressValue = (int)bytesDownloaded;
                     };
                     downloadClient.DownloadFileCompleted += (s, e) =>
@@ -715,8 +827,9 @@ namespace MassEffectRandomizer
             bw.RunWorkerAsync();
         }
 
-        private void PerformPostStartup()
+        private async void PerformPostStartup()
         {
+            await PerformWriteCheck(true);
             ProgressPanelVisible = System.Windows.Visibility.Collapsed;
             ButtonPanelVisible = System.Windows.Visibility.Visible;
         }

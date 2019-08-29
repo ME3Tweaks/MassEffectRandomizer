@@ -15,6 +15,7 @@
                       MinHeight="680" 
                       MinWidth="825"
                       Height="915"
+                      WindowStartupLocation="CenterScreen"
                       Width="825">
     <Window.Resources>
         <converters:EnumMatchToBooleanConverter x:Key="enumConverter" />
