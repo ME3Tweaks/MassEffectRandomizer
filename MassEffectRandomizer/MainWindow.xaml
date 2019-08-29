@@ -14,7 +14,7 @@
                       Title="Mass Effect Randomizer" 
                       MinHeight="680" 
                       MinWidth="825"
-                      Height="915"
+                      Height="900"
                       WindowStartupLocation="CenterScreen"
                       Width="825">
     <Window.Resources>

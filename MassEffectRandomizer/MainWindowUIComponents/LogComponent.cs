@@ -265,6 +265,21 @@ namespace MassEffectRandomizer
             bw.DoWork += (a, b) =>
             {
                 Log.Information("Collecting log information...");
+                if (logfile == null)
+                {
+                    //latest
+                    var directory = new DirectoryInfo(App.LogDir);
+                    var logfiles = directory.GetFiles("applog*.txt").OrderByDescending(f => f.LastWriteTime).ToList();
+                    if (logfiles.Count() > 0)
+                    {
+                        logfile = logfiles.ElementAt(0).FullName;
+                    }
+                    else
+                    {
+                        Log.Information("No logs available, somehow. Canceling upload");
+                        return;
+                    }
+                }
                 string log = GetSelectedLogText(logfile);
                 //var lzmaExtractedPath = Path.Combine(Path.GetTempPath(), "lzma.exe");
 
@@ -280,35 +295,7 @@ namespace MassEffectRandomizer
                 var lzmaExtractedPath = Path.Combine(Utilities.GetAppDataFolder(), "executables", "lzma.exe");
 
 
-                if (log == null)
-                {
-                    //latest
-                    var directory = new DirectoryInfo(App.LogDir);
-                    var logfiles = directory.GetFiles("applog*.txt").OrderByDescending(f => f.LastWriteTime).ToList();
-                    if (logfiles.Count() > 0)
-                    {
-                        var currentTime = DateTime.Now;
-                        log = "";
-                        //if (currentTime.Date != bootTime.Date && logfiles.Count() > 1)
-                        //{
-                        //    //we need to do last 2 files
-                        //    Log.Information("Log file has rolled over since app was booted - including previous days' log.");
-                        //    File.Copy(logfiles.ElementAt(1).FullName, logfiles.ElementAt(1).FullName + ".tmp");
-                        //    log = File.ReadAllText(logfiles.ElementAt(1).FullName + ".tmp");
-                        //    File.Delete(logfiles.ElementAt(1).FullName + ".tmp");
-                        //    log += "\n";
-                        //}
-                        Log.Information("Staging log file for upload. This is the final log item that should appear in an uploaded log.");
-                        File.Copy(logfiles.ElementAt(0).FullName, logfiles.ElementAt(0).FullName + ".tmp");
-                        log += File.ReadAllText(logfiles.ElementAt(0).FullName + ".tmp");
-                        File.Delete(logfiles.ElementAt(0).FullName + ".tmp");
-                    }
-                    else
-                    {
-                        Log.Information("No logs available, somehow. Canceling upload");
-                        return;
-                    }
-                }
+                
 
                 string zipStaged = Path.Combine(Utilities.GetAppDataFolder(), "logfile_forUpload");
                 File.WriteAllText(zipStaged, log);

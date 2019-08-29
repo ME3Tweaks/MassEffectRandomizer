@@ -66,7 +66,9 @@ namespace MassEffectRandomizer.Classes
 
         internal static string GetAppDataFolder()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\MassEffectRandomizer";
+            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MassEffectRandomizer");
+            Directory.CreateDirectory(folder);
+            return folder;
         }
 
         public static string GetEmbeddedStaticFilesTextFile(string filename)
@@ -1148,6 +1150,16 @@ namespace MassEffectRandomizer.Classes
                     }
                 }
             }
+        }
+
+        internal static string GetAppCrashHandledFile()
+        {
+            return Path.Combine(Utilities.GetAppDataFolder(), "APP_CRASH_HANDLED");
+        }
+
+        internal static string GetAppCrashFile()
+        {
+            return Path.Combine(Utilities.GetAppDataFolder(), "APP_CRASH");
         }
     }
 }

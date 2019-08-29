@@ -54,7 +54,7 @@ namespace MassEffectRandomizer
             {
                 //exe is missing? not sure how this could be null at this point.
                 Log.Error("Game directory is null - has the filesystem changed since the app was booted?");
-                await this.ShowMessageAsync("Cannot determine game path", "The game path cannot be determined - this is most likely a bug. Please report this issue to the developers on Discord (Settings -> Report an issue).");
+                await this.ShowMessageAsync("Cannot determine game path", "The game path cannot be determined - this is most likely a bug. Please report this issue to the developers on Discord.");
                 return;
             }
 
@@ -669,7 +669,7 @@ namespace MassEffectRandomizer
                                 else
                                 {
                                     Log.Fatal("No local manifest exists to use, exiting...");
-                                    await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for ALOT Installer. There is no local bundled version available. Information that is required to build and install ALOT is not available. Check the program logs.");
+                                    await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for Mass Effect Randomizer. There is no local bundled version available. Information about files that are required for use is not available. Check the program logs.");
                                     Environment.Exit(1);
                                 }
                             }
@@ -688,7 +688,7 @@ namespace MassEffectRandomizer
                         else
                         {
                             Log.Fatal("No local manifest exists to use, exiting...");
-                            await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for ALOT Installer. There is no local bundled version available. Information that is required to build and install ALOT is not available. Check the program logs.");
+                            await this.ShowMessageAsync("No Manifest Available", "An error occured downloading the manifest for Mass Effect Randomizer. There is no local bundled version available. Information about files that are required for use is not available. Check the program logs.");
                             Environment.Exit(1);
                         }
                     }
@@ -830,6 +830,58 @@ namespace MassEffectRandomizer
         private async void PerformPostStartup()
         {
             await PerformWriteCheck(true);
+            string appCrashFile = Utilities.GetAppCrashFile();
+            string appCrashHandledFile = Utilities.GetAppCrashHandledFile();
+
+            if (File.Exists(appCrashFile))
+            {
+                DateTime crashTime = File.GetCreationTime(appCrashFile);
+                bool hasBeenHandled = false;
+                try
+                {
+                    File.Delete(appCrashFile);
+                    Log.Warning("Removed APP_CRASH");
+                    if (File.Exists(appCrashHandledFile))
+                    {
+                        hasBeenHandled = true;
+                        Log.Warning("Removed APP_CRASH_HANDLED - the previous crash has already been handled");
+                        File.Delete(appCrashHandledFile);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Cannot remove APP_CRASH:" + e.Message);
+                    if (!File.Exists(appCrashHandledFile))
+                    {
+                        File.Create(appCrashHandledFile);
+                    }
+                }
+                if (crashTime.Date == DateTime.Today && !hasBeenHandled)
+                {
+                    Log.Information("Crash date: " + crashTime.Date + ", today is " + DateTime.Today + ", crash not handled. Prompting to upload");
+                    MetroDialogSettings mds = new MetroDialogSettings();
+                    mds.AffirmativeButtonText = "Upload";
+                    mds.NegativeButtonText = "No";
+                    mds.DefaultButtonFocus = MessageDialogResult.Affirmative;
+                    var upload = await this.ShowMessageAsync("Previous randomizer session crashed", "The previous randomizer session crashed. Would you like to upload the log to help the developer fix it?", MessageDialogStyle.AffirmativeAndNegative, mds);
+                    if (upload == MessageDialogResult.Affirmative)
+                    {
+                        await UploadLog(true, null);
+                        //ShowStatus("Crash log uploaded");
+                        mds = new MetroDialogSettings();
+                        mds.AffirmativeButtonText = "Join Discord";
+                        mds.NegativeButtonText = "Decline";
+                        mds.DefaultButtonFocus = MessageDialogResult.Affirmative;
+                        var result = await this.ShowMessageAsync("Want to help fix this issue?", "We would appreciate if you joined the ME3Tweaks Discord server so you can help us reproduce this issue so we can get it fixed.", MessageDialogStyle.AffirmativeAndNegative, mds);
+                        if (result == MessageDialogResult.Affirmative)
+                        {
+                            Utilities.OpenWebPage(App.DISCORD_INVITE_LINK);
+                        }
+                    }
+
+                }
+            }
+
             ProgressPanelVisible = System.Windows.Visibility.Collapsed;
             ButtonPanelVisible = System.Windows.Visibility.Visible;
         }

@@ -810,7 +810,7 @@ namespace MassEffectRandomizer
         private void DiscordButton_Click(object sender, RoutedEventArgs e)
         {
             //ME3Tweaks Discord
-            Utilities.OpenWebPage(" https://discord.gg/s8HA6dc");
+            Utilities.OpenWebPage(App.DISCORD_INVITE_LINK);
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,9 +29,28 @@ namespace MassEffectRandomizer
         internal const string BACKUP_REGISTRY_KEY = @"Software\ALOTAddon"; //Shared. Do not change
         public static string LogDir;
         internal static string MainThemeColor = "Violet";
-
+        private static bool POST_STARTUP = false;
+        public const string DISCORD_INVITE_LINK = "https://discord.gg/s8HA6dc";
         [STAThread]
         public static void Main()
+        {
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            try
+            {
+                var application = new App();
+                application.InitializeComponent();
+                application.Run();
+            }
+            catch (Exception e)
+            {
+                OnFatalCrash(e);
+                throw e;
+            }
+        }
+
+        public App() : base()
         {
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             string exePath = assembly.Location;
@@ -86,6 +106,8 @@ namespace MassEffectRandomizer
       .WriteTo.Debug()
 #endif
       .CreateLogger();
+            this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            POST_STARTUP = true;
             ToolTipService.ShowDurationProperty.OverrideMetadata(
                 typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
             Log.Information("===========================================================================");
@@ -141,9 +163,46 @@ namespace MassEffectRandomizer
             Log.Information("Loading property lookup DB");
             ME1UnrealObjectInfo.loadfromJSON();
 
-            var application = new App();
-            application.InitializeComponent();
-            application.Run();
+            //try
+            //{
+            //    var application = new App();
+            //    application.InitializeComponent();
+            //    application.Run();
+            //}
+            //catch (Exception e)
+            //{
+            //    OnFatalCrash(e);
+            //    throw e;
+            //}
+        }
+
+        /// <summary>
+        /// Called when an unhandled exception occurs. This method can only be invoked after startup has completed. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">Exception to process</param>
+        static void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            string errorMessage = string.Format("Mass Effect Randomizer has crashed! This is the exception that caused the crash:");
+            string st = FlattenException(e.Exception);
+            Log.Fatal(errorMessage);
+            Log.Fatal(st);
+            //Log.Information("Forcing beta mode off before exiting...");
+            //Utilities.WriteRegistryKey(Registry.CurrentUser, AlotAddOnGUI.MainWindow.REGISTRY_KEY, AlotAddOnGUI.MainWindow.SETTINGSTR_BETAMODE, 0);
+            File.Create(Utilities.GetAppCrashFile());
+        }
+
+        /// <summary>
+        /// Called when a fatal crash occurs. Only does something if startup has not completed.
+        /// </summary>
+        /// <param name="e">The fatal exception.</param>
+        public static void OnFatalCrash(Exception e)
+        {
+            if (!POST_STARTUP)
+            {
+                string errorMessage = string.Format("Mass Effect Randomizer has encountered a fatal startup crash:\n" + FlattenException(e));
+                File.WriteAllText(Path.Combine(Utilities.GetAppDataFolder(), "FATAL_STARTUP_CRASH.txt"), errorMessage);
+            }
         }
 
         /// <summary>
