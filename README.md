@@ -2,4 +2,4 @@
 
 Mass Effect Randomizer is a randomizer for the first Mass Effect game on PC.
 
-You can find more information about it [ME3Tweaks](https://me3tweaks.com/masseffectrandomizer).
+You can find more information about it at [ME3Tweaks](https://me3tweaks.com/masseffectrandomizer).
