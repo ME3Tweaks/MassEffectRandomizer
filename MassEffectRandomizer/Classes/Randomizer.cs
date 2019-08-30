@@ -500,7 +500,7 @@ namespace MassEffectRandomizer.Classes
 
                 if (mainWindow.RANDSETTING_CHARACTER_ICONICFACE && export.ClassName == "BioMorphFace" && export.ObjectName.StartsWith("Player_"))
                 {
-                    Log.Information("Randomizing iconic female shepard face by "+ mainWindow.RANDSETTING_CHARACTER_ICONICFACE_AMOUNT);
+                    Log.Information("Randomizing iconic female shepard face by " + mainWindow.RANDSETTING_CHARACTER_ICONICFACE_AMOUNT);
                     RandomizeBioMorphFace(export, random, mainWindow.RANDSETTING_CHARACTER_ICONICFACE_AMOUNT);
                 }
             }
@@ -652,15 +652,15 @@ namespace MassEffectRandomizer.Classes
                                         }
                                     }
                                 }
-                                else if (mainWindow.RANDSETTING_MISC_STARCOLORS)
+                                else if ((exp.ClassName == "BioSunFlareComponent" || exp.ClassName == "BioSunFlareStreakComponent" || exp.ClassName == "BioSunActor") && mainWindow.RANDSETTING_MISC_STARCOLORS)
                                 {
+                                    if (!loggedFilename)
+                                    {
+                                        Log.Information("Randomizing map file: " + files[i]);
+                                        loggedFilename = true;
+                                    }
                                     if (exp.ClassName == "BioSunFlareComponent" || exp.ClassName == "BioSunFlareStreakComponent")
                                     {
-                                        if (!loggedFilename)
-                                        {
-                                            Log.Information("Randomizing map file: " + files[i]);
-                                            loggedFilename = true;
-                                        }
                                         var tint = exp.GetProperty<StructProperty>("FlareTint");
                                         if (tint != null)
                                         {
@@ -670,11 +670,6 @@ namespace MassEffectRandomizer.Classes
                                     }
                                     else if (exp.ClassName == "BioSunActor")
                                     {
-                                        if (!loggedFilename)
-                                        {
-                                            Log.Information("Randomizing map file: " + files[i]);
-                                            loggedFilename = true;
-                                        }
                                         var tint = exp.GetProperty<StructProperty>("SunTint");
                                         if (tint != null)
                                         {
@@ -2719,9 +2714,9 @@ namespace MassEffectRandomizer.Classes
                 scottishVowelOrdering = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
                 scottishVowelOrdering.Shuffle(random);
                 upperScottishVowelOrdering = new List<char>();
-                foreach(var c in scottishVowelOrdering)
+                foreach (var c in scottishVowelOrdering)
                 {
-                    upperScottishVowelOrdering.Add(char.ToUpper(c,CultureInfo.InvariantCulture));
+                    upperScottishVowelOrdering.Add(char.ToUpper(c, CultureInfo.InvariantCulture));
                 }
             }
 
@@ -4615,7 +4610,7 @@ namespace MassEffectRandomizer.Classes
 
         private void RandomizeAINames(ME1Package pacakge, Random random)
         {
-            bool forcedCharge = random.Next(1) == 0;
+            bool forcedCharge = random.Next(8) == 0;
             for (int i = 0; i < pacakge.NameCount; i++)
             {
                 NameReference n = pacakge.getNameEntry(i);
