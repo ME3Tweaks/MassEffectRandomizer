@@ -445,11 +445,10 @@ namespace MassEffectRandomizer
             Log.Information("Game is installed at " + me1Path);
 
             Log.Information("Detecting locale...");
-            string locale = Utilities.GetGameLocale();
-            if (locale == null || locale != "en_US")
+            if (!Utilities.IsSupportedLocale())
             {
-                Log.Error("Unsupported locale detected: " + locale);
-                await this.ShowMessageAsync("Mass Effect unsupported locale", "Mass Effect Randomizer only works with en_US locales of the game (INT). Your current installation locale is unsupported or could not determined. Mass Effect Randomizer is written against the en_US locale and will not work with other localizations of the game. The application will now exit. If you need assistance, please come to the ME3Tweaks Discord.");
+                Log.Error("Unable to detect INT locale.");
+                await this.ShowMessageAsync("Mass Effect unsupported locale", "Mass Effect Randomizer only works with INT(english) locales of the game. Your current installation locale is unsupported or could not determined (could not detect loc_int files). Mass Effect Randomizer is written against the INT locale and will not work with other localizations of the game. The application will now exit. If you need assistance, please come to the ME3Tweaks Discord.");
                 Log.Error("Exiting due to unsupported locale");
                 Environment.Exit(1);
             }

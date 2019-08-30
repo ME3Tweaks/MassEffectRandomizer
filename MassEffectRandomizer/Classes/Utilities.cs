@@ -1082,21 +1082,29 @@ namespace MassEffectRandomizer.Classes
             return pname.Length > 0;
         }
 
-        public static string GetGameLocale()
+        public static bool IsSupportedLocale()
         {
-            //does not exist in ini (or ini does not exist).
-            string softwareKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\";
-            string key64 = @"Wow6432Node\";
-            string gameKey = @"BioWare\Mass Effect";
-            string entry = "Locale";
+            var gamePath = GetGamePath();
+            var locintfile1 = Path.Combine(gamePath, @"BioGame\CookedPC\Maps\EntryMenu_LOC_int.SFM");
+            var locintfile2 = Path.Combine(gamePath, @"BioGame\CookedPC\Maps\ICE\BIOA_ICE00_LOC_int.SFM");
+            var locintfile3 = Path.Combine(gamePath, @"BioGame\CookedPC\Maps\LAV\BIOA_LAV00_LOC_int.SFM");
+            var locintfile4 = Path.Combine(gamePath, @"BioGame\CookedPC\Maps\CRD\BIOA_CRD00_LOC_int.SFM");
 
-            string locale = (string)Registry.GetValue(softwareKey + gameKey, entry, null);
-            if (locale == null)
-            {
-                locale = (string)Registry.GetValue(softwareKey + key64 + gameKey, entry, null);
-            }
+            return File.Exists(locintfile1) && File.Exists(locintfile2) && File.Exists(locintfile3) && File.Exists(locintfile4);
 
-            return locale;
+            ////does not exist in ini (or ini does not exist).
+            //string softwareKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\";
+            //string key64 = @"Wow6432Node\";
+            //string gameKey = @"BioWare\Mass Effect";
+            //string entry = "Locale";
+
+            //string locale = (string)Registry.GetValue(softwareKey + gameKey, entry, null);
+            //if (locale == null)
+            //{
+            //    locale = (string)Registry.GetValue(softwareKey + key64 + gameKey, entry, null);
+            //}
+
+            //return locale;
         }
 
         public static void RemoveRunAsAdminXPSP3FromME1()

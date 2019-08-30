@@ -764,6 +764,7 @@ namespace MassEffectRandomizer
                     else
                     {
                         //Make directory and add to queue
+                        Log.Information("Static cached file not found: " + file.ResolvedDestination + ", adding to download queue.");
                         filesToDownload.Add(file);
                     }
                 }
