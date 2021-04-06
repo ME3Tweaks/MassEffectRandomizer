@@ -31,6 +31,7 @@ namespace MassEffectRandomizer
         internal static string MainThemeColor = "Violet";
         private static bool POST_STARTUP = false;
         public const string DISCORD_INVITE_LINK = "https://discord.gg/s8HA6dc";
+        public const string ME2R_LINK = "https://www.nexusmods.com/masseffect2/mods/364";
         [STAThread]
         public static void Main()
         {

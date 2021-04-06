@@ -351,7 +351,7 @@ namespace MassEffectRandomizer
             var preseed = random.Next();
             RANDSETTING_MISC_MAPFACES_AMOUNT = .3;
             RANDSETTING_CHARACTER_ICONICFACE_AMOUNT = .3;
-            RANDSETTING_WACK_FACEFX_AMOUNT = 2;
+            RANDSETTING_WACK_FACEFX_AMOUNT = 3;
             ProgressBar_Bottom_Max = 100;
             ProgressBar_Bottom_Min = 0;
             ProgressPanelVisible = Visibility.Visible;
@@ -810,6 +810,12 @@ namespace MassEffectRandomizer
         {
             //ME3Tweaks Discord
             Utilities.OpenWebPage(App.DISCORD_INVITE_LINK);
+        }
+
+        private void ME2R_Click(object sender, RoutedEventArgs e)
+        {
+            //ME3Tweaks Discord
+            Utilities.OpenWebPage(App.ME2R_LINK);
         }
     }
 }

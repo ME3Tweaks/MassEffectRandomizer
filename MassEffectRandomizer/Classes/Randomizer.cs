@@ -2708,7 +2708,7 @@ namespace MassEffectRandomizer.Classes
         /// <param name="Tlks"></param>
         private void MakeTextPossiblyScottish(List<TalkFile> Tlks, Random random, bool updateProgressbar)
         {
-            Log.Information("Making text possibly scottish");
+            Log.Information("Randomizing vowels");
             if (scottishVowelOrdering == null)
             {
                 scottishVowelOrdering = new List<char>(new char[] { 'a', 'e', 'i', 'o', 'u' });
@@ -2728,7 +2728,7 @@ namespace MassEffectRandomizer.Classes
                 int current = 0;
                 if (updateProgressbar)
                 {
-                    mainWindow.CurrentOperationText = $"Applying Scottish accent [{currentTlkIndex}/{Tlks.Count()}]";
+                    mainWindow.CurrentOperationText = $"Randomizing vowels [{currentTlkIndex}/{Tlks.Count()}]";
                     mainWindow.ProgressBar_Bottom_Max = tf.StringRefs.Length;
                     mainWindow.ProgressBarIndeterminate = false;
                 }
@@ -2757,6 +2757,12 @@ namespace MassEffectRandomizer.Classes
                             if (word.Length == 1)
                             {
                                 continue; //Don't modify I, A
+                            }
+
+                            if (word.StartsWith("%") || word.StartsWith("<CUSTOM"))
+                            {
+                                Debug.WriteLine($"Skipping {word}");
+                                continue; // Don't modify tokens
                             }
 
                             char[] newStringAsChars = word.ToArray();
