@@ -9,12 +9,12 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ME3Tweaks")]
 [assembly: AssemblyProduct("Mass Effect Randomizer")]
-[assembly: AssemblyCopyright("Copyright © 2018-2019 ME3Tweaks")]
+[assembly: AssemblyCopyright("Copyright © 2018-2021 ME3Tweaks")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Version informationr(
-[assembly: AssemblyVersion("1.0.3.1018")]
-[assembly: AssemblyFileVersion("1.0.3.1018")]
+[assembly: AssemblyVersion("1.0.3.1020")]
+[assembly: AssemblyFileVersion("1.0.3.1020")]
 [assembly: NeutralResourcesLanguageAttribute( "en-US" )]
 
