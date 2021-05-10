@@ -199,7 +199,7 @@ namespace MassEffectRandomizer.Classes.TLK
                 if (StringRefs[i].StringID == id)
                 {
                     //Debug.WriteLine("Setting string " + id + " to " + newString);
-                    Log.Information($"Updating {export.ObjectName} string id {id} to {newString.Truncate(135)}{(newString.Length > 135 ? "... (truncated for log)" : "")}");
+                    //Log.Information($"Updating {export.ObjectName} string id {id} to {newString.Truncate(135)}{(newString.Length > 135 ? "... (truncated for log)" : "")}");
                     StringRefs[i].Data = newString;
                     StringRefs[i].Flags = BitConverter.GetBytes(newString == null ? 0 : 1); //should port to me3explorer.
                     Modified = true;

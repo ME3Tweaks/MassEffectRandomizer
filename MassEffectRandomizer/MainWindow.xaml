@@ -347,6 +347,43 @@
                                             <CheckBox Content="Randomly randomize pawn sizes in maps" Foreground="Red" ToolTip="Warning: This breaks many cutscenes, ragdoll physics, and may make enemies immune to gun damage (but not melee)&#xA;Slightly changes the X,Y,Z scalars for pawn sizes.&#xA;This setting will not apply to all pawns, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_MAPPAWNSIZES}" />
                                             <CheckBox Content="Randomly randomize movement interpolations" Foreground="Red" ToolTip="Warning: This breaks a lot of camera pans, possibly other things&#xA;Slightly changes the movement and rotations of interpolations of everything&#xA;This setting will not apply to all interpolations, it will be randomly applied" Margin="3" IsChecked="{Binding RANDSETTING_MISC_INTERPS}" />
                                             <CheckBox Content="Randomize vowels" ToolTip="Translates game to some weird dialect of Scottish-Like English.&#10;If you are a streamer this could be fun if you like to read text out loud to your audience" Margin="3" IsChecked="{Binding RANDSETTING_WACK_SCOTTISH}" />
+                                            <CheckBox Content="UwU-ify text" Name="RandomizeUWU_Checkbox"  ToolTip="Convewts gawme text intwo uwu text" Margin="3" IsChecked="{Binding RANDSETTING_WACK_UWU}" />
+                                            <CheckBox Content="Add emoticons" Margin="25,0,0,0" ToolTip="Adds emoticon faces based on the content of the sentence" IsChecked="{Binding RANDSETTING_WACK_UWU_EMOTICONS}" >
+                                                <CheckBox.Style>
+                                                    <Style TargetType="CheckBox" BasedOn="{StaticResource MetroCheckBox}">
+                                                        <Setter Property="Opacity" Value="0.5"></Setter>
+                                                        <Setter Property="IsEnabled" Value="False"></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsChecked,ElementName=RandomizeUWU_Checkbox}" Value="True">
+                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                                <Setter Property="Opacity" Value="1.0"></Setter>
+
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                        <Style.Resources>
+                                                            <SolidColorBrush x:Key="HighlightBrush" Color="Orchid" />
+                                                        </Style.Resources>
+                                                    </Style>
+                                                </CheckBox.Style>
+                                            </CheckBox>
+                                            <CheckBox Content="Keep original casing" Margin="25,0,0,0" ToolTip="Keeps upper and lower casing. UwU by default lowercases everything" IsChecked="{Binding RANDSETTING_WACK_UWU_KEEPCASING}" >
+                                                <CheckBox.Style>
+                                                    <Style TargetType="CheckBox" BasedOn="{StaticResource MetroCheckBox}">
+                                                        <Setter Property="Opacity" Value="0.5"></Setter>
+                                                        <Setter Property="IsEnabled" Value="False"></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsChecked,ElementName=RandomizeUWU_Checkbox}" Value="True">
+                                                                <Setter Property="IsEnabled" Value="True"/>
+                                                                <Setter Property="Opacity" Value="1.0"></Setter>
+
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                        <Style.Resources>
+                                                            <SolidColorBrush x:Key="HighlightBrush" Color="Orchid" />
+                                                        </Style.Resources>
+                                                    </Style>
+                                                </CheckBox.Style>
+                                            </CheckBox>
                                             <CheckBox Content="Randomize NPC Head Colors" ToolTip="Randomizes the colors used for NPC heads" Margin="3" IsChecked="{Binding RANDSETTING_PAWN_MATERIALCOLORS}" />
                                         </StackPanel>
                                     </StackPanel>
@@ -431,7 +468,7 @@
                                 <Image HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Source="images/me3tweaks.png" Margin="8,0,0,0" Cursor="Hand" MouseDown="Image_ME3Tweaks_Click" ToolTip="Software developed with love by ME3Tweaks" />
                             </StackPanel>
                             <StackPanel HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,3,0,0">
-                                <TextBlock Text="Copyright (C) 2019 - 2021 ME3Tweaks&#xA;Enormous help from Hallashyn &lt;3&#xA;Huge thanks to all of the artists who let me use their images. You rock!&#xA;&#xA;This program is free software: you can redistribute it and/or modify it under the terms of the&#xA;GNU General Public License as published by the Free Software Foundation, either version 3 of the&#xA;License, or (at your option) any later version.&#xA;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without&#xA;even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#xA;GNU General Public License for more details.&#xA;&#xA;Mass Effect is a registered trademark of EA INTERNATIONAL (STUDIO&#xA;AND PUBLISHING) LTD. This program has no affiliation with BioWare&#xA;or Electronic Arts.&#xA;&#xA;Images are copyright of their respective owners, see Credits tab." />
+                                <TextBlock Text="Copyright (C) 2019 - 2021 ME3Tweaks&#xA;Enormous help from Hallashyn &lt;3&#xA;UwUify emoticon algorithm written by Not_Female&#xA;Huge thanks to all of the artists who let me use their images. You rock!&#xA;&#xA;This program is free software: you can redistribute it and/or modify it under the terms of the&#xA;GNU General Public License as published by the Free Software Foundation, either version 3 of the&#xA;License, or (at your option) any later version.&#xA;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without&#xA;even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&#xA;GNU General Public License for more details.&#xA;&#xA;Mass Effect is a registered trademark of EA INTERNATIONAL (STUDIO&#xA;AND PUBLISHING) LTD. This program has no affiliation with BioWare&#xA;or Electronic Arts.&#xA;&#xA;Images are copyright of their respective owners, see Credits tab." />
                             </StackPanel>
                         </Grid>
                     </StackPanel>

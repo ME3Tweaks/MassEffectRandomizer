@@ -335,6 +335,40 @@ namespace MassEffectRandomizer
         public bool RANDSETTING_WACK_OPENINGCUTSCENE { get; set; }
         public bool RANDSETTING_PAWN_FACEFX { get; set; }
         public bool RANDSETTING_WACK_SCOTTISH { get; set; }
+
+        private bool TextOptionChanging;
+
+        public void OnRANDSETTING_WACK_SCOTTISHChanged()
+        {
+            if (!TextOptionChanging)
+            {
+                TextOptionChanging = true;
+                if (RANDSETTING_WACK_SCOTTISH)
+                {
+                    RANDSETTING_WACK_UWU = false;
+                }
+                TextOptionChanging = false;
+            }
+        }
+
+        public void OnRANDSETTING_WACK_UWUChanged()
+        {
+            if (!TextOptionChanging)
+            {
+                TextOptionChanging = true;
+                if (RANDSETTING_WACK_UWU)
+                {
+                    RANDSETTING_WACK_SCOTTISH = false;
+                }
+                TextOptionChanging = false;
+            }
+        }
+
+
+
+        public bool RANDSETTING_WACK_UWU { get; set; }
+        public bool RANDSETTING_WACK_UWU_KEEPCASING { get; set; }
+        public bool RANDSETTING_WACK_UWU_EMOTICONS { get; set; }
         public bool RANDSETTING_PAWN_BIOLOOKATDEFINITION { get; set; }
 
 
